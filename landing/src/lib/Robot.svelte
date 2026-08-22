@@ -14,8 +14,8 @@
     <path class="ear ear-r" d="M21 13h2v2h-2v4h-2V9h2v4Z" />
 
     <!-- eyes (the two key squares) -->
-    <path class="eye eye-l" fill="var(--eye)" stroke-width="0.55" d="M10 16H8v-4h2v4Z" />
-    <path class="eye eye-r" fill="var(--eye)" stroke-width="0.55" d="M16 16h-2v-4h2v4Z" />
+    <path class="eye eye-l" fill={eye} stroke-width="0.55" d="M10 16H8v-4h2v4Z" />
+    <path class="eye eye-r" fill={eye} stroke-width="0.55" d="M16 16h-2v-4h2v4Z" />
 
     <!-- screen + flag -->
     <path d="M13 7h6v2H5V7h6V5h2v2Z" />

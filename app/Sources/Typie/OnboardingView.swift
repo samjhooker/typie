@@ -35,7 +35,7 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             footer
         }
-        .background(Theme.cream)
+        .background(Theme.paper)
         .frame(width: 680, height: 560)
         .onAppear { startPolling() }
         .onDisappear { pollTimer?.invalidate() }
@@ -49,19 +49,12 @@ struct OnboardingView: View {
                 .frame(width: 30, height: 29)
             Text("typie.")
                 .font(Theme.display(24, .heavy))
-                .foregroundStyle(wordmarkGradient)
+                .foregroundStyle(Theme.hotpink)
             Spacer()
             Theme.kicker("step \(step.rawValue + 1) of 4")
         }
         .padding(.horizontal, 28)
         .padding(.vertical, 18)
-    }
-
-    private var wordmarkGradient: LinearGradient {
-        LinearGradient(
-            colors: [Theme.hotpink, Theme.purple, Theme.orange],
-            startPoint: .leading, endPoint: .trailing
-        )
     }
 
     private var footer: some View {
@@ -147,42 +140,29 @@ struct OnboardingView: View {
     // MARK: steps
 
     private var welcomeStep: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 18) {
             Spacer()
-            ZStack {
-                Circle()
-                    .fill(Theme.mint.opacity(0.25))
-                    .frame(width: 120, height: 120)
-                RobotIcon(mood: .idle)
-                    .frame(width: 62, height: 60)
-            }
-            .padding(.bottom, 22)
+            RobotIcon(mood: .idle)
+                .frame(width: 52, height: 50)
 
-            Text("HOLD A KEY.\nSAY THE THING.")
-                .font(Theme.display(42, .black))
+            Text("HOLD A KEY. SAY THE THING.")
+                .font(Theme.display(30, .black))
                 .multilineTextAlignment(.center)
-                .kerning(-1)
-                .foregroundStyle(Theme.green)
+                .kerning(-0.3)
+                .foregroundStyle(Theme.ink)
+
             Text("Your words appear wherever your cursor is — entirely on this Mac.")
-                .font(Theme.body(15))
+                .font(Theme.body(14))
                 .multilineTextAlignment(.center)
-                .padding(.top, 10)
-                .foregroundStyle(Theme.greenDeep.opacity(0.8))
+                .foregroundStyle(Theme.slate.opacity(0.8))
 
             HStack(spacing: 12) {
                 WelcomeCard(icon: "keyboard", title: "works everywhere", detail: "any app that accepts typing")
                 WelcomeCard(icon: "bolt.fill", title: "instant", detail: "text lands in ~100 ms")
                 WelcomeCard(icon: "wifi.slash", title: "zero cloud", detail: "audio never leaves this Mac")
             }
-            .padding(.top, 26)
-
+            .padding(.top, 8)
             Spacer()
-
-            Text("~470 mb one-time download · macOS 14+ · no account · $0")
-                .font(Theme.mono(11))
-                .kerning(0.6)
-                .foregroundStyle(Theme.green.opacity(0.55))
-                .padding(.bottom, 4)
         }
         .padding(.horizontal, 30)
     }
@@ -196,7 +176,7 @@ struct OnboardingView: View {
             Text("Two tiny permissions.")
                 .font(Theme.display(28, .heavy))
                 .kerning(-0.5)
-                .foregroundStyle(Theme.green)
+                .foregroundStyle(Theme.ink)
             PermissionCard(
                 title: "Microphone",
                 detail: "so typie can hear you while the key is held. audio is processed on-device and thrown away.",
@@ -236,7 +216,7 @@ struct OnboardingView: View {
             Text(modelReady ? "All set." : "One-time download")
                 .font(Theme.display(26, .heavy))
                 .kerning(-0.5)
-                .foregroundStyle(Theme.green)
+                .foregroundStyle(Theme.ink)
 
             switch models.status {
             case .downloading(let fraction):
@@ -248,7 +228,7 @@ struct OnboardingView: View {
                 Text("typie's brain, downloaded straight onto this Mac.\nafter this, it never needs the internet again.")
                     .font(Theme.body(13))
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(Theme.greenDeep.opacity(0.7))
+                    .foregroundStyle(Theme.slate.opacity(0.7))
             case .loading:
                 ProgressBar(fraction: 0.98)
                     .frame(width: 340)
@@ -258,7 +238,7 @@ struct OnboardingView: View {
             case .ready:
                 Label("already installed — from here on, everything happens offline.", systemImage: "wifi.slash")
                     .font(Theme.body(14))
-                    .foregroundStyle(Theme.greenDeep.opacity(0.75))
+                    .foregroundStyle(Theme.slate.opacity(0.75))
             case .failed(let message):
                 Text(message)
                     .font(Theme.body(13))
@@ -289,7 +269,7 @@ struct OnboardingView: View {
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: 400)
-                            .foregroundStyle(Theme.greenDeep.opacity(0.85))
+                            .foregroundStyle(Theme.slate.opacity(0.85))
                         Text("~470 mb · downloaded once · offline forever after")
                             .font(Theme.mono(11))
                             .kerning(0.6)
@@ -369,13 +349,13 @@ struct OnboardingView: View {
                 Toggle(isOn: $settings.historyEnabled) {
                     Text("save history")
                         .font(Theme.body(13))
-                        .foregroundStyle(Theme.green)
+                        .foregroundStyle(Theme.ink)
                 }
                 .toggleStyle(.switch)
                 Toggle(isOn: $settings.launchAtLogin) {
                     Text("start at login")
                         .font(Theme.body(13))
-                        .foregroundStyle(Theme.green)
+                        .foregroundStyle(Theme.ink)
                 }
                 .toggleStyle(.switch)
             }
@@ -414,17 +394,17 @@ struct WelcomeCard: View {
                 .foregroundStyle(Theme.hotpink)
             Text(title)
                 .font(Theme.display(13, .heavy))
-                .foregroundStyle(Theme.green)
+                .foregroundStyle(Theme.ink)
             Text(detail)
                 .font(Theme.body(11))
-                .foregroundStyle(Theme.greenDeep.opacity(0.65))
+                .foregroundStyle(Theme.slate.opacity(0.65))
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 10)
-        .frame(maxWidth: .infinity, minHeight: 104)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.white))
+        .frame(maxWidth: .infinity, minHeight: 88)
+        .background(RoundedRectangle(cornerRadius: Theme.radiusM, style: .continuous).fill(Theme.cream))
         .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            RoundedRectangle(cornerRadius: Theme.radiusM, style: .continuous)
                 .strokeBorder(Theme.green.opacity(0.08), lineWidth: 1)
         )
     }
@@ -444,7 +424,7 @@ struct PracticeBox: View {
             HStack {
                 Text("try it right now")
                     .font(Theme.display(15, .heavy))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(Theme.ink)
                 Spacer()
                 switch controller.phase {
                 case .listening:
@@ -476,9 +456,9 @@ struct PracticeBox: View {
                 }
             }
             .frame(height: 96)
-            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.white))
+            .background(RoundedRectangle(cornerRadius: Theme.radiusM, style: .continuous).fill(Theme.cream))
             .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: Theme.radiusM, style: .continuous)
                     .strokeBorder(flash ? Theme.mintLive : (focused ? Theme.mint : Theme.green.opacity(0.12)), lineWidth: flash ? 3 : focused ? 2 : 1)
             )
             .animation(Theme.easeOut, value: flash)
@@ -518,7 +498,7 @@ struct TriggerPicker: View {
                         .foregroundStyle(Theme.hotpink)
                     Text(selection.rawValue)
                         .font(Theme.display(15))
-                        .foregroundStyle(Theme.green)
+                        .foregroundStyle(Theme.ink)
                     Spacer()
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.system(size: 10, weight: .bold))
@@ -526,7 +506,7 @@ struct TriggerPicker: View {
                 }
                 .padding(.horizontal, 14).padding(.vertical, 10)
                 .frame(width: 230)
-                .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.white))
+                .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.cream))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .strokeBorder(Theme.green.opacity(0.18), lineWidth: 1)
@@ -561,22 +541,22 @@ struct PermissionCard: View {
                     .frame(width: 52, height: 52)
                 Image(systemName: icon)
                     .font(.system(size: 21, weight: .bold))
-                    .foregroundStyle(Theme.greenDeep)
+                    .foregroundStyle(Theme.slate)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(Theme.display(17, .heavy))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(Theme.ink)
                 Text(detail)
                     .font(Theme.body(13))
-                    .foregroundStyle(Theme.greenDeep.opacity(0.7))
+                    .foregroundStyle(Theme.slate.opacity(0.7))
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
             if granted {
                 Label("granted", systemImage: "checkmark.circle.fill")
                     .font(Theme.mono(11))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(Theme.ink)
             } else {
                 Button("allow", action: action)
                     .buttonStyle(.plain)
@@ -588,9 +568,9 @@ struct PermissionCard: View {
             }
         }
         .padding(18)
-        .background(RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Color.white))
+        .background(RoundedRectangle(cornerRadius: Theme.radiusL, style: .continuous).fill(Theme.cream))
         .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
+            RoundedRectangle(cornerRadius: Theme.radiusL, style: .continuous)
                 .strokeBorder(granted ? Theme.mint : Theme.green.opacity(0.08), lineWidth: granted ? 2 : 1)
         )
     }
@@ -623,7 +603,7 @@ struct KeyCap: View {
             .padding(.horizontal, 26).padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Theme.greenDeep)
+                    .fill(Theme.ink)
                     .shadow(color: Color(hex: 0x0B1F1B), radius: 0, x: 0, y: 6)
             )
     }
@@ -642,7 +622,7 @@ struct TutorialRow: View {
                     .frame(width: 26, height: 26)
                 Text(number)
                     .font(Theme.display(13, .heavy))
-                    .foregroundStyle(Theme.greenDeep)
+                    .foregroundStyle(Theme.slate)
             }
             Image(systemName: icon)
                 .font(.system(size: 14, weight: .bold))
@@ -650,7 +630,7 @@ struct TutorialRow: View {
                 .frame(width: 20)
             Text(text)
                 .font(Theme.body(14))
-                .foregroundStyle(Theme.greenDeep.opacity(0.85))
+                .foregroundStyle(Theme.slate.opacity(0.85))
         }
     }
 }

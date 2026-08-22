@@ -12,7 +12,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Trigger")
                     .font(Theme.display(18, .heavy))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(Theme.ink)
                 TriggerPicker(selection: $settings.triggerMode)
             }
 
@@ -20,7 +20,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Keybinding")
                     .font(Theme.display(18, .heavy))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(Theme.ink)
                 KeybindingPicker()
             }
 
@@ -31,10 +31,10 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Save previous transcriptions")
                         .font(Theme.display(15))
-                        .foregroundStyle(Theme.green)
+                        .foregroundStyle(Theme.ink)
                     Text("kept locally on disk — never anywhere else")
                         .font(Theme.body(12))
-                        .foregroundStyle(Theme.greenDeep.opacity(0.6))
+                        .foregroundStyle(Theme.slate.opacity(0.6))
                 }
             }
             .toggleStyle(.switch)
@@ -43,10 +43,10 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Launch at login")
                         .font(Theme.display(15))
-                        .foregroundStyle(Theme.green)
+                        .foregroundStyle(Theme.ink)
                     Text("the robot wakes up when your Mac does")
                         .font(Theme.body(12))
-                        .foregroundStyle(Theme.greenDeep.opacity(0.6))
+                        .foregroundStyle(Theme.slate.opacity(0.6))
                 }
             }
             .toggleStyle(.switch)
@@ -60,7 +60,7 @@ struct SettingsView: View {
                 .foregroundStyle(Theme.green.opacity(0.5))
         }
         .padding(28)
-        .background(Theme.cream)
+        .background(Theme.paper)
         .frame(width: 440)
     }
 }
@@ -108,7 +108,7 @@ struct HistoryView: View {
                          ? "say something first — hold \(SettingsStore.shared.hotkey.shortLabel)"
                          : "turn on \"save previous transcriptions\" in settings")
                         .font(Theme.body(13))
-                        .foregroundStyle(Theme.greenDeep.opacity(0.6))
+                        .foregroundStyle(Theme.slate.opacity(0.6))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -124,7 +124,7 @@ struct HistoryView: View {
                 }
             }
         }
-        .background(Theme.cream)
+        .background(Theme.paper)
         .frame(width: 480, height: 520)
     }
 }
@@ -139,7 +139,7 @@ struct HistoryRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.text)
                     .font(Theme.body(14))
-                    .foregroundStyle(Theme.greenDeep)
+                    .foregroundStyle(Theme.slate)
                     .textSelection(.enabled)
                 HStack(spacing: 8) {
                     Text(dateText)

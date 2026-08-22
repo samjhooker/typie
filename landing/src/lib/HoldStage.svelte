@@ -705,6 +705,7 @@
   /* dynamic-island style: small notch idle, wide pill when typie is live */
   .notch {
     width: 92px;
+    height: 24px;
     background: #000;
     border-radius: 0 0 10px 10px;
     display: flex;
@@ -719,7 +720,8 @@
   /* expand slower, snap shut quick */
   .notch.open {
     width: min(240px, 60vw);
-    padding: 0 7px 3px;
+    height: 24px;
+    padding: 0 7px;
     justify-content: space-between;
     transition: width 0.45s cubic-bezier(0.2, 1.1, 0.35, 1);
   }

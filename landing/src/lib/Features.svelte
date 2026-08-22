@@ -144,7 +144,7 @@
         <p class="banner-sub">Get the app. Hold ⌥. Say the thing!</p>
       </div>
       <div class="banner-mascot" aria-hidden="true">
-        <Robot mood="done" size={64} />
+        <Robot mood="done" size={64} eye="#131722" />
       </div>
       <DownloadCta />
     </div>

@@ -24,9 +24,9 @@ enum AppPaths {
 
 enum FontLoader {
     static func loadBundledFonts() {
-        let names = ["Archivo", "Inter", "Caveat", "IBMPlexMono-Regular", "IBMPlexMono-Medium"]
+        // register everything bundled — no allow-list to forget to update
         guard let urls = Bundle.module.urls(forResourcesWithExtension: "ttf", subdirectory: nil) else { return }
-        for url in urls where names.contains(url.deletingPathExtension().lastPathComponent) {
+        for url in urls {
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
     }
