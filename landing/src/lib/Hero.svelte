@@ -5,13 +5,31 @@
   import { hold } from './hold.svelte.js';
 
   let keyDown = $state(false);
+  let interacted = $state(false);
 
   function tap() {
+    interacted = true;
     keyDown = true;
     setTimeout(() => (keyDown = false), 200);
     /* starts live dictation; releasing anywhere stops it (HoldStage listens globally) */
     hold.press();
   }
+
+  /* if the visitor hasn't tried it, demo it for them once */
+  $effect(() => {
+    const t = setTimeout(() => {
+      if (
+        !interacted &&
+        document.visibilityState === 'visible' &&
+        !matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        interacted = true;
+        hold.press();
+        setTimeout(() => hold.press(), 1800);
+      }
+    }, 5000);
+    return () => clearTimeout(t);
+  });
 </script>
 
 <section class="hero field" id="top" class:live={app.mood === 'listening'}>
@@ -20,12 +38,18 @@
       <p class="kicker hand">voice dictation for mac</p>
 
       <h1>
-        Press <button
-          class="key"
-          class:down={keyDown || app.mood === 'listening'}
-          onpointerdown={(e) => { e.preventDefault(); tap(); }}
-          aria-label="the option key - press and hold to try it"
-        >&thinsp;&#8997;&thinsp;</button><span class="dot">.</span><br />
+        Press <span class="keywrap">
+          <button
+            class="key"
+            class:down={keyDown || app.mood === 'listening'}
+            class:pulse={!interacted}
+            onpointerdown={(e) => { e.preventDefault(); tap(); }}
+            aria-label="the option key - press and hold to try it"
+          >&thinsp;&#8997;&thinsp;</button>
+          {#if !interacted}
+            <span class="tag hand" aria-hidden="true">hold me!</span>
+          {/if}
+        </span><span class="dot">.</span><br />
         <span class="talk">Talk.</span><br />
         <span class="typed">Typed.</span>
       </h1>
@@ -109,6 +133,45 @@
     transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
     cursor: pointer;
     user-select: none;
+  }
+
+  .keywrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tag {
+    position: absolute;
+    top: -0.55em;
+    right: -1.1em;
+    font-size: clamp(18px, 1.8vw, 24px);
+    color: var(--hotpink);
+    transform: rotate(8deg);
+    pointer-events: none;
+    white-space: nowrap;
+    animation: tagbob 2.2s ease-in-out infinite;
+  }
+
+  @keyframes tagbob {
+    0%, 100% { transform: rotate(8deg) translateY(0); }
+    50% { transform: rotate(4deg) translateY(-0.12em); }
+  }
+
+  .key.pulse {
+    animation: halo 1.8s ease-out infinite;
+  }
+
+  @keyframes halo {
+    0% { box-shadow: 0 0.13em 0 #0b1f1b, 0 0 0 0 rgba(252, 86, 129, 0.55); }
+    70% { box-shadow: 0 0.13em 0 #0b1f1b, 0 0 0 0.45em rgba(252, 86, 129, 0); }
+    100% { box-shadow: 0 0.13em 0 #0b1f1b, 0 0 0 0 rgba(252, 86, 129, 0); }
+  }
+
+  .key.down {
+    animation: none;
+    transform: translateY(0.08em);
+    box-shadow: 0 0.02em 0 #0b1f1b;
+    background: var(--hotpink);
   }
 
   .key:hover {

@@ -21,15 +21,17 @@ jobs:
         env:
           APP_VERSION: ${{ github.ref_name }}
 
-      - name: Rename DMG with tag
+      - name: Rename DMG
         run: |
           mkdir -p dist
-          mv app/build/typie-*.dmg "dist/typie-${GITHUB_REF_NAME}.dmg"
+          # fixed asset name → releases/latest/download/typie.dmg always
+          # points at the newest build
+          cp app/build/typie-*.dmg dist/typie.dmg
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/typie-*.dmg
+          files: dist/typie.dmg
           generate_release_notes: true
           body: |
             **typie ${{ github.ref_name }}**
@@ -37,7 +39,7 @@ jobs:
             hold a key. say the thing. it's typed.
 
             ### install
-            1. download **typie-${{ github.ref_name }}.dmg** below
+            1. download **typie.dmg** below
             2. open it and drag **typie** into Applications
             3. first launch only: macOS will ask once — open
                **System Settings → Privacy & Security**, scroll down,
