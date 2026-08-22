@@ -3,6 +3,8 @@
   import DownloadCta from './DownloadCta.svelte';
   import { app } from './state.svelte.js';
 
+  let scrolled = $state(false);
+
   const status = $derived(
     app.mood === 'listening' ? 'rec'
     : app.mood === 'typing' ? 'typing'
@@ -11,8 +13,10 @@
   );
 </script>
 
+<svelte:window onscroll={() => (scrolled = window.scrollY > 24)} />
+
 <header>
-  <div class="pill">
+  <div class="pill" class:scrolled>
     <a href="#top" class="word" aria-label="Typie home">
       <Logo size={24} />
     </a>
@@ -59,6 +63,24 @@
     border-radius: 999px;
     border: 2px solid var(--ink);
     box-shadow: 0 5px 0 rgba(19, 23, 34, 0.85);
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  /* at top of page: naked chrome; pill materialises on scroll */
+  .pill:not(.scrolled) {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .pill.scrolled:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 rgba(19, 23, 34, 0.85);
   }
 
   .word {

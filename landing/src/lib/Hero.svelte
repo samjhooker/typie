@@ -9,6 +9,7 @@
   function tap() {
     keyDown = true;
     setTimeout(() => (keyDown = false), 200);
+    /* starts live dictation; releasing anywhere stops it (HoldStage listens globally) */
     hold.press();
   }
 </script>
@@ -21,9 +22,9 @@
       <h1>
         Press <button
           class="key"
-          class:down={keyDown}
-          onclick={tap}
-          aria-label="the option key - click to try it"
+          class:down={keyDown || app.mood === 'listening'}
+          onpointerdown={(e) => { e.preventDefault(); tap(); }}
+          aria-label="the option key - press and hold to try it"
         >&thinsp;&#8997;&thinsp;</button><span class="dot">.</span><br />
         <span class="talk">Talk.</span><br />
         <span class="typed">Typed.</span>

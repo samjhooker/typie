@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <!-- typie favicon: paper tile, chonky hotpink robot -->
+  <!-- typie favicon: paper tile, chonky hotpink robot, centered on (12,12) -->
   <rect width="24" height="24" rx="5.5" fill="#F8F3E8"/>
-  <g transform="translate(2.8,2.2) scale(0.71)" fill="#FC5681" stroke="#FC5681"
+  <g transform="translate(3.48,3.48) scale(0.71)" fill="#FC5681" stroke="#FC5681"
      stroke-width="1.3" stroke-linejoin="round" fill-rule="evenodd">
     <path d="M19 21H5v-2h14v2ZM5 19H3v-4H1v-2h2V9h2v10Zm16-6h2v2h-2v4h-2V9h2v4Zm-11 3H8v-4h2v4Zm6 0h-2v-4h2v4Zm-3-9h6v2H5V7h6V5h2v2Zm-2-2H7V3h4v2Z"/>
   </g>
