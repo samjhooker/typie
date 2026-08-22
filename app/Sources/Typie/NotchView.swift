@@ -1,7 +1,9 @@
 import SwiftUI
 
-/// The typie island that extends out of the Mac's notch:
-/// robot pops out of the left, waveform out of the right.
+/// The typie island that lives in the Mac's notch.
+/// Idle (notched Macs): looks like the physical notch itself — black, quiet.
+/// While dictating: the black expands outward in BOTH directions —
+/// dancing robot out the left, live waveform out the right.
 struct NotchView: View {
     @ObservedObject private var controller = DictationController.shared
     @State private var pulse = false
@@ -10,80 +12,28 @@ struct NotchView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let w = geo.size.width
-            ZStack {
-                HStack(spacing: 0) {
-                    // ── left extension: robot ──────────────────────
-                    HStack(spacing: 8) {
-                        RobotIcon(mood: robotMood)
-                            .frame(width: 26, height: 25)
-                        if phase == .listening {
-                            Circle()
-                                .fill(Theme.hotpink)
-                                .frame(width: 7, height: 7)
-                                .scaleEffect(pulse ? 1.35 : 0.9)
-                                .opacity(pulse ? 0.55 : 1)
-                                .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulse)
-                            Text("LISTENING")
-                                .font(Theme.mono(10))
-                                .kerning(1.2)
-                                .foregroundStyle(Theme.cream.opacity(0.85))
-                        } else if phase == .transcribing {
-                            Text("THINKING")
-                                .font(Theme.mono(10))
-                                .kerning(1.2)
-                                .foregroundStyle(Theme.sun.opacity(0.9))
-                        }
-                    }
-                    .padding(.leading, hasPhysicalNotch ? 14 : 18)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            let expanded = isVisible
 
-                    // ── right extension: waveform / loader / result ─
-                    HStack(spacing: 8) {
-                        switch phase {
-                        case .listening:
-                            WaveformBars(level: controller.level, phase: $barPhase)
-                        case .transcribing:
-                            LoadingDots(tick: loadTick)
-                        case .done(let ms):
-                            if ms >= 0 {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 11, weight: .black))
-                                    .foregroundStyle(Theme.mintLive)
-                                Text("\(Int(ms))ms")
-                                    .font(Theme.mono(11))
-                                    .foregroundStyle(Theme.mintLive)
-                            } else {
-                                Text("…hmm")
-                                    .font(Theme.hand(16))
-                                    .foregroundStyle(Theme.pink)
-                            }
-                        default:
-                            EmptyView()
-                        }
-                    }
-                    .padding(.trailing, hasPhysicalNotch ? 14 : 18)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                }
+            ZStack(alignment: .top) {
+                // ── the black island ────────────────────────────────
+                islandShape(expanded: expanded)
+                    .frame(
+                        width: expanded ? geo.size.width : idleWidth,
+                        height: expanded ? geo.size.height : idleHeight,
+                        alignment: .top
+                    )
+                    .shadow(color: .black.opacity(expanded ? 0.35 : 0), radius: 12, y: 6)
 
-                // physical notch gap illusion: a darker seam in the middle
-                if hasPhysicalNotch {
-                    VStack {
-                        Rectangle()
-                            .fill(Color.black)
-                            .frame(width: w * 0.45, height: 4)
-                            .frame(maxHeight: .infinity, alignment: .top)
-                    }
+                // ── expanded contents ───────────────────────────────
+                if expanded {
+                    expandedContent
+                        .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                        .transition(.opacity)
                 }
             }
+            .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.black)
-                .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
-        )
-        .opacity(isVisible ? 1 : 0)
-        .animation(Theme.springy, value: phase)
+        .animation(Theme.springy, value: isVisible)
         .onAppear {
             Timer.scheduledTimer(withTimeInterval: 0.16, repeats: true) { _ in
                 MainActor.assumeIsolated {
@@ -94,6 +44,72 @@ struct NotchView: View {
             barPhase = true
         }
     }
+
+    // MARK: - island chrome
+
+    /// Idle sizes come from the real measured notch (NotchPanel measures
+    /// it via the screen's auxiliary areas). Notch-less Macs: hidden idle.
+    private var idleWidth: CGFloat { NotchPanel.notchWidth }
+    private var idleHeight: CGFloat { NotchPanel.notchHeight }
+
+    @ViewBuilder private func islandShape(expanded: Bool) -> some View {
+        if hasPhysicalNotch {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: expanded ? 20 : 10,
+                bottomTrailingRadius: expanded ? 20 : 10,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+            .fill(Color.black)
+        } else {
+            RoundedRectangle(cornerRadius: expanded ? 20 : 0, style: .continuous)
+                .fill(Color.black)
+                .opacity(isVisible ? 1 : 0)
+        }
+    }
+
+    // MARK: - expanded layout: robot ← · · · → waveform
+
+    private var expandedContent: some View {
+        HStack(spacing: 0) {
+            // ── left wing: dancing robot ─────────────────
+            RobotIcon(mood: robotMood)
+                .frame(width: 24, height: 23)
+                .scaleEffect(pulse && phase == .listening ? 1.08 : 1.0)
+                .padding(.leading, 14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            // ── right wing: waveform / loader / result ──────────────
+            HStack(spacing: 8) {
+                switch phase {
+                case .listening:
+                    WaveformBars(level: controller.level, phase: $barPhase)
+                case .transcribing:
+                    LoadingDots(tick: loadTick)
+                case .done(let ms):
+                    if ms >= 0 {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(Theme.mintLive)
+                        Text("\(Int(ms))ms")
+                            .font(Theme.mono(11))
+                            .foregroundStyle(Theme.mintLive)
+                    } else {
+                        Text("…hmm")
+                            .font(Theme.hand(16))
+                            .foregroundStyle(Theme.pink)
+                    }
+                default:
+                    EmptyView()
+                }
+            }
+            .padding(.trailing, 14)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+    }
+
+    // MARK: - state
 
     private var phase: DictationPhase { controller.phase }
 
@@ -114,7 +130,7 @@ struct NotchView: View {
     }
 
     private var hasPhysicalNotch: Bool {
-        NSScreen.main?.safeAreaInsets.top ?? 0 > 0
+        (NSScreen.main?.safeAreaInsets.top ?? 0) > 0
     }
 }
 
@@ -122,7 +138,7 @@ struct WaveformBars: View {
     let level: Float
     @Binding var phase: Bool
 
-    private let barCount = 5
+    private let barCount = 7
 
     var body: some View {
         HStack(spacing: 3) {
@@ -131,7 +147,7 @@ struct WaveformBars: View {
                     .fill(Theme.mintLive)
                     .frame(width: 3, height: height(for: i))
                     .animation(
-                        .easeInOut(duration: 0.16).delay(Double(i) * 0.03),
+                        .easeInOut(duration: 0.14).delay(Double(i) * 0.03),
                         value: level
                     )
             }
@@ -140,11 +156,14 @@ struct WaveformBars: View {
     }
 
     private func height(for index: Int) -> CGFloat {
-        let base = [0.5, 0.8, 1.0, 0.75, 0.45][index]
+        // symmetric envelope so edges dance less than the middle
+        let center = Double(barCount - 1) / 2
+        let symmetric = 1.0 - abs(Double(index) - center) / (center + 1)
+        let base = 0.35 + symmetric * 0.65
         // combine live mic loudness with a little motion so it always dances
         let wiggle: Float = phase ? 0.85 : 1.0
         let l = max(0.08, min(1, level)) * wiggle
-        return CGFloat(base * Double(l)) * 20 + 3
+        return CGFloat(base * Double(l)) * 16 + 3
     }
 }
 

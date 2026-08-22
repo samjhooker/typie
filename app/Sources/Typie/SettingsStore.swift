@@ -42,12 +42,23 @@ enum HotkeyKey: String, CaseIterable, Codable {
     }
 }
 
+/// How the hotkey behaves. Both = hold works AND tap works.
 enum TriggerMode: String, CaseIterable, Codable {
+    case both = "Hold or tap"
     case hold = "Hold to talk"
-    case toggle = "Press to toggle"
+    case toggle = "Tap to toggle"
+
+    var icon: String {
+        switch self {
+        case .both: return "sparkles"
+        case .hold: return "hand.raised.fill"
+        case .toggle: return "hand.tap.fill"
+        }
+    }
 
     var hint: String {
         switch self {
+        case .both: return "hold it and speak, or tap to start and tap again to stop"
         case .hold: return "hold the key while you speak, let go to transcribe"
         case .toggle: return "press once to start, press again to stop"
         }
@@ -78,10 +89,26 @@ final class SettingsStore: ObservableObject {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hotkey = HotkeyKey(rawValue: defaults.string(forKey: "hotkey") ?? "") ?? .rightOption
-        triggerMode = TriggerMode(rawValue: defaults.string(forKey: "triggerMode") ?? "") ?? .hold
-        historyEnabled = defaults.object(forKey: "historyEnabled") as? Bool ?? false
-        launchAtLogin = defaults.bool(forKey: "launchAtLogin")
+        triggerMode = TriggerMode(rawValue: defaults.string(forKey: "triggerMode") ?? "") ?? .both
+        historyEnabled = defaults.object(forKey: "historyEnabled") as? Bool ?? true
+        launchAtLogin = defaults.object(forKey: "launchAtLogin") as? Bool ?? true
         onboardingDone = defaults.bool(forKey: "onboardingDone")
+    }
+
+    /// Applies the current launch-at-login preference to the system.
+    /// Called once at app start since init assignments don't fire didSet.
+    func syncLaunchAtLogin() {
+        guard #available(macOS 13.0, *) else { return }
+        do {
+            let service = SMAppService.mainApp
+            if launchAtLogin && service.status != .enabled {
+                try service.register()
+            } else if !launchAtLogin && service.status == .enabled {
+                try service.unregister()
+            }
+        } catch {
+            NSLog("typie: launch at login sync failed: \(error)")
+        }
     }
 
     private func applyLaunchAtLogin(_ enabled: Bool) {

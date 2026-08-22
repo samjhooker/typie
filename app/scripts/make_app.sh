@@ -51,6 +51,15 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </plist>
 PLIST
 
-codesign --force --sign - "$APP"
+# Prefer the stable "typie-dev" identity when available: TCC permissions
+# (Accessibility, mic) survive rebuilds with a real cert, unlike ad-hoc.
+if security find-identity -v -p codesigning | grep -q 'typie-dev'; then
+    echo "→ signing with stable identity 'typie-dev' (permissions persist)"
+    codesign --force --sign "typie-dev" "$APP"
+else
+    echo "⚠ signing ad-hoc — permissions will reset on every rebuild!"
+    echo "  run scripts/create_signing_cert.sh once to fix this"
+    codesign --force --sign - "$APP"
+fi
 
 echo "built $APP"

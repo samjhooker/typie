@@ -1,5 +1,6 @@
 <script>
   import Logo from './Logo.svelte';
+  import DownloadCta from './DownloadCta.svelte';
   import { app } from './state.svelte.js';
 
   const status = $derived(
@@ -27,7 +28,7 @@
       <a href="#faq">FAQ</a>
     </nav>
 
-    <a href="#get" class="btn btn-green cta">Download for free</a>
+    <DownloadCta class="cta" />
   </div>
 </header>
 
@@ -51,13 +52,13 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 8px 8px 18px;
-    background: rgba(249, 248, 244, 0.9);
+    padding: 8px 8px 8px 20px;
+    background: rgba(255, 253, 247, 0.94);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 999px;
-    border: 1px solid rgba(2, 89, 77, 0.1);
-    box-shadow: 0 10px 40px rgba(2, 89, 77, 0.14);
+    border: 2px solid var(--ink);
+    box-shadow: 0 5px 0 rgba(19, 23, 34, 0.85);
   }
 
   .word {
@@ -97,18 +98,20 @@
 
   .links a {
     font-family: var(--display);
-    font-weight: 700;
-    font-size: 13.5px;
-    letter-spacing: 0.02em;
-    color: var(--green-deep);
-    padding: 8px 13px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding: 8px 14px;
     border-radius: 999px;
-    transition: background 0.2s ease, transform 0.25s var(--spring);
+    transition: background 0.2s ease, transform 0.25s var(--spring), box-shadow 0.2s ease;
   }
 
   .links a:hover {
-    background: rgba(130, 237, 166, 0.45);
-    transform: translateY(-1px);
+    background: var(--butter);
+    box-shadow: 0 3px 0 rgba(19, 23, 34, 0.7);
+    transform: translateY(-2px) rotate(-1deg);
   }
 
   .pricing {
@@ -120,20 +123,34 @@
 
   .pricing i {
     position: absolute;
-    top: -7px;
-    right: -14px;
-    font-size: 13px;
+    top: -9px;
+    right: -18px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--hotpink);
-    transform: rotate(8deg);
+    transform: rotate(10deg);
     pointer-events: none;
     white-space: nowrap;
   }
 
-  .cta {
-    padding: 11px 20px;
-    font-size: 13px;
+  .pill :global(a.cta) {
+    padding: 11px 18px;
+    font-size: 12.5px;
     flex-shrink: 0;
+    box-shadow: none;
+  }
+
+  .pill :global(a.cta:hover),
+  .pill :global(a.cta:active) {
+    box-shadow: none;
+    transform: none;
+    rotate: none;
+  }
+
+  .pill :global(.apl) {
+    width: 14px;
+    height: 14px;
+    margin-top: -1px;
   }
 
   @media (max-width: 860px) {
@@ -141,6 +158,6 @@
   }
 
   @media (max-width: 480px) {
-    .cta { padding: 10px 14px; font-size: 12px; }
+    .pill :global(a.cta) { padding: 10px 14px; font-size: 11.5px; }
   }
 </style>

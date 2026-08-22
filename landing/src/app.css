@@ -3,24 +3,26 @@
   --mint-live: #6ee89a;
   --green: #03594d;
   --green-deep: #02453c;
-  --cream: #f9f8f4;
-  --butter: #ffff94;
-  --sky: #aefbff;
-  --pink: #fccddc;
+  --cream: #fffdf7;
+  --paper: #f8f3e8;
+  --butter: #ffde8a;
+  --sky: #bcd6ff;
+  --pink: #ffd3e0;
   --hotpink: #fc5681;
-  --lavender: #f6bbfd;
+  --lavender: #ddd8ff;
   --lime: #d8e268;
   --sun: #fdc068;
   --orange: #ff9124;
   --purple: #c88cfd;
-  --ink: #032b25;
+  --periwinkle: #5b7cfa;
+  --ink: #131722;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --display: 'Archivo', -apple-system, system-ui, sans-serif;
+  --display: 'Baloo 2', 'Archivo', -apple-system, system-ui, sans-serif;
   --sans: 'Inter', -apple-system, system-ui, sans-serif;
   --hand: 'Caveat', cursive;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
-  --radius: 32px;
+  --radius: 36px;
 }
 
 * {
@@ -35,8 +37,8 @@ html {
 
 body {
   font-family: var(--sans);
-  background: var(--cream);
-  color: var(--green);
+  background: var(--paper);
+  color: #2c3342;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -53,7 +55,7 @@ h3 {
   font-family: var(--display);
   font-weight: 800;
   line-height: 0.98;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 a {
@@ -80,10 +82,11 @@ button {
 }
 
 .field-mint { background: var(--mint); color: var(--green); }
-.field-cream { background: var(--cream); color: var(--green); }
-.field-sky { background: var(--sky); color: var(--green); }
-.field-lavender { background: var(--lavender); color: var(--green-deep); }
-.field-pink { background: var(--pink); color: var(--green-deep); }
+.field-cream { background: transparent; color: #2c3342; }
+.field-sky { background: transparent; color: #2c3342; }
+.field-lavender { background: var(--lavender); color: var(--ink); }
+.field-pink { background: var(--pink); color: var(--ink); }
+.field-butter { background: var(--butter); color: var(--ink); }
 .field-ink { background: var(--ink); color: var(--cream); }
 
 .hand {
@@ -98,7 +101,7 @@ button {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(2, 89, 77, 0.62);
+  color: rgba(19, 23, 34, 0.55);
 }
 
 .field-ink .mono {
@@ -111,11 +114,17 @@ button {
 }
 
 .subhead {
-  font-size: clamp(30px, 5vw, 64px);
+  font-size: clamp(34px, 5.6vw, 72px);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
-  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.subhead .accent,
+.accent {
+  color: var(--hotpink);
 }
 
 .kicker {
@@ -130,69 +139,89 @@ button {
   padding: 15px 28px;
   border-radius: 999px;
   font-family: var(--display);
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   transition:
-    transform 0.25s var(--spring),
+    transform 0.18s var(--spring),
     background 0.2s ease,
-    box-shadow 0.2s ease,
+    box-shadow 0.18s ease,
     color 0.2s ease;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) rotate(-1deg);
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: translateY(2px);
+}
+
+.btn-green {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--hotpink);
+}
+
+.btn-green:hover {
+  box-shadow: 0 8px 0 var(--hotpink);
+}
+
+.btn-green:active {
+  box-shadow: 0 1px 0 var(--hotpink);
 }
 
 .btn-butter {
   background: var(--butter);
   color: var(--ink);
+  box-shadow: 0 5px 0 rgba(19, 23, 34, 0.85);
 }
 
 .btn-butter:hover {
   background: var(--sun);
-  box-shadow: 0 12px 28px rgba(2, 89, 77, 0.16);
+  box-shadow: 0 8px 0 rgba(19, 23, 34, 0.85);
+}
+
+.btn-butter:active {
+  box-shadow: 0 1px 0 rgba(19, 23, 34, 0.85);
 }
 
 .btn-pink {
   background: var(--pink);
-  color: var(--green);
+  color: var(--ink);
+  box-shadow: 0 5px 0 rgba(19, 23, 34, 0.85);
 }
 
 .btn-pink:hover {
   background: var(--hotpink);
   color: var(--cream);
-  box-shadow: 0 12px 28px rgba(2, 89, 77, 0.16);
+  box-shadow: 0 8px 0 rgba(19, 23, 34, 0.85);
 }
 
-.btn-green {
-  background: var(--green);
-  color: var(--cream);
-}
-
-.btn-green:hover {
-  background: var(--green-deep);
-  box-shadow: 0 12px 28px rgba(2, 89, 77, 0.28);
+.btn-pink:active {
+  box-shadow: 0 1px 0 rgba(19, 23, 34, 0.85);
 }
 
 .btn-ghost {
-  border: 2px solid rgba(2, 89, 77, 0.35);
-  color: var(--green);
+  border: 2.5px solid rgba(19, 23, 34, 0.35);
+  color: var(--ink);
 }
 
 .btn-ghost:hover {
-  border-color: var(--green);
-  background: rgba(255, 255, 255, 0.28);
+  border-color: var(--ink);
+  background: rgba(19, 23, 34, 0.05);
+  box-shadow: none;
+}
+
+.btn-ghost:active {
+  box-shadow: none;
 }
 
 .btn-cream {
   background: var(--cream);
-  color: var(--green);
+  color: var(--ink);
+  box-shadow: 0 5px 0 rgba(19, 23, 34, 0.85);
 }
 
 .reveal {

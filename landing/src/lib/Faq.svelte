@@ -31,17 +31,18 @@
   let open = $state(0);
 </script>
 
-<section class="field field-cream">
+<section class="field field-cream" id="faq">
   <div class="container wrap">
     <div class="left">
       <p class="mono kicker" use:reveal>a few boring ones</p>
-      <h2 class="subhead" use:reveal={{ delay: 40 }}>Ask it.</h2>
+      <h2 class="subhead" use:reveal={{ delay: 40 }}>Ask<br />it.</h2>
+      <p class="hand note" use:reveal={{ delay: 100 }}>the robot answers everything else →</p>
     </div>
     <div class="list">
       {#each items as item, i}
-        <div class="row">
-          <button onclick={() => (open = open === i ? -1 : i)}>
-            <span>{item.q}</span>
+        <div class="row" class:open={open === i}>
+          <button onclick={() => (open = open === i ? -1 : i)} aria-expanded={open === i}>
+            <span class="q"><i class="arr">→</i>{item.q}</span>
             <span class="plus">{open === i ? '–' : '+'}</span>
           </button>
           {#if open === i}
@@ -61,43 +62,92 @@
     align-items: start;
   }
 
-  .row {
-    border-top: 1px solid rgba(2, 89, 77, 0.12);
+  .note {
+    margin-top: 18px;
+    font-size: clamp(17px, 2vw, 22px);
+    color: var(--hotpink);
+    transform: rotate(-2deg);
   }
 
-  .row:last-child {
-    border-bottom: 1px solid rgba(2, 89, 77, 0.12);
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .row {
+    border: 2px solid rgba(19, 23, 34, 0.14);
+    border-radius: 24px;
+    padding: 4px 24px;
+    background: transparent;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s var(--spring);
+  }
+
+  .row:hover {
+    border-color: rgba(19, 23, 34, 0.45);
+    transform: translateX(4px);
+  }
+
+  .row.open {
+    background: var(--cream);
+    border-color: var(--ink);
+    box-shadow: 6px 6px 0 rgba(252, 86, 129, 0.35);
+    transform: none;
   }
 
   button {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 16px;
-    padding: 18px 0;
+    padding: 16px 0;
     text-align: left;
     font-family: var(--display);
-    font-weight: 800;
-    font-size: clamp(16px, 1.8vw, 20px);
-    letter-spacing: -0.02em;
-    color: var(--green);
+    font-weight: 700;
+    font-size: clamp(17px, 1.9vw, 21px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .q {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .arr {
+    font-style: normal;
+    color: var(--hotpink);
+    font-size: 20px;
+    transition: transform 0.3s var(--spring);
+    display: inline-block;
+  }
+
+  .row.open .arr {
+    transform: rotate(90deg);
   }
 
   .plus {
     color: var(--hotpink);
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1;
   }
 
   p {
-    padding: 0 0 20px;
-    max-width: 46ch;
-    color: var(--green-deep);
-    font-size: 16px;
-    line-height: 1.5;
+    padding: 0 0 20px 38px;
+    max-width: 52ch;
+    color: rgba(19, 23, 34, 0.75);
+    font-size: 15.5px;
+    line-height: 1.55;
   }
 
   @media (max-width: 800px) {
     .wrap { grid-template-columns: 1fr; gap: 24px; }
+    p { padding-left: 34px; }
   }
 </style>

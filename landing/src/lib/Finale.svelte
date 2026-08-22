@@ -1,6 +1,7 @@
 <script>
   import Logo from './Logo.svelte';
   import Robot from './Robot.svelte';
+  import DownloadCta from './DownloadCta.svelte';
   import { reveal } from './reveal.js';
 
   const WORD = 'TYPIE.';
@@ -42,7 +43,7 @@
     <p class="hand aside" use:reveal={{ delay: 120 }}>it's free. it was always going to be free.</p>
 
     <div class="ctas" use:reveal={{ delay: 200 }}>
-      <a href="#pricing" class="btn btn-green big">Download for Mac - $0</a>
+      <DownloadCta big />
       <a href="#top" class="btn btn-ghost">Still unsure? Scroll up ↑</a>
     </div>
 
@@ -89,12 +90,12 @@
 
   .giant {
     font-family: var(--display);
-    font-weight: 900;
+    font-weight: 800;
     text-transform: uppercase;
-    font-size: clamp(56px, 11vw, 140px);
+    font-size: clamp(60px, 12vw, 156px);
     line-height: 0.9;
-    letter-spacing: -0.04em;
-    color: var(--green);
+    letter-spacing: -0.015em;
+    color: var(--green-deep);
     display: flex;
     gap: 0.18em;
     flex-wrap: wrap;
@@ -104,6 +105,7 @@
   .grad {
     font-style: italic;
     color: var(--hotpink);
+    text-shadow: 4px 4px 0 rgba(19, 23, 34, 0.18);
     min-width: 1em;
     text-align: left;
   }
@@ -126,6 +128,7 @@
   .big {
     padding: 18px 34px;
     font-size: 16px;
+    box-shadow: 0 6px 0 rgba(19, 23, 34, 0.85);
   }
 
   .chips {
@@ -140,8 +143,8 @@
   .chips li {
     padding: 8px 16px;
     border-radius: 999px;
-    background: rgba(249, 248, 244, 0.65);
-    border: 1px solid rgba(2, 89, 77, 0.12);
+    background: rgba(255, 253, 247, 0.75);
+    border: 2px solid rgba(2, 89, 77, 0.14);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--green-deep);

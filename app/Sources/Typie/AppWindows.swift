@@ -4,9 +4,6 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var settings = SettingsStore.shared
 
-    @State private var recording = false
-    @State private var eventMonitor: Any?
-
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             Theme.kicker("typie settings")
@@ -16,16 +13,7 @@ struct SettingsView: View {
                 Text("Trigger")
                     .font(Theme.display(18, .heavy))
                     .foregroundStyle(Theme.green)
-                Picker("", selection: $settings.triggerMode) {
-                    ForEach(TriggerMode.allCases, id: \.self) { mode in
-                        Text(mode.rawValue).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                Text(settings.triggerMode.hint)
-                    .font(Theme.hand(19))
-                    .foregroundStyle(Theme.green.opacity(0.65))
+                TriggerPicker(selection: $settings.triggerMode)
             }
 
             // keybinding
@@ -33,21 +21,7 @@ struct SettingsView: View {
                 Text("Keybinding")
                     .font(Theme.display(18, .heavy))
                     .foregroundStyle(Theme.green)
-                HStack(spacing: 14) {
-                    Button(action: toggleRecording) {
-                        HStack(spacing: 8) {
-                            KeyCap(label: recording ? "?" : settings.hotkey.shortLabel)
-                                .scaleEffect(recording ? 1.06 : 1)
-                            Text(recording ? "press a modifier…" : "change")
-                                .font(Theme.body(13))
-                                .foregroundStyle(recording ? Theme.hotpink : Theme.greenDeep.opacity(0.7))
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    Text("any option / command / control key")
-                        .font(Theme.mono(11))
-                        .foregroundStyle(Theme.green.opacity(0.55))
-                }
+                KeybindingPicker()
             }
 
             Divider().overlay(Theme.green.opacity(0.12))
@@ -88,38 +62,6 @@ struct SettingsView: View {
         .padding(28)
         .background(Theme.cream)
         .frame(width: 440)
-        .onExit { cleanup() }
-    }
-
-    private func toggleRecording() {
-        if recording {
-            stopRecording()
-        } else {
-            recording = true
-            eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event in
-                let code = Int(event.keyCode)
-                if let key = HotkeyKey.fromKeyCode(code) {
-                    DispatchQueue.main.async {
-                        settings.hotkey = key
-                        stopRecording()
-                    }
-                    return nil
-                }
-                return event
-            }
-        }
-    }
-
-    private func stopRecording() {
-        recording = false
-        if let monitor = eventMonitor {
-            NSEvent.removeMonitor(monitor)
-            eventMonitor = nil
-        }
-    }
-
-    private func cleanup() {
-        stopRecording()
     }
 }
 

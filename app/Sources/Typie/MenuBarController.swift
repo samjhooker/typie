@@ -29,20 +29,22 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     private var cancellables: Set<AnyCancellable> = []
 
+    /// The menu is rebuilt every time the user clicks the robot.
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        rebuildMenu()
+    }
+
     func refreshMenuTitle() {
         guard let button = statusItem?.button else { return }
+        // robot always stays put — he just changes colour with his mood
         switch DictationController.shared.phase {
         case .listening:
-            button.image = nil
-            button.title = "●"
+            button.image = Self.robotImage(tint: NSColor(displayP3Red: 0.99, green: 0.34, blue: 0.51, alpha: 1)) // hotpink
         case .transcribing:
-            button.image = nil
-            button.title = "…"
+            button.image = Self.robotImage(tint: NSColor(displayP3Red: 1.0, green: 0.57, blue: 0.14, alpha: 1)) // orange
         case .done(let ms):
-            button.image = nil
-            button.title = ms >= 0 ? "\(Int(ms))ms" : "?"
+            button.image = Self.robotImage(tint: ms >= 0 ? NSColor(displayP3Red: 0.43, green: 0.91, blue: 0.60, alpha: 1) : nil)
         case .idle:
-            button.title = ""
             button.image = Self.robotImage()
         }
     }
@@ -54,10 +56,20 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let settings = SettingsStore.shared
         let phase = DictationController.shared.phase
 
+        // version header
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+        let versionItem = NSMenuItem(title: "typie v\(version)", action: nil, keyEquivalent: "")
+        versionItem.isEnabled = false
+        menu.addItem(versionItem)
+
         let statusText: String
         switch phase {
         case .idle:
-            statusText = "ready — hold \(settings.hotkey.shortLabel)"
+            switch settings.triggerMode {
+            case .both: statusText = "ready — hold or tap \(settings.hotkey.shortLabel)"
+            case .hold: statusText = "ready — hold \(settings.hotkey.shortLabel)"
+            case .toggle: statusText = "ready — tap \(settings.hotkey.shortLabel)"
+            }
         case .listening:
             statusText = "listening…"
         case .transcribing:
@@ -69,12 +81,26 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         status.isEnabled = false
         menu.addItem(status)
 
+        // loud, visible warning when the hotkey can never fire
+        if !HotkeyMonitor.accessibilityGranted(prompt: false) {
+            let warn = NSMenuItem(
+                title: "⚠︎ accessibility permission missing — needed to paste text",
+                action: #selector(AppDelegate.openAccessibilitySettings), keyEquivalent: "")
+            warn.target = appDelegate
+            menu.addItem(warn)
+        }
+
         menu.addItem(.separator())
 
         let keybind = NSMenuItem(
             title: "Change Keybinding", action: #selector(AppDelegate.openSettings), keyEquivalent: "k")
         keybind.target = appDelegate
         menu.addItem(keybind)
+
+        let welcome = NSMenuItem(
+            title: "Run Setup Again…", action: #selector(AppDelegate.showOnboarding), keyEquivalent: "")
+        welcome.target = appDelegate
+        menu.addItem(welcome)
 
         let history = NSMenuItem(
             title: "Previous Transcriptions", action: #selector(AppDelegate.openHistory), keyEquivalent: "h")
@@ -93,12 +119,12 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         menu.addItem(quit)
     }
 
-    /// Draws the robot glyph as a small template image for the menu bar,
-    /// using the exact polygon geometry from the landing page SVG.
-    /// Eyes are punched through (template images render from alpha only).
-    private static func robotImage() -> NSImage {
+    /// Draws the robot glyph for the menu bar. Tint nil = black template
+    /// image (follows dark/light menu bar); a color bakes in a mood tint.
+    private static func robotImage(tint: NSColor? = nil) -> NSImage {
         let u: CGFloat = 18.0 / 26.0
         let size = NSSize(width: 18, height: 25 * u)
+        let ink = tint ?? .black
 
         let image = NSImage(size: size, flipped: true) { _ in
             let g = RobotIcon.Glyph.self
@@ -120,7 +146,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
                 all.append(path(poly))
             }
             all.windingRule = .evenOdd
-            NSColor.black.setFill()
+            ink.setFill()
             all.fill()
 
             // the landing page's chunky 1.3-unit round-joined stroke, body only
@@ -130,12 +156,12 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             }
             bodyPath.lineWidth = 1.3 * u
             bodyPath.lineJoinStyle = .round
-            NSColor.black.setStroke()
+            ink.setStroke()
             bodyPath.stroke()
 
             return true
         }
-        image.isTemplate = true
+        image.isTemplate = (tint == nil)
         return image
     }
 }

@@ -3,19 +3,13 @@
 
   let { size = 26 } = $props();
 
-  const LETTERS = [
-    ['t', 'var(--hotpink)'],
-    ['y', 'var(--orange)'],
-    ['p', 'var(--purple)'],
-    ['i', 'var(--green)'],
-    ['e', 'var(--sun)']
-  ];
+  const LETTERS = ['t', 'y', 'p', 'i', 'e'];
 </script>
 
 <span class="logo" style="font-size:{size}px">
   <Robot size={Math.round(size * 1.15)} mood="idle" />
   <span class="word">
-    {#each LETTERS as [ch, color]}<b style="color:{color}">{ch}</b>{/each}<i>.</i>
+    {#each LETTERS as ch}<b>{ch}</b>{/each}<i>.</i>
   </span>
 </span>
 
@@ -25,6 +19,7 @@
     align-items: center;
     gap: 0.32em;
     line-height: 1;
+    color: var(--hotpink);
   }
 
   .logo :global(.robot) {
@@ -40,7 +35,5 @@
 
   .word i {
     font-style: normal;
-    color: var(--hotpink);
   }
 </style>
-

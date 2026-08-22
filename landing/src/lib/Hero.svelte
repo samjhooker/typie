@@ -1,5 +1,6 @@
 <script>
   import HoldStage from './HoldStage.svelte';
+  import DownloadCta from './DownloadCta.svelte';
   import { app } from './state.svelte.js';
   import { hold } from './hold.svelte.js';
 
@@ -45,22 +46,23 @@
   }
 </script>
 
-<section class="hero field field-mint" id="top" class:live={app.mood === 'listening'}>
-  <div class="sticker s1 hand" aria-hidden="true">no cloud, ever ↓</div>
-  <div class="sticker s2 hand" aria-hidden="true">under 100 ms ⚡</div>
+<section class="hero field" id="top" class:live={app.mood === 'listening'}>
+  <div class="demo" id="how" class:in={stage}>
+    <HoldStage />
+  </div>
 
   <div class="container intro">
     <h1>
-      <span class="w c-green" class:in={press}>PRESS.</span>
+      <span class="w c-ink" class:in={press}>PRESS.</span>{' '}
       <button
-        class="w c-pink hold-key"
+        class="w hold-key"
         class:in={holdWord}
         class:down={app.mood === 'listening'}
         aria-label="Press option to try Typie"
         onclick={tap}
       >HOLD.</button>
       <br />
-      <span class="w hl" class:in={say}>SAY IT.</span>
+      <span class="w c-pink" class:in={say}>SAY IT.</span>{' '}
       <span class="w outline" class:in={typedN > 0}>
         {TYPED.slice(0, typedN)}{#if typedN > 0 && typedN < TYPED.length}<span class="caret"></span>{/if}
       </span>
@@ -73,16 +75,12 @@
     </p>
 
     <div class="ctas" class:in={ctas}>
-      <a href="#get" class="btn btn-green">Download free for Mac</a>
+      <DownloadCta />
     </div>
 
     <p class="specs mono" class:in={ctas}>
       macOS 14+ · apple silicon · ~8 mb app · offline forever · $0
     </p>
-  </div>
-
-  <div class="demo" id="how" class:in={stage}>
-    <HoldStage />
   </div>
 </section>
 
@@ -90,26 +88,30 @@
   .hero {
     padding: 148px 0 48px;
     text-align: center;
+    background: var(--paper);
     transition: background-color 0.45s ease;
     overflow: hidden;
   }
 
-  .hero.live { background: var(--mint-live); }
+  .hero.live { background: #eef9f2; }
 
   .intro {
     max-width: 980px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: clamp(40px, 6vh, 64px);
   }
 
   h1 {
-    font-size: clamp(46px, 8.6vw, 108px);
-    font-weight: 900;
+    font-size: clamp(48px, 9vw, 122px);
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: -0.04em;
-    line-height: 0.92;
-    color: var(--green);
+    letter-spacing: -0.015em;
+    line-height: 0.94;
+    color: var(--ink);
+    position: relative;
+    z-index: 1;
   }
 
   .w {
@@ -120,24 +122,16 @@
 
   .w.in { animation: stamp 0.45s var(--spring) forwards; }
 
-  .c-green { color: var(--green); }
+  .c-ink { color: var(--ink); }
 
   .c-pink {
-    color: var(--hotpink);
-    transition: transform 0.15s ease;
-  }
-
-  .hl {
-    background: linear-gradient(transparent 12%, var(--butter) 12%, var(--butter) 90%, transparent 90%);
-    padding-inline: 0.08em;
-    color: var(--green);
+    color: var(--periwinkle);
   }
 
   .outline,
   .outline.in {
-    color: var(--cream);
-    -webkit-text-stroke: 2.5px var(--green-deep);
-    text-shadow: 4px 4px 0 rgba(2, 89, 77, 0.22);
+    color: var(--butter);
+    text-shadow: 0.055em 0.055em 0 var(--ink);
     font-style: italic;
     animation: none;
     opacity: 1;
@@ -146,11 +140,15 @@
   .hold-key {
     cursor: pointer;
     font: inherit;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: inherit;
     line-height: inherit;
     text-transform: inherit;
+    color: var(--hotpink);
+    transition: transform 0.15s ease, color 0.15s ease;
   }
+
+  .hold-key:hover { color: #e63a67; }
 
   .hold-key.down { transform: translateY(3px) scale(0.98); }
 
@@ -173,14 +171,14 @@
     max-width: 52ch;
     font-size: clamp(17px, 1.9vw, 21px);
     line-height: 1.5;
-    color: var(--green-deep);
+    color: rgba(19, 23, 34, 0.68);
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.5s ease, transform 0.5s var(--ease-out);
   }
 
   .lede strong {
-    color: var(--green);
+    color: var(--ink);
     background: linear-gradient(transparent 70%, rgba(252, 86, 129, 0.35) 70%);
   }
 
@@ -208,7 +206,9 @@
   .specs.in { opacity: 1; }
 
   .demo {
-    margin-top: 40px;
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
     scroll-margin-top: 120px;
     opacity: 0;
     transform: translateY(18px);
@@ -217,31 +217,7 @@
 
   .demo.in { opacity: 1; transform: none; }
 
-  .sticker {
-    position: absolute;
-    font-size: clamp(15px, 1.7vw, 20px);
-    color: var(--green-deep);
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0;
-    animation: stamp 0.5s var(--spring) 1.7s forwards;
-  }
-
-  .sticker.s1 {
-    top: 190px;
-    left: max(2vw, 16px);
-    transform: rotate(-9deg);
-  }
-
-  .sticker.s2 {
-    top: 240px;
-    right: max(3vw, 20px);
-    transform: rotate(7deg);
-    color: var(--hotpink);
-  }
-
   @media (max-width: 900px) {
-    .sticker { display: none; }
     .hero { padding-top: 124px; }
   }
 </style>

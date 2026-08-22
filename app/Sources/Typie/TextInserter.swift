@@ -7,6 +7,8 @@ import Foundation
 enum TextInserter {
     static func paste(_ text: String) {
         guard !text.isEmpty else { return }
+        let front = NSWorkspace.shared.frontmostApplication?.localizedName ?? "?"
+        AppLog.event("paste: \(text.count) chars → \(front)")
         let pb = NSPasteboard.general
         let saved = pb.string(forType: .string)
 
@@ -15,9 +17,12 @@ enum TextInserter {
 
         postCmdV()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        // give the target app time to actually READ the pasteboard before
+        // restoring the user's old clipboard contents
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             let current = NSPasteboard.general.string(forType: .string)
             if current == text {
+                AppLog.event("paste: restoring previous clipboard")
                 if let saved, !saved.isEmpty {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(saved, forType: .string)

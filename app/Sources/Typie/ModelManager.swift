@@ -23,6 +23,12 @@ final class ModelManager: ObservableObject {
 
     var isReady: Bool { if case .ready = status { return true }; return false }
 
+    /// Current download progress in [0, 1], or 0 when not downloading.
+    var progressFraction: Double {
+        if case .downloading(let fraction) = status { return fraction }
+        return 0
+    }
+
     static func modelsExist() -> Bool {
         AsrModels.modelsExist(at: AppPaths.parakeetV3Dir)
     }
@@ -33,6 +39,7 @@ final class ModelManager: ObservableObject {
     func downloadAndLoad() async {
         guard !loaded else { return }
         status = Self.modelsExist() ? .loading : .downloading(0)
+        AppLog.event("model: \(Self.modelsExist() ? "loading from disk" : "downloading")…")
         do {
             let sharedRef = Self.shared
             let models = try await AsrModels.downloadAndLoad(
@@ -52,6 +59,7 @@ final class ModelManager: ObservableObject {
             asrManager = manager
             loaded = true
             status = .ready
+            AppLog.event("model: loaded and ready")
         } catch {
             status = .failed(error.localizedDescription)
         }

@@ -46,6 +46,19 @@ enum Theme {
     }
 }
 
+extension View {
+    /// Shows the pointing-hand cursor while hovering (plain buttons don't get one by default).
+    func pointingHandCursor() -> some View {
+        onHover { hovering in
+            if hovering {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
+            }
+        }
+    }
+}
+
 extension Color {
     init(hex: UInt32) {
         self.init(

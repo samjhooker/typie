@@ -1,6 +1,7 @@
 <script>
   import { reveal } from './reveal.js';
   import { chat } from './chat.svelte.js';
+  import DownloadCta from './DownloadCta.svelte';
 
   const plans = [
     {
@@ -136,7 +137,7 @@
           {#if plan.name === 'Enterprise'}
             <button class="btn {plan.btnCls} cta" onclick={() => chat.sales()}>{plan.btnText}</button>
           {:else}
-            <a href="#get" class="btn {plan.btnCls} cta">{plan.btnText}</a>
+            <DownloadCta label={plan.btnText} kind={plan.name === 'Pro' ? 'butter' : 'green'} class="cta" />
           {/if}
         </article>
       {/each}
@@ -163,6 +164,11 @@
 
   .sub { margin-top: 14px; }
 
+  .pricing :global(.mono),
+  .pricing .mono {
+    color: rgba(19, 23, 34, 0.55);
+  }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -179,19 +185,25 @@
     flex-direction: column;
     gap: 16px;
     border-radius: var(--radius);
-    padding: 32px 28px;
+    padding: 34px 30px;
+    transition: transform 0.3s var(--spring), box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
   }
 
   .card-paper {
-    background: #fff;
-    color: var(--green-deep);
-    border: 1px solid rgba(2, 89, 77, 0.1);
+    background: var(--cream);
+    color: var(--ink);
+    border: 2px solid rgba(19, 23, 34, 0.12);
   }
 
   .card-hotpink {
     background: var(--hotpink);
     color: var(--cream);
     z-index: 2;
+    box-shadow: 0 8px 0 rgba(19, 23, 34, 0.85);
   }
 
   .badge {

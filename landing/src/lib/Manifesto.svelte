@@ -30,13 +30,16 @@
   .panel {
     background: var(--hotpink);
     border-radius: var(--radius);
-    padding: clamp(44px, 7vw, 80px) clamp(28px, 6vw, 72px);
+    padding: clamp(48px, 7vw, 88px) clamp(28px, 6vw, 72px);
+    box-shadow: 0 8px 0 rgba(19, 23, 34, 0.85);
   }
 
   h2 {
     margin: 0;
-    font-size: clamp(32px, 5.2vw, 68px);
-    letter-spacing: -0.035em;
+    font-size: clamp(34px, 5.6vw, 76px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    line-height: 0.98;
   }
 
   .l1 { color: var(--cream); }
@@ -44,10 +47,10 @@
 
   .l3 {
     margin-top: 22px;
-    max-width: 48ch;
+    max-width: 52ch;
     font-size: clamp(16px, 1.8vw, 20px);
     line-height: 1.5;
-    color: rgba(249, 248, 244, 0.92);
+    color: rgba(255, 253, 247, 0.95);
   }
 
   .row {

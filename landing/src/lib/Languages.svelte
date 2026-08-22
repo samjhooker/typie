@@ -64,7 +64,7 @@
   }
 </script>
 
-<section class="languages field field-sky">
+<section class="languages field field-butter">
   <div class="container head">
     <p class="hand kicker" use:reveal>no language settings. none.</p>
     <h2 class="subhead" use:reveal={{ delay: 60 }}>
@@ -106,13 +106,13 @@
 
   .kicker {
     font-size: clamp(17px, 2vw, 23px);
-    color: var(--green-deep);
+    color: rgba(19, 23, 34, 0.65);
     transform: rotate(-3deg);
   }
 
   h2 {
     margin: 14px 0 0;
-    max-width: 18ch;
+    max-width: 20ch;
   }
 
   .greet {
@@ -121,7 +121,7 @@
     font-family: var(--display);
     font-weight: 800;
     font-size: clamp(20px, 3vw, 28px);
-    color: var(--green);
+    color: var(--ink);
   }
 
   .caret {
@@ -162,15 +162,15 @@
   }
 
   .chip:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 12px 26px rgba(2, 89, 77, 0.16);
+    transform: translateY(-5px) scale(1.05) rotate(-1deg);
+    box-shadow: 0 10px 22px rgba(19, 23, 34, 0.16);
   }
 
-  .b0 { background: var(--mint); }
-  .b1 { background: var(--butter); }
-  .b2 { background: var(--cream); }
+  .b0 { background: var(--pink); }
+  .b1 { background: var(--cream); }
+  .b2 { background: var(--mint); }
   .b3 { background: var(--lavender); }
-  .b4 { background: var(--lime); }
+  .b4 { background: var(--cream); }
 
   .chip {
     display: flex;
@@ -196,15 +196,15 @@
 
   .nat {
     font-size: 13px;
-    color: rgba(2, 89, 77, 0.75);
+    color: rgba(19, 23, 34, 0.62);
   }
 
   .more {
     padding: 15px 21px;
     background: transparent;
-    border: 2px dashed rgba(2, 89, 77, 0.45);
+    border: 2.5px dashed rgba(19, 23, 34, 0.45);
     border-radius: 999px;
-    color: var(--green-deep);
+    color: var(--ink);
     font-size: 14px;
   }
 
@@ -212,7 +212,7 @@
     display: inline-block;
     margin-top: 36px;
     font-size: clamp(16px, 1.9vw, 21px);
-    color: var(--green-deep);
+    color: rgba(19, 23, 34, 0.75);
     transform: rotate(2deg);
   }
 </style>

@@ -122,9 +122,12 @@ struct RobotIcon: View {
 
     private var glyph: some View {
         Canvas { context, size in
-            let unit = size.width / 26
-            let ox = unit * -1   // viewBox x offset
-            let oy = unit * -0.5 // viewBox y offset
+            // unit sized so the ~24-unit-wide, ~20-unit-tall glyph fits with margin
+            let unit = min(size.width / 25, size.height / 22)
+            // center on the glyph's visual mass (x: 1...23 → 12, y: 3...21 → 12),
+            // not the viewBox origin — otherwise it sits half a unit left
+            let ox = size.width / 2 - 12 * unit
+            let oy = size.height / 2 - 12 * unit
 
             let body_ = body_
             let stroke = StrokeStyle(lineWidth: 1.3 * unit, lineJoin: .round)

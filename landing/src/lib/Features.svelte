@@ -1,7 +1,47 @@
 <script>
   import { reveal } from './reveal.js';
+  import Robot from './Robot.svelte';
+  import DownloadCta from './DownloadCta.svelte';
+  import { nsSvg } from './svgid.js';
 
-  const bars = [0.9, 0.5, 1.1, 0.7, 1.3, 0.6, 1.0, 0.8];
+  import gmail from 'thesvg/gmail';
+  import slack from 'thesvg/slack';
+  import notion from 'thesvg/notion';
+  import figma from 'thesvg/figma';
+  import chrome from 'thesvg/chrome';
+  import github from 'thesvg/github';
+  import discord from 'thesvg/discord';
+  import whatsapp from 'thesvg/whatsapp';
+  import spotify from 'thesvg/spotify';
+  import telegram from 'thesvg/telegram';
+  import linear from 'thesvg/linear';
+  import safari from 'thesvg/safari';
+  import vscode from 'thesvg/visual-studio-code';
+  import trello from 'thesvg/trello';
+  import obsidian from 'thesvg/obsidian';
+  import xcode from 'thesvg/xcode';
+
+  const rowA = [
+    { n: 'Gmail', s: gmail.svg },
+    { n: 'Slack', s: slack.svg },
+    { n: 'Notion', s: notion.svg },
+    { n: 'Figma', s: figma.svg },
+    { n: 'Chrome', s: chrome },
+    { n: 'GitHub', s: github.svg },
+    { n: 'Discord', s: discord.svg },
+    { n: 'WhatsApp', s: whatsapp.svg }
+  ];
+
+  const rowB = [
+    { n: 'Spotify', s: spotify.svg },
+    { n: 'Telegram', s: telegram.svg },
+    { n: 'Linear', s: linear.svg },
+    { n: 'Safari', s: safari.svg },
+    { n: 'VS Code', s: vscode.svg },
+    { n: 'Trello', s: trello.svg },
+    { n: 'Obsidian', s: obsidian.svg },
+    { n: 'Xcode', s: xcode.svg }
+  ];
 </script>
 
 <section class="features field field-cream" id="features">
@@ -9,66 +49,79 @@
     <p class="hand kicker" use:reveal>the whole pitch, in six boxes</p>
     <h2 class="subhead" use:reveal={{ delay: 60 }}>
       Everything you need.
-      <span class="mark-butter">Nothing you don't.</span>
+      <span class="accent">Nothing you don't.</span>
     </h2>
   </div>
 
   <div class="container grid">
-    <article class="card c-butter span2" use:reveal={{ delay: 80 }}>
-      <p class="mono label">speed</p>
-      <p class="big"><span class="grad">&lt;100&nbsp;ms</span> from lips to letters</p>
-      <div class="eq" aria-hidden="true">
-        {#each bars as b, i}
-          <i style="animation-duration:{b}s; animation-delay:{i * 0.07}s"></i>
-        {/each}
-      </div>
+    <article class="card c-butter tall" use:reveal={{ delay: 80 }}>
+      <h3 class="title t-orange">&lt;100&nbsp;ms from lips to letters</h3>
       <p class="body">
-        Faster than you can switch windows, find the mic icon, or remember what
-        you were about to say. By the time your sentence ends, it's on screen.
+        Faster than you can switch windows or find the mic icon. By the time
+        your sentence ends, it's on screen.
       </p>
+      <div class="marquee" aria-label="works in every app">
+        <div class="mrow">
+          {#each [...rowA, ...rowA] as app}
+            <span class="tile"><i class="ic">{@html nsSvg(app.s, app.n)}</i>{app.n}</span>
+          {/each}
+        </div>
+        <div class="mrow rev">
+          {#each [...rowB, ...rowB] as app}
+            <span class="tile"><i class="ic">{@html nsSvg(app.s, app.n)}</i>{app.n}</span>
+          {/each}
+        </div>
+      </div>
+      <span class="doodle d-hand hand">+ literally any text field ✦</span>
     </article>
 
-    <article class="card c-pink" use:reveal={{ delay: 140 }}>
-      <p class="mono label">privacy</p>
-      <p class="big">0 bytes leave this Mac</p>
+    <article class="card c-periwinkle" use:reveal={{ delay: 140 }}>
+      <h3 class="title t-blue">0 bytes leave this Mac</h3>
       <p class="body">
         Audio is processed on-device and thrown away. We can't hear you.
         There's nothing to leak, sell, or subpoena.
       </p>
+      <ul class="chips" aria-label="privacy">
+        <li>🔒 on-device only</li>
+        <li>🚫 no training</li>
+        <li>📴 offline forever</li>
+      </ul>
     </article>
 
-    <article class="card c-sky" use:reveal={{ delay: 200 }}>
-      <p class="mono label">offline</p>
-      <p class="big">Works on a plane ✈️</p>
+    <article class="card c-pink" use:reveal={{ delay: 120 }}>
+      <h3 class="title t-magenta">Works on a plane ✈️</h3>
       <p class="body">
         No server to reach, so there's no server to miss. Subway, cabin mode,
         cabin in the woods - all fine.
       </p>
+      <span class="doodle d-plane" aria-hidden="true">✈︎</span>
     </article>
 
-    <article class="card c-lavender" use:reveal={{ delay: 120 }}>
-      <p class="mono label">everywhere</p>
-      <p class="big">One key. Every app.</p>
+    <article class="card c-sky" use:reveal={{ delay: 180 }}>
+      <h3 class="title t-green">One key. Every app.</h3>
       <p class="body">
         Mail, Slack, Notes, that cursed CRM. Hold ⌥ anywhere and speak - the
         text lands where your cursor already is.
       </p>
+      <ul class="chips" aria-label="everywhere">
+        <li>⌥ hold + speak</li>
+        <li>cursor stays put</li>
+      </ul>
     </article>
 
-    <article class="card c-mint" use:reveal={{ delay: 180 }}>
-      <p class="mono label">price</p>
-      <p class="big">$0. Forever. Really.</p>
+    <article class="card c-mint" use:reveal={{ delay: 220 }}>
+      <h3 class="title t-forest">$0. Forever. Really.</h3>
       <p class="body">
         It runs on your machine and never phones home, so charging monthly for
         it would be a bit strange.
       </p>
+      <p class="hand aside">(we checked twice)</p>
     </article>
 
-    <article class="card c-paper span2" use:reveal={{ delay: 240 }}>
+    <article class="card c-paper wide" use:reveal={{ delay: 260 }}>
       <div class="row">
         <div>
-          <p class="mono label">setup</p>
-          <p class="big">Download. Hold ⌥. Done.</p>
+          <h3 class="title t-ink">Download. Hold ⌥. Done.</h3>
           <p class="body">
             ~8 MB app + ~500 MB model on first run, macOS 14+, Apple silicon.
             No account, no email,
@@ -82,16 +135,19 @@
         </ul>
       </div>
     </article>
+  </div>
 
-    <article class="card c-sun" use:reveal={{ delay: 300 }}>
-      <p class="mono label">the catch</p>
-      <p class="big">There isn't one. It's free.</p>
-      <p class="body">
-        No trial. No "free tier". No card that quietly renews at $14.99.
-        There is no billing page.
-      </p>
-      <p class="hand aside">(we checked twice)</p>
-    </article>
+  <div class="container">
+    <div class="banner" use:reveal>
+      <div class="banner-copy">
+        <h3 class="banner-title">Have fun typing.</h3>
+        <p class="banner-sub">Get the app. Hold ⌥. Say the thing!</p>
+      </div>
+      <div class="banner-mascot" aria-hidden="true">
+        <Robot mood="done" size={64} />
+      </div>
+      <DownloadCta />
+    </div>
   </div>
 </section>
 
@@ -105,113 +161,194 @@
 
   .kicker {
     font-size: clamp(17px, 2vw, 23px);
-    color: var(--green-deep);
+    color: var(--hotpink);
     transform: rotate(-3deg);
   }
 
   .subhead {
     margin-top: 14px;
-    max-width: 16ch;
+    max-width: 20ch;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
     margin-top: 56px;
   }
 
   .card {
     position: relative;
     border-radius: var(--radius);
-    padding: clamp(24px, 2.6vw, 34px);
+    padding: clamp(28px, 3.2vw, 44px);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     text-align: left;
+    overflow: hidden;
     transition:
       transform 0.35s var(--spring),
       box-shadow 0.35s ease;
   }
 
   .card:hover {
-    transform: translateY(-6px) rotate(-0.5deg);
-    box-shadow: 0 22px 44px rgba(2, 89, 77, 0.14);
+    transform: translateY(-8px) rotate(-0.6deg);
+    box-shadow: 0 24px 48px rgba(19, 23, 34, 0.14);
   }
 
-  .span2 { grid-column: span 2; }
+  .tall { grid-row: span 2; }
+  .wide { grid-column: span 2; }
 
-  .c-butter { background: var(--butter); color: var(--ink); }
-  .c-pink { background: var(--pink); color: var(--green-deep); }
-  .c-sky { background: var(--sky); color: var(--green-deep); }
-  .c-lavender { background: var(--lavender); color: var(--green-deep); }
-  .c-mint { background: var(--mint); color: var(--green-deep); }
-  .c-sun { background: var(--sun); color: var(--green-deep); }
+  .c-butter { background: var(--butter); }
+  .c-periwinkle { background: var(--lavender); }
+  .c-pink { background: var(--pink); }
+  .c-sky { background: var(--sky); }
+  .c-mint { background: var(--mint); }
   .c-paper {
-    background: #fff;
-    color: var(--green-deep);
-    border: 1px solid rgba(2, 89, 77, 0.1);
+    background: var(--cream);
+    border: 2px solid rgba(19, 23, 34, 0.1);
   }
 
-  .label {
-    opacity: 0.65;
+  .title {
+    margin: 0;
+    font-size: clamp(28px, 3.2vw, 44px);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
   }
 
-  .big {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: clamp(24px, 2.6vw, 34px);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-  }
-
-  .grad {
-    color: var(--hotpink);
-    font-style: italic;
-  }
+  .t-orange { color: #e06b00; }
+  .t-blue { color: var(--periwinkle); }
+  .t-magenta { color: #d6336c; }
+  .t-green { color: #03594d; }
+  .t-forest { color: #02453c; }
+  .t-ink { color: var(--ink); }
 
   .body {
-    font-size: 15px;
+    font-size: 15.5px;
     line-height: 1.55;
-    max-width: 52ch;
+    color: rgba(19, 23, 34, 0.72);
+    max-width: 46ch;
   }
 
-  .eq {
+  .chips {
+    list-style: none;
     display: flex;
-    align-items: flex-end;
-    gap: 5px;
-    height: 44px;
-    margin-block: 4px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
   }
 
-  .eq i {
-    width: 8px;
-    border-radius: 4px;
-    background: var(--green);
-    height: 30%;
-    animation: bounce 1s ease-in-out infinite alternate;
-    transform-origin: bottom;
+  .chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    padding: 8px 15px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(19, 23, 34, 0.78);
+    box-shadow: 0 2px 8px rgba(19, 23, 34, 0.06);
   }
 
-  @keyframes bounce {
-    from { transform: scaleY(0.5); }
-    to { transform: scaleY(1.6); }
+  /* app logo marquee */
+  .marquee {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+
+  .mrow {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    animation: mscroll 26s linear infinite;
+  }
+
+  .mrow.rev {
+    animation-direction: reverse;
+    animation-duration: 32s;
+  }
+
+  .marquee:hover .mrow {
+    animation-play-state: paused;
+  }
+
+  @keyframes mscroll {
+    to { transform: translateX(-50%); }
+  }
+
+  .tile {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 22px 12px 15px;
+    background: var(--cream);
+    border-radius: 999px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 17px;
+    color: rgba(19, 23, 34, 0.82);
+    white-space: nowrap;
+    box-shadow: 0 3px 0 rgba(19, 23, 34, 0.18);
+  }
+
+  .tile .ic {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+  }
+
+  .tile .ic :global(svg) {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  .aside {
+    margin-top: auto;
+    font-size: clamp(17px, 1.8vw, 20px);
+    color: rgba(19, 23, 34, 0.65);
+    transform: rotate(-3deg);
+    align-self: flex-end;
+  }
+
+  .doodle {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .d-hand {
+    right: 22px;
+    top: 20px;
+    font-size: clamp(18px, 2vw, 24px);
+    color: rgba(19, 23, 34, 0.55);
+    transform: rotate(8deg);
+  }
+
+  .d-plane {
+    right: 26px;
+    bottom: 22px;
+    font-size: clamp(34px, 4vw, 52px);
+    color: rgba(214, 51, 108, 0.4);
+    transform: rotate(12deg);
   }
 
   .row {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
-    gap: 28px;
+    gap: 32px;
     align-items: center;
   }
 
   .row .body { max-width: none; }
-
-  .aside {
-    font-size: clamp(17px, 1.8vw, 20px);
-    color: var(--green);
-    transform: rotate(-3deg);
-  }
 
   .ticks {
     list-style: none;
@@ -221,6 +358,7 @@
     font-family: var(--display);
     font-weight: 700;
     font-size: 15px;
+    color: var(--ink);
   }
 
   .ticks li::before {
@@ -228,14 +366,53 @@
     color: var(--hotpink);
   }
 
-  @media (max-width: 900px) {
-    .grid { grid-template-columns: 1fr 1fr; }
-    .span2 { grid-column: span 2; }
+  /* banner strip */
+  .banner {
+    margin-top: 24px;
+    background: var(--butter);
+    border-radius: var(--radius);
+    padding: clamp(24px, 3vw, 36px) clamp(24px, 3.4vw, 44px);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: 0 6px 0 rgba(19, 23, 34, 0.85);
   }
 
-  @media (max-width: 620px) {
+  .banner-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-right: auto;
+  }
+
+  .banner-title {
+    margin: 0;
+    font-size: clamp(28px, 3.2vw, 42px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .banner-sub {
+    font-size: 16px;
+    color: rgba(19, 23, 34, 0.68);
+  }
+
+  .banner-mascot {
+    color: var(--ink);
+    line-height: 0;
+    animation: wiggle 3.2s ease-in-out infinite;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(6deg) translateY(-4px); }
+  }
+
+  @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
-    .span2 { grid-column: auto; }
+    .wide { grid-column: auto; }
     .row { grid-template-columns: 1fr; }
   }
 </style>
