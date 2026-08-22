@@ -11,6 +11,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
 cp ".build/release/typie" "$APP/Contents/MacOS/typie"
 
+cp Sources/Typie/Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+
 # SPM resource bundle (fonts etc.)
 if [ -d ".build/release/Typie_Typie.bundle" ]; then
   cp -R ".build/release/Typie_Typie.bundle" "$APP/Contents/Resources/"
@@ -35,6 +37,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
     <string>typie</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>LSUIElement</key>

@@ -2,6 +2,15 @@
   import HoldStage from './HoldStage.svelte';
   import DownloadCta from './DownloadCta.svelte';
   import { app } from './state.svelte.js';
+  import { hold } from './hold.svelte.js';
+
+  let keyDown = $state(false);
+
+  function tap() {
+    keyDown = true;
+    setTimeout(() => (keyDown = false), 200);
+    hold.press();
+  }
 </script>
 
 <section class="hero field" id="top" class:live={app.mood === 'listening'}>
@@ -10,16 +19,15 @@
       <p class="kicker hand">voice dictation for mac</p>
 
       <h1>
-        Press <span class="key" aria-label="the option key">&thinsp;&#8997;&thinsp;</span><span class="dot">.</span><br />
-        <span class="talk">Talk.</span>
+        Press <button
+          class="key"
+          class:down={keyDown}
+          onclick={tap}
+          aria-label="the option key - click to try it"
+        >&thinsp;&#8997;&thinsp;</button><span class="dot">.</span><br />
+        <span class="talk">Talk.</span><br />
         <span class="typed">Typed.</span>
       </h1>
-
-      <p class="lede">
-        Super accurate transcription. Fully offline. Almost instant.
-        Hold option anywhere on your Mac, say the thing, and your words
-        land right where your cursor is — <strong>never on a server</strong>.
-      </p>
 
       <div class="ctas">
         <DownloadCta />
@@ -34,6 +42,12 @@
       </div>
     </div>
   </div>
+
+  <p class="lede">
+    Super accurate transcription. Fully offline. Almost instant.
+    Hold option anywhere on your Mac, say the thing, and your words
+    land right where your cursor is — <strong>never on a server</strong>.
+  </p>
 </section>
 
 <style>
@@ -49,8 +63,8 @@
 
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
-    gap: clamp(36px, 5vw, 72px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.618fr);
+    gap: clamp(32px, 4vw, 56px);
     align-items: center;
   }
 
@@ -70,9 +84,9 @@
 
   h1 {
     margin: 0;
-    font-size: clamp(42px, 4.8vw, 76px);
+    font-size: clamp(52px, 6vw, 100px);
     font-weight: 800;
-    line-height: 1.04;
+    line-height: 1.02;
     letter-spacing: -0.015em;
     color: var(--ink);
   }
@@ -83,7 +97,7 @@
     justify-content: center;
     font-family: var(--mono);
     font-weight: 500;
-    font-size: 0.74em;
+    font-size: 0.72em;
     line-height: 1;
     background: var(--green-deep);
     color: var(--cream);
@@ -96,10 +110,14 @@
     user-select: none;
   }
 
-  h1:hover .key,
-  .key:active {
-    transform: translateY(0.02em);
-    box-shadow: 0 0.03em 0 #0b1f1b;
+  .key:hover {
+    background: #06473c;
+    transform: translateY(-0.04em) rotate(-2deg);
+  }
+
+  .key.down {
+    transform: translateY(0.08em);
+    box-shadow: 0 0.02em 0 #0b1f1b;
     background: var(--hotpink);
   }
 
@@ -113,10 +131,12 @@
   }
 
   .lede {
-    margin-top: 22px;
-    max-width: 42ch;
-    font-size: clamp(16.5px, 1.6vw, 19px);
-    line-height: 1.6;
+    margin-top: clamp(36px, 5vh, 56px);
+    max-width: 58ch;
+    margin-inline: auto;
+    text-align: center;
+    font-size: clamp(17px, 1.7vw, 20px);
+    line-height: 1.65;
     color: rgba(19, 23, 34, 0.72);
   }
 
@@ -144,7 +164,7 @@
 
   .demo {
     width: 100%;
-    max-width: 620px;
+    max-width: 760px;
     scroll-margin-top: 120px;
   }
 

@@ -1,6 +1,7 @@
 <script>
   import Robot from './Robot.svelte';
   import { app } from './state.svelte.js';
+  import { hold } from './hold.svelte.js';
   import outlook from 'thesvg/microsoft-outlook';
   import messenger from 'thesvg/messenger';
   import slack from 'thesvg/slack';
@@ -211,6 +212,14 @@
 
   $effect(() => () => {
     if (app.mood !== 'idle') app.mood = 'idle';
+  });
+
+  /* let the hero headline keycap drive the real demo */
+  $effect(() => {
+    hold.press = () => {
+      armed = true;
+      press();
+    };
   });
 </script>
 

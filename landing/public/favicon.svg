@@ -1,13 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <defs>
-    <linearGradient id="g" x1="1" y1="0" x2="23" y2="24" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fc5681"/>
-      <stop offset="0.5" stop-color="#c88cfd"/>
-      <stop offset="1" stop-color="#ff9124"/>
-    </linearGradient>
-  </defs>
-  <rect width="24" height="24" rx="6" fill="#f9f8f4"/>
-  <g transform="translate(2.4 2.4) scale(0.8)" fill="url(#g)">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- typie favicon: paper tile, chonky hotpink robot -->
+  <rect width="24" height="24" rx="5.5" fill="#F8F3E8"/>
+  <g transform="translate(2.8,2.2) scale(0.71)" fill="#FC5681" stroke="#FC5681"
+     stroke-width="1.3" stroke-linejoin="round" fill-rule="evenodd">
     <path d="M19 21H5v-2h14v2ZM5 19H3v-4H1v-2h2V9h2v10Zm16-6h2v2h-2v4h-2V9h2v4Zm-11 3H8v-4h2v4Zm6 0h-2v-4h2v4Zm-3-9h6v2H5V7h6V5h2v2Zm-2-2H7V3h4v2Z"/>
   </g>
 </svg>
