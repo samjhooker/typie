@@ -77,7 +77,7 @@ struct NotchView: View {
             RobotIcon(mood: robotMood)
                 .frame(width: 24, height: 23)
                 .scaleEffect(pulse && phase == .listening ? 1.08 : 1.0)
-                .padding(.leading, 14)
+                .padding(.leading, 22)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // ── right wing: waveform / loader / result ──────────────
@@ -104,7 +104,7 @@ struct NotchView: View {
                     EmptyView()
                 }
             }
-            .padding(.trailing, 14)
+            .padding(.trailing, 22)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
@@ -144,15 +144,15 @@ struct WaveformBars: View {
         HStack(spacing: 3) {
             ForEach(0..<barCount, id: \.self) { i in
                 Capsule()
-                    .fill(Theme.mintLive)
-                    .frame(width: 3, height: height(for: i))
+                    .fill(Theme.hotpink)
+                    .frame(width: 4, height: height(for: i))
                     .animation(
-                        .easeInOut(duration: 0.14).delay(Double(i) * 0.03),
+                        .easeInOut(duration: 0.1).delay(Double(i) * 0.02),
                         value: level
                     )
             }
         }
-        .frame(height: 20)
+        .frame(height: 26)
     }
 
     private func height(for index: Int) -> CGFloat {
@@ -160,10 +160,11 @@ struct WaveformBars: View {
         let center = Double(barCount - 1) / 2
         let symmetric = 1.0 - abs(Double(index) - center) / (center + 1)
         let base = 0.35 + symmetric * 0.65
-        // combine live mic loudness with a little motion so it always dances
-        let wiggle: Float = phase ? 0.85 : 1.0
-        let l = max(0.08, min(1, level)) * wiggle
-        return CGFloat(base * Double(l)) * 16 + 3
+        // biggly: aggressive gain + a floor so bars never go flat,
+        // plus per-bar jitter so it always shimmers with the voice
+        let l = max(0.18, min(1, level * 2.2)) * (phase ? 1.0 : 0.6)
+        let jitter = phase ? [0.9, 1.15, 0.85, 1.2, 0.95, 1.1, 0.8][index] : 1
+        return CGFloat(base * Double(l) * jitter) * 22 + 3
     }
 }
 

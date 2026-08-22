@@ -231,22 +231,18 @@
         <span>File</span><span>Edit</span><span>View</span><span>Help</span>
       </span>
       <div class="notchwrap">
-        <div class="notch-mascot" class:up={mode !== 'idle'} aria-hidden="true">
-          <Robot size={44} mood={mode === 'listening' ? 'listening' : mode === 'done' ? 'done' : 'idle'} />
-        </div>
         <div class="notch" class:open={mode !== 'idle'}>
-          <div class="notch-in">
+          <span class="nleft" class:show={mode !== 'idle'} aria-hidden="true">
+            <Robot size={22} mood={mode === 'listening' ? 'listening' : mode === 'done' ? 'done' : 'idle'} />
+          </span>
+          <span class="cam" aria-hidden="true"></span>
+          <span class="nright" class:show={mode !== 'idle'} aria-hidden="true">
             {#if mode === 'listening'}
-              <span class="rec"></span>
-              <div class="eq"><i></i><i></i><i></i><i></i></div>
-              <span class="nlbl">listening</span>
+              <span class="weq"><i></i><i></i><i></i><i></i><i></i></span>
             {:else if mode === 'done'}
-              <span class="ok">✓</span>
-              <span class="nlbl">{lastMs} ms</span>
-            {:else}
-              <span class="peek"><i></i><i></i></span>
+              <span class="nok mono">✓ {lastMs} ms</span>
             {/if}
-          </div>
+          </span>
         </div>
       </div>
       <span class="mbright mono">
@@ -603,10 +599,11 @@
     flex-direction: column;
     border-radius: 22px;
     overflow: hidden;
-    border: 2px solid rgba(19, 23, 34, 0.9);
+    border: 10px solid #0d0f0e;
     box-shadow:
       0 40px 90px rgba(2, 89, 77, 0.24),
-      0 4px 14px rgba(2, 89, 77, 0.08);
+      0 4px 14px rgba(2, 89, 77, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     background: var(--paper);
     transition: box-shadow 0.3s ease;
   }
@@ -619,7 +616,7 @@
 
   .smenubar {
     position: relative;
-    height: 36px;
+    height: 26px;
     background: rgba(19, 23, 34, 0.07);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -695,113 +692,96 @@
     left: 50%;
     top: 0;
     transform: translateX(-50%);
-  }
-
-  .notch-mascot {
-    position: absolute;
-    left: -46px;
-    bottom: -6px;
-    z-index: 0;
-    color: var(--hotpink);
-    opacity: 0;
-    transform: translateY(60%) scale(0.85);
-    transition:
-      transform 0.45s cubic-bezier(0.2, 1.4, 0.35, 1),
-      opacity 0.3s ease;
-    pointer-events: none;
-  }
-
-  .notch-mascot.up {
-    opacity: 1;
-    transform: translateY(-16%) rotate(-8deg) scale(1);
-  }
-
-  .notch {
-    position: relative;
     z-index: 1;
+  }
+
+  /* dynamic-island style: small notch idle, wide pill when typie is live */
+  .notch {
     width: 92px;
-    height: 40px;
+    height: 32px;
     background: #000;
-    border-radius: 0 0 14px 14px;
+    border-radius: 0 0 6px 6px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    transition: width 0.4s var(--ease-out);
+    padding: 0;
+    padding-bottom: 3px;
+    transition: width 0.24s var(--ease-out);
     overflow: hidden;
   }
 
-  .notch.open { width: min(230px, 56vw); }
+  /* expand slower, snap shut quick */
+  .notch.open {
+    width: min(240px, 60vw);
+    padding: 0 7px 3px;
+    justify-content: space-between;
+    transition: width 0.45s cubic-bezier(0.2, 1.1, 0.35, 1);
+  }
 
-  .notch-in {
+  .cam {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #101318;
+    box-shadow: inset 0 0 2px 1px rgba(90, 100, 125, 0.55);
+    flex-shrink: 0;
+  }
+
+  .nleft,
+  .nright {
+    width: 0;
+    opacity: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
-    height: 30px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition:
+      width 0.35s var(--ease-out) 0.08s,
+      opacity 0.25s ease 0.08s;
   }
 
-  .peek {
-    display: flex;
-    gap: 14px;
+  .nleft { justify-content: flex-start; }
+  .nright { justify-content: flex-end; }
+
+  .notch.open .nleft,
+  .notch.open .nright {
+    width: 58px;
+    opacity: 1;
   }
 
-  .peek i {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: rgba(249, 248, 244, 0.85);
-    animation: peek 5s infinite;
+  .nleft :global(.robot) {
+    color: var(--hotpink);
   }
 
-  .peek i:last-child { animation-delay: 0.1s; }
-
-  @keyframes peek {
-    0%, 93%, 100% { transform: scaleY(1); }
-    96% { transform: scaleY(0.05); }
-  }
-
-  .rec {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--hotpink);
-    animation: blink 1s steps(2) infinite;
-  }
-
-  @keyframes blink {
-    50% { opacity: 0.25; }
-  }
-
-  .eq {
+  .weq {
     display: flex;
     align-items: center;
     gap: 3px;
-    height: 14px;
+    height: 16px;
   }
 
-  .eq i {
+  .weq i {
     width: 3px;
     border-radius: 2px;
-    background: var(--mint);
-    animation: eq 0.55s ease-in-out infinite alternate;
+    background: var(--hotpink);
+    height: 5px;
+    animation: weq 0.5s ease-in-out infinite alternate;
   }
 
-  .eq i:nth-child(2) { animation-delay: 0.12s; }
-  .eq i:nth-child(3) { animation-delay: 0.05s; }
-  .eq i:nth-child(4) { animation-delay: 0.2s; }
+  .weq i:nth-child(1) { animation-delay: 0s; }
+  .weq i:nth-child(2) { animation-delay: 0.12s; }
+  .weq i:nth-child(3) { animation-delay: 0.05s; }
+  .weq i:nth-child(4) { animation-delay: 0.18s; }
+  .weq i:nth-child(5) { animation-delay: 0.09s; }
 
-  @keyframes eq {
-    from { height: 4px; }
-    to { height: 13px; }
+  @keyframes weq {
+    from { height: 4px; opacity: 0.7; }
+    to { height: 14px; opacity: 1; }
   }
 
-  .ok { color: var(--mint); font-size: 12px; }
-
-  .nlbl {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--cream);
-    opacity: 0.85;
+  .nok {
+    font-size: 9px !important;
+    color: var(--hotpink);
     white-space: nowrap;
   }
 
