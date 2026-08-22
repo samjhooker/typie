@@ -1,5 +1,5 @@
 <script>
-  let { label = 'Download free for Mac', href = '#get', kind = 'green', big = false, class: cls = '' } = $props();
+  let { label = 'Download free for Mac', href = 'https://github.com/samjhooker/typie/releases/latest', kind = 'green', big = false, class: cls = '' } = $props();
 </script>
 
 <a {href} class="btn btn-{kind} dl {cls}" class:big>

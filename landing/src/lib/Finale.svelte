@@ -47,6 +47,15 @@
       <a href="#top" class="btn btn-ghost">Still unsure? Scroll up ↑</a>
     </div>
 
+    <div class="firstlaunch" use:reveal={{ delay: 240 }}>
+      <p class="mono">first launch only — one-time, 30 seconds</p>
+      <ol>
+        <li>open the dmg, drag <b>typie</b> into applications</li>
+        <li>system settings → privacy &amp; security → click <b>“open anyway”</b></li>
+        <li>grant microphone + accessibility when asked. that's it.</li>
+      </ol>
+    </div>
+
     <ul class="chips" use:reveal={{ delay: 280 }}>
       <li class="mono">macOS 14+</li>
       <li class="mono">~500 mb model, once</li>
@@ -148,6 +157,35 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--green-deep);
+  }
+
+  .firstlaunch {
+    margin-top: 26px;
+    background: rgba(255, 253, 247, 0.75);
+    border: 2px solid rgba(2, 89, 77, 0.14);
+    border-radius: 24px;
+    padding: 18px 26px;
+    max-width: 560px;
+    color: var(--green-deep);
+  }
+
+  .firstlaunch .mono {
+    color: var(--green-deep);
+    opacity: 0.65;
+    margin-bottom: 8px;
+  }
+
+  .firstlaunch ol {
+    margin: 0;
+    padding-left: 20px;
+    text-align: left;
+    font-size: 14.5px;
+    line-height: 1.75;
+  }
+
+  .firstlaunch b {
+    background: var(--butter);
+    padding-inline: 0.15em;
   }
 
   footer {

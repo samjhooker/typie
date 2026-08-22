@@ -1,0 +1,47 @@
+name: Release
+
+# Trigger: push a tag like v1.0.0 → builds a DMG and publishes a GitHub
+# Release with it attached. The app is ad-hoc/self-signed; downloaders get
+# a one-time Gatekeeper prompt (see landing "open typie" instructions).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build DMG
+        run: ./app/scripts/make_dmg.sh
+        env:
+          APP_VERSION: ${{ github.ref_name }}
+
+      - name: Rename DMG with tag
+        run: |
+          mkdir -p dist
+          mv app/build/typie-*.dmg "dist/typie-${GITHUB_REF_NAME}.dmg"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/typie-*.dmg
+          generate_release_notes: true
+          body: |
+            **typie ${{ github.ref_name }}**
+
+            hold a key. say the thing. it's typed.
+
+            ### install
+            1. download **typie-${{ github.ref_name }}.dmg** below
+            2. open it and drag **typie** into Applications
+            3. first launch only: macOS will ask once — open
+               **System Settings → Privacy & Security**, scroll down,
+               click **"Open Anyway"**
+            4. grant Microphone + Accessibility when asked
+
+            100% local · no cloud · no account · no telemetry

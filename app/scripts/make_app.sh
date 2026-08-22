@@ -28,9 +28,9 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
     <key>CFBundleIdentifier</key>
     <string>app.typie.typie</string>
     <key>CFBundleVersion</key>
-    <string>0.1.0</string>
+    <string>${APP_VERSION:-1.0.0}</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1.0</string>
+    <string>${APP_VERSION:-1.0.0}</string>
     <key>CFBundleExecutable</key>
     <string>typie</string>
     <key>CFBundlePackageType</key>

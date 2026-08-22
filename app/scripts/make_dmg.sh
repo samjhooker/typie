@@ -4,9 +4,10 @@
 set -e
 cd "$(dirname "$0")/.."
 
+export APP_VERSION="${APP_VERSION:-1.0.0}"
 ./scripts/make_app.sh
 
-VERSION="0.1.0"
+VERSION="${DMG_VERSION:-1.0.0}"
 STAGING="build/dmg-staging"
 DMG="build/typie-$VERSION.dmg"
 
