@@ -1,84 +1,89 @@
 # typie
 
 > hold a key. say the thing. it's typed.
-> 100% on your mac. 100% free. 0% subscription.
+> a native macos dictation engine that answers in under 100 ms and never touches the internet.
 
-**typie** is a tiny robot that lives in your mac menu bar and types whatever you say, in under 100 milliseconds, without your voice ever leaving your machine.
+yes, it's just another transcription app. there are roughly forty of them now. three launched while you were reading this sentence.
 
-## why this exists
+most of them share one design decision: your voice goes to their cloud, and you pay rent on your own voice. typie makes the opposite bet - **all inference local, zero backend, sub-100 ms end-to-end** - and turns that constraint into the product.
 
-so there's this dictation app. it's genuinely good. it's also $12/month.
+## what it actually is
 
-$12/month. for dictation. forever. to rent the ability to talk at your own computer.
+a native macos menu bar app. hold your hotkey, talk, let go. text lands wherever your cursor is.
 
-i did the math: one year of that subscription costs more than the mac mini i'd rather spend money on. so instead of subscribing, i spent a weekend building the thing myself, and now you can have it for exactly $0.
+```
+you ──hold ⌥──> mic ──> on-device ASR model ──> CGEvent keystrokes ──> whatever app you're in
+                         (~500 mb, local)          <100 ms later
+```
 
-this is not a business. there is no pricing page trickery (okay, there's a *joke* pricing page). there's just an app that runs on your computer and does its job.
+## design decisions
 
-## what it does
+**one dependency: [FluidAudio](https://github.com/FluidInference/FluidAudio).**
+the ASR engine runs entirely on-device on apple silicon. i evaluated the alternatives:
 
-- hold ⌥ (or any key, if you're freaky like that), speak, release
-- your words appear wherever your cursor is - mail, slack, notes, your cursed crm
-- **under 100 ms** from lips to letters. by the time your sentence ends, it's on screen
-- ~25 languages, zero settings
-- works offline. on a plane. in a subway. in a cabin in the woods
-- lives in the notch. literally pops out of it like a little robot butler
+| option | verdict |
+|---|---|
+| cloud APIs (whisper api, assemblyai, ...) | adds 200-800 ms round trip, per-minute billing, a privacy policy, and an outage mode |
+| self-hosted whisper.cpp server | same latency problem, now i'm ops |
+| on-device via FluidAudio | no network after model download, no per-use cost, latency = inference time |
+
+the ~500 mb model downloads once on first install. after that the app has no reason to ever see the internet again.
+
+**CGEvent synthetic keystrokes for output.**
+transcription becomes real keyboard events into whatever app has focus. mail, slack, notes, electron abominations - if it accepts typing, typie works there. no clipboard pollution, no per-app integrations to maintain.
+
+**AppKit/SwiftUI, zero UI framework tax.**
+a menu bar utility should not ship a browser runtime. the whole app is ~20 swift files with one package dependency.
+
+**carbon-era global hotkeys, fully remappable.**
+hold-to-talk on any modifier, rebound in-app. small feature, but it's the difference between a tool and a toy.
+
+**SwiftUI notch panel.**
+the robot lives in your macbook notch and pops out while listening. this serves no business purpose. it is simply correct.
+
+## latency
+
+sub-100 ms from releasing the key to text on screen. doing inference locally removes the round trip entirely - the network hop most competitors pay is slower than the actual transcription.
 
 ## privacy
 
-your voice is processed entirely on-device and thrown away the moment it becomes text.
+not a policy, an architecture:
 
-- no cloud. there is no server to hack, subpoena, or "temporarily discontinue"
-- no analytics, telemetry, cookies, or accounts
-- we can't hear you. we don't want to. we have no ears
+- audio goes mic -> model -> garbage collector. nothing else
+- no analytics, no telemetry, no update pings
+- zero network calls after the initial model download
+- delete the app and nothing remains
 
-the ~500 mb model downloads once on first install. after that, typie never touches the internet again.
+## build it
+
+macos 14+, apple silicon, swift 5.9+.
+
+```bash
+cd app
+./scripts/make_app.sh     # release binary -> build/typie.app
+./scripts/make_dmg.sh     # same, plus distributable dmg
+```
+
+grant mic + accessibility permissions when asked. it cannot do its job without them, which is more than most apps can say honestly.
+
+## repo layout
+
+```
+app/       the mac app (swift, ~20 files, one dependency)
+landing/   the website (svelte 5 + vite), featuring a support chatbot whose
+           entire knowledge base is "it's free and works fully offline"
+```
 
 ## pricing
 
 | plan | price |
-|---|---|
+|------|-------|
 | free | $0 |
 | pro | $0 |
-| enterprise | $0 per seat |
+| enterprise | $0/seat |
 
-yes, really. payment infrastructure is expensive and i couldn't be bothered.
-
-## building it
-
-macos 14+, apple silicon, [swift](https://www.swift.org/install/) 5.9+.
-
-```bash
-# build typie.app
-cd app
-./scripts/make_app.sh
-
-# or a distributable dmg
-./scripts/make_dmg.sh
-```
-
-the app lands in `app/build/typie.app`. drag it to applications, grant mic + accessibility permissions when asked (it needs them to listen and type, that's the whole job), go.
-
-### repo layout
-
-```
-app/       the mac app (swift, no dependencies worth mentioning)
-landing/   the website (svelte + vite), including the support robot
-           who will answer every question with "it's free and works
-           fully offline"
-```
-
-## faq
-
-**is it really free?**
-payment infrastructure is expensive and i couldn't be bothered. $0 means $0.
-
-**where does my voice go?**
-nowhere. on-device processing, audio tossed instantly. we can't hear you.
-
-**can i remap the key?**
-yes. if you're freaky like that.
+payment infrastructure is expensive and i could not be bothered.
 
 ## license
 
-mit. do whatever. if you make money with it, i'm honestly impressed, tell me how.
+mit. do whatever.
