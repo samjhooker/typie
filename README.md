@@ -3,9 +3,9 @@
 > hold a key. say the thing. it's typed.
 > a native macos dictation engine that answers in under 100 ms and never touches the internet.
 
-yes, it's just another transcription app. there are roughly forty of them now. three launched while you were reading this sentence.
+yes, it's just another transcription app. Powered locally by [Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3)
 
-most of them share one design decision: your voice goes to their cloud, and you pay rent on your own voice. typie makes the opposite bet - **all inference local, zero backend, sub-100 ms end-to-end** - and turns that constraint into the product.
+most existing transcription apps share a common design decision: your voice goes to their cloud, and you pay rent on your own voice. typie makes the opposite bet - **all inference local, zero backend, sub-100 ms end-to-end** - and turns that constraint into the product.
 
 ## what it actually is
 
@@ -13,7 +13,8 @@ a native macos menu bar app. hold your hotkey, talk, let go. text lands wherever
 
 ```
 you ──hold ⌥──> mic ──> on-device ASR model ──> CGEvent keystrokes ──> whatever app you're in
-                         (~500 mb, local)          <100 ms later
+
+                        (~500 mb, local)          <100 ms later
 ```
 
 ## design decisions
@@ -27,7 +28,7 @@ the ASR engine runs entirely on-device on apple silicon. i evaluated the alterna
 | self-hosted whisper.cpp server | same latency problem, now i'm ops |
 | on-device via FluidAudio | no network after model download, no per-use cost, latency = inference time |
 
-the ~500 mb model downloads once on first install. after that the app has no reason to ever see the internet again.
+the ~500 mb model -[ Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) - downloads once on first install. after that the app has no reason to ever see the internet again.
 
 **CGEvent synthetic keystrokes for output.**
 transcription becomes real keyboard events into whatever app has focus. mail, slack, notes, electron abominations - if it accepts typing, typie works there. no clipboard pollution, no per-app integrations to maintain.
@@ -84,6 +85,3 @@ landing/   the website (svelte 5 + vite), featuring a support chatbot whose
 
 payment infrastructure is expensive and i could not be bothered.
 
-## license
-
-mit. do whatever.
