@@ -94,6 +94,7 @@
 
   let step = $state(0);
   let mode = $state('idle');
+  let notchOpen = $state(false);
   let lastMs = $state(null);
   let keyI = $state(0);
   let armed = $state(false);
@@ -118,6 +119,7 @@
   function startListening() {
     mode = 'listening';
     app.mood = 'listening';
+    notchOpen = true;
     pressStart = performance.now();
     playSfx(pressSfx);
     /* no auto-pop: hold as long as you like (min 600 ms) */
@@ -136,6 +138,7 @@
     app.lastMs = lastMs;
     mode = 'done';
     app.mood = 'done';
+    later(() => { notchOpen = false; }, 200);
     later(() => {
       step = (step + 1) % scenes.length;
       mode = 'idle';
@@ -182,9 +185,13 @@
   }
 
   function pick(i) {
-    if (mode !== 'idle' || i === step) return;
+    if (i === step && mode === 'idle') return;
+    clearTimers();
     step = i;
     lastMs = null;
+    notchOpen = false;
+    mode = 'idle';
+    app.mood = 'idle';
   }
 
   $effect(() => {
@@ -231,12 +238,12 @@
         <span>File</span><span>Edit</span><span>View</span><span>Help</span>
       </span>
       <div class="notchwrap">
-        <div class="notch" class:open={mode !== 'idle'}>
-          <span class="nleft" class:show={mode !== 'idle'} aria-hidden="true">
+        <div class="notch" class:open={notchOpen}>
+          <span class="nleft" class:show={notchOpen} aria-hidden="true">
             <Robot size={22} mood={mode === 'listening' ? 'listening' : mode === 'done' ? 'done' : 'idle'} />
           </span>
           <span class="cam" aria-hidden="true"></span>
-          <span class="nright" class:show={mode !== 'idle'} aria-hidden="true">
+          <span class="nright" class:show={notchOpen} aria-hidden="true">
             {#if mode === 'listening'}
               <span class="weq"><i></i><i></i><i></i><i></i><i></i></span>
             {:else if mode === 'done'}
@@ -599,7 +606,7 @@
     flex-direction: column;
     border-radius: 22px;
     overflow: hidden;
-    border: 10px solid #0d0f0e;
+    border: 5px solid #0d0f0e;
     box-shadow:
       0 40px 90px rgba(2, 89, 77, 0.24),
       0 4px 14px rgba(2, 89, 77, 0.08),
@@ -698,9 +705,8 @@
   /* dynamic-island style: small notch idle, wide pill when typie is live */
   .notch {
     width: 92px;
-    height: 32px;
     background: #000;
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 10px 10px;
     display: flex;
     align-items: center;
     justify-content: center;
