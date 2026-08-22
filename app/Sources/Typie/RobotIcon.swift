@@ -13,7 +13,7 @@ enum RobotMood {
 struct RobotIcon: View {
     var mood: RobotMood = .idle
     var body_: Color = Theme.hotpink
-    var eye: Color = Theme.cream
+    var eye: Color = Theme.hotpink
 
     @State private var blinkL = false
     @State private var blinkR = false

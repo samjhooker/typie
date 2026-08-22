@@ -2,7 +2,7 @@
   import Robot from './Robot.svelte';
   import { chat } from './chat.svelte.js';
 
-  const SALES_PITCH = "hi. i'm sales. everything is free and works fully offline. we don't do anything with your data - it doesn't leave your machine, so there's nothing to hand over. the contract is one character long: $.";
+  const SALES_PITCH = "hi. i'm sales. everything is free and works fully offline. we don't do anything with your data - it doesn't leave your machine, so there's nothing to hand over. so... there's really nothing left to negotiate. welcome aboard.";
 
   let draft = $state('');
   let thinking = $state(false);
