@@ -14,7 +14,7 @@
       </p>
       <div class="row" use:reveal={{ delay: 240 }}>
         <div class="glyph" aria-hidden="true">
-          <Robot mood="idle" size={150} />
+          <Robot mood="idle" size={150} eye="#f9f8f4" />
         </div>
         <p class="hand note">just a robot with one job</p>
       </div>
