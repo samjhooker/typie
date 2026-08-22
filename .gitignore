@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Swift / Xcode
+.build/
+build/
+*.xcodeproj
+DerivedData/
+*.swiftpm
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+logs
+*.log
+npm-debug.log*
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea
