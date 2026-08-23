@@ -17,6 +17,9 @@
         </svg>
       </span>
       you type</h2>
+    <p class="lede" use:reveal={{ delay: 40 }}>
+      If your cursor can blink there, Typie can type there. No window, no pasting.
+    </p>
   </div>
 
   <div class="container marquee" use:reveal={{ delay: 80 }}>
@@ -49,6 +52,15 @@
     color: var(--hotpink);
     transform: rotate(-2deg);
     margin-bottom: 10px;
+  }
+
+  .lede {
+    margin: 16px auto 0;
+    max-width: 44rem;
+    text-align: center;
+    color: rgba(19, 23, 34, 0.68);
+    line-height: 1.6;
+    font-size: clamp(16px, 1.5vw, 18px);
   }
 
   .marquee {

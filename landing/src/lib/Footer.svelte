@@ -79,7 +79,7 @@
 <style>
   footer {
     position: relative;
-    margin-top: clamp(40px, 6vh, 80px);
+    margin-top: clamp(24px, 4vh, 48px);
     color: rgba(255, 253, 247, 0.85);
   }
 

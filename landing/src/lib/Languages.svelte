@@ -3,40 +3,36 @@
   import Robot from './Robot.svelte';
 
   const langs = [
-    { n: 'Bulgarian', flag: '🇧🇬' },
-    { n: 'Croatian', flag: '🇭🇷' },
-    { n: 'Czech', flag: '🇨🇿' },
-    { n: 'Danish', flag: '🇩🇰' },
-    { n: 'Dutch', flag: '🇳🇱' },
-    { n: 'English', flag: '🇬🇧' },
-    { n: 'Estonian', flag: '🇪🇪' },
-    { n: 'Finnish', flag: '🇫🇮' },
-    { n: 'French', flag: '🇫🇷' },
-    { n: 'German', flag: '🇩🇪' },
-    { n: 'Greek', flag: '🇬🇷' },
-    { n: 'Hungarian', flag: '🇭🇺' },
-    { n: 'Italian', flag: '🇮🇹' },
-    { n: 'Latvian', flag: '🇱🇻' },
-    { n: 'Lithuanian', flag: '🇱🇹' },
-    { n: 'Maltese', flag: '🇲🇹' },
-    { n: 'Polish', flag: '🇵🇱' },
-    { n: 'Portuguese', flag: '🇵🇹' },
-    { n: 'Romanian', flag: '🇷🇴' },
-    { n: 'Slovak', flag: '🇸🇰' },
-    { n: 'Slovenian', flag: '🇸🇮' },
-    { n: 'Spanish', flag: '🇪🇸' },
-    { n: 'Swedish', flag: '🇸🇪' },
-    { n: 'Russian', flag: '🇷🇺' },
-    { n: 'Ukrainian', flag: '🇺🇦' }
+    { n: 'Bulgarian', native: 'Български' },
+    { n: 'Croatian', native: 'Hrvatski' },
+    { n: 'Czech', native: 'Čeština' },
+    { n: 'Danish', native: 'Dansk' },
+    { n: 'Dutch', native: 'Nederlands' },
+    { n: 'English', native: 'English' },
+    { n: 'Estonian', native: 'Eesti' },
+    { n: 'Finnish', native: 'Suomi' },
+    { n: 'French', native: 'Français' },
+    { n: 'German', native: 'Deutsch' },
+    { n: 'Greek', native: 'Ελληνικά' },
+    { n: 'Hungarian', native: 'Magyar' },
+    { n: 'Italian', native: 'Italiano' },
+    { n: 'Latvian', native: 'Latviešu' },
+    { n: 'Lithuanian', native: 'Lietuvių' },
+    { n: 'Maltese', native: 'Malti' },
+    { n: 'Polish', native: 'Polski' },
+    { n: 'Portuguese', native: 'Português' },
+    { n: 'Romanian', native: 'Română' },
+    { n: 'Slovak', native: 'Slovenčina' },
+    { n: 'Slovenian', native: 'Slovenščina' },
+    { n: 'Spanish', native: 'Español' },
+    { n: 'Swedish', native: 'Svenska' },
+    { n: 'Russian', native: 'Русский' },
+    { n: 'Ukrainian', native: 'Українська' }
   ];
-
-  const spins = [1.4, -2.2, 2, -1.1, 0.6, -1.8, 1.2, -0.4, 2.1, -1.6, 0.8, 1.9, -2, 1.1, -0.7, 1.6, -1.4, 0.3, 2.2, -1.9, -0.8, 1.5, 0.5, -1.2, 1.8];
-  const nudges = [0, 7, -5, 4, -3, 8, 2, -6, 5, -4, 7, -2, 3, 6, -7, 1, -5, 4, 8, -3, 2, -6, 5, -1, 3];
 </script>
 
 <section class="langs field" id="languages">
   <div class="container">
-    <p class="hand kicker" use:reveal>nvidia parakeet, on your mac</p>
     <h2 class="subhead" use:reveal>
       25 languages.
       <span class="squiggle">No cloud.
@@ -46,25 +42,19 @@
       </span>
     </h2>
     <p class="lede" use:reveal={{ delay: 60 }}>
-      Typie transcribes with <strong>NVIDIA Parakeet</strong>, a speech model that runs on your Mac. It’s trained heavily on European languages. This is the set we ship today.
+      Fast, accurate transcription that runs <strong>entirely on your Mac</strong>. Your audio is
+      processed locally and never uploaded. Powered by NVIDIA’s Parakeet model.
     </p>
 
     <div class="wrap" use:reveal={{ delay: 100 }}>
       <span class="peek" aria-hidden="true"><Robot size={44} mood="idle" /></span>
       <ul class="board">
-    {#each langs as lang, i}
-      {#if i === 8}
-        <li class="break" aria-hidden="true"></li>
-        <li class="shim mid" aria-hidden="true"></li>
-      {:else if i === 16}
-        <li class="break" aria-hidden="true"></li>
-      {/if}
-      <li class="card" style="--spin:{spins[i]}deg; --nudge:{nudges[i]}px">
-        <span class="flag" aria-hidden="true">{lang.flag}</span>
-        <span class="name">{lang.n}</span>
-      </li>
-    {/each}
-    <li class="shim last" aria-hidden="true"></li>
+        {#each langs as lang}
+          <li class="card" lang={lang.n}>
+            <span class="native">{lang.native}</span>
+            <span class="name">{lang.n}</span>
+          </li>
+        {/each}
       </ul>
     </div>
   </div>
@@ -74,16 +64,8 @@
   .langs {
     position: relative;
     overflow-x: hidden;
-    padding-top: clamp(56px, 8vh, 96px);
-    padding-bottom: clamp(56px, 8vh, 96px);
-  }
-
-  .kicker {
-    text-align: center;
-    font-size: clamp(20px, 2vw, 24px);
-    color: var(--hotpink);
-    transform: rotate(-2deg);
-    margin-bottom: 10px;
+    padding-top: clamp(48px, 7vh, 80px);
+    padding-bottom: clamp(48px, 7vh, 80px);
   }
 
   h2 {
@@ -95,11 +77,11 @@
 
   .lede {
     margin: 22px auto 0;
-    max-width: 42rem;
+    max-width: 44rem;
     text-align: center;
     color: rgba(19, 23, 34, 0.68);
     line-height: 1.6;
-    font-size: clamp(15px, 1.4vw, 17px);
+    font-size: clamp(16px, 1.5vw, 18px);
   }
 
   .lede strong {
@@ -109,7 +91,7 @@
 
   .wrap {
     position: relative;
-    margin-top: clamp(44px, 6vh, 68px);
+    margin-top: clamp(32px, 4.5vh, 48px);
     min-width: 0;
     max-width: 100%;
     overflow: hidden;
@@ -117,9 +99,10 @@
 
   .board {
     list-style: none;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 10px;
     width: 100%;
     min-width: 0;
     max-width: 100%;
@@ -141,40 +124,20 @@
     50% { transform: rotate(6deg) translateY(6px); }
   }
 
-  .break,
-  .shim {
-    display: none;
-    height: 0;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .shim.mid {
-    flex-basis: 56px;
-  }
-
-  .shim.last {
-    flex-basis: 40px;
-  }
-
   .card {
     position: relative;
     z-index: 0;
     min-width: 0;
     max-width: 100%;
-    width: auto;
     box-sizing: border-box;
     background: #fff;
-    border-radius: 20px;
+    border-radius: 999px;
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.06);
-    padding: 16px 10px 14px;
+    padding: 10px 18px 11px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    transform: rotate(var(--spin)) translateY(var(--nudge));
+    gap: 1px;
     transition:
       transform 0.35s var(--spring),
       box-shadow 0.3s ease;
@@ -182,76 +145,41 @@
 
   .card:hover {
     z-index: 3;
-    transform: translateY(-6px) scale(1.07) rotate(-1.2deg);
+    transform: translateY(-4px) scale(1.05);
     box-shadow: 0 14px 30px rgba(19, 23, 34, 0.12);
   }
 
-  .flag {
-    font-size: 48px;
-    line-height: 1;
-    filter: drop-shadow(0 2px 4px rgba(19, 23, 34, 0.14));
+  .native {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.25;
+    white-space: nowrap;
   }
 
   .name {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: rgba(19, 23, 34, 0.52);
     text-align: center;
     line-height: 1.2;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   @media (max-width: 640px) {
-    .flag {
-      font-size: 40px;
-    }
-
-    .card {
-      padding: 14px 8px 12px;
-    }
-
-    .card:nth-last-child(2) {
-      grid-column: 2;
-    }
-
     h2 {
       flex-direction: column;
       align-items: center;
       row-gap: 2px;
     }
-  }
-
-  @media (min-width: 641px) {
-    .board {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-  }
-
-  @media (min-width: 981px) {
-    .board {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-content: flex-start;
-      gap: 14px 12px;
-    }
-
-    .break {
-      display: block;
-      flex-basis: 100%;
-    }
-
-    .shim {
-      display: block;
-      flex: 0 0 0;
-    }
 
     .card {
-      flex: 0 0 auto;
-      width: 118px;
+      padding: 8px 14px 9px;
+    }
+
+    .native {
+      font-size: 14.5px;
     }
   }
 

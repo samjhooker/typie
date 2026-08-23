@@ -2,14 +2,11 @@
   import { reveal } from './reveal.js';
   import AssetSlot from './AssetSlot.svelte';
   import DownloadCta from './DownloadCta.svelte';
-  import { chat } from './chat.svelte.js';
 
   const SAME = [
     'Fully offline',
     'Unlimited usage',
-    'Nothing hits a server',
-    'No account, no card',
-    'Any app, any text field'
+    'No account, no card'
   ];
 
   const plans = [
@@ -17,9 +14,10 @@
       name: 'Free',
       price: '$0',
       period: 'forever',
-      blurb: 'For people who like free things.',
+      blurb: 'Everything Typie can do. Forever.',
+      popular: false,
       cta: 'download',
-      label: 'Get Free'
+      label: 'Get Typie'
     },
     {
       name: 'Pro',
@@ -29,14 +27,6 @@
       popular: true,
       cta: 'download',
       label: 'Get Pro'
-    },
-    {
-      name: 'Enterprise',
-      price: '$0',
-      period: 'per seat (there are no seats)',
-      blurb: 'Procurement will be confused. That’s the point.',
-      cta: 'sales',
-      label: 'Talk to sales'
     }
   ];
 </script>
@@ -47,7 +37,7 @@
       <div class="copy">
         <p class="hand kicker">pricing, sort of</p>
         <h2>Your voice. Anywhere.</h2>
-        <p class="sub">Three plans. One price. It’s $0.</p>
+        <p class="sub">Two plans. One price. It’s $0.</p>
       </div>
 
       <div class="plans">
@@ -64,11 +54,7 @@
                 <li><span>✓</span>{f}</li>
               {/each}
             </ul>
-            {#if p.cta === 'sales'}
-              <button class="btn btn-ghost" onclick={() => chat.sales()}>{p.label}</button>
-            {:else}
-              <DownloadCta kind={p.popular ? 'butter' : 'ghost'} label={p.label} />
-            {/if}
+            <DownloadCta kind={p.popular ? 'butter' : 'ghost'} label={p.label} />
           </article>
         {/each}
       </div>
@@ -192,11 +178,13 @@
 
   .plans {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
     align-items: stretch;
     position: relative;
     z-index: 1;
+    max-width: 760px;
+    margin-inline: auto;
   }
 
   .plan {

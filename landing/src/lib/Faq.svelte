@@ -3,32 +3,28 @@
 
   const items = [
     {
-      q: 'What is Typie?',
-      a: 'A tiny robot in your Mac menu bar. Hold a key, say the thing, it’s typed. No window. No account.'
+      q: 'How is Typie different from built-in dictation?',
+      a: 'Speed and accuracy. Words land in under 100 milliseconds, right where your cursor is, in any app. No dictation mode to switch on and off.'
     },
     {
-      q: 'How is it different from built-in dictation?',
-      a: 'Speed and accuracy. Words land in under 100 milliseconds, right where your cursor is, in any app.'
+      q: 'Does my voice ever leave my Mac?',
+      a: 'No. Audio is processed on your Mac by the built-in model, then thrown away. We can’t hear you. We don’t want to.'
     },
     {
-      q: 'Who can use Typie?',
-      a: 'Anyone on an Apple silicon Mac running macOS 14 or newer.'
+      q: 'Does it work in any app?',
+      a: 'Anywhere text can go: Slack, Mail, browsers, editors, spreadsheets, that one ancient CRM. If there’s a cursor, Typie types there.'
     },
     {
-      q: 'Is Typie really offline?',
-      a: 'Really. Audio is processed on your Mac and thrown away. We can’t hear you. We don’t want to.'
-    },
-    {
-      q: 'Are you supporting more languages?',
-      a: 'Not at this time. Typie uses NVIDIA’s Parakeet model for transcription, which is trained heavily on European languages. That’s the set we ship today.'
+      q: 'Why is it free?',
+      a: 'Honestly? Payment infrastructure is expensive and I couldn’t be bothered. $0 means $0.'
     },
     {
       q: 'What do I have to download?',
       a: '~500 MB on first install - that’s the model, not bloat. After that it runs offline forever. There is no server to miss.'
     },
     {
-      q: 'Why is it free?',
-      a: 'Honestly? Payment infrastructure is expensive and I couldn\'t be bothered. $0 means $0.'
+      q: 'Are you supporting more languages?',
+      a: 'Not at this time. Typie uses NVIDIA’s Parakeet model for transcription, which is trained heavily on European languages. That’s the set we ship today.'
     }
   ];
 

@@ -3,21 +3,25 @@
   import AssetSlot from './AssetSlot.svelte';
   import Robot from './Robot.svelte';
 
+  const featured = {
+    q: '“I answered a full page of Slack messages on the train without touching my keyboard. Meeting notes, an awkward half-apology to my manager, the works. Checked it all afterwards out of pure paranoia and found exactly one typo. My keyboard has never felt so redundant.”',
+    who: 'Product designer',
+    tone: '#c5daff',
+    bg: '#eff4ff'
+  };
+
   const quotes = [
     {
-      q: '“I genuinely forgot I was dictating.”',
-      who: 'Designer',
-      tone: '#c5daff'
-    },
-    {
-      q: '“It’s basically a keyboard shortcut for my brain.”',
-      who: 'Founder',
-      tone: '#ffe0a8'
-    },
-    {
-      q: '“I use it in Slack, Mail, everywhere.”',
+      q: '“I stopped opening a notes window first. I just hold option and think out loud.”',
       who: 'Engineer',
-      tone: '#ffd0e6'
+      tone: '#ffd0e6',
+      bg: '#fff0f6'
+    },
+    {
+      q: '“It types faster than the words arrive in my head. Genuinely disorienting for a week.”',
+      who: 'Founder',
+      tone: '#ffe0a8',
+      bg: '#fff8e9'
     }
   ];
 </script>
@@ -34,27 +38,37 @@
     </h2>
 
     <div class="grid">
-      {#each quotes as t, i}
-        <figure class="card" use:reveal={{ delay: i * 90 }}>
-          {#if i === 0}
-            <div class="cameo left" aria-hidden="true">
-              <span class="cam-bubble hand">we definitely<br />real people</span>
-              <Robot size={44} mood="thinking" />
+      <figure class="card featured" style="background:{featured.bg}" use:reveal>
+        <div class="cameo left" aria-hidden="true">
+          <span class="cam-bubble hand">we definitely<br />real people</span>
+          <Robot size={44} mood="thinking" />
+        </div>
+        <div class="head">
+          <AssetSlot id="avatar-0" width="60px" round>
+            {#snippet fallback()}
+              <span class="avatar" style="background:{featured.tone}" aria-hidden="true"></span>
+            {/snippet}
+          </AssetSlot>
+          <blockquote>{featured.q}</blockquote>
+        </div>
+        <figcaption class="mono">{featured.who}</figcaption>
+      </figure>
+
+      <div class="side">
+        {#each quotes as t, i}
+          <figure class="card" style="background:{t.bg}" use:reveal={{ delay: 90 + i * 90 }}>
+            <div class="head">
+              <AssetSlot id={`avatar-${i + 1}`} width="46px" round>
+                {#snippet fallback()}
+                  <span class="avatar sm" style="background:{t.tone}" aria-hidden="true"></span>
+                {/snippet}
+              </AssetSlot>
+              <blockquote>{t.q}</blockquote>
             </div>
-          {:else if i === 2}
-            <div class="cameo right" aria-hidden="true"><Robot size={44} mood="idle" /></div>
-          {/if}
-          <div class="head">
-            <AssetSlot id={`avatar-${i}`} width="52px" round>
-              {#snippet fallback()}
-                <span class="avatar" style="background:{t.tone}" aria-hidden="true"></span>
-              {/snippet}
-            </AssetSlot>
-            <blockquote>{t.q}</blockquote>
-          </div>
-          <figcaption class="mono">– {t.who}</figcaption>
-        </figure>
-      {/each}
+            <figcaption class="mono">{t.who}</figcaption>
+          </figure>
+        {/each}
+      </div>
     </div>
   </div>
 </section>
@@ -69,35 +83,55 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1.35fr 1fr;
     gap: clamp(16px, 2.4vw, 28px);
-    margin-top: clamp(56px, 7vh, 76px);
+    margin-top: clamp(48px, 6.5vh, 68px);
+    align-items: stretch;
+  }
+
+  .side {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: clamp(16px, 2.4vw, 28px);
   }
 
   .card {
     position: relative;
-    background: #fffdf7;
+    background: var(--cream);
     border: 1px solid rgba(19, 23, 34, 0.07);
     border-radius: 20px;
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.05);
-    padding: clamp(20px, 2.4vw, 30px);
+    padding: clamp(22px, 2.6vw, 32px);
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
+  }
+
+  /* fallback when no inline bg is set */
+
+  .featured blockquote {
+    font-size: clamp(19px, 2vw, 24px);
+    line-height: 1.4;
   }
 
   .head {
     display: flex;
     gap: 14px;
     align-items: flex-start;
+    flex: 1;
   }
 
   .avatar {
     display: block;
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     flex-shrink: 0;
+  }
+
+  .avatar.sm {
+    width: 46px;
+    height: 46px;
   }
 
   blockquote {
@@ -111,6 +145,11 @@
   figcaption.mono {
     text-transform: none;
     letter-spacing: 0.04em;
+    padding-left: 74px;
+  }
+
+  .side figcaption.mono {
+    padding-left: 60px;
   }
 
   .cameo {
@@ -125,13 +164,6 @@
     left: 14px;
     transform: rotate(-8deg);
     color: var(--hotpink);
-  }
-
-  .right {
-    right: 10px;
-    transform: rotate(9deg) scaleX(-1);
-    animation-delay: 1.2s;
-    color: var(--sun);
   }
 
   @keyframes camfloat {
@@ -160,8 +192,16 @@
       margin-top: clamp(32px, 5vh, 48px);
     }
 
+    .side {
+      grid-template-rows: none;
+    }
+
     .cameo {
       display: none;
+    }
+
+    figcaption.mono {
+      padding-left: 0;
     }
   }
 </style>

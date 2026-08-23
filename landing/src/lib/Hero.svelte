@@ -72,6 +72,7 @@
       return;
     }
     const holdMs = 2200;
+    let loop;
     const timers = [];
     const beat = () => {
       if (interacted || !inView || document.visibilityState !== 'visible') return;
@@ -82,8 +83,13 @@
         }, holdMs)
       );
     };
-    const loop = setInterval(beat, 5000);
+    /* let visitors land first - the option key demos itself after ~2s */
+    const kickoff = setTimeout(() => {
+      beat();
+      loop = setInterval(beat, 5000);
+    }, 2000);
     return () => {
+      clearTimeout(kickoff);
       clearInterval(loop);
       timers.forEach(clearTimeout);
       if (!interacted && app.mood === 'listening') hold.press();
@@ -103,17 +109,19 @@
 >
   <div class="container grid">
     <div class="copy">
-      <p class="kicker hand">voice dictation for Mac</p>
-
       <h1>
-        <span class="press">Press</span>
-        <span class="talk">Talk</span>
-        <span class="typed">Typed</span>
+        <span class="press">Just <span class="talk">talk.</span></span>
+        <span class="typed">It’s typed.</span>
       </h1>
+
+      <p class="value">
+        Stupidly good voice dictation for macOS. Fully offline, almost
+        instant, works in any app, free forever.
+      </p>
 
       <div class="holdline">
         <p>
-          Hold
+          try it right here: hold
           <span class="keywrap">
             <span class="talkpulse" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="rings" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -128,7 +136,7 @@
               <span class="klbl">option</span>
             </button>
           </span>
-          and say something
+          and talk
         </p>
       </div>
     </div>
@@ -151,7 +159,7 @@
 
 <style>
   .hero {
-    padding: clamp(120px, 15vh, 170px) 0 clamp(72px, 10vh, 120px);
+    padding: clamp(120px, 15vh, 170px) 0 clamp(44px, 6vh, 68px);
     background: transparent;
     overflow: visible;
   }
@@ -230,22 +238,38 @@
 
   h1 {
     margin: 0;
-    font-size: clamp(64px, 7.5vw, 118px);
+    font-size: clamp(60px, 6.6vw, 104px);
     font-weight: 800;
-    line-height: 0.95;
+    line-height: 0.98;
     letter-spacing: -0.04em;
     color: var(--ink);
     display: flex;
     flex-direction: column;
   }
 
+  .press {
+    display: block;
+  }
+
   .talk { color: var(--periwinkle); }
-  .typed { color: var(--gold-ink); }
+  .typed { color: var(--hotpink); }
+
+  .value {
+    margin-top: clamp(24px, 3.5vh, 34px);
+    max-width: 32ch;
+    font-size: clamp(17px, 1.7vw, 21px);
+    line-height: 1.55;
+    color: rgba(19, 23, 34, 0.78);
+  }
+
+  .micro {
+    letter-spacing: 0.06em;
+  }
 
   .holdline {
     position: relative;
     z-index: 1;
-    margin-top: clamp(48px, 6.5vh, 76px);
+    margin-top: clamp(32px, 4.5vh, 48px);
   }
 
   .holdline p {
@@ -253,9 +277,9 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    font-size: clamp(18px, 1.9vw, 22px);
+    font-size: clamp(17px, 1.6vw, 20px);
     font-weight: 600;
-    color: var(--ink);
+    color: rgba(19, 23, 34, 0.72);
   }
 
   .key {

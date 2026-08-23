@@ -7,6 +7,7 @@
   import Testimonials from './lib/Testimonials.svelte';
   import CtaBanner from './lib/CtaBanner.svelte';
   import Faq from './lib/Faq.svelte';
+  import FinalCta from './lib/FinalCta.svelte';
   import Footer from './lib/Footer.svelte';
   import ChatBot from './lib/ChatBot.svelte';
   import About from './lib/About.svelte';
@@ -44,10 +45,27 @@
     <Testimonials />
     <CtaBanner />
     <Faq />
-    <Footer />
+
+    <!-- pink band runs unbroken into the footer wave -->
+    <div class="tail">
+      <FinalCta />
+      <Footer />
+    </div>
   </main>
 
   <ChatBot />
 {/if}
+
+<style>
+  /* the wave's transparent half shows this instead of page cream,
+     so the pink section flows straight into the footer */
+  .tail {
+    background: var(--pink-band);
+  }
+
+  .tail :global(footer) {
+    margin-top: 0;
+  }
+</style>
 
 

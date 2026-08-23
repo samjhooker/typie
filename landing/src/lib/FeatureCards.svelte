@@ -2,26 +2,15 @@
   import { reveal } from './reveal.js';
   import Robot from './Robot.svelte';
   import Notch from './Notch.svelte';
-  import { nsSvg } from './svgid.js';
-  import slack from 'thesvg/slack';
-  import notion from 'thesvg/notion';
-
-  const slackSvg = slack.svg ?? slack;
-  const notionSvg = notion.svg ?? notion;
-  const mailSvg =
-    '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" fill="#3b82f6"/><path d="m4.5 7.5 7.5 6 7.5-6" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 </script>
 
 <section class="features field pop-b" id="features">
-  <div class="container">
-    <p class="hand kicker" use:reveal>everything you need to know</p>
-  </div>
   <div class="container grid">
-    <!-- Talk naturally -->
+    <!-- Talk like you think -->
     <article class="card c-lavender" use:reveal>
-      <h3>Talk naturally</h3>
+      <h3>Talk like you think</h3>
       <div class="body">
-        <p>Mumble. Ramble. Talk too fast. It still becomes the sentence you meant.</p>
+        <p>No commands, no robot voice. Mumble, ramble, talk too fast, it still comes out as the sentence you meant.</p>
         <div class="art">
           <span class="botpair" aria-hidden="true">
             <span class="lift">
@@ -38,7 +27,7 @@
               <span class="tilt">
                 <span class="spark s1">✦</span>
                 <span class="spark s2">✧</span>
-                <span class="bot bot-ink"><Robot size={92} mood="listening" bg="var(--card-lavender)" /></span>
+                <span class="bot bot-purple"><Robot size={92} mood="listening" bg="var(--card-lavender)" /></span>
               </span>
               <i class="ground g-bot"></i>
             </span>
@@ -47,11 +36,11 @@
       </div>
     </article>
 
-    <!-- Keep your words private -->
+    <!-- Privacy -->
     <article class="card c-blue" use:reveal={{ delay: 80 }}>
-      <h3>Keep your words private</h3>
+      <h3>Your voice never leaves your Mac</h3>
       <div class="body">
-        <p>On-device, then gone. Your voice never leaves this Mac. We couldn’t hear you if we tried.</p>
+        <p>Transcribed on-device, then the audio is gone. No cloud, no uploads. We couldn’t hear you if we tried.</p>
         <div class="art">
           <span class="lock-scene" aria-hidden="true">
             <img
@@ -65,7 +54,7 @@
               <span class="tilt">
                 <span class="spark s1">✦</span>
                 <span class="spark s2">✧</span>
-                <span class="bot bot-pink"><Robot size={64} mood="idle" bg="var(--card-blue)" /></span>
+                <span class="bot bot-navy"><Robot size={64} mood="idle" bg="var(--card-blue)" /></span>
               </span>
               <i class="ground g-bot"></i>
             </span>
@@ -74,38 +63,33 @@
       </div>
     </article>
 
-    <!-- Use it everywhere -->
+    <!-- Ridiculously fast -->
     <article class="card c-cream" use:reveal>
-      <h3>Use it everywhere</h3>
+      <h3>Ridiculously fast</h3>
       <div class="body">
-        <p>No special window. It types wherever your cursor already is. Slack, Mail, the cursed spreadsheet.</p>
+        <p>No server round trip. Words land in about 100 milliseconds, roughly the pause between your own sentences.</p>
         <div class="art">
-          <span class="everywhere" aria-hidden="true">
-            <svg class="links" viewBox="0 0 180 150" fill="none">
-              <path d="M52 108 C 58 70 88 38 118 28" />
-              <path d="M118 28 C 148 36 168 68 154 96" />
-              <path d="M154 96 C 138 124 88 128 52 108" />
-            </svg>
+          <span class="speedscene" aria-hidden="true">
             <span class="hub mascot">
               <span class="tilt">
                 <span class="spark s1">✦</span>
-                <span class="bot bot-pink"><Robot size={78} mood="idle" bg="var(--card-cream)" /></span>
+                <span class="bot bot-orange"><Robot size={78} mood="idle" bg="var(--card-cream)" /></span>
               </span>
               <i class="ground g-bot"></i>
             </span>
-            <span class="app a-slack">{@html nsSvg(slackSvg, 'ew-slack')}</span>
-            <span class="app a-mail">{@html nsSvg(mailSvg, 'ew-mail')}</span>
-            <span class="app a-notion">{@html nsSvg(notionSvg, 'ew-notion')}</span>
+            <span class="chip ch-a"><b>&lt;100 ms</b> voice to text</span>
+            <span class="chip ch-b"><b>0</b> uploads</span>
+            <span class="chip ch-c"><b>100%</b> on-device</span>
           </span>
         </div>
       </div>
     </article>
 
-    <!-- Never break your flow -->
+    <!-- Hold. Speak. Release. -->
     <article class="card c-mint" use:reveal={{ delay: 80 }}>
-      <h3>Never break your flow</h3>
+      <h3>Hold. Speak. Release.</h3>
       <div class="body">
-        <p>You were writing. You still are. One key, then straight back to the sentence.</p>
+        <p>One shortcut. That’s the whole interface. Hold ⌥, say the thing, let go, and you’re back in the sentence.</p>
         <div class="art flow-art">
           <img
             class="flow-key"
@@ -129,13 +113,7 @@
     padding-bottom: clamp(40px, 6vh, 72px);
   }
 
-  .kicker {
-    text-align: center;
-    font-size: clamp(20px, 2vw, 24px);
-    color: var(--hotpink);
-    transform: rotate(-1.5deg);
-    margin-bottom: clamp(28px, 4vh, 48px);
-  }
+
 
   .grid {
     display: grid;
@@ -183,11 +161,11 @@
   }
 
   p {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.55;
     color: rgba(19, 23, 34, 0.82);
     opacity: 1;
-    max-width: 28ch;
+    max-width: 30ch;
     flex: 1 1 0;
     min-width: 0;
     align-self: flex-start;
@@ -284,6 +262,18 @@
     50% { transform: rotate(1.6deg) translateY(-2px); }
   }
 
+  .bot-purple {
+    color: #8a5ff2; /* matches the talk-wave waveform graphic beside it */
+  }
+
+  .bot-navy {
+    color: #2c3f9e;
+  }
+
+  .bot-orange {
+    color: var(--orange);
+  }
+
   .bot-pink {
     color: var(--hotpink);
   }
@@ -317,74 +307,71 @@
     50% { opacity: 1; transform: scale(1.1) rotate(18deg); }
   }
 
-  .everywhere {
+  /* speed scene: robot centred inside the dashed ring + floating proof chips */
+  .speedscene {
     position: relative;
-    width: 180px;
+    width: 190px;
     height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 6px;
   }
 
-  .links {
+  .speedscene::before {
+    content: "";
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+    inset: 6% 4% 10%;
+    border: 1.6px dashed rgba(19, 23, 34, 0.26);
+    border-radius: 50%;
   }
 
-  .links path {
-    stroke: rgba(19, 23, 34, 0.28);
-    stroke-width: 1.6;
-    stroke-linecap: round;
-    stroke-dasharray: 3 5;
-  }
-
-  .hub {
-    position: absolute;
-    left: 2px;
-    bottom: 2px;
+  .speedscene .hub {
+    position: relative;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .hub .tilt {
-    transform: rotate(16deg);
-    transform-origin: 70% 80%;
+  .speedscene .hub .tilt {
+    transform: rotate(-6deg);
+    transform-origin: 50% 80%;
   }
 
-  .app {
+  .chip {
     position: absolute;
-    z-index: 1;
-    width: 38px;
-    height: 38px;
     background: #fff;
-    border-radius: 11px;
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: rgba(19, 23, 34, 0.66);
+    white-space: nowrap;
     box-shadow: 0 6px 14px rgba(19, 23, 34, 0.12);
-    display: grid;
-    place-items: center;
   }
 
-  .app :global(svg) {
-    width: 20px;
-    height: 20px;
+  .chip b {
+    color: var(--ink);
+    font-weight: 800;
+    margin-right: 3px;
   }
 
-  .a-slack {
-    top: 8px;
-    left: 98px;
+  .ch-a {
+    top: 4px;
+    left: -6px;
     animation: drift-slack 6.4s ease-in-out infinite;
   }
 
-  .a-mail {
-    top: 42px;
-    left: 138px;
+  .ch-b {
+    top: 34px;
+    right: -14px;
     animation: drift-mail 7.2s ease-in-out infinite 0.35s;
   }
 
-  .a-notion {
-    top: 96px;
-    left: 108px;
+  .ch-c {
+    bottom: 16px;
+    right: -4px;
     animation: drift-notion 8s ease-in-out infinite 0.8s;
   }
 
