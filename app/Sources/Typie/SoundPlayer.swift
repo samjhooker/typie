@@ -20,7 +20,7 @@ enum SoundPlayer {
     }
 
     private static func makePlayer(_ name: String) -> AVAudioPlayer? {
-        guard let url = Bundle.module.url(forResource: name, withExtension: "wav", subdirectory: nil) else {
+        guard let url = Bundle.typieResources?.url(forResource: name, withExtension: "wav", subdirectory: nil) else {
             NSLog("typie: sound not found: \(name)")
             return nil
         }

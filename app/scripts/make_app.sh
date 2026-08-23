@@ -13,10 +13,18 @@ cp ".build/release/typie" "$APP/Contents/MacOS/typie"
 
 cp Sources/Typie/Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
-# SPM resource bundle (fonts etc.)
-if [ -d ".build/release/Typie_Typie.bundle" ]; then
-  cp -R ".build/release/Typie_Typie.bundle" "$APP/Contents/Resources/"
-fi
+# SPM resource bundles (fonts, sounds) go in Contents/Resources ONLY.
+# Never place them in the .app root: Swift's generated Bundle.module looks
+# there, but codesign refuses to seal bundle-root contents ("unsealed
+# contents present in the bundle root"), so the app could never be signed.
+# Typie reads them via Bundle.typieResources instead (see ResourceBundle.swift).
+for dir in .build/release .build/arm64-apple-macosx/release; do
+  for b in "$dir"/*.bundle(N); do
+    name="${b:t}"
+    mkdir -p "$APP/Contents/Resources/$name"
+    ditto "$b" "$APP/Contents/Resources/$name"
+  done
+done
 
 cat > "$APP/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,13 +65,14 @@ PLIST
 
 # Prefer the stable "typie-dev" identity when available: TCC permissions
 # (Accessibility, mic) survive rebuilds with a real cert, unlike ad-hoc.
+# --deep so nested resource bundles get sealed into the signature too
 if security find-identity -v -p codesigning | grep -q 'typie-dev'; then
     echo "→ signing with stable identity 'typie-dev' (permissions persist)"
-    codesign --force --sign "typie-dev" "$APP"
+    codesign --force --deep --sign "typie-dev" "$APP"
 else
     echo "⚠ signing ad-hoc — permissions will reset on every rebuild!"
     echo "  run scripts/create_signing_cert.sh once to fix this"
-    codesign --force --sign - "$APP"
+    codesign --force --deep --sign - "$APP"
 fi
 
 echo "built $APP"
