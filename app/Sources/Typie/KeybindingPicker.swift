@@ -26,7 +26,7 @@ struct KeybindingPicker: View {
                     .font(Theme.display(15))
                     .foregroundStyle(recording ? Theme.hotpink : Theme.green)
                 Text(recording ? "esc to cancel" : "click the key to remap it")
-                    .font(Theme.hand(18))
+                    .font(Theme.body(12))
                     .foregroundStyle(Theme.green.opacity(0.6))
             }
         }

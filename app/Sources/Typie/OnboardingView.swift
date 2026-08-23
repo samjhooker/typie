@@ -35,7 +35,7 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             footer
         }
-        .background(Theme.paper)
+        .background(Theme.cream)
         .frame(width: 680, height: 560)
         .onAppear { startPolling() }
         .onDisappear { pollTimer?.invalidate() }
@@ -44,12 +44,12 @@ struct OnboardingView: View {
     // MARK: chrome
 
     private var header: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             RobotIcon(mood: robotMood)
                 .frame(width: 30, height: 29)
             Text("typie.")
                 .font(Theme.display(24, .heavy))
-                .foregroundStyle(Theme.hotpink)
+                .foregroundStyle(Theme.ink)
             Spacer()
             Theme.kicker("step \(step.rawValue + 1) of 4")
         }
@@ -61,7 +61,7 @@ struct OnboardingView: View {
         HStack {
             if step == .welcome || (step == .permissions && allPermissionsDone) || step == .model {
                 Text(stepHint)
-                    .font(Theme.hand(22))
+                    .font(Theme.body(13))
                     .foregroundStyle(Theme.green.opacity(0.65))
             }
             Spacer()
@@ -141,7 +141,7 @@ struct OnboardingView: View {
     // MARK: steps
 
     private var welcomeStep: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 12) {
             Spacer()
             RobotIcon(mood: .idle)
                 .frame(width: 52, height: 50)
@@ -234,7 +234,7 @@ struct OnboardingView: View {
                 ProgressBar(fraction: 0.98)
                     .frame(width: 340)
                 Text("waking it up…")
-                    .font(Theme.hand(20))
+                    .font(Theme.body(14, .medium))
                     .foregroundStyle(Theme.green.opacity(0.7))
             case .ready:
                 Label("already installed — from here on, everything happens offline.", systemImage: "wifi.slash")
@@ -263,7 +263,7 @@ struct OnboardingView: View {
             case .notDownloaded:
                 if downloadApproved {
                     Text("getting ready…")
-                        .font(Theme.hand(20))
+                        .font(Theme.body(14, .medium))
                         .foregroundStyle(Theme.green.opacity(0.7))
                 } else {
                     VStack(spacing: 16) {
@@ -442,7 +442,7 @@ struct PracticeBox: View {
                         .foregroundStyle(Theme.green.opacity(0.6))
                 default:
                     Text(focused ? "hold or tap \(hotkeyLabel), then speak" : "words land here automatically — just talk")
-                        .font(Theme.hand(17))
+                        .font(Theme.body(13))
                         .foregroundStyle(Theme.green.opacity(focused ? 0.75 : 0.5))
                 }
             }
@@ -523,7 +523,7 @@ struct TriggerPicker: View {
             .frame(width: 230)
 
             Text(selection.hint)
-                .font(Theme.hand(18))
+                .font(Theme.body(13))
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(Theme.green.opacity(0.6))
         }

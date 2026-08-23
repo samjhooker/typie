@@ -34,7 +34,7 @@ struct AppContentView: View {
                     .frame(width: 22, height: 21)
                 Text("typie.")
                     .font(Theme.display(19, .heavy))
-                    .foregroundStyle(Theme.hotpink)
+                    .foregroundStyle(Theme.ink)
                 Spacer()
                 PaneSwitcher(selection: $state.pane)
             }
@@ -49,7 +49,7 @@ struct AppContentView: View {
             case .history: HistoryPane()
             }
         }
-        .background(Theme.paper)
+        .background(Theme.cream)
         .frame(width: 520, height: 580)
     }
 }
@@ -250,7 +250,7 @@ struct StatsPane: View {
                                      label: "avg response", value: avgLatency)
                         }
                         Text("counted locally, one word at a time — typing estimate at \(Int(StatsStore.standardWPM)) wpm")
-                            .font(Theme.hand(19))
+                            .font(Theme.body(12))
                             .foregroundStyle(Theme.green.opacity(0.6))
                             .frame(maxWidth: .infinity)
                             .padding(.top, 4)
