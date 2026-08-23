@@ -48,7 +48,7 @@
     </div>
 
     <div class="firstlaunch" use:reveal={{ delay: 240 }}>
-      <p class="mono">first launch only — one-time, 30 seconds</p>
+      <p class="mono">first launch only · one-time, 30 seconds</p>
       <ol>
         <li>open the dmg, drag <b>typie</b> into applications</li>
         <li>system settings → privacy &amp; security → click <b>“open anyway”</b></li>

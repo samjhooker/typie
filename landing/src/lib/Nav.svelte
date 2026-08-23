@@ -1,16 +1,8 @@
 <script>
   import Logo from './Logo.svelte';
   import DownloadCta from './DownloadCta.svelte';
-  import { app } from './state.svelte.js';
 
   let scrolled = $state(false);
-
-  const status = $derived(
-    app.mood === 'listening' ? 'rec'
-    : app.mood === 'typing' ? 'typing'
-    : app.mood === 'done' && app.lastMs != null ? `${app.lastMs}ms`
-    : ''
-  );
 </script>
 
 <svelte:window onscroll={() => (scrolled = window.scrollY > 24)} />
@@ -20,10 +12,6 @@
     <a href="#top" class="word" aria-label="Typie home">
       <Logo size={24} />
     </a>
-
-    {#if status}
-      <span class="live mono"><i></i>{status}</span>
-    {/if}
 
     <nav class="links">
       <a href="#how">How</a>
@@ -88,28 +76,6 @@
     align-items: center;
     min-width: 0;
     flex-shrink: 0;
-  }
-
-  .live {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--hotpink);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    animation: stamp 0.35s var(--spring);
-  }
-
-  .live i {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--hotpink);
-    animation: pulse 1s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    50% { opacity: 0.3; }
   }
 
   .links {

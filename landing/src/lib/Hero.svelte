@@ -3,17 +3,41 @@
   import DownloadCta from './DownloadCta.svelte';
   import { app } from './state.svelte.js';
   import { hold } from './hold.svelte.js';
+  import { intro } from './intro.svelte.js';
 
   let keyDown = $state(false);
   let interacted = $state(false);
+  let keyEl;
 
   function tap() {
     interacted = true;
+    intro.active = false;
     keyDown = true;
     setTimeout(() => (keyDown = false), 200);
     /* starts live dictation; releasing anywhere stops it (HoldStage listens globally) */
     hold.press();
   }
+
+  /* intro veil: grayscale page + pink glow on the key, then color returns */
+  $effect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      intro.active = false;
+      return;
+    }
+    const measure = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (keyEl) {
+          const r = keyEl.getBoundingClientRect();
+          intro.glow = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        }
+      });
+    });
+    const fade = setTimeout(() => (intro.active = false), 1700);
+    return () => {
+      cancelAnimationFrame(measure);
+      clearTimeout(fade);
+    };
+  });
 
   /* if the visitor hasn't tried it, demo it for them once */
   $effect(() => {
@@ -40,6 +64,7 @@
       <h1>
         Press <span class="keywrap">
           <button
+            bind:this={keyEl}
             class="key"
             class:down={keyDown || app.mood === 'listening'}
             class:pulse={!interacted}
@@ -49,9 +74,9 @@
           {#if !interacted}
             <span class="tag hand" aria-hidden="true">hold me!</span>
           {/if}
-        </span><span class="dot">.</span><br />
-        <span class="talk">Talk.</span><br />
-        <span class="typed">Typed.</span>
+        </span>
+        <span class="talk">Talk</span><br />
+        <span class="typed">Typed</span>
       </h1>
 
       <div class="ctas">
@@ -70,8 +95,6 @@
 
   <p class="lede">
     Super accurate transcription. Fully offline. Almost instant.
-    Hold option anywhere on your Mac, say the thing, and your words
-    land right where your cursor is — <strong>never on a server</strong>.
   </p>
 </section>
 
@@ -158,13 +181,22 @@
   }
 
   .key.pulse {
-    animation: halo 1.8s ease-out infinite;
+    position: relative;
+    animation: none;
   }
 
-  @keyframes halo {
-    0% { box-shadow: 0 0.13em 0 #0b1f1b, 0 0 0 0 rgba(252, 86, 129, 0.55); }
-    70% { box-shadow: 0 0.13em 0 #0b1f1b, 0 0 0 0.45em rgba(252, 86, 129, 0); }
-    100% { box-shadow: 0 0.13em 0 #0b1f1b, 0 0 0 0 rgba(252, 86, 129, 0); }
+  .key.pulse::after {
+    content: '';
+    position: absolute;
+    inset: -6px -10px;
+    border-radius: inherit;
+    border: 3px solid rgba(252, 86, 129, 0.65);
+    animation: haloring 1.5s ease-out infinite;
+  }
+
+  @keyframes haloring {
+    0% { opacity: 0.9; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.35); }
   }
 
   .key.down {

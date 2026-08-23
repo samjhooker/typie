@@ -79,7 +79,7 @@
       name: 'VS Code',
       brand: vscode.svg,
       icon: '🧑‍💻',
-      title: 'main.ts — typie',
+      title: 'main.ts · typie',
       meta: 'Visual Studio Code',
       side: [['main.ts'], ['index.ts'], ['styles.css'], ['README.md']],
       text: 'ship it, ship it now'
