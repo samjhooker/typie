@@ -1,4 +1,4 @@
-# typie
+# [typie.cc](https://typie.cc/)
 
 > hold a key. say the thing. it's typed.
 > a native macos dictation engine that answers in under 100 ms and never touches the internet.
@@ -7,6 +7,8 @@
 
 
 yes, it's just another transcription app. Powered locally by [Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3)
+
+https://typie.cc/
 
 most existing transcription apps share a common design decision: your voice goes to their cloud, and you pay rent on your own voice. typie makes the opposite bet - **all inference local, zero backend, sub-100 ms end-to-end** - and turns that constraint into the product.
 
