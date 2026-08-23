@@ -34,7 +34,7 @@
   .bot {
     line-height: 0;
     color: var(--hotpink);
-    animation: botwave 4s ease-in-out infinite;
+    animation: botwave 4s var(--ease-inout) infinite;
   }
 
   @keyframes botwave {

@@ -37,16 +37,16 @@
     padding-block: 18px;
     background: transparent;
     transition:
-      background 0.3s ease,
-      box-shadow 0.3s ease,
-      padding 0.3s ease;
+      background 0.35s var(--ease-out),
+      box-shadow 0.35s var(--ease-out),
+      padding 0.35s var(--ease-out);
   }
 
   header.scrolled {
     padding-block: 10px;
-    background: color-mix(in srgb, var(--page) 90%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: color-mix(in srgb, var(--page) 88%, transparent);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
     box-shadow: 0 1px 0 rgba(19, 23, 34, 0.08);
   }
 
@@ -69,12 +69,34 @@
   .links a {
     position: relative;
     opacity: 0.82;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition:
+      opacity 0.3s var(--ease-out),
+      color 0.3s var(--ease-out);
+  }
+
+  /* sliding underline: sweeps in from the left, exits right */
+  .links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s var(--snap);
   }
 
   .links a:hover {
     opacity: 1;
     color: var(--hotpink);
+  }
+
+  .links a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 
   .price-link {

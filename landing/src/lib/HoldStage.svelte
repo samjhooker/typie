@@ -473,7 +473,7 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
       0 4px 0 #1a0a32;
-    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+    transition: transform 0.1s var(--snap), box-shadow 0.1s var(--snap), background 0.12s var(--ease-out);
     user-select: none;
     -webkit-user-select: none;
   }
@@ -495,7 +495,7 @@
 
   /* idle nudge: the key taps itself so people get it */
   .minikey:not(.down) {
-    animation: nudge 3.4s ease-in-out infinite;
+    animation: nudge 3.4s var(--ease-inout) infinite;
   }
 
   @keyframes nudge {
@@ -524,7 +524,7 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
       0 5px 0 #1a0a32;
-    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+    transition: transform 0.1s var(--snap), box-shadow 0.1s var(--snap), background 0.12s var(--ease-out);
     cursor: pointer;
   }
 
@@ -590,7 +590,7 @@
     box-shadow:
       0 40px 90px rgba(3, 43, 37, 0.22),
       0 4px 14px rgba(3, 43, 37, 0.08);
-    transition: box-shadow 0.3s ease, transform 0.3s var(--spring);
+    transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--spring);
   }
 
   .window.listening {
@@ -629,7 +629,7 @@
       radial-gradient(120% 110% at 90% 10%, rgba(140, 185, 255, 0.95), transparent 58%),
       radial-gradient(110% 85% at 55% 105%, rgba(255, 158, 216, 0.65), transparent 60%),
       linear-gradient(160deg, #cff2b4 0%, #bcc9ff 52%, #ffd0ec 100%);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s var(--ease-out);
   }
 
   .mac.listening {
@@ -849,7 +849,7 @@
     box-shadow:
       0 30px 60px rgba(19, 23, 34, 0.22),
       0 2px 8px rgba(19, 23, 34, 0.1);
-    transition: box-shadow 0.3s ease, transform 0.3s var(--spring);
+    transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--spring);
   }
 
   .window.done {
@@ -1531,7 +1531,7 @@
     height: 8px;
     border-radius: 50%;
     background: #9aa0a6;
-    animation: tdot 1.1s ease-in-out infinite;
+    animation: tdot 1.1s var(--ease-inout) infinite;
   }
 
   .typing i:nth-child(2) { animation-delay: 0.15s; }

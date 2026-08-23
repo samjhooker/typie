@@ -89,7 +89,10 @@
     <article class="card c-mint" use:reveal={{ delay: 80 }}>
       <h3>Hold. Speak. Release.</h3>
       <div class="body">
-        <p>One shortcut. That’s the whole interface. Hold ⌥, say the thing, let go, and you’re back in the sentence.</p>
+        <div class="copy">
+          <p>One shortcut. That’s the whole interface. Hold ⌥, say the thing, let go, and you’re back in the sentence.</p>
+          <p>And if you wanna go real crazy, you can even remap the key.</p>
+        </div>
         <div class="art flow-art">
           <img
             class="flow-key"
@@ -117,8 +120,79 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(200px, auto);
     gap: clamp(20px, 2.8vw, 32px);
+  }
+
+  /* bento law: one cell dominates — wide, not comedically tall */
+  .c-lavender {
+    grid-column: span 2;
+  }
+
+  .c-lavender h3 {
+    font-size: clamp(24px, 2.6vw, 34px);
+  }
+
+  .c-lavender p {
+    max-width: 38ch;
+    font-size: 17px;
+  }
+
+  .c-lavender .wave-icon {
+    width: clamp(120px, 11vw, 160px);
+  }
+
+  .c-lavender .bot :global(svg) {
+    width: 108px;
+    height: 108px;
+  }
+
+  /* 1x1 cells: stack text over art so copy keeps full width at every breakpoint */
+  .c-blue .body,
+  .c-cream .body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .c-blue p,
+  .c-cream p {
+    max-width: none;
+  }
+
+  .c-blue .art,
+  .c-cream .art {
+    align-self: center;
+  }
+
+  /* mint fills the second row as the wide band */
+  .c-mint {
+    grid-column: span 2;
+  }
+
+  .c-mint .body {
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .c-mint .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .c-mint p {
+    max-width: 44ch;
+  }
+
+  .c-mint .art {
+    align-self: center;
+  }
+
+  .c-mint .flow-key {
+    width: clamp(110px, 11vw, 150px);
   }
 
   .card {
@@ -131,7 +205,7 @@
     min-height: 0;
     transition:
       transform 0.35s var(--spring),
-      box-shadow 0.3s ease;
+      box-shadow 0.3s var(--ease-out);
   }
 
   .card:hover {
@@ -209,7 +283,7 @@
     width: clamp(92px, 9vw, 124px);
     height: auto;
     filter: drop-shadow(0 8px 6px rgba(252, 86, 129, 0.28));
-    animation: wavebob 4.2s ease-in-out infinite;
+    animation: wavebob 4.2s var(--ease-inout) infinite;
   }
 
   .bot {
@@ -249,7 +323,7 @@
 
   /* this card's robot should nod, not boogie */
   .botpair .bot :global(.listening svg) {
-    animation: talksoft 2.8s ease-in-out infinite;
+    animation: talksoft 2.8s var(--ease-inout) infinite;
   }
 
   .botpair .bot :global(.listening .ear-l),
@@ -296,7 +370,7 @@
     font-size: 16px;
     line-height: 1;
     pointer-events: none;
-    animation: twinkle 2.4s ease-in-out infinite;
+    animation: twinkle 2.4s var(--ease-inout) infinite;
   }
 
   .s1 { top: -8px; right: -6px; transform: rotate(12deg); }
@@ -360,19 +434,19 @@
   .ch-a {
     top: 4px;
     left: -6px;
-    animation: drift-slack 6.4s ease-in-out infinite;
+    animation: drift-slack 6.4s var(--ease-inout) infinite;
   }
 
   .ch-b {
     top: 34px;
     right: -14px;
-    animation: drift-mail 7.2s ease-in-out infinite 0.35s;
+    animation: drift-mail 7.2s var(--ease-inout) infinite 0.35s;
   }
 
   .ch-c {
     bottom: 16px;
     right: -4px;
-    animation: drift-notion 8s ease-in-out infinite 0.8s;
+    animation: drift-notion 8s var(--ease-inout) infinite 0.8s;
   }
 
   @keyframes drift-slack {
@@ -433,9 +507,31 @@
     filter: drop-shadow(0 16px 14px rgba(19, 23, 34, 0.22));
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1079px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: minmax(180px, auto);
+    }
+
+    .c-lavender {
+      grid-column: span 2;
+      grid-row: auto;
+    }
+
+    .c-mint {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 700px) {
     .grid {
       grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+    }
+
+    .c-lavender,
+    .c-mint {
+      grid-column: auto;
     }
   }
 

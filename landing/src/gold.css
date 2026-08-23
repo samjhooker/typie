@@ -1,0 +1,260 @@
+/* ============================================================
+   gold.css — VibeCurb visual-redesign override layer
+   Loaded LAST in main.js. Delete this one import to fully revert.
+   Contains: tokens · typography · components · atmosphere · motion.
+   No JS was harmed in the making of this file.
+   ============================================================ */
+
+/* ── Layer 1: Tokens ─────────────────────────────────────── */
+
+:root {
+  /* Display font: Inter → Bricolage Grotesque.
+     WHY: Inter-as-display is the typographic equivalent of serving
+     fine dining on paper plates. Bricolage's optical quirks give
+     headlines a voice — which is literally the product. */
+  --display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+
+  /* Warm text scale — kills the #2c3342 / #131722 inconsistency */
+  --text-2: rgba(19, 23, 34, 0.76);
+  --text-3: rgba(19, 23, 34, 0.54);
+
+  /* Extra snap curve for tiny interactive moments */
+  --snap: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Symmetric curve for ambient infinite loops */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ── Tier 1: true spring physics via linear() ──
+     mass=1, stiffness=400, damping=30. Explosive start,
+     ~2% overshoot, soft settle. The iOS sheet-present curve. */
+  --spring-snappy: linear(
+    0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%,
+    0.938 16.7%, 1.017 19.4%, 1.067 22.5%, 1.089 26.0%,
+    1.079 30.3%, 1.049 36.0%, 1.024 42.6%, 1.011 50.3%,
+    1.004 59.2%, 1.001 69.3%, 1
+  );
+
+  /* mass=1, stiffness=200, damping=24. Gentle acceleration,
+     ~5% overshoot, two-phase settle. For state changes. */
+  --spring-smooth: linear(
+    0, 0.004, 0.016 2.3%, 0.063 4.7%, 0.141 7.2%,
+    0.25 9.9%, 0.601 16.5%, 0.815 21.0%, 0.929 25.2%,
+    0.987 29.0%, 1.025 33.5%, 1.042 38.0%, 1.04 43.5%,
+    1.027 50.0%, 1.013 57.5%, 1.005 67.0%, 1.001 79.0%, 1
+  );
+}
+
+html {
+  background: var(--page);
+}
+
+/* ── Layer 2: Typography ─────────────────────────────────── */
+
+/* Headings inherit --display via app.css; tighten the globals here.
+   Scoped component rules win on specificity where they exist — these
+   are the floor, not the ceiling. */
+h1, h2, h3 {
+  text-wrap: balance;
+  line-height: 1.02;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.subhead,
+.lede {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+/* ── Layer 5: Components ─────────────────────────────────── */
+
+/* Buttons: physical lift-and-press, spring curve, warm shadows */
+.btn {
+  transition:
+    transform 0.35s var(--snap),
+    background-color 0.25s var(--ease-out),
+    box-shadow 0.35s var(--snap),
+    color 0.25s var(--ease-out);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+  transition-duration: 0.12s;
+}
+
+.btn-green {
+  box-shadow: 0 2px 6px rgba(19, 23, 34, 0.14);
+}
+
+.btn-green:hover {
+  box-shadow: 0 10px 26px rgba(19, 23, 34, 0.22);
+}
+
+.btn-green:active {
+  box-shadow: 0 3px 8px rgba(19, 23, 34, 0.18);
+}
+
+.btn-butter:hover {
+  box-shadow: 0 10px 24px rgba(229, 158, 18, 0.3);
+}
+
+.btn-ghost:hover {
+  transform: translateY(-2px);
+}
+
+/* Cards everywhere: consistent warm border + hover lift language.
+   (Scoped rules set per-section colors; these set the physics.) */
+
+/* Focus visibility — keyboard users deserve designed focus */
+:focus-visible {
+  outline: 2.5px solid var(--hotpink);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--hotpink);
+  color: #fffdf7;
+}
+
+/* ── Layer 6: Atmosphere ─────────────────────────────────── */
+
+/* Soft warm glows behind the opening viewport — felt, not seen */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 42% at 18% -4%, rgba(255, 218, 138, 0.2) 0%, transparent 62%),
+    radial-gradient(ellipse 52% 38% at 88% 2%, rgba(252, 86, 129, 0.08) 0%, transparent 58%);
+}
+
+/* Film grain — the anti-flat. Fixed, inert, invisible until gone. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483647;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Layer 7: Motion ─────────────────────────────────────── */
+
+/* Entry: staggered fade-up-deblur on a real spring.
+   Apply with class="enter-up" style="--stagger: 120ms" */
+.enter-up {
+  animation: enter-up 0.8s var(--spring-snappy) both;
+  animation-delay: var(--stagger, 0ms);
+}
+
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Scroll reveals: upgraded to spring physics + deblur.
+   reveal.js adds .visible via IntersectionObserver (untouched). */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(6px);
+  transition:
+    opacity 0.7s var(--spring-snappy),
+    transform 0.7s var(--spring-snappy),
+    filter 0.7s var(--spring-snappy);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* ── Nav entry choreography ──────────────────────────────── */
+
+header {
+  animation: nav-in 0.8s var(--spring-snappy) both;
+}
+
+@keyframes nav-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* links stagger left-to-right after the bar lands */
+.links a {
+  animation: nav-link-in 0.6s var(--spring-snappy) both;
+}
+
+.links a:nth-child(1) { animation-delay: 0.25s; }
+.links a:nth-child(2) { animation-delay: 0.33s; }
+.links a:nth-child(3) { animation-delay: 0.41s; }
+.links a:nth-child(4) { animation-delay: 0.49s; }
+
+@keyframes nav-link-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* logo: quiet scale on hover */
+header .word {
+  display: inline-block;
+  transition: transform 0.35s var(--snap);
+}
+
+header .word:hover {
+  transform: scale(1.06);
+}
+
+/* Section rhythm — chapters, not paragraphs.
+   Hero overrides its own padding (scoped), everyone else breathes. */
+.field {
+  padding: clamp(72px, 10vh, 124px) 0;
+}
+
+/* ── Signature: ripple click dot (spawned by ripple.js) ──── */
+
+.ripple-dot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple-pop 0.65s var(--ease-out) forwards;
+}
+
+@keyframes ripple-pop {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

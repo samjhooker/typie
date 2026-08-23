@@ -116,7 +116,7 @@
     line-height: 0;
     color: var(--hotpink);
     transform: rotate(10deg);
-    animation: peeksneak 5s ease-in-out infinite;
+    animation: peeksneak 5s var(--ease-inout) infinite;
   }
 
   @keyframes peeksneak {
@@ -140,7 +140,7 @@
     gap: 1px;
     transition:
       transform 0.35s var(--spring),
-      box-shadow 0.3s ease;
+      box-shadow 0.3s var(--ease-out);
   }
 
   .card:hover {

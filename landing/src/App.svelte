@@ -4,6 +4,7 @@
   import AppsRow from './lib/AppsRow.svelte';
   import FeatureCards from './lib/FeatureCards.svelte';
   import Languages from './lib/Languages.svelte';
+  import MetricBar from './lib/MetricBar.svelte';
   import Testimonials from './lib/Testimonials.svelte';
   import CtaBanner from './lib/CtaBanner.svelte';
   import Faq from './lib/Faq.svelte';
@@ -39,9 +40,10 @@
 
   <main>
     <Hero />
-    <AppsRow />
     <FeatureCards />
+    <AppsRow />
     <Languages />
+    <MetricBar />
     <Testimonials />
     <CtaBanner />
     <Faq />

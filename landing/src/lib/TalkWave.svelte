@@ -25,7 +25,7 @@
     border-radius: 999px;
     background: currentColor;
     transform-origin: center;
-    animation: talk 1.05s ease-in-out infinite;
+    animation: talk 1.05s var(--ease-inout) infinite;
     animation-delay: calc(var(--i) * -0.12s);
     animation-duration: calc(0.68s + (var(--i) * 0.07s));
   }

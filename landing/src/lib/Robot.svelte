@@ -89,7 +89,7 @@
 
   /* idle: gentle float */
   .idle svg {
-    animation: floaty 5s ease-in-out infinite;
+    animation: floaty 5s var(--ease-inout) infinite;
   }
 
   @keyframes floaty {
@@ -99,7 +99,7 @@
 
   /* listening / typing: excited wiggle */
   .listening svg {
-    animation: boogie 0.45s ease-in-out infinite alternate;
+    animation: boogie 0.45s var(--ease-inout) infinite alternate;
   }
 
   @keyframes boogie {
@@ -109,7 +109,7 @@
 
   /* thinking: slow sway */
   .thinking svg {
-    animation: sway 1.8s ease-in-out infinite;
+    animation: sway 1.8s var(--ease-inout) infinite;
   }
 
   @keyframes sway {
@@ -150,7 +150,7 @@
     transform-box: fill-box;
     transform-origin: center;
     translate: var(--ex, 0px) var(--ey, 0px);
-    transition: translate 0.18s ease-out;
+    transition: translate 0.18s var(--snap);
     animation: blink 4.2s infinite;
   }
 

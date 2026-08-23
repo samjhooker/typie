@@ -107,6 +107,11 @@
   .row {
     border-bottom: 1px solid rgba(19, 23, 34, 0.12);
     padding: 6px 4px;
+    transition: background-color 0.3s var(--ease-out);
+  }
+
+  .row:hover {
+    background: rgba(252, 86, 129, 0.04);
   }
 
   .row:first-child {
@@ -135,8 +140,10 @@
     transition: transform 0.3s var(--spring);
   }
 
+  /* glyph swaps + to −; a spring scale pulse sells the toggle
+     without rotating the minus into an unreadable bar */
   .row.open .plus {
-    transform: rotate(90deg);
+    transform: scale(1.25);
   }
 
   p {
@@ -145,6 +152,19 @@
     color: rgba(19, 23, 34, 0.72);
     font-size: 15px;
     line-height: 1.6;
+    /* spring settle on expand — answers arrive, don't blink in */
+    animation: faq-in 0.5s var(--spring-snappy);
+  }
+
+  @keyframes faq-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @media (max-width: 800px) {

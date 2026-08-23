@@ -144,7 +144,7 @@
     place-items: center;
     font-size: 18px;
     color: var(--green-deep);
-    transition: transform 0.3s var(--spring), box-shadow 0.3s ease;
+    transition: transform 0.3s var(--spring), box-shadow 0.3s var(--ease-out);
     overflow: visible;
   }
 
@@ -283,7 +283,7 @@
     border-radius: 999px;
     background: rgba(130, 237, 166, 0.3);
     color: var(--green-deep);
-    transition: background 0.2s ease;
+    transition: background 0.2s var(--ease-out);
   }
 
   .quick button:hover:not(:disabled) {
@@ -307,7 +307,7 @@
     color: var(--ink);
     background: #fff;
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s var(--ease-out);
   }
 
   input:focus {
@@ -321,7 +321,7 @@
     background: var(--green);
     color: var(--cream);
     font-size: 15px;
-    transition: background 0.2s ease, transform 0.2s var(--spring);
+    transition: background 0.2s var(--ease-out), transform 0.2s var(--spring);
   }
 
   .send:hover:not(:disabled) {

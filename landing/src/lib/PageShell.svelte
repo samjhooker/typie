@@ -62,7 +62,7 @@
     font-weight: 500;
     color: var(--ink);
     opacity: 0.72;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: opacity 0.2s var(--ease-out), color 0.2s var(--ease-out);
   }
 
   .back:hover {

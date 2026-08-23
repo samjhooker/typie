@@ -2,6 +2,7 @@
   import HoldStage from './HoldStage.svelte';
   import { app } from './state.svelte.js';
   import { hold } from './hold.svelte.js';
+  import { magnetic } from './magnetic.js';
 
   let keyDown = $state(false);
   let interacted = $state(false);
@@ -109,20 +110,23 @@
 >
   <div class="container grid">
     <div class="copy">
-      <h1>
+      <h1 class="kinetic">
         <span class="press">Just <span class="talk">talk.</span></span>
         <span class="typed">It’s typed.</span>
       </h1>
 
-      <p class="value">
+      <p
+        class="value enter-up"
+        style="--stagger: 180ms"
+      >
         Stupidly good voice dictation for macOS. Fully offline, almost
         instant, works in any app, free forever.
       </p>
 
-      <div class="holdline">
+      <div class="holdline enter-up" style="--stagger: 320ms">
         <p>
           try it right here: hold
-          <span class="keywrap">
+          <span class="keywrap" use:magnetic>
             <span class="talkpulse" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="rings" aria-hidden="true"><i></i><i></i><i></i></span>
             <button
@@ -249,6 +253,28 @@
 
   .press {
     display: block;
+    animation: line-up 0.9s var(--spring-snappy) both;
+  }
+
+  .typed {
+    display: block;
+    animation: line-up 0.9s var(--spring-snappy) 0.14s both;
+  }
+
+  /* masked line reveal: each line rises out of its own clip window */
+  @keyframes line-up {
+    from {
+      opacity: 0;
+      transform: translateY(55%);
+      clip-path: inset(-10% 0 58% 0);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      clip-path: inset(-10% 0 -12% 0);
+      filter: blur(0);
+    }
   }
 
   .talk { color: var(--periwinkle); }
@@ -297,7 +323,7 @@
     box-shadow:
       0 3px 0 #050505,
       inset 0 1px 0 rgba(255, 255, 255, 0.14);
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+    transition: transform 0.12s var(--snap), box-shadow 0.12s var(--snap), background 0.15s var(--ease-out);
     cursor: pointer;
     user-select: none;
     position: relative;
@@ -392,6 +418,7 @@
   .demo-col {
     display: block;
     min-width: 0;
+    animation: enter-up 0.9s var(--spring-snappy) 0.4s both;
   }
 
   .demo {
@@ -430,7 +457,7 @@
     );
     filter: blur(6px);
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.35s var(--ease-out);
   }
 
   .macglow i {
@@ -469,7 +496,7 @@
     z-index: 1;
     padding-bottom: 28px;
     filter: drop-shadow(0 28px 52px rgba(19, 23, 34, 0.22));
-    transition: filter 0.45s ease;
+    transition: filter 0.45s var(--ease-out);
   }
 
   .hero.live .laptop {

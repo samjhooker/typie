@@ -105,6 +105,18 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    transition:
+      transform 0.45s var(--spring-snappy),
+      box-shadow 0.45s var(--spring-snappy),
+      border-color 0.3s var(--ease-out);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 16px 36px rgba(19, 23, 34, 0.09),
+      0 3px 10px rgba(19, 23, 34, 0.04);
+    border-color: rgba(19, 23, 34, 0.13);
   }
 
   /* fallback when no inline bg is set */
@@ -157,7 +169,7 @@
     top: -22px;
     line-height: 0;
     z-index: 2;
-    animation: camfloat 4s ease-in-out infinite;
+    animation: camfloat 4s var(--ease-inout) infinite;
   }
 
   .left {

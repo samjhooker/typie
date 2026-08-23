@@ -1,6 +1,7 @@
 <script>
   import Logo from './Logo.svelte';
   import Robot from './Robot.svelte';
+  import { reveal } from './reveal.js';
 
   const cols = [
     {
@@ -44,7 +45,7 @@
 
   <div class="body">
     <div class="container grid">
-      <div class="brand">
+      <div class="brand" use:reveal>
         <a href="/" aria-label="Typie home">
           <Logo size={24} color="#fffdf7" />
         </a>
@@ -52,8 +53,8 @@
       </div>
 
       <nav class="cols" aria-label="footer">
-        {#each cols as col}
-          <div class="col">
+        {#each cols as col, ci}
+          <div class="col" use:reveal={{ delay: 80 + ci * 80 }}>
             <h3>{col.h}</h3>
             <ul>
               {#each col.links as link}
@@ -64,7 +65,7 @@
         {/each}
       </nav>
 
-      <div class="social" aria-label="social links">
+      <div class="social" aria-label="social links" use:reveal={{ delay: 340 }}>
         <a href="https://www.linkedin.com/in/samuelhooker/" aria-label="Sam Hooker on LinkedIn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0Z"/></svg>
         </a>
@@ -142,12 +143,35 @@
 
   ul a {
     opacity: 0.78;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    position: relative;
+    transition:
+      opacity 0.3s var(--ease-out),
+      color 0.3s var(--ease-out);
+  }
+
+  /* sliding underline, same language as the nav */
+  ul a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s var(--snap);
   }
 
   ul a:hover {
     opacity: 1;
     color: var(--butter);
+  }
+
+  ul a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 
   .social {
@@ -158,7 +182,7 @@
 
   .social a {
     opacity: 0.8;
-    transition: opacity 0.2s ease, transform 0.2s var(--spring);
+    transition: opacity 0.2s var(--ease-out), transform 0.2s var(--spring);
     line-height: 0;
   }
 
