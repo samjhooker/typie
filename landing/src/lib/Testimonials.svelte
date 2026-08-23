@@ -1,27 +1,28 @@
 <script>
   import { reveal } from './reveal.js';
+  import AssetSlot from './AssetSlot.svelte';
   import Robot from './Robot.svelte';
 
   const quotes = [
     {
       q: '“I genuinely forgot I was dictating.”',
       who: 'Designer',
-      tone: '#c9d8f5'
+      tone: '#c5daff'
     },
     {
       q: '“It’s basically a keyboard shortcut for my brain.”',
       who: 'Founder',
-      tone: '#f5d9c2'
+      tone: '#ffe0a8'
     },
     {
       q: '“I use it in Slack, Mail, everywhere.”',
       who: 'Engineer',
-      tone: '#d3ead7'
+      tone: '#ffd0e6'
     }
   ];
 </script>
 
-<section class="testimonials field">
+<section class="testimonials field pop-c">
   <div class="container">
     <h2 class="subhead" use:reveal>
       Loved by people who
@@ -35,8 +36,16 @@
     <div class="grid">
       {#each quotes as t, i}
         <figure class="card" use:reveal={{ delay: i * 90 }}>
+          {#if i === 0}
+            <div class="cameo left" aria-hidden="true">
+              <span class="cam-bubble hand">we definitely<br />real people</span>
+              <Robot size={44} mood="thinking" />
+            </div>
+          {:else if i === 2}
+            <div class="cameo right" aria-hidden="true"><Robot size={44} mood="idle" /></div>
+          {/if}
           <div class="head">
-            <AssetSlot id={`avatar-${i}`} width="52px">
+            <AssetSlot id={`avatar-${i}`} width="52px" round>
               {#snippet fallback()}
                 <span class="avatar" style="background:{t.tone}" aria-hidden="true"></span>
               {/snippet}
@@ -47,10 +56,6 @@
         </figure>
       {/each}
     </div>
-
-    <!-- robot cameos peeking in from the edges -->
-    <div class="cameo left" aria-hidden="true"><Robot size={44} mood="thinking" /></div>
-    <div class="cameo right" aria-hidden="true"><Robot size={44} mood="idle" eye="#f5a623" /></div>
   </div>
 </section>
 
@@ -58,16 +63,19 @@
   .testimonials {
     position: relative;
     overflow: visible;
+    padding-top: clamp(48px, 7vh, 80px);
+    padding-bottom: clamp(48px, 7vh, 80px);
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(16px, 2.4vw, 28px);
-    margin-top: clamp(32px, 5vh, 52px);
+    margin-top: clamp(56px, 7vh, 76px);
   }
 
   .card {
+    position: relative;
     background: #fffdf7;
     border: 1px solid rgba(19, 23, 34, 0.07);
     border-radius: 20px;
@@ -107,23 +115,49 @@
 
   .cameo {
     position: absolute;
-    top: -10px;
+    top: -22px;
     line-height: 0;
+    z-index: 2;
+    animation: camfloat 4s ease-in-out infinite;
   }
 
   .left {
-    left: -14px;
-    transform: rotate(-12deg);
+    left: 14px;
+    transform: rotate(-8deg);
+    color: var(--hotpink);
   }
 
   .right {
-    right: -14px;
-    transform: rotate(10deg) scaleX(-1);
+    right: 10px;
+    transform: rotate(9deg) scaleX(-1);
+    animation-delay: 1.2s;
+    color: var(--sun);
+  }
+
+  @keyframes camfloat {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -8px; }
+  }
+
+  .cam-bubble {
+    position: absolute;
+    top: 2px;
+    left: 36px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 5px 11px 6px;
+    font-size: 16px;
+    line-height: 0.95;
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(19, 23, 34, 0.1);
+    white-space: nowrap;
+    transform: rotate(7deg);
   }
 
   @media (max-width: 900px) {
     .grid {
       grid-template-columns: 1fr;
+      margin-top: clamp(32px, 5vh, 48px);
     }
 
     .cameo {

@@ -19,6 +19,10 @@
       a: 'Really. Audio is processed on your Mac and thrown away. We can’t hear you. We don’t want to.'
     },
     {
+      q: 'Are you supporting more languages?',
+      a: 'Not at this time. Typie uses NVIDIA’s Parakeet model for transcription, which is trained heavily on European languages. That’s the set we ship today.'
+    },
+    {
       q: 'What do I have to download?',
       a: '~500 MB on first install - that’s the model, not bloat. After that it runs offline forever. There is no server to miss.'
     },

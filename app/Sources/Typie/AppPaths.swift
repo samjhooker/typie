@@ -20,6 +20,8 @@ enum AppPaths {
     static let parakeetV3Dir: URL = modelsRoot.appendingPathComponent("parakeet-tdt-0.6b-v3-coreml", isDirectory: true)
 
     static let historyFile: URL = supportDir.appendingPathComponent("transcriptions.json")
+
+    static let statsFile: URL = supportDir.appendingPathComponent("stats.json")
 }
 
 enum FontLoader {

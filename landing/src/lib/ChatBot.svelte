@@ -267,7 +267,7 @@
 
   .dots {
     letter-spacing: 0.2em;
-    color: rgba(3, 43, 37, 0.5);
+    color: rgba(3, 89, 77, 0.5);
   }
 
   .quick {

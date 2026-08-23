@@ -91,6 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if onboardingWindow == nil {
             onboardingWindow = makeWindow(
                 title: "Welcome to typie",
+                size: NSSize(width: 680, height: 560),
                 view: OnboardingView { [weak self] in self?.finishSetup() }
             )
         }
@@ -107,11 +108,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         showAppWindow(pane: .history)
     }
 
+    @objc func openStats() {
+        showAppWindow(pane: .stats)
+    }
+
     private func showAppWindow(pane: AppPane) {
         NSApp.activate(ignoringOtherApps: true)
         WindowState.shared.pane = pane
         if appWindow == nil {
-            appWindow = makeWindow(title: "typie", view: AppContentView())
+            appWindow = makeWindow(title: "typie", size: NSSize(width: 520, height: 580), view: AppContentView())
         }
         present(appWindow!)
     }
@@ -124,9 +129,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         TextInserter.paste(text)
     }
 
-    private func makeWindow<V: View>(title: String, view: V) -> NSWindow {
+    private func makeWindow<V: View>(title: String, size: NSSize, view: V) -> NSWindow {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 680, height: 560),
+            contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false

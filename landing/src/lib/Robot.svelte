@@ -1,11 +1,56 @@
 <script>
-  let { size = 100, mood = 'idle', eye = '#fc5681' } = $props();
+  let { size = 100, mood = 'idle', eye = 'currentColor', bg = 'none' } = $props();
+
+  /* ---- eye tracking: all robots watch the cursor ---- */
+  let ex = $state(0);
+  let ey = $state(0);
+  let root;
+
+  const pointer = { x: -9999, y: -9999 };
+  let raf = 0;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function onMove(e) {
+    pointer.x = e.clientX;
+    pointer.y = e.clientY;
+  }
+
+  function tick() {
+    if (root) {
+      const r = root.getBoundingClientRect();
+      if (r.bottom > -80 && r.top < innerHeight + 80) {
+        const dx = pointer.x - (r.left + r.width / 2);
+        const dy = pointer.y - (r.top + r.height * 0.62);
+        const d = Math.hypot(dx, dy) || 1;
+        /* keep pupils inside the key-square sockets, never the glyph edge */
+        const maxX = Math.min(size * 0.018, 2.6);
+        const maxY = Math.min(size * 0.012, 1.8);
+        const pull = Math.min(d / 280, 1);
+        ex = (dx / d) * maxX * pull;
+        ey = (dy / d) * maxY * pull;
+      }
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  $effect(() => {
+    if (reduced) return;
+    addEventListener('pointermove', onMove, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => {
+      removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(raf);
+    };
+  });
 </script>
 
 <!-- the one and only typie glyph - split into its own subpaths so
      pillars can be ears and key squares can be eyes. fill follows `color`. -->
-<div class="robot {mood}" style="width:{size}px;--eye:{eye}" aria-hidden="true">
+<div class="robot {mood}" bind:this={root} style="width:{size}px;--eye:{eye};--ex:{ex}px;--ey:{ey}px" aria-hidden="true">
   <svg viewBox="-1 -0.5 26 25" fill="currentColor" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round">
+    {#if bg !== 'none'}
+      <path fill={bg} stroke="none" d="M5 7h14v12H5z" />
+    {/if}
     <!-- bottom bar -->
     <path d="M19 21H5v-2h14v2Z" />
 
@@ -100,10 +145,12 @@
     transform: translateX(4%) scaleX(1.18) scaleY(1.08);
   }
 
-  /* blink + wink (eyes are the two key squares) */
+  /* blink + wink (eyes are the two key squares) + cursor tracking */
   .eye {
     transform-box: fill-box;
     transform-origin: center;
+    translate: var(--ex, 0px) var(--ey, 0px);
+    transition: translate 0.18s ease-out;
     animation: blink 4.2s infinite;
   }
 

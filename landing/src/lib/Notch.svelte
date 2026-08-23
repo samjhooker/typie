@@ -1,194 +1,279 @@
 <script>
   import { reveal } from './reveal.js';
   import Robot from './Robot.svelte';
-
-  /* cycles the three notch states so the band demos itself */
-  let active = $state(0);
-  const STATES = ['Idle', 'Listening', 'Typed'];
-
-  $effect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const t = setInterval(() => (active = (active + 1) % 3), 2600);
-    return () => clearInterval(t);
-  });
+  import TalkWave from './TalkWave.svelte';
 </script>
 
-<section class="notchband field">
-  <div class="container">
-    <div class="panel" use:reveal>
-      <div class="copy">
-        <h2>It lives in your notch</h2>
-        <p>Always there when you need it, never in your way.</p>
+<section class="notchband">
+    <div class="panel">
+      <div class="copy" use:reveal>
+        <p class="hand kicker">It lives in your notch.</p>
+        <h2>Always there<br /><span class="nowrap">when you need it.</span></h2>
+        <div class="body">
+          <p>
+            One shortcut. That’s it.<br />
+            Hold <i class="keyhint mono">&#8997;</i>, speak, release.<br />
+            Your words appear.
+          </p>
+          <svg class="starburst" viewBox="0 0 60 60" aria-hidden="true">
+            <g stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round">
+              <line x1="30" y1="4" x2="30" y2="18" />
+              <line x1="30" y1="42" x2="30" y2="56" />
+              <line x1="4" y1="30" x2="18" y2="30" />
+              <line x1="42" y1="30" x2="56" y2="30" />
+              <line x1="11" y1="11" x2="21" y2="21" />
+              <line x1="39" y1="39" x2="49" y2="49" />
+              <line x1="49" y1="11" x2="39" y2="21" />
+              <line x1="21" y1="39" x2="11" y2="49" />
+            </g>
+          </svg>
+        </div>
       </div>
 
-      <div class="states">
-        {#each STATES as label, i}
-          <div class="state" class:on={active === i}>
-            <div class="pill">
-              {#if i === 0}
-                <span class="bot"><Robot size={20} mood="idle" /></span>
-                <span class="name">typie</span>
-              {:else if i === 1}
-                <span class="mono k">&#8997;</span>
-                <span class="listen mono">listening…</span>
-                <span class="weq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-              {:else}
-                <span class="mono k">&#8997;</span>
-                <span class="typed">“I’ll send it over tonight.”</span>
-              {/if}
-            </div>
-            <span class="label">{label}</span>
+      <div class="stack" use:reveal={{ delay: 80 }} aria-hidden="true">
+      <!-- idle: just the hardware camera notch -->
+      <div class="lid">
+        <div class="screen">
+          <div class="island idle">
+            <span class="cam"></span>
           </div>
-        {/each}
+        </div>
+      </div>
+
+      <!-- listening: island grows around the camera -->
+      <div class="lid">
+        <div class="screen">
+          <div class="island live">
+            <span class="bot"><Robot size={20} mood="listening" /></span>
+            <span class="cam"></span>
+            <span class="wave"><TalkWave n={5} color="#fc5681" /></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- done: bot on the left, speed on the right -->
+      <div class="lid">
+        <div class="screen">
+          <div class="island live done">
+            <span class="bot"><Robot size={22} mood="done" /></span>
+            <span class="cam"></span>
+            <span class="ms">✓ 80ms</span>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
-  </div>
 </section>
 
 <style>
+  .notchband {
+    padding: 0;
+  }
+
   .panel {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(240px, 0.82fr) minmax(0, 1.35fr);
+    gap: clamp(20px, 3vw, 40px);
+    align-items: center;
     background: var(--pink-band);
     border-radius: 28px;
-    padding: clamp(32px, 4.5vw, 60px);
-    display: grid;
-    grid-template-columns: 1fr 1.3fr;
-    gap: clamp(28px, 4vw, 64px);
-    align-items: center;
+    overflow: hidden;
+    padding: clamp(32px, 4.5vw, 56px) 0 clamp(32px, 4.5vw, 56px) clamp(28px, 4vw, 56px);
+  }
+
+  .copy {
+    padding-right: 8px;
+  }
+
+  .kicker {
+    font-size: clamp(22px, 2.2vw, 28px);
+    color: var(--ink);
+    transform: rotate(-2deg);
+    margin-bottom: 16px;
   }
 
   h2 {
-    font-size: clamp(24px, 2.6vw, 34px);
-    letter-spacing: -0.03em;
-    margin-bottom: 10px;
+    font-size: clamp(32px, 4.2vw, 52px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
     color: var(--ink);
+    margin-bottom: 22px;
   }
 
-  .copy p {
-    color: rgba(19, 23, 34, 0.7);
-    max-width: 26ch;
+  .nowrap {
+    white-space: nowrap;
   }
 
-  .states {
+  .body {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .body p {
+    font-size: clamp(16px, 1.5vw, 18px);
+    line-height: 1.55;
+    color: rgba(19, 23, 34, 0.68);
+    max-width: 28ch;
+  }
+
+  .keyhint {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 5px;
+    padding: 1px 6px;
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 12px;
+    vertical-align: 1px;
+  }
+
+  .starburst {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    margin-top: 18px;
+    transform: rotate(8deg);
+  }
+
+  .stack {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
+    min-width: 0;
   }
 
-  .state {
-    display: flex;
+  .lid {
+    background: #0c0e12;
+    border-radius: 32px 0 0 0;
+    padding: 11px 0 0 11px;
+  }
+
+  .screen {
+    position: relative;
+    height: clamp(84px, 11vw, 128px);
+    border-radius: 21px 0 0 0;
+    overflow: hidden;
+    background:
+      radial-gradient(130% 160% at 0% -10%, rgba(130, 237, 166, 0.55) 0%, transparent 52%),
+      radial-gradient(110% 140% at 100% 0%, rgba(252, 86, 129, 0.28) 0%, transparent 48%),
+      linear-gradient(118deg, #bcd6ff 0%, #ddd8ff 42%, #82eda6 100%);
+  }
+
+  .island {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: #fffdf7;
+    border-radius: 0 0 14px 14px;
+    overflow: hidden;
+  }
+
+  .idle {
+    width: 96px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    padding-bottom: 4px;
+  }
+
+  .live {
+    width: min(280px, 52%);
+    height: 34px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 16px;
-    opacity: 0.45;
-    transform: translateX(-6px);
-    transition: opacity 0.5s ease, transform 0.5s var(--ease-out);
+    padding: 0 16px 4px;
+    border-radius: 0 0 16px 16px;
   }
 
-  .state.on {
-    opacity: 1;
-    transform: none;
-  }
-
-  .pill {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #10131a;
-    border-radius: 999px;
-    padding: 12px 22px;
-    min-height: 52px;
-    box-shadow: 0 6px 18px rgba(19, 23, 34, 0.25);
-  }
-
-  .label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.55);
-    width: 76px;
-  }
-
-  .state.on .label {
-    color: var(--ink);
+  .cam {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(120, 130, 150, 0.4),
+      0 0 0 2px #000;
+    justify-self: center;
   }
 
   .bot {
+    display: block;
     line-height: 0;
-  }
-
-  .name {
-    color: #fffdf7;
-    font-weight: 700;
-    font-size: 15px;
-    margin-inline: auto;
-  }
-
-  .k {
-    color: rgba(255, 253, 247, 0.55);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  .listen {
     color: var(--hotpink);
+    flex-shrink: 0;
+    justify-self: start;
   }
 
-  .weq {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    height: 18px;
-    margin-inline: auto;
+  .wave {
+    display: block;
+    width: 40px;
+    justify-self: end;
   }
 
-  .weq i {
-    width: 3px;
-    border-radius: 2px;
-    background: var(--hotpink);
-    animation: eq 0.9s ease-in-out infinite alternate;
+  .wave :global(.talkwave) {
+    height: 14px;
+    gap: 2px;
   }
 
-  .weq i:nth-child(1) { height: 30%; }
-  .weq i:nth-child(2) { height: 70%; animation-delay: 0.1s; }
-  .weq i:nth-child(3) { height: 100%; animation-delay: 0.2s; }
-  .weq i:nth-child(4) { height: 55%; animation-delay: 0.3s; }
-  .weq i:nth-child(5) { height: 90%; animation-delay: 0.15s; }
-  .weq i:nth-child(6) { height: 40%; animation-delay: 0.35s; }
-  .weq i:nth-child(7) { height: 65%; animation-delay: 0.05s; }
-
-  @keyframes eq {
-    from { transform: scaleY(0.4); }
-    to { transform: scaleY(1); }
+  .wave :global(.talkwave i) {
+    width: 2.5px;
   }
 
-  .typed {
-    color: #fffdf7;
-    font-size: 14.5px;
-    font-weight: 500;
-    margin-inline: auto;
+  .ms {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--mint);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    justify-self: end;
   }
 
   @media (max-width: 860px) {
     .panel {
       grid-template-columns: 1fr;
+      gap: 28px;
+      padding: 32px 0 0 24px;
     }
 
-    .copy p {
-      max-width: none;
+    .copy {
+      padding-right: 24px;
     }
 
-    .typed {
-      white-space: normal;
+    .starburst {
+      margin-top: 8px;
     }
-  }
 
-  @media (max-width: 520px) {
-    .label {
-      display: none;
+    .lid {
+      border-radius: 22px 0 0 0;
+      padding: 8px 0 0 8px;
+    }
+
+    .screen {
+      height: 78px;
+      border-radius: 14px 0 0 0;
+    }
+
+    .idle {
+      width: 84px;
+      height: 24px;
+    }
+
+    .live {
+      width: min(220px, 64%);
+      height: 30px;
+    }
+
+    .ms {
+      font-size: 12px;
     }
   }
 </style>

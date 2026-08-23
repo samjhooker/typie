@@ -73,6 +73,7 @@ struct OnboardingView: View {
                         .padding(.horizontal, 26)
                         .padding(.vertical, 12)
                         .background(Capsule().fill(nextEnabled ? Theme.hotpink : Theme.green.opacity(0.3)))
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .pointingHandCursor()
@@ -246,16 +247,19 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 420)
-                Button("try again") {
+                Button {
                     if !ModelManager.modelsExist() { downloadStart = Date() }
                     Task { await ModelManager.shared.downloadAndLoad() }
+                } label: {
+                    Text("try again")
+                        .font(Theme.display(14))
+                        .foregroundStyle(Theme.cream)
+                        .padding(.horizontal, 20).padding(.vertical, 10)
+                        .background(Capsule().fill(Theme.hotpink))
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .pointingHandCursor()
-                .font(Theme.display(14))
-                .foregroundStyle(Theme.cream)
-                .padding(.horizontal, 20).padding(.vertical, 10)
-                .background(Capsule().fill(Theme.hotpink))
             case .notDownloaded:
                 if downloadApproved {
                     Text("getting ready…")
@@ -281,6 +285,7 @@ struct OnboardingView: View {
                                 .foregroundStyle(Theme.cream)
                                 .padding(.horizontal, 26).padding(.vertical, 13)
                                 .background(Capsule().fill(Theme.hotpink))
+                                .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .pointingHandCursor()
@@ -558,13 +563,18 @@ struct PermissionCard: View {
                     .font(Theme.mono(11))
                     .foregroundStyle(Theme.ink)
             } else {
-                Button("allow", action: action)
-                    .buttonStyle(.plain)
-                    .pointingHandCursor()
-                    .font(Theme.display(13))
-                    .foregroundStyle(Theme.cream)
-                    .padding(.horizontal, 18).padding(.vertical, 9)
-                    .background(Capsule().fill(Theme.hotpink))
+                Button {
+                    action()
+                } label: {
+                    Text("allow")
+                        .font(Theme.display(13))
+                        .foregroundStyle(Theme.cream)
+                        .padding(.horizontal, 18).padding(.vertical, 9)
+                        .background(Capsule().fill(Theme.hotpink))
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .pointingHandCursor()
             }
         }
         .padding(18)

@@ -1,14 +1,16 @@
 :root {
-  /* palette - remapped to the design mockup */
+  /* Gen Z: hot pink robot, butter, mint, periwinkle — never as body text */
   --mint: #82eda6;
   --mint-live: #6ee89a;
   --green: #03594d;
   --green-deep: #02453c;
   --footer-green: #1d5c45;
   --cream: #fffdf7;
+  --page: #fffdf7;
   --paper: #fdf8ee;
   --butter: #ffda8a;
   --sun: #fdc068;
+  --gold-ink: #e59e12;
   --sky: #bcd6ff;
   --pink: #ffd3e0;
   --hotpink: #fc5681;
@@ -19,12 +21,35 @@
   --periwinkle: #6f8ffb;
   --ink: #131722;
 
-  /* pastel card fills from the mockup */
   --card-lavender: #efecfb;
   --card-blue: #dde9fa;
   --card-cream: #fdf3dc;
   --card-mint: #dff0e4;
   --pink-band: #fbdae4;
+
+  --lemon: var(--butter);
+  --petal: var(--sun);
+  --rose: var(--pink);
+  --orchid: var(--lavender);
+  --peri: var(--sky);
+  --ice: var(--sky);
+  --skyblue: var(--sky);
+  --aqua: var(--mint);
+  --softcyan: var(--mint);
+  --celadon: var(--lime);
+  --neon: var(--hotpink);
+  --gold: var(--sun);
+  --violet: var(--purple);
+  --azure: var(--periwinkle);
+  --blaze: var(--orange);
+  --cyan: var(--mint);
+
+  --glow-pink: rgba(252, 86, 129, 0.22);
+  --glow-blue: rgba(111, 143, 251, 0.22);
+  --glow-butter: rgba(255, 218, 138, 0.38);
+  --glow-purple: rgba(200, 140, 253, 0.22);
+  --glow-mint: rgba(130, 237, 166, 0.28);
+  --glow-blush: rgba(252, 86, 129, 0.24);
 
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --display: 'Inter', -apple-system, system-ui, sans-serif;
@@ -44,16 +69,21 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--page);
+  transition: background 0.55s ease;
 }
 
 body {
   font-family: var(--sans);
-  background: var(--cream);
+  background: var(--page);
   color: #2c3342;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background 0.55s ease;
 }
+
+
 
 ::selection {
   background: var(--butter);
@@ -88,8 +118,15 @@ button {
 }
 
 .field {
-  padding: clamp(72px, 10vh, 120px) 0;
+  padding: clamp(80px, 11vh, 132px) 0;
   position: relative;
+}
+
+#features,
+#languages,
+#pricing,
+#faq {
+  scroll-margin-top: 88px;
 }
 
 .field-cream { background: transparent; color: #2c3342; }
@@ -150,6 +187,13 @@ button {
 
 .kicker {
   margin-bottom: 14px;
+}
+
+/* section backgrounds stay flat so the page reads as one sheet */
+.pop-a,
+.pop-b,
+.pop-c {
+  background: var(--page);
 }
 
 .btn {

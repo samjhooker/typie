@@ -3,35 +3,33 @@
    * Placeholder frame for final illustration assets.
    * Drop a file into public/assets/{id}.png (or .webp/.svg) and it appears
    * automatically; until then the fallback snippet renders.
+   *
+   * Note: we verify the response actually decodes as an image, because dev
+   * servers answer 200 with index.html for missing files (SPA fallback).
    */
-  let { id, alt = '', width = '100%', fallback } = $props();
+  let { id, alt = '', width = '100%', fallback, round = false } = $props();
 
-  const EXTS = ['png', 'webp', 'svg'];
+  const EXTS = ['webp', 'png', 'svg'];
   let src = $state(null);
 
-  const url = (ext) => `${import.meta.env.BASE_URL}assets/${id}.${ext}`;
-
-  async function probe() {
-    for (const ext of EXTS) {
-      try {
-        const res = await fetch(url(ext), { method: 'HEAD' });
-        if (res.ok) {
-          src = url(ext);
-          return;
-        }
-      } catch {
-        /* keep probing */
-      }
-    }
-    src = null;
+  function tryLoad(i = 0) {
+    if (i >= EXTS.length) return; // nothing exists -> keep fallback
+    const url = `${import.meta.env.BASE_URL}assets/${id}.${EXTS[i]}`;
+    const img = new Image();
+    img.onload = () => {
+      if (img.naturalWidth > 0) src = url;
+      else tryLoad(i + 1);
+    };
+    img.onerror = () => tryLoad(i + 1);
+    img.src = url;
   }
 
   $effect(() => {
-    probe();
+    tryLoad();
   });
 </script>
 
-<span class="slot" style="width:{width}">
+<span class="slot" class:round style="width:{width}">
   {#if src}
     <img {src} {alt} loading="lazy" />
   {:else}
@@ -49,6 +47,18 @@
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  .round {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .round img {
+    height: 100%;
+    object-fit: cover;
   }
 
   .fallback {

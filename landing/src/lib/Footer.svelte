@@ -6,24 +6,24 @@
     {
       h: 'Product',
       links: [
-        { l: 'Features', h: '#features' },
-        { l: 'Use cases', h: '#use-cases' },
-        { l: 'Pricing', h: '#pricing' }
+        { l: 'Features', h: '/#features' },
+        { l: 'Languages', h: '/#languages' },
+        { l: 'Pricing', h: '/#pricing' }
       ]
     },
     {
       h: 'Resources',
       links: [
-        { l: 'FAQ', h: '#faq' },
+        { l: 'FAQ', h: '/#faq' },
         { l: 'Privacy', h: '/privacy' },
-        { l: 'Terms', h: '/about' }
+        { l: 'Terms', h: '/terms' }
       ]
     },
     {
       h: 'Company',
       links: [
         { l: 'About', h: '/about' },
-        { l: 'Contact', h: '#faq' }
+        { l: 'Contact', h: '/#faq' }
       ]
     }
   ];
@@ -45,7 +45,7 @@
   <div class="body">
     <div class="container grid">
       <div class="brand">
-        <a href="#top" aria-label="Typie home">
+        <a href="/" aria-label="Typie home">
           <Logo size={24} color="#fffdf7" />
         </a>
         <p class="mono">© {new Date().getFullYear()} Typie. All rights reserved.</p>
@@ -65,8 +65,8 @@
       </nav>
 
       <div class="social" aria-label="social links">
-        <a href="https://x.com" aria-label="Typie on X">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.7 3H21l-7.2 8.2L22.2 21h-6.6l-5.2-6.1L4.5 21H1.2l7.7-8.8L1.8 3h6.8l4.7 5.5L17.7 3Zm-1.2 16h1.9L6.9 4.9H4.9L16.5 19Z"/></svg>
+        <a href="https://www.linkedin.com/in/samuelhooker/" aria-label="Sam Hooker on LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0Z"/></svg>
         </a>
         <a href="https://github.com/samjhooker/typie" aria-label="Typie on GitHub">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.61-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
@@ -86,9 +86,11 @@
   .peek {
     position: absolute;
     right: clamp(20px, 8vw, 140px);
-    top: -14px;
+    top: -46px;
     z-index: 2;
     line-height: 0;
+    transform: rotate(6deg);
+    color: var(--hotpink);
   }
 
   .wave {

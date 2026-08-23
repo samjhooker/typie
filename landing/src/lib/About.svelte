@@ -5,84 +5,82 @@
 </script>
 
 <svelte:head>
-  <title>About - typie</title>
-  <meta name="description" content="Typie is voice dictation that just works - a tiny robot in your Mac menu bar. Free, offline, no cloud." />
+  <title>About - Typie</title>
+  <meta name="description" content="Typie is voice dictation for Mac. Hold a key, talk, and your words appear - on-device, free, no cloud." />
 </svelte:head>
 
 <PageShell>
-  <h1 class="subhead" use:reveal>about typie</h1>
-  <p class="hand tag" use:reveal={{ delay: 80 }}>one robot. one job.</p>
+  <p class="hand kicker" use:reveal>one robot. one job.</p>
+  <h1 class="subhead" use:reveal>About Typie</h1>
 
   <div class="grid">
-    <div class="col" use:reveal={{ delay: 140 }}>
+    <div class="col" use:reveal={{ delay: 80 }}>
       <p class="lede">
-        Typie started with a simple annoyance: saying a sentence is fast, but
-        typing it is slow - and every dictation tool wanted to ship your voice
-        to a server first.
+        Saying a sentence is fast. Typing it is slow. Every other dictation tool wanted to ship your voice to a server first.
       </p>
       <p>
-        So there's no server. Typie runs a speech model entirely on your Mac.
-        Hold a key, speak, and your words appear wherever your cursor is - in
-        under 100 milliseconds. Mail, Slack, Notes, that cursed CRM. Anywhere
-        text goes.
+        Typie doesn’t. It runs on your Mac, in the notch, and nowhere else. Hold option, speak, release. Your words land in whatever you were already typing - Mail, Slack, Notes, the cursed CRM.
       </p>
       <p>
-        It's free because payment infrastructure is expensive and we couldn't
-        be bothered. It's private because your audio never leaves the machine,
-        so there's nothing to protect except the off switch.
+        It’s free because charging for a key you already own felt rude. It’s private because the audio never leaves the machine. That’s the whole company.
       </p>
     </div>
 
-    <div class="side" use:reveal={{ delay: 220 }}>
-      <span class="glyph"><Robot mood="idle" size={140} /></span>
+    <aside class="side" use:reveal={{ delay: 140 }}>
+      <span class="glyph"><Robot mood="idle" size={120} /></span>
       <ul class="facts">
         <li><strong>&lt;100 ms</strong><span>lips to letters</span></li>
         <li><strong>0 bytes</strong><span>leave this Mac</span></li>
         <li><strong>$0</strong><span>forever, really</span></li>
       </ul>
-    </div>
+    </aside>
   </div>
 </PageShell>
 
 <style>
-  .tag {
-    font-size: clamp(20px, 2.4vw, 27px);
-    color: var(--green-deep);
+  .kicker {
+    text-align: left;
+    font-size: clamp(20px, 2.2vw, 26px);
+    color: var(--hotpink);
     transform: rotate(-2deg);
-    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .subhead {
+    text-align: left;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 56px;
-    margin-top: 44px;
+    grid-template-columns: 1.45fr 0.9fr;
+    gap: clamp(28px, 4vw, 56px);
+    margin-top: 40px;
     align-items: start;
   }
 
   .lede {
     font-family: var(--display);
     font-weight: 700;
-    font-size: clamp(19px, 2vw, 24px);
+    font-size: clamp(18px, 2vw, 23px);
     line-height: 1.4;
     letter-spacing: -0.02em;
-    color: var(--green-deep);
-    margin-bottom: 18px;
+    color: var(--ink);
+    margin-bottom: 16px;
   }
 
   .col p:not(.lede) {
     margin-bottom: 14px;
-    color: var(--green-deep);
-    line-height: 1.6;
+    color: #2c3342;
+    line-height: 1.65;
   }
 
   .glyph {
     display: grid;
     place-items: center;
-    color: #f9f8f4;
-    background: rgba(249, 248, 244, 0.35);
-    border-radius: var(--radius);
-    padding: 34px;
+    color: var(--hotpink);
+    background: var(--card-lavender);
+    border-radius: 24px;
+    padding: 32px;
     line-height: 0;
   }
 
@@ -90,30 +88,30 @@
     list-style: none;
     display: grid;
     gap: 10px;
-    margin-top: 18px;
+    margin-top: 16px;
   }
 
   .facts li {
     display: flex;
     align-items: baseline;
     gap: 12px;
-    background: rgba(249, 248, 244, 0.65);
-    border: 1px solid rgba(2, 89, 77, 0.12);
+    background: #fff;
+    border: 1px solid rgba(19, 23, 34, 0.07);
     border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(19, 23, 34, 0.05);
     padding: 12px 18px;
   }
 
   .facts strong {
     font-family: var(--display);
-    font-weight: 900;
-    font-size: 20px;
-    color: var(--green-deep);
-    min-width: 86px;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--ink);
+    min-width: 82px;
   }
 
   .facts span {
-    color: var(--green-deep);
-    opacity: 0.75;
+    color: rgba(19, 23, 34, 0.62);
     font-size: 14px;
   }
 

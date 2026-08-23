@@ -154,6 +154,7 @@ final class DictationController: ObservableObject {
             } else {
                 TextInserter.paste(text)
             }
+            StatsStore.shared.record(text: text, latencyMs: ms, audioSeconds: seconds)
             if let settings {
                 HistoryStore.shared.add(text: text, latencyMs: ms, enabled: settings.historyEnabled)
             }

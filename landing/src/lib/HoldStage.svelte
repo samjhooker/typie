@@ -1,5 +1,6 @@
 <script>
   import Robot from './Robot.svelte';
+  import TalkWave from './TalkWave.svelte';
   import { app } from './state.svelte.js';
   import { hold } from './hold.svelte.js';
   import outlook from 'thesvg/microsoft-outlook';
@@ -27,6 +28,7 @@
     {
       id: 'mail',
       name: 'Outlook',
+      wave: '#0f6cbd',
       brand: outlook.svg,
       icon: '✉️',
       title: 'New Message',
@@ -37,6 +39,7 @@
     {
       id: 'notes',
       name: 'Notes',
+      wave: '#e0912f',
       brand: appleNotes,
       icon: '📝',
       title: 'Notes',
@@ -47,6 +50,7 @@
     {
       id: 'chat',
       name: 'Messenger',
+      wave: '#0084ff',
       brand: messenger.svg,
       icon: '💬',
       title: 'Alex, Sam +1',
@@ -57,6 +61,7 @@
     {
       id: 'slack',
       name: 'Slack',
+      wave: '#ecb22e',
       brand: slack.svg,
       icon: '💼',
       title: '#launch-week',
@@ -67,6 +72,7 @@
     {
       id: 'docs',
       name: 'Google Docs',
+      wave: '#1a73e8',
       brand: gdocs.svg,
       icon: '📄',
       title: 'launch notes',
@@ -77,6 +83,7 @@
     {
       id: 'code',
       name: 'VS Code',
+      wave: '#0098ff',
       brand: vscode.svg,
       icon: '🧑‍💻',
       title: 'main.ts · typie',
@@ -254,7 +261,7 @@
           <span class="cam" aria-hidden="true"></span>
           <span class="nright" class:show={notchOpen} aria-hidden="true">
             {#if mode === 'listening'}
-              <span class="weq"><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="wave"><TalkWave n={5} color="#fc5681" /></span>
             {:else if mode === 'done'}
               <span class="nok mono">✓ {lastMs} ms</span>
             {/if}
@@ -317,17 +324,10 @@
           </aside>
           <div class="paper">
             {#if mode === 'listening'}
-              {#if scene.id === 'chat'}
-                <div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="talking" aria-hidden="true">
+                <TalkWave n={17} color={scene.wave} />
                 <p class="hint2 hand">say anything…</p>
-              {:else}
-                <div class="ears" aria-hidden="true">
-                  {#each Array(28) as _, i}
-                    <i style="animation-delay:{(i % 9) * 80}ms; animation-duration:{450 + (i * 37) % 350}ms"></i>
-                  {/each}
-                </div>
-                <p class="hint2 hand">say anything…</p>
-              {/if}
+              </div>
             {:else if mode === 'done'}
               {#key step}
                 <div class="popwrap">
@@ -434,7 +434,9 @@
 
 <style>
   .stage {
-    width: min(760px, 100%);
+    width: 100%;
+    height: 100%;
+    min-height: 0;
     margin-inline: auto;
     display: flex;
     flex-direction: column;
@@ -470,7 +472,7 @@
     font-size: 13px;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 4px 0 #0b1f1b;
+      0 4px 0 #1a0a32;
     transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
     user-select: none;
     -webkit-user-select: none;
@@ -487,7 +489,7 @@
 
   .minikey.down {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 #0b1f1b;
+    box-shadow: 0 1px 0 #1a0a32;
     background: var(--hotpink);
   }
 
@@ -497,13 +499,13 @@
   }
 
   @keyframes nudge {
-    0%, 10%, 100% { transform: translateY(0); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 4px 0 #0b1f1b; }
-    5% { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 0 #0b1f1b; }
+    0%, 10%, 100% { transform: translateY(0); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 4px 0 #1a0a32; }
+    5% { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 0 #1a0a32; }
   }
 
   .minikey.down {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 #0b1f1b;
+    box-shadow: 0 1px 0 #1a0a32;
     background: var(--hotpink);
     animation: none;
   }
@@ -521,7 +523,7 @@
     grid-auto-flow: column;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 5px 0 #0b1f1b;
+      0 5px 0 #1a0a32;
     transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
     cursor: pointer;
   }
@@ -581,19 +583,19 @@
   .window {
     width: 100%;
     background: var(--cream);
-    border: 1px solid rgba(2, 89, 77, 0.09);
+    border: 1px solid rgba(3, 43, 37, 0.12);
     border-radius: 28px;
     overflow: hidden;
     text-align: left;
     box-shadow:
-      0 40px 90px rgba(2, 89, 77, 0.22),
-      0 4px 14px rgba(2, 89, 77, 0.08);
+      0 40px 90px rgba(3, 43, 37, 0.22),
+      0 4px 14px rgba(3, 43, 37, 0.08);
     transition: box-shadow 0.3s ease, transform 0.3s var(--spring);
   }
 
   .window.listening {
     box-shadow:
-      0 40px 90px rgba(2, 89, 77, 0.26),
+      0 40px 90px rgba(3, 43, 37, 0.26),
       0 0 0 3px var(--mint-live);
   }
 
@@ -609,16 +611,18 @@
 
   /* mac screen frame */
   .mac {
+    position: relative;
     width: 100%;
-    height: 560px;
+    height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    border-radius: 22px;
+    border-radius: 22px 22px 0 0;
     overflow: hidden;
     border: 5px solid #0d0f0e;
     box-shadow:
-      0 40px 90px rgba(2, 89, 77, 0.24),
-      0 4px 14px rgba(2, 89, 77, 0.08),
+      0 40px 90px rgba(3, 43, 37, 0.24),
+      0 4px 14px rgba(3, 43, 37, 0.08),
       inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     background: var(--paper);
     transition: box-shadow 0.3s ease;
@@ -626,12 +630,13 @@
 
   .mac.listening {
     box-shadow:
-      0 40px 90px rgba(2, 89, 77, 0.28),
+      0 40px 90px rgba(3, 43, 37, 0.28),
       0 0 0 3px var(--mint-live);
   }
 
   .smenubar {
     position: relative;
+    z-index: 4;
     height: 26px;
     background: rgba(19, 23, 34, 0.07);
     backdrop-filter: blur(10px);
@@ -640,6 +645,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
+    overflow: visible;
   }
 
   .mbleft,
@@ -708,92 +714,98 @@
     left: 50%;
     top: 0;
     transform: translateX(-50%);
-    z-index: 1;
+    z-index: 6;
+    overflow: visible;
+    pointer-events: none;
   }
 
-  /* dynamic-island style: small notch idle, wide pill when typie is live */
+  /* hardware camera notch idle → grows into the live island */
   .notch {
-    width: 92px;
-    height: 24px;
+    position: relative;
+    z-index: 1;
+    width: 78px;
+    height: 26px;
     background: #000;
-    border-radius: 0 0 10px 10px;
-    display: flex;
+    border-radius: 0 0 13px 13px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: center;
-    padding: 0;
-    padding-bottom: 3px;
-    transition: width 0.24s var(--ease-out);
+    column-gap: 0;
+    padding: 0 8px;
+    pointer-events: auto;
     overflow: hidden;
+    transform-origin: 50% 0;
+    transition:
+      width 0.58s cubic-bezier(0.22, 1.28, 0.36, 1),
+      padding 0.5s cubic-bezier(0.22, 1.28, 0.36, 1),
+      column-gap 0.5s cubic-bezier(0.22, 1.28, 0.36, 1);
   }
 
-  /* expand slower, snap shut quick */
   .notch.open {
-    width: min(240px, 60vw);
-    height: 24px;
-    padding: 0 7px;
-    justify-content: space-between;
-    transition: width 0.45s cubic-bezier(0.2, 1.1, 0.35, 1);
+    width: 252px;
+    height: 26px;
+    padding: 0 14px;
+    column-gap: 8px;
+    animation: islandpop 0.58s cubic-bezier(0.22, 1.28, 0.36, 1);
+  }
+
+  @keyframes islandpop {
+    0% { transform: scale(1, 1); }
+    42% { transform: scale(1.045, 1.1); }
+    100% { transform: scale(1, 1); }
   }
 
   .cam {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: #101318;
-    box-shadow: inset 0 0 2px 1px rgba(90, 100, 125, 0.55);
+    justify-self: center;
+    background:
+      radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(120, 130, 150, 0.35),
+      0 0 0 2px #000;
     flex-shrink: 0;
   }
 
   .nleft,
   .nright {
-    width: 0;
+    min-width: 0;
     opacity: 0;
     display: flex;
     align-items: center;
     overflow: hidden;
-    flex-shrink: 0;
+    transform: translateY(2px) scale(0.84);
     transition:
-      width 0.35s var(--ease-out) 0.08s,
-      opacity 0.25s ease 0.08s;
+      opacity 0.28s ease 0.16s,
+      transform 0.4s cubic-bezier(0.22, 1.2, 0.36, 1) 0.12s;
   }
 
-  .nleft { justify-content: flex-start; }
-  .nright { justify-content: flex-end; }
+  .nleft { justify-content: flex-start; justify-self: start; }
+  .nright { justify-content: flex-end; justify-self: end; }
 
   .notch.open .nleft,
   .notch.open .nright {
-    width: 58px;
     opacity: 1;
+    transform: none;
   }
 
   .nleft :global(.robot) {
     color: var(--hotpink);
   }
 
-  .weq {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    height: 16px;
+  .wave {
+    display: block;
+    width: 36px;
   }
 
-  .weq i {
-    width: 3px;
-    border-radius: 2px;
-    background: var(--hotpink);
-    height: 5px;
-    animation: weq 0.5s ease-in-out infinite alternate;
+  .wave :global(.talkwave) {
+    height: 12px;
+    gap: 2px;
   }
 
-  .weq i:nth-child(1) { animation-delay: 0s; }
-  .weq i:nth-child(2) { animation-delay: 0.12s; }
-  .weq i:nth-child(3) { animation-delay: 0.05s; }
-  .weq i:nth-child(4) { animation-delay: 0.18s; }
-  .weq i:nth-child(5) { animation-delay: 0.09s; }
-
-  @keyframes weq {
-    from { height: 4px; opacity: 0.7; }
-    to { height: 14px; opacity: 1; }
+  .wave :global(.talkwave i) {
+    width: 2.5px;
   }
 
   .nok {
@@ -805,6 +817,7 @@
   /* desktop wallpaper */
   .desk {
     position: relative;
+    z-index: 1;
     flex: 1;
     min-height: 0;
     display: flex;
@@ -1052,10 +1065,6 @@
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
   }
 
-  .window.theme-mail .ears i {
-    background: #0f6cbd;
-  }
-
   /* Apple Notes */
   .window.theme-notes .paper {
     background: linear-gradient(180deg, #fff8e1 0%, #fffdf4 100%);
@@ -1063,10 +1072,6 @@
 
   .window.theme-notes .side {
     background: #f6efdb;
-  }
-
-  .window.theme-notes .ears i {
-    background: #e0912f;
   }
 
   /* native content: text lands at the right size, in the right place */
@@ -1197,10 +1202,6 @@
 
   .window.theme-slack .ghost {
     padding-top: 4px;
-  }
-
-  .window.theme-slack .ears i {
-    background: #611f69;
   }
 
   /* Google Docs: inside a browser */
@@ -1410,9 +1411,7 @@
     color: rgba(60, 64, 67, 0.45);
   }
 
-  .window.theme-docs .ears i {
-    background: #1a73e8;
-  }
+
 
   /* VS Code: dark editor */
   .window.theme-code .titlebar {
@@ -1475,9 +1474,7 @@
     color: rgba(255, 255, 255, 0.35);
   }
 
-  .window.theme-code .ears i {
-    background: #0098ff;
-  }
+
 
   .window.theme-code .badge {
     background: #0e639c;
@@ -1544,9 +1541,7 @@
     background: #f5f6fa;
   }
 
-  .window.theme-chat .ears i {
-    background: #0084ff;
-  }
+
 
   .bubble-in {
     align-self: flex-start;
@@ -1562,7 +1557,7 @@
 
   .ghost {
     font-size: 12.5px !important;
-    color: rgba(2, 89, 77, 0.42);
+    color: rgba(3, 89, 77, 0.42);
     line-height: 1.6;
   }
 
@@ -1578,34 +1573,28 @@
     box-shadow: 0 3px 10px rgba(0, 106, 255, 0.3);
   }
 
-  .ears {
+  .talking {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 12px;
+    animation: fadein 0.25s ease both;
+  }
+
+  .talking :global(.talkwave) {
+    height: clamp(48px, 8vw, 72px);
     gap: 5px;
-    height: 64px;
   }
 
-  .ears i {
-    width: 5px;
-    height: 14px;
-    border-radius: 3px;
-    background: var(--green);
-    animation: wave ease-in-out infinite alternate;
-    transform-origin: center;
-  }
-
-  @keyframes wave {
-    from { transform: scaleY(0.4); opacity: 0.5; }
-    to { transform: scaleY(3.2); opacity: 1; }
+  .talking :global(.talkwave i) {
+    width: clamp(5px, 0.7vw, 8px);
   }
 
   .hint2 {
     text-align: center;
-    margin-top: 14px;
     font-size: clamp(19px, 2vw, 23px);
     color: var(--green-deep);
-    animation: fadein 0.25s ease both;
   }
 
   @keyframes fadein {
@@ -1751,5 +1740,9 @@
     .side { display: none; }
     .mbleft span:not(.apple) { display: none; }
     .meta { display: none; }
+    .talking { gap: 6px; }
+    .talking :global(.talkwave) { height: 28px; gap: 3px; }
+    .talking :global(.talkwave i) { width: 4px; }
+    .hint2 { font-size: 13px; }
   }
 </style>

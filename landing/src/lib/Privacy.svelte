@@ -4,89 +4,107 @@
 
   const sections = [
     {
-      h: 'the short version',
-      p: 'We collect nothing. Your voice never leaves your Mac. There is no account, so there are no accounts to breach. This is the whole policy - everything below is just detail.'
+      h: 'The short version',
+      p: 'We collect nothing about what you say. Dictation happens on your Mac. There are no accounts, so there is nothing to breach. The rest is just the same sentence in more words.'
     },
     {
-      h: 'audio',
-      p: 'Typie processes your speech on-device. The audio is thrown away the moment it becomes text. It is never recorded, stored, uploaded, or heard by anyone - including us, because there is no us listening. There is no server.'
+      h: 'Audio',
+      p: 'Your speech is processed on-device and discarded as soon as it becomes text. It is never recorded, stored, uploaded, or listened to - including by us. There is no server for it to go to.'
     },
     {
-      h: 'data we collect',
-      p: 'None. No analytics, no telemetry, no crash reports, no cookies, no trackers. The app has no way to phone home because it has nothing to phone and nowhere to call.'
+      h: 'What stays on your Mac',
+      p: 'The speech model (downloaded once) and whatever you typed. Uninstall Typie and that goes with it.'
     },
     {
-      h: 'what stays on your machine',
-      p: 'The speech model (~500 MB, downloaded once) and whatever you dictated. That\'s it. Uninstall Typie and all of it goes with it.'
+      h: 'No accounts. Ever.',
+      p: 'There is no sign-in. Not Apple, not Google, not us. Typie is a standalone app on your Mac: independent, unsigned. We do not know who you are. You can kinda trust us.'
     },
     {
-      h: 'third parties',
-      p: 'There are no third parties. No ad networks, no SDKs, no "partners". Reading this section took you longer than building it took us.'
+      h: 'Data we do not collect',
+      p: 'No analytics, no telemetry, no crash phoning-home, no cookies, no ad SDKs, no “partners”. The app has nowhere to call.'
     },
     {
-      h: 'changes to this policy',
-      p: 'If this policy ever changes, something has gone hilariously wrong - there is literally nothing to change. But if it does, we\'d have no way to email you about it, because we don\'t know who you are. And honestly? Beautiful.'
+      h: 'Changes',
+      p: 'If this policy ever changes we will update this page. We cannot email you about it, because we do not know who you are. That is the point.'
     }
   ];
 </script>
 
 <svelte:head>
-  <title>Privacy - typie</title>
-  <meta name="description" content="Typie's privacy policy: we collect nothing. Your voice is processed on your Mac and never leaves it." />
+  <title>Privacy - Typie</title>
+  <meta name="description" content="Typie privacy policy: dictation is on-device. We do not collect your voice, documents, or a profile of you." />
 </svelte:head>
 
 <PageShell>
-  <h1 class="subhead" use:reveal>privacy policy</h1>
-  <p class="hand tag" use:reveal={{ delay: 80 }}>the shortest one you'll ever read.</p>
+  <p class="hand kicker" use:reveal>the short one.</p>
+  <h1 class="subhead" use:reveal>Privacy policy</h1>
+  <p class="intro" use:reveal={{ delay: 60 }}>
+    Typie is built so your voice never leaves your computer. This page exists because people ask for one.
+  </p>
 
   <div class="wrap">
     {#each sections as s, i}
-      <section use:reveal={{ delay: i * 60 }}>
+      <section use:reveal={{ delay: i * 50 }}>
         <h2>{s.h}</h2>
         <p>{s.p}</p>
       </section>
     {/each}
   </div>
 
-  <p class="fine mono">last updated: never, really · questions? the robot in the corner knows as much as we do.</p>
+  <p class="fine mono">Last updated: August 2026 · Questions: the robot on the home page knows as much as we do.</p>
 </PageShell>
 
 <style>
-  .tag {
-    font-size: clamp(20px, 2.4vw, 27px);
-    color: var(--green-deep);
+  .kicker {
+    text-align: left;
+    font-size: clamp(20px, 2.2vw, 26px);
+    color: var(--hotpink);
     transform: rotate(-2deg);
-    margin-top: 10px;
+    margin-bottom: 10px;
   }
 
-  .wrap {
-    margin-top: 44px;
-    max-width: 720px;
+  .subhead {
+    text-align: left;
   }
 
-  section {
-    background: rgba(249, 248, 244, 0.75);
-    border: 1px solid rgba(2, 89, 77, 0.1);
-    border-radius: var(--radius);
-    padding: 26px 30px;
-    margin-bottom: 16px;
-  }
-
-  h2 {
-    font-size: clamp(19px, 2vw, 24px);
-    color: var(--green-deep);
-    letter-spacing: -0.02em;
-    text-transform: capitalize;
-  }
-
-  p {
-    margin-top: 10px;
-    color: var(--green-deep);
+  .intro {
+    margin-top: 16px;
+    max-width: 40rem;
+    color: rgba(19, 23, 34, 0.68);
     line-height: 1.6;
   }
 
+  .wrap {
+    margin-top: 36px;
+    max-width: 720px;
+    display: grid;
+    gap: 12px;
+  }
+
+  section {
+    background: #fff;
+    border: 1px solid rgba(19, 23, 34, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(19, 23, 34, 0.04);
+    padding: 22px 26px;
+  }
+
+  h2 {
+    font-size: clamp(18px, 1.8vw, 22px);
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin-top: 8px;
+    color: #2c3342;
+    line-height: 1.65;
+  }
+
   .fine {
-    margin-top: 26px;
-    opacity: 0.7;
+    margin-top: 28px;
+    opacity: 0.65;
+    text-transform: none;
+    letter-spacing: 0.04em;
   }
 </style>

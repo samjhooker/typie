@@ -1,62 +1,106 @@
 <script>
   import HoldStage from './HoldStage.svelte';
-  import AssetSlot from './AssetSlot.svelte';
   import { app } from './state.svelte.js';
   import { hold } from './hold.svelte.js';
-  import { intro } from './intro.svelte.js';
 
   let keyDown = $state(false);
   let interacted = $state(false);
+  let nudge = $state(true);
+  let inView = $state(true);
   let keyEl;
+  let heroEl = $state(null);
+
+  function markInteracted() {
+    interacted = true;
+    nudge = false;
+  }
 
   function tap() {
-    interacted = true;
-    intro.active = false;
+    markInteracted();
     keyDown = true;
     setTimeout(() => (keyDown = false), 200);
     /* starts live dictation; releasing anywhere stops it (HoldStage listens globally) */
     hold.press();
   }
 
-  /* intro veil: grayscale page + pink glow on the key, then color returns */
-  $effect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      intro.active = false;
+  function onUserKey(e) {
+    if (!e.isTrusted) return;
+    if (e.key === 'Alt' || e.key === 'Meta' || e.key === 'Shift' || e.key === 'Control') {
+      markInteracted();
+    }
+  }
+
+  function onHeroPointer(e) {
+    if (!e.isTrusted) return;
+    if (e.button !== 0 && e.button !== -1) return;
+    const t = e.target;
+    /* nav/download live outside the hero. leave scene-dock + real controls alone. */
+    if (t?.closest?.('a, input, textarea, select, .dock-item')) return;
+    /* the key and the in-laptop mini key already call press() themselves */
+    if (t?.closest?.('.key, .minikey')) {
+      markInteracted();
       return;
     }
-    const measure = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (keyEl) {
-          const r = keyEl.getBoundingClientRect();
-          intro.glow = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-        }
-      });
-    });
-    const fade = setTimeout(() => (intro.active = false), 1700);
-    return () => {
-      cancelAnimationFrame(measure);
-      clearTimeout(fade);
-    };
+    tap();
+  }
+
+  /* a couple of pulses off the option key so the eye lands there first */
+  $effect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      nudge = false;
+      return;
+    }
+    const t = setTimeout(() => (nudge = false), 2600);
+    return () => clearTimeout(t);
   });
 
-  /* if the visitor hasn't tried it, demo it for them once */
+  /* demo the option key only while the hero is actually on screen */
   $effect(() => {
-    const t = setTimeout(() => {
-      if (
-        !interacted &&
-        document.visibilityState === 'visible' &&
-        !matchMedia('(prefers-reduced-motion: reduce)').matches
-      ) {
-        interacted = true;
-        hold.press();
-        setTimeout(() => hold.press(), 1800);
-      }
-    }, 5000);
-    return () => clearTimeout(t);
+    if (!heroEl) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+      },
+      { threshold: [0, 0.2, 0.45] }
+    );
+    io.observe(heroEl);
+    return () => io.disconnect();
+  });
+
+  $effect(() => {
+    if (interacted || matchMedia('(prefers-reduced-motion: reduce)').matches || !inView) {
+      return;
+    }
+    const holdMs = 2200;
+    const timers = [];
+    const beat = () => {
+      if (interacted || !inView || document.visibilityState !== 'visible') return;
+      hold.press();
+      timers.push(
+        setTimeout(() => {
+          if (!interacted && inView) hold.press();
+        }, holdMs)
+      );
+    };
+    const loop = setInterval(beat, 5000);
+    return () => {
+      clearInterval(loop);
+      timers.forEach(clearTimeout);
+      if (!interacted && app.mood === 'listening') hold.press();
+    };
   });
 </script>
 
-<section class="hero field" id="top">
+<svelte:window onkeydown={onUserKey} />
+
+<section
+  class="hero field pop-a"
+  id="top"
+  bind:this={heroEl}
+  class:live={app.mood === 'listening'}
+  class:nudge
+  onpointerdown={onHeroPointer}
+>
   <div class="container grid">
     <div class="copy">
       <p class="kicker hand">voice dictation for Mac</p>
@@ -68,62 +112,37 @@
       </h1>
 
       <div class="holdline">
-        <svg class="arrowdoodle" viewBox="0 0 60 44" aria-hidden="true">
-          <path
-            d="M52 4C36 10 18 16 12 30"
-            fill="none"
-            stroke="rgba(19,23,34,.5)"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-          <path
-            d="M19 24l-7 6-1-9"
-            fill="none"
-            stroke="rgba(19,23,34,.5)"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-
         <p>
           Hold
           <span class="keywrap">
+            <span class="talkpulse" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="rings" aria-hidden="true"><i></i><i></i><i></i></span>
             <button
               bind:this={keyEl}
               class="key"
               class:down={keyDown || app.mood === 'listening'}
               onpointerdown={(e) => { e.preventDefault(); tap(); }}
               aria-label="the option key - press and hold to try it"
-            >&thinsp;&#8997;&thinsp;option</button>
+            >
+              <span class="ksym" aria-hidden="true">&#8997;</span>
+              <span class="klbl">option</span>
+            </button>
           </span>
           and say something
         </p>
-
-        <AssetSlot id="hero-doodle" width="220px">
-          {#snippet fallback()}
-            <svg class="squiggledoodle" viewBox="0 0 220 70" aria-hidden="true">
-              <path
-                d="M8 40c26-26 44-28 38-12-6 17 14 14 34 2s40-16 32 0-6 26 22 20 46-14 78-6"
-                fill="none"
-                stroke="var(--hotpink)"
-                stroke-width="3"
-                stroke-linecap="round"
-                opacity="0.75"
-              />
-            </svg>
-          {/snippet}
-        </AssetSlot>
       </div>
     </div>
 
     <div class="demo-col">
-      <div class="demo" id="how">
+      <div class="demo">
+        <span class="macglow" aria-hidden="true"><b></b><i></i><i></i></span>
         <div class="laptop">
           <div class="lid">
             <HoldStage />
           </div>
-          <div class="base" aria-hidden="true"><i></i></div>
+          <div class="base" aria-hidden="true">
+            <i class="chin"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -132,23 +151,74 @@
 
 <style>
   .hero {
-    padding: clamp(120px, 15vh, 170px) 0 clamp(56px, 8vh, 96px);
-    background: var(--cream);
-    overflow: hidden;
+    padding: clamp(120px, 15vh, 170px) 0 clamp(72px, 10vh, 120px);
+    background: transparent;
+    overflow: visible;
   }
 
   .grid {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding-left: max(24px, calc((100vw - 1180px) / 2));
+    padding-right: 0;
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
-    gap: clamp(32px, 4vw, 64px);
+    grid-template-columns: minmax(280px, 42vw) minmax(0, 1fr);
+    gap: clamp(20px, 2.4vw, 36px);
     align-items: center;
   }
 
   /* ---- left: copy ---- */
   .copy {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    z-index: 1;
+  }
+
+  .kicker,
+  h1 {
+    position: relative;
+    z-index: 3;
+  }
+
+  .talkpulse {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(62vw, 640px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .talkpulse i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(252, 86, 129, 0.28) 0%,
+      rgba(252, 86, 129, 0.1) 42%,
+      transparent 68%
+    );
+    opacity: 0;
+  }
+
+  .hero.live .talkpulse i {
+    animation: talkwave 1.7s ease-out infinite;
+  }
+
+  .hero.live .talkpulse i:nth-child(2) { animation-delay: 0.45s; }
+  .hero.live .talkpulse i:nth-child(3) { animation-delay: 0.9s; }
+
+  @keyframes talkwave {
+    0% { transform: scale(0.42); opacity: 0.8; }
+    100% { transform: scale(1.12); opacity: 0; }
   }
 
   .kicker {
@@ -170,95 +240,241 @@
   }
 
   .talk { color: var(--periwinkle); }
-  .typed { color: var(--butter); }
+  .typed { color: var(--gold-ink); }
 
   .holdline {
     position: relative;
-    margin-top: clamp(28px, 3.5vh, 44px);
-    padding-left: 54px;
+    z-index: 1;
+    margin-top: clamp(48px, 6.5vh, 76px);
   }
 
   .holdline p {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    font-size: clamp(15px, 1.5vw, 17.5px);
+    gap: 12px;
+    font-size: clamp(18px, 1.9vw, 22px);
     font-weight: 600;
     color: var(--ink);
   }
 
-  .arrowdoodle {
-    position: absolute;
-    left: -6px;
-    top: -30px;
-    width: 56px;
-    height: 42px;
-  }
-
   .key {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    font-family: var(--mono);
+    display: inline-grid;
+    grid-template-rows: 1fr auto;
+    width: 54px;
+    height: 54px;
+    padding: 6px 6px 5px;
+    font-family: var(--sans);
     font-weight: 500;
-    font-size: 13.5px;
     line-height: 1;
-    background: var(--green-deep);
-    color: var(--cream);
-    border-radius: 8px;
-    padding: 8px 12px;
-    box-shadow: 0 3px 0 #0b1f1b;
+    background: #1d1d1f;
+    color: #f5f5f7;
+    border-radius: 7px;
+    box-shadow:
+      0 3px 0 #050505,
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
     transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
     cursor: pointer;
     user-select: none;
+    position: relative;
+    z-index: 2;
+    vertical-align: middle;
+  }
+
+  .ksym {
+    justify-self: end;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    opacity: 0.95;
+  }
+
+  .klbl {
+    justify-self: center;
+    width: 100%;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1;
   }
 
   .key:hover {
-    background: #06473c;
-    transform: translateY(-1px) rotate(-2deg);
+    background: #2a2a2d;
+    transform: translateY(-1px);
   }
 
   .key.down {
-    transform: translateY(2px);
-    box-shadow: 0 0 0 #0b1f1b;
-    background: var(--hotpink);
+    transform: translateY(3px);
+    box-shadow: 0 0 0 #050505, inset 0 2px 5px rgba(0, 0, 0, 0.45);
+    background: #111;
   }
 
   .keywrap {
     position: relative;
+    z-index: 1;
     display: inline-block;
   }
 
-  .squiggledoodle {
-    width: 200px;
-    height: auto;
-    margin-top: 26px;
-    transform: rotate(-4deg);
+  .rings {
+    position: absolute;
+    inset: -7px;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .hero.live .rings,
+  .hero.nudge .rings {
+    opacity: 1;
+  }
+
+  .rings i {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--hotpink);
+    border-radius: 10px;
+    opacity: 0;
+  }
+
+  .hero.live .rings i {
+    animation: ping 1.55s ease-out infinite;
+  }
+
+  .hero.live .rings i:nth-child(2) { animation-delay: 0.5s; }
+  .hero.live .rings i:nth-child(3) { animation-delay: 1s; }
+
+  .hero.nudge .rings i {
+    animation: ping 1.15s ease-out 2;
+  }
+
+  .hero.nudge .rings i:nth-child(2) { animation-delay: 0.38s; }
+  .hero.nudge .rings i:nth-child(3) { animation-delay: 0.76s; }
+
+  .hero.nudge .key:not(.down) {
+    animation: keyflash 1.15s ease-out 2;
+  }
+
+  @keyframes ping {
+    0% { transform: scale(1); opacity: 0.55; }
+    100% { transform: scale(1.9); opacity: 0; }
+  }
+
+  @keyframes keyflash {
+    0%, 100% { box-shadow: 0 3px 0 #050505, 0 0 0 0 rgba(252, 86, 129, 0); }
+    35% { box-shadow: 0 3px 0 #050505, 0 0 18px 4px rgba(252, 86, 129, 0.45); }
   }
 
   /* ---- right: laptop demo ---- */
   .demo-col {
-    display: flex;
-    justify-content: center;
+    display: block;
     min-width: 0;
   }
 
   .demo {
-    width: 100%;
-    max-width: 780px;
-    scroll-margin-top: 120px;
+    position: relative;
+    width: 62vw;
+    max-width: none;
+    transform: translateX(-100px);
+  }
+
+  .macglow {
+    position: absolute;
+    left: 50%;
+    top: -6%;
+    width: min(58vw, 620px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -22%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .macglow b,
+  .macglow i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+  }
+
+  .macglow b {
+    inset: 6%;
+    background: radial-gradient(
+      circle,
+      rgba(252, 86, 129, 0.78) 0%,
+      rgba(252, 86, 129, 0.38) 34%,
+      rgba(252, 86, 129, 0.12) 62%,
+      transparent 76%
+    );
+    filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .macglow i {
+    background: radial-gradient(
+      circle,
+      rgba(252, 86, 129, 0.55) 0%,
+      rgba(252, 86, 129, 0.22) 40%,
+      transparent 70%
+    );
+    opacity: 0;
+  }
+
+  .hero.live .macglow b {
+    opacity: 1;
+  }
+
+  .hero.live .macglow i {
+    animation: macpulse 1.7s ease-out infinite;
+  }
+
+  .hero.live .macglow i:nth-child(3) {
+    animation-delay: 0.55s;
+  }
+
+  @keyframes macpulse {
+    0% { transform: scale(0.38); opacity: 0.95; }
+    100% { transform: scale(1.28); opacity: 0; }
   }
 
   .laptop {
-    filter: drop-shadow(0 24px 48px rgba(19, 23, 34, 0.18));
+    --lid-r: clamp(22px, 3.7cqi, 36px);
+    --bezel: clamp(8px, 1.15cqi, 12px);
+    --glass-r: clamp(14px, 2.55cqi, 26px);
+    container-type: inline-size;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 28px;
+    filter: drop-shadow(0 28px 52px rgba(19, 23, 34, 0.22));
+    transition: filter 0.45s ease;
+  }
+
+  .hero.live .laptop {
+    filter: drop-shadow(0 28px 52px rgba(19, 23, 34, 0.22));
+  }
+
+  .laptop::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 2px;
+    height: 22px;
+    background: radial-gradient(ellipse, rgba(19, 23, 34, 0.24), transparent 70%);
+    pointer-events: none;
   }
 
   .lid {
-    background: #10131a;
-    border-radius: 22px 22px 0 0;
-    padding: 14px 14px 0;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    background: #1a1c22;
+    border-radius: var(--lid-r) var(--lid-r) 0 0;
+    padding: var(--bezel) var(--bezel) 0;
+    overflow: hidden;
   }
 
   /* the hero copy explains the interaction; keep the stage clean */
@@ -268,30 +484,72 @@
 
   .lid :global(.stage) {
     width: 100%;
+    height: 100%;
+    flex: 1;
+    min-height: 0;
+    gap: 0;
+    overflow: hidden;
+    border-radius: var(--glass-r) var(--glass-r) 0 0;
+  }
+
+  .lid :global(.mac) {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    min-height: 0;
+    border: 0;
+    border-radius: var(--glass-r) var(--glass-r) 0 0;
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .lid :global(.smenubar) {
+    border-radius: var(--glass-r) var(--glass-r) 0 0;
   }
 
   .base {
-    height: 18px;
-    background: linear-gradient(#e8ebf2, #c9cfdd);
-    border-radius: 0 0 18px 18px;
     position: relative;
+    z-index: 1;
+    height: 24px;
+    margin: -1px -5.4% 0;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent 40%),
+      linear-gradient(90deg, #9aa0ac 0%, #e4e7ee 10%, #f5f6f9 50%, #e4e7ee 90%, #9aa0ac 100%);
+    border-radius: 0 0 10px 10px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -2px 0 rgba(70, 74, 86, 0.12);
   }
 
-  .base i {
+  .base::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 100%;
+    height: 14px;
+    background: linear-gradient(180deg, #c5c9d2 0%, #9aa0ac 50%, #6f7480 100%);
+    border-radius: 0 0 14px 14px;
+    clip-path: polygon(0 0, 100% 0, 96.8% 100%, 3.2% 100%);
+  }
+
+  .base .chin {
     position: absolute;
     left: 50%;
-    top: 0;
+    top: 1px;
     transform: translateX(-50%);
-    width: 120px;
-    height: 8px;
-    background: #aab2c5;
-    border-radius: 0 0 10px 10px;
+    width: 18%;
+    min-width: 100px;
+    max-width: 168px;
+    height: 10px;
+    background: linear-gradient(180deg, #7e8490, #5a5f6a);
+    border-radius: 0 0 9px 9px;
   }
 
   @media (max-width: 980px) {
     .grid {
       grid-template-columns: 1fr;
-      gap: clamp(40px, 6vh, 56px);
+      gap: clamp(36px, 5vh, 48px);
     }
 
     .copy {
@@ -307,8 +565,18 @@
       padding-left: 0;
     }
 
-    .arrowdoodle {
-      display: none;
+    .grid {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .demo {
+      width: 100%;
+      transform: none;
+    }
+
+    .base {
+      margin-inline: -14px;
     }
   }
 </style>

@@ -14,10 +14,13 @@
     </a>
 
     <nav class="links" aria-label="primary">
-      <a href="#how">How it works</a>
       <a href="#features">Features</a>
-      <a href="#use-cases">Use cases</a>
-      <a href="#pricing">Pricing</a>
+      <a href="#languages">Languages</a>
+      <a href="#pricing" class="price-link">
+        <span class="struck">Pricing</span>
+        <span class="freehand hand">it's free</span>
+      </a>
+      <a href="#faq">FAQ</a>
     </nav>
 
     <DownloadCta kind="green" />
@@ -41,7 +44,7 @@
 
   header.scrolled {
     padding-block: 10px;
-    background: rgba(255, 253, 247, 0.9);
+    background: color-mix(in srgb, var(--page) 90%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: 0 1px 0 rgba(19, 23, 34, 0.08);
@@ -56,6 +59,7 @@
 
   .links {
     display: flex;
+    align-items: center;
     gap: clamp(20px, 3vw, 40px);
     font-size: 15px;
     font-weight: 500;
@@ -71,6 +75,28 @@
   .links a:hover {
     opacity: 1;
     color: var(--hotpink);
+  }
+
+  .price-link {
+    position: relative;
+  }
+
+  .struck {
+    text-decoration: line-through;
+    text-decoration-color: var(--hotpink);
+    text-decoration-thickness: 2px;
+    text-underline-offset: -2px;
+  }
+
+  .freehand {
+    position: absolute;
+    top: calc(100% - 2px);
+    left: 50%;
+    font-size: 13px;
+    color: var(--hotpink);
+    transform: translateX(-50%) rotate(-9deg);
+    white-space: nowrap;
+    pointer-events: none;
   }
 
   @media (max-width: 860px) {

@@ -1,31 +1,27 @@
 <script>
   import Logo from './Logo.svelte';
-
-  export let title = '';
+  import DownloadCta from './DownloadCta.svelte';
+  import Footer from './Footer.svelte';
 </script>
 
 <div class="page">
-  <header class="top">
-    <div class="bar">
-      <a href="/"><Logo size={22} /></a>
-      <a href="/" class="btn btn-ghost home">← back home</a>
+  <header>
+    <div class="container bar">
+      <a href="/" aria-label="Typie home"><Logo size={26} /></a>
+      <div class="actions">
+        <a href="/" class="back">← home</a>
+        <DownloadCta kind="green" />
+      </div>
     </div>
   </header>
 
-  <main class="field body" style="background:var(--mint); color:var(--green)">
+  <main class="body">
     <div class="container">
       <slot />
     </div>
   </main>
 
-  <footer>
-    <p>typie - a tiny robot with one job · © 2026 · no clouds were involved</p>
-    <nav>
-      <a href="/">home</a>
-      <a href="/about">about</a>
-      <a href="/privacy">privacy</a>
-    </nav>
-  </footer>
+  <Footer />
 </div>
 
 <style>
@@ -33,53 +29,55 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: var(--page);
+    color: #2c3342;
   }
 
-  .top {
+  header {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(249, 248, 244, 0.9);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(2, 89, 77, 0.08);
+    padding-block: 14px;
+    background: color-mix(in srgb, var(--page) 90%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 rgba(19, 23, 34, 0.08);
   }
 
   .bar {
-    width: min(1180px, calc(100% - 40px));
-    margin-inline: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 0;
+    gap: 16px;
   }
 
-  .home {
-    font-size: 12px;
-    padding: 10px 18px;
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .back {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    opacity: 0.72;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+
+  .back:hover {
+    opacity: 1;
+    color: var(--hotpink);
   }
 
   .body {
     flex: 1;
+    padding: clamp(48px, 8vh, 88px) 0 clamp(24px, 4vh, 48px);
   }
 
-  footer {
-    background: var(--ink);
-    color: var(--cream);
-    padding: 28px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    font-size: 13.5px;
-  }
-
-  footer nav {
-    display: flex;
-    gap: 18px;
-  }
-
-  footer a:hover {
-    color: var(--mint);
+  @media (max-width: 640px) {
+    .actions :global(.btn) {
+      display: none;
+    }
   }
 </style>

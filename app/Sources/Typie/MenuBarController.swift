@@ -81,6 +81,16 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         status.isEnabled = false
         menu.addItem(status)
 
+        // a quiet little brag line from the stats vault
+        let stats = StatsStore.shared
+        if stats.totalWords > 0 {
+            let brag = NSMenuItem(
+                title: "\(stats.totalWords.formatted()) words dictated · \(StatsStore.formatDuration(stats.timeSavedSeconds)) saved",
+                action: #selector(AppDelegate.openStats), keyEquivalent: "")
+            brag.target = appDelegate
+            menu.addItem(brag)
+        }
+
         // loud, visible warning when the hotkey can never fire
         if !HotkeyMonitor.accessibilityGranted(prompt: false) {
             let warn = NSMenuItem(
