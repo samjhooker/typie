@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://typie.app/sitemap.xml
+Sitemap: https://typie.cc/sitemap.xml

@@ -11,7 +11,7 @@
     "directory": "./dist"
   },
   "routes": [
-    { "pattern": "typie.app", "custom_domain": true },
-    { "pattern": "www.typie.app", "custom_domain": true }
+    { "pattern": "typie.cc", "custom_domain": true },
+    { "pattern": "www.typie.cc", "custom_domain": true }
   ]
 }
