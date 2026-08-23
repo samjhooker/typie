@@ -6,8 +6,7 @@ import SwiftUI
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let menuController = MenuBarController()
     private var onboardingWindow: NSWindow?
-    private var settingsWindow: NSWindow?
-    private var historyWindow: NSWindow?
+    private var appWindow: NSWindow?
     private var phaseCancellable: AnyCancellable?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -98,20 +97,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         present(onboardingWindow!)
     }
 
+    // MARK: the one window
+
     @objc func openSettings() {
-        NSApp.activate(ignoringOtherApps: true)
-        if settingsWindow == nil {
-            settingsWindow = makeWindow(title: "typie settings", view: SettingsView())
-        }
-        present(settingsWindow!)
+        showAppWindow(pane: .general)
     }
 
     @objc func openHistory() {
+        showAppWindow(pane: .history)
+    }
+
+    private func showAppWindow(pane: AppPane) {
         NSApp.activate(ignoringOtherApps: true)
-        if historyWindow == nil {
-            historyWindow = makeWindow(title: "previous transcriptions", view: HistoryView())
+        WindowState.shared.pane = pane
+        if appWindow == nil {
+            appWindow = makeWindow(title: "typie", view: AppContentView())
         }
-        present(historyWindow!)
+        present(appWindow!)
+    }
+
+    /// Menu shortcut: re-paste whatever typie heard last, at the cursor.
+    @objc func pasteLastTranscription() {
+        guard let text = DictationController.shared.lastGoodText
+            ?? HistoryStore.shared.entries.first?.text else { return }
+        AppLog.event("menu: re-pasting previous transcription")
+        TextInserter.paste(text)
     }
 
     private func makeWindow<V: View>(title: String, view: V) -> NSWindow {

@@ -20,8 +20,8 @@
   }
 
   .big {
-    padding: 18px 34px;
+    padding: 16px 32px;
     font-size: 16px;
-    box-shadow: 0 6px 0 rgba(19, 23, 34, 0.85);
+    box-shadow: 0 8px 22px rgba(19, 23, 34, 0.28);
   }
 </style>

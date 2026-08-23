@@ -12,7 +12,7 @@
     </div>
   </header>
 
-  <main class="field field-mint body">
+  <main class="field body" style="background:var(--mint); color:var(--green)">
     <div class="container">
       <slot />
     </div>

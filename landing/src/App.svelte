@@ -1,12 +1,13 @@
 <script>
   import Nav from './lib/Nav.svelte';
   import Hero from './lib/Hero.svelte';
-  import Features from './lib/Features.svelte';
-  import Languages from './lib/Languages.svelte';
-  import Manifesto from './lib/Manifesto.svelte';
-  import Pricing from './lib/Pricing.svelte';
+  import AppsRow from './lib/AppsRow.svelte';
+  import FeatureCards from './lib/FeatureCards.svelte';
+  import Notch from './lib/Notch.svelte';
+  import Testimonials from './lib/Testimonials.svelte';
+  import CtaBanner from './lib/CtaBanner.svelte';
   import Faq from './lib/Faq.svelte';
-  import Finale from './lib/Finale.svelte';
+  import Footer from './lib/Footer.svelte';
   import ChatBot from './lib/ChatBot.svelte';
   import About from './lib/About.svelte';
   import Privacy from './lib/Privacy.svelte';
@@ -33,12 +34,13 @@
 
   <main>
     <Hero />
-    <Features />
-    <Languages />
-    <Manifesto />
-    <Pricing />
+    <AppsRow />
+    <FeatureCards />
+    <Notch />
+    <Testimonials />
+    <CtaBanner />
     <Faq />
-    <Finale />
+    <Footer />
   </main>
 
   <ChatBot />
@@ -52,7 +54,7 @@
     pointer-events: none;
     backdrop-filter: grayscale(1);
     -webkit-backdrop-filter: grayscale(1);
-    background: rgba(248, 243, 232, 0.12);
+    background: rgba(255, 253, 247, 0.12);
     opacity: 1;
     transition: opacity 0.9s ease;
   }

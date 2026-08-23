@@ -1,12 +1,12 @@
 <script>
   import Robot from './Robot.svelte';
 
-  let { size = 26 } = $props();
+  let { size = 26, color = null } = $props();
 
   const LETTERS = ['t', 'y', 'p', 'i', 'e'];
 </script>
 
-<span class="logo" style="font-size:{size}px">
+<span class="logo" style="font-size:{size}px; {color ? `--tone:${color}` : ''}">
   <Robot size={Math.round(size * 1.15)} mood="idle" />
   <span class="word">
     {#each LETTERS as ch}<b>{ch}</b>{/each}<i>.</i>
@@ -19,11 +19,11 @@
     align-items: center;
     gap: 0.32em;
     line-height: 1;
-    color: var(--hotpink);
+    color: var(--tone, var(--hotpink));
   }
 
   .logo :global(.robot) {
-    color: var(--hotpink);
+    color: var(--tone, var(--hotpink));
   }
 
   .word {
@@ -31,6 +31,7 @@
     font-weight: 900;
     font-size: 1.12em;
     letter-spacing: -0.05em;
+    color: var(--tone, var(--ink));
   }
 
   .word i {

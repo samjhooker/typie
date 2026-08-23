@@ -20,6 +20,8 @@ final class DictationController: ObservableObject {
     @Published private(set) var lastTranscript: String?
     /// while onboarding, transcripts go to the practice box instead of ⌘V
     var routesToDemoBox = false
+    /// last successful transcript, for quick re-paste
+    private(set) var lastGoodText: String?
 
     let modelManager = ModelManager.shared
     private let capture = AudioCapture()
@@ -145,6 +147,7 @@ final class DictationController: ObservableObject {
                 return
             }
             AppLog.event("transcribed in \(Int(ms))ms: \"\(text)\"")
+            lastGoodText = text
             if routesToDemoBox {
                 AppLog.event("routing transcript to onboarding practice box (paste skipped)")
                 lastTranscript = text

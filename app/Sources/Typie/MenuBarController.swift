@@ -92,28 +92,26 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let keybind = NSMenuItem(
-            title: "Change Keybinding", action: #selector(AppDelegate.openSettings), keyEquivalent: "k")
-        keybind.target = appDelegate
-        menu.addItem(keybind)
+        // quick re-paste of the last thing typie heard
+        if (DictationController.shared.lastGoodText ?? HistoryStore.shared.entries.first?.text) != nil {
+            let repaste = NSMenuItem(
+                title: "Paste previous",
+                action: #selector(AppDelegate.pasteLastTranscription), keyEquivalent: "p")
+            repaste.target = appDelegate
+            menu.addItem(repaste)
+        }
+
+        let settingsItem = NSMenuItem(
+            title: "Settings…", action: #selector(AppDelegate.openSettings), keyEquivalent: ",")
+        settingsItem.target = appDelegate
+        menu.addItem(settingsItem)
 
         let welcome = NSMenuItem(
             title: "Run Setup Again…", action: #selector(AppDelegate.showOnboarding), keyEquivalent: "")
         welcome.target = appDelegate
         menu.addItem(welcome)
 
-        let history = NSMenuItem(
-            title: "Previous Transcriptions", action: #selector(AppDelegate.openHistory), keyEquivalent: "h")
-        history.target = appDelegate
-        history.isEnabled = settings.historyEnabled || !HistoryStore.shared.entries.isEmpty
-        menu.addItem(history)
-
         menu.addItem(.separator())
-
-        let settingsItem = NSMenuItem(
-            title: "Settings…", action: #selector(AppDelegate.openSettings), keyEquivalent: ",")
-        settingsItem.target = appDelegate
-        menu.addItem(settingsItem)
 
         let quit = NSMenuItem(title: "Quit typie", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         menu.addItem(quit)

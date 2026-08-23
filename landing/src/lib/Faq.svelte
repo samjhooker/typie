@@ -7,20 +7,20 @@
       a: 'A tiny robot in your Mac menu bar. Hold a key, say the thing, it’s typed. No window. No account.'
     },
     {
-      q: 'What do I need to run it?',
-      a: 'A Mac. Apple silicon, macOS 14+. It lives in the menu bar with one key.'
+      q: 'How is it different from built-in dictation?',
+      a: 'Speed and accuracy. Words land in under 100 milliseconds, right where your cursor is, in any app.'
+    },
+    {
+      q: 'Who can use Typie?',
+      a: 'Anyone on an Apple silicon Mac running macOS 14 or newer.'
+    },
+    {
+      q: 'Is Typie really offline?',
+      a: 'Really. Audio is processed on your Mac and thrown away. We can’t hear you. We don’t want to.'
     },
     {
       q: 'What do I have to download?',
       a: '~500 MB on first install - that’s the model, not bloat. After that it runs offline forever. There is no server to miss.'
-    },
-    {
-      q: 'Where does my voice go?',
-      a: 'It doesn’t. Audio is processed on your Mac and thrown away. We can’t hear you. We don’t want to.'
-    },
-    {
-      q: 'Can I remap the key?',
-      a: 'Yes. If you’re freaky like that.'
     },
     {
       q: 'Why is it free?',
@@ -34,16 +34,30 @@
 <section class="field field-cream" id="faq">
   <div class="container wrap">
     <div class="left">
-      <p class="mono kicker" use:reveal>a few boring ones</p>
-      <h2 class="subhead" use:reveal={{ delay: 40 }}>Ask<br />it.</h2>
-      <p class="hand note" use:reveal={{ delay: 100 }}>the robot answers everything else →</p>
+      <h2 use:reveal>Frequently<br />asked<br />questions</h2>
+      <svg class="starburst" viewBox="0 0 60 60" aria-hidden="true">
+        <g stroke="var(--hotpink)" stroke-width="3.5" stroke-linecap="round">
+          <line x1="30" y1="4" x2="30" y2="18" />
+          <line x1="30" y1="42" x2="30" y2="56" />
+          <line x1="4" y1="30" x2="18" y2="30" />
+          <line x1="42" y1="30" x2="56" y2="30" />
+          <line x1="11" y1="11" x2="21" y2="21" />
+          <line x1="39" y1="39" x2="49" y2="49" />
+          <line x1="49" y1="11" x2="39" y2="21" />
+          <line x1="21" y1="39" x2="11" y2="49" />
+        </g>
+      </svg>
     </div>
-    <div class="list">
+
+    <div class="list" use:reveal={{ delay: 60 }}>
       {#each items as item, i}
         <div class="row" class:open={open === i}>
-          <button onclick={() => (open = open === i ? -1 : i)} aria-expanded={open === i}>
-            <span class="q"><i class="arr">→</i>{item.q}</span>
-            <span class="plus">{open === i ? '–' : '+'}</span>
+          <button
+            onclick={() => (open = open === i ? -1 : i)}
+            aria-expanded={open === i}
+          >
+            <span class="plus">{open === i ? '−' : '+'}</span>
+            <span class="q">{item.q}</span>
           </button>
           {#if open === i}
             <p>{item.a}</p>
@@ -57,97 +71,90 @@
 <style>
   .wrap {
     display: grid;
-    grid-template-columns: 0.7fr 1.3fr;
-    gap: 64px;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(40px, 6vw, 96px);
     align-items: start;
   }
 
-  .note {
-    margin-top: 18px;
-    font-size: clamp(17px, 2vw, 22px);
-    color: var(--hotpink);
-    transform: rotate(-2deg);
+  h2 {
+    font-size: clamp(34px, 3.6vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    color: var(--ink);
+  }
+
+  .starburst {
+    width: 52px;
+    height: 52px;
+    margin-top: 26px;
+    margin-left: 8px;
+    transform: rotate(12deg);
+    animation: twirl 9s linear infinite;
+  }
+
+  @keyframes twirl {
+    to {
+      transform: rotate(372deg);
+    }
   }
 
   .list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
   }
 
   .row {
-    border: 2px solid rgba(19, 23, 34, 0.14);
-    border-radius: 24px;
-    padding: 4px 24px;
-    background: transparent;
-    transition:
-      background 0.25s ease,
-      border-color 0.25s ease,
-      box-shadow 0.25s ease,
-      transform 0.25s var(--spring);
+    border-bottom: 1px solid rgba(19, 23, 34, 0.12);
+    padding: 6px 4px;
   }
 
-  .row:hover {
-    border-color: rgba(19, 23, 34, 0.45);
-    transform: translateX(4px);
-  }
-
-  .row.open {
-    background: var(--cream);
-    border-color: var(--ink);
-    box-shadow: 6px 6px 0 rgba(252, 86, 129, 0.35);
-    transform: none;
+  .row:first-child {
+    border-top: 1px solid rgba(19, 23, 34, 0.12);
   }
 
   button {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 16px;
     padding: 16px 0;
     text-align: left;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(17px, 1.9vw, 21px);
+    font-size: clamp(15px, 1.5vw, 17px);
+    font-weight: 600;
     letter-spacing: -0.01em;
     color: var(--ink);
-  }
-
-  .q {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .arr {
-    font-style: normal;
-    color: var(--hotpink);
-    font-size: 20px;
-    transition: transform 0.3s var(--spring);
-    display: inline-block;
-  }
-
-  .row.open .arr {
-    transform: rotate(90deg);
   }
 
   .plus {
     color: var(--hotpink);
     font-size: 22px;
     line-height: 1;
+    width: 22px;
+    flex-shrink: 0;
+    transition: transform 0.3s var(--spring);
+  }
+
+  .row.open .plus {
+    transform: rotate(90deg);
   }
 
   p {
     padding: 0 0 20px 38px;
-    max-width: 52ch;
-    color: rgba(19, 23, 34, 0.75);
-    font-size: 15.5px;
-    line-height: 1.55;
+    max-width: 54ch;
+    color: rgba(19, 23, 34, 0.72);
+    font-size: 15px;
+    line-height: 1.6;
   }
 
   @media (max-width: 800px) {
-    .wrap { grid-template-columns: 1fr; gap: 24px; }
-    p { padding-left: 34px; }
+    .wrap {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    p {
+      padding-left: 38px;
+    }
   }
 </style>

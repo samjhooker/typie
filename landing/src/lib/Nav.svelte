@@ -7,145 +7,75 @@
 
 <svelte:window onscroll={() => (scrolled = window.scrollY > 24)} />
 
-<header>
-  <div class="pill" class:scrolled>
+<header class:scrolled>
+  <div class="container bar">
     <a href="#top" class="word" aria-label="Typie home">
-      <Logo size={24} />
+      <Logo size={26} />
     </a>
 
-    <nav class="links">
-      <a href="#how">How</a>
+    <nav class="links" aria-label="primary">
+      <a href="#how">How it works</a>
       <a href="#features">Features</a>
-      <a href="#pricing" class="pricing">Pricing<i class="hand">it's free</i></a>
-      <a href="#faq">FAQ</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#pricing">Pricing</a>
     </nav>
 
-    <DownloadCta class="cta" />
+    <DownloadCta kind="green" />
   </div>
 </header>
 
 <style>
   header {
     position: fixed;
-    top: 16px;
+    top: 0;
     left: 0;
     right: 0;
     z-index: 110;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-    padding-inline: 16px;
+    padding-block: 18px;
+    background: transparent;
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease,
+      padding 0.3s ease;
   }
 
-  .pill {
-    pointer-events: auto;
-    width: min(1120px, 100%);
+  header.scrolled {
+    padding-block: 10px;
+    background: rgba(255, 253, 247, 0.9);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 rgba(19, 23, 34, 0.08);
+  }
+
+  .bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 8px 8px 8px 20px;
-    background: rgba(255, 253, 247, 0.94);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 999px;
-    border: 2px solid var(--ink);
-    box-shadow: 0 5px 0 rgba(19, 23, 34, 0.85);
-    transition:
-      background 0.3s ease,
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  /* at top of page: naked chrome; pill materialises on scroll */
-  .pill:not(.scrolled) {
-    background: transparent;
-    border-color: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  .pill.scrolled:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 0 rgba(19, 23, 34, 0.85);
-  }
-
-  .word {
-    display: inline-flex;
-    align-items: center;
-    min-width: 0;
-    flex-shrink: 0;
+    gap: 16px;
   }
 
   .links {
     display: flex;
-    gap: 4px;
-    margin-left: auto;
+    gap: clamp(20px, 3vw, 40px);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
   }
 
   .links a {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--ink);
-    padding: 8px 14px;
-    border-radius: 999px;
-    transition: background 0.2s ease, transform 0.25s var(--spring), box-shadow 0.2s ease;
+    position: relative;
+    opacity: 0.82;
+    transition: opacity 0.2s ease, color 0.2s ease;
   }
 
   .links a:hover {
-    background: var(--butter);
-    box-shadow: 0 3px 0 rgba(19, 23, 34, 0.7);
-    transform: translateY(-2px) rotate(-1deg);
-  }
-
-  .pricing {
-    position: relative;
-    text-decoration: line-through;
-    text-decoration-color: var(--hotpink);
-    text-decoration-thickness: 2.5px;
-  }
-
-  .pricing i {
-    position: absolute;
-    top: -9px;
-    right: -18px;
-    font-size: 14px;
-    font-weight: 700;
+    opacity: 1;
     color: var(--hotpink);
-    transform: rotate(10deg);
-    pointer-events: none;
-    white-space: nowrap;
-  }
-
-  .pill :global(a.cta) {
-    padding: 11px 18px;
-    font-size: 12.5px;
-    flex-shrink: 0;
-    box-shadow: none;
-  }
-
-  .pill :global(a.cta:hover),
-  .pill :global(a.cta:active) {
-    box-shadow: none;
-    transform: none;
-    rotate: none;
-  }
-
-  .pill :global(.apl) {
-    width: 14px;
-    height: 14px;
-    margin-top: -1px;
   }
 
   @media (max-width: 860px) {
-    .links { display: none; }
-  }
-
-  @media (max-width: 480px) {
-    .pill :global(a.cta) { padding: 10px 14px; font-size: 11.5px; }
+    .links {
+      display: none;
+    }
   }
 </style>
