@@ -1,5 +1,7 @@
 # macOS
 .DS_Store
+# ...except the DMG layout template (the icon positions are the feature)
+!app/scripts/dmg-template/.DS_Store
 
 # Swift / Xcode
 .build/

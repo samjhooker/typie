@@ -1,5 +1,7 @@
 <script>
-  let { label = 'Download free for Mac', href = 'https://github.com/samjhooker/typie/releases/latest/download/typie.dmg', kind = 'green', big = false, class: cls = '' } = $props();
+  // Link to the Releases page (not the raw asset) so first-time users see
+  // the install/Gatekeeper instructions in the release notes.
+  let { label = 'Download free for Mac', href = 'https://github.com/samjhooker/typie/releases/latest', kind = 'green', big = false, class: cls = '' } = $props();
 </script>
 
 <a {href} class="btn btn-{kind} dl {cls}" class:big>
