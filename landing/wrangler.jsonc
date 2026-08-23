@@ -1,0 +1,17 @@
+// Deploys the landing site as a Cloudflare Worker with static assets.
+// Custom domain attaches automatically on deploy (domain must be in the
+// same Cloudflare account). Requires:
+//   CLOUDFLARE_API_TOKEN  (Edit Cloudflare Workers template)
+//   CLOUDFLARE_ACCOUNT_ID
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "typie-landing",
+  "compatibility_date": "2025-08-01",
+  "assets": {
+    "directory": "./dist"
+  },
+  "routes": [
+    { "pattern": "typie.app", "custom_domain": true },
+    { "pattern": "www.typie.app", "custom_domain": true }
+  ]
+}
