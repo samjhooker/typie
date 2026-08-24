@@ -292,7 +292,7 @@ html.ent-page {
   position: relative;
   z-index: 10;
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1.05fr 0.95fr;
   align-items: center;
   gap: clamp(40px, 4.5vw, 72px);
   padding-block: 130px 90px;
@@ -384,7 +384,7 @@ html.ent-page {
 /* ---------- hero demo: dictation cycling through enterprise apps ---------- */
 
 .ent-hero .hero-demo {
-  max-width: 520px;
+  max-width: 560px;
   justify-self: center;
   width: 100%;
 }
@@ -421,7 +421,10 @@ html.ent-page {
 .ent-hero .hd-window {
   position: relative;
   margin: 46px auto 0;
-  width: min(440px, calc(100% - 44px));
+  width: min(480px, calc(100% - 40px));
+  aspect-ratio: 2 / 1;
+  display: flex;
+  flex-direction: column;
   background: #17191f;
   border: 1px solid rgba(237, 239, 242, 0.14);
   border-radius: 10px;
@@ -452,6 +455,7 @@ html.ent-page {
 /* window chrome: traffic lights, title, meta */
 
 .ent-hero .titlebar {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -494,12 +498,13 @@ html.ent-page {
   white-space: nowrap;
 }
 
-/* app body: sidebar + paper, fixed height so scenes never resize the window */
+/* app body: sidebar + paper, fills the locked-aspect window */
 
 .ent-hero .winbody {
   display: grid;
   grid-template-columns: 128px 1fr;
-  height: 172px;
+  flex: 1;
+  min-height: 0;
 }
 
 .ent-hero .side {
@@ -1929,7 +1934,7 @@ section.block.band {
   /* sidebar folds away on small screens, like the homepage stage */
   .ent-hero .winbody {
     grid-template-columns: 1fr;
-    height: 150px;
+    min-height: 132px;
   }
 
   .ent-hero .side {
