@@ -1,15 +1,20 @@
 #!/bin/zsh
-# Builds the release binary and assembles typie.app
+# Builds the release binary and assembles the typie.app bundle.
+# Override with env vars for a side-by-side dev variant:
+#   APP_NAME=typie-dev BUNDLE_ID=app.typie.typie-dev ./scripts/make_app.sh
 set -e
 cd "$(dirname "$0")/.."
 
+APP_NAME="${APP_NAME:-typie}"
+BUNDLE_ID="${BUNDLE_ID:-app.typie.typie}"
+
 swift build -c release
 
-APP="build/typie.app"
+APP="build/$APP_NAME.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-cp ".build/release/typie" "$APP/Contents/MacOS/typie"
+cp ".build/release/typie" "$APP/Contents/MacOS/$APP_NAME"
 
 cp Sources/Typie/Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
@@ -26,23 +31,23 @@ for dir in .build/release .build/arm64-apple-macosx/release; do
   done
 done
 
-cat > "$APP/Contents/Info.plist" <<'PLIST'
+cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>typie</string>
+    <string>$APP_NAME</string>
     <key>CFBundleDisplayName</key>
-    <string>typie</string>
+    <string>$APP_NAME</string>
     <key>CFBundleIdentifier</key>
-    <string>app.typie.typie</string>
+    <string>$BUNDLE_ID</string>
     <key>CFBundleVersion</key>
     <string>${APP_VERSION:-1.0.0}</string>
     <key>CFBundleShortVersionString</key>
     <string>${APP_VERSION:-1.0.0}</string>
     <key>CFBundleExecutable</key>
-    <string>typie</string>
+    <string>$APP_NAME</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIconFile</key>
@@ -75,4 +80,4 @@ else
     codesign --force --deep --sign - "$APP"
 fi
 
-echo "built $APP"
+echo "built $APP ($BUNDLE_ID)"

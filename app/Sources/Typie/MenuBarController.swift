@@ -11,8 +11,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     func setUp(appDelegate: AppDelegate) {
         self.appDelegate = appDelegate
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        item.isVisible = true
         item.button?.image = Self.robotImage()
         item.button?.image?.isTemplate = true
+        AppLog.event("menu bar: status item set up — hasButton=\(item.button != nil), visible=\(item.isVisible)")
 
         let menu = NSMenu()
         menu.delegate = self
@@ -56,9 +58,9 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let settings = SettingsStore.shared
         let phase = DictationController.shared.phase
 
-        // version header
+        // version header (variant-tagged so dev/prod robots are tellable apart)
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
-        let versionItem = NSMenuItem(title: "typie v\(version)", action: nil, keyEquivalent: "")
+        let versionItem = NSMenuItem(title: "\(AppVariant.displayName) v\(version)", action: nil, keyEquivalent: "")
         versionItem.isEnabled = false
         menu.addItem(versionItem)
 

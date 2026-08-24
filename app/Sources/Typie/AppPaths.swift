@@ -2,15 +2,21 @@ import AppKit
 import CoreText
 
 enum AppPaths {
+    /// dev variant gets its own support dir (settings/history/stats),
+    /// except models — those always come from the production folder so
+    /// the download is shared between both installs
     static let supportDir: URL = {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        let dir = base.appendingPathComponent("typie", isDirectory: true)
+        let dir = base.appendingPathComponent(AppVariant.isDev ? "typie-dev" : "typie", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }()
 
     static let modelsRoot: URL = {
-        let dir = supportDir.appendingPathComponent("models", isDirectory: true)
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        // deliberately the PRODUCTION dir in both variants
+        let dir = base.appendingPathComponent("typie", isDirectory: true)
+            .appendingPathComponent("models", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }()

@@ -44,8 +44,8 @@ the ~500 mb model -[ Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt
 **CGEvent synthetic keystrokes for output.**
 transcription becomes real keyboard events into whatever app has focus. mail, slack, notes, electron abominations - if it accepts typing, typie works there. no clipboard pollution, no per-app integrations to maintain.
 
-**AppKit/SwiftUI, zero UI framework tax.**
-a menu bar utility should not ship a browser runtime. the whole app is ~20 swift files with one package dependency.
+**AppKit for the parts that touch your system, a bundled Svelte web UI (WKWebView) for the windows.**
+the dictation engine, hotkeys, notch island and menu bar are native; the settings/stats/onboarding windows are a Svelte 5 app (same design system as this site) served from local files inside a WKWebView — pretty and flexible without shipping a server or a network call.
 
 **carbon-era global hotkeys, fully remappable.**
 hold-to-talk on any modifier, rebound in-app. small feature, but it's the difference between a tool and a toy.
@@ -72,8 +72,17 @@ macos 14+, apple silicon, swift 5.9+.
 
 ```bash
 cd app
-./scripts/make_app.sh     # release binary -> build/typie.app
-./scripts/make_dmg.sh     # same, plus distributable dmg
+./scripts/build_webui.sh   # rebuild the Svelte web UI into the app resources
+./scripts/make_app.sh      # release binary -> build/typie.app
+./scripts/make_dmg.sh      # same, plus distributable dmg
+```
+
+side-by-side dev build (runs while production typie stays open, own settings,
+shares the model, skips the notch):
+
+```bash
+cd app
+./scripts/make_dev_app.sh && open build/typie-dev.app
 ```
 
 grant mic + accessibility permissions when asked. it cannot do its job without them, which is more than most apps can say honestly.

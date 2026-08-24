@@ -1,17 +1,17 @@
 import AppKit
 import Combine
-import SwiftUI
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate {
     private let menuController = MenuBarController()
-    private var onboardingWindow: NSWindow?
-    private var appWindow: NSWindow?
+    private var onboardingController: WebUIController?
+    private var appController: WebUIController?
     private var phaseCancellable: AnyCancellable?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // never allow two instances — they'd fight over mic + event tap
-        let others = NSRunningApplication.runningApplications(withBundleIdentifier: "app.typie.typie")
+        // never allow two instances of the SAME variant — they'd fight over
+        // mic + event tap. dev (typie-dev) and prod run side by side on purpose
+        let others = NSRunningApplication.runningApplications(withBundleIdentifier: AppVariant.bundleID)
             .filter { $0 != NSRunningApplication.current }
         if let existing = others.first {
             AppLog.event("another typie already running (pid \(existing.processIdentifier)) — activating it and exiting")
@@ -37,47 +37,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             AppLog.event("launch path: setup complete — going straight to live mode")
             // model files are on disk but not in memory yet — load them
             Task { await ModelManager.shared.downloadAndLoad() }
-            finishSetup()
+            finishSetup(closeOnboarding: false)
         } else {
             AppLog.event("launch path: onboarding (done=\(settings.onboardingDone), model=\(ModelManager.modelsExist()))")
             showOnboarding()
         }
     }
 
-    func finishSetup() {
+    func finishSetup(closeOnboarding: Bool = true) {
         DictationController.shared.routesToDemoBox = false
         SettingsStore.shared.onboardingDone = true
-        if let window = onboardingWindow {
-            onboardingWindow = nil   // nil first so windowWillClose won't re-enter
-            window.close()
+        if closeOnboarding, let controller = onboardingController {
+            onboardingController = nil   // nil first so windowWillClose won't re-enter
+            controller.close()
         }
         DictationController.shared.startMonitoring()
-        NotchPanel.shared.show()
+        showNotchIfFree()
         AppLog.event("setup complete — LIVE MODE: paste-at-cursor on, notch island on")
-    }
-
-    /// Closing the welcome window counts as finishing setup — people close
-    /// windows; they don't always hunt for the footer button.
-    func windowWillClose(_ notification: Notification) {
-        guard let closing = notification.object as? NSWindow,
-              closing == onboardingWindow else { return }
-        AppLog.event("welcome window closed by user — completing setup")
-        finishSetup()
-    }
-
-    /// Route to the practice box only while the welcome window is actually
-    /// focused. The moment any other window/app is frontmost, transcripts
-    /// paste at the cursor like normal.
-    func windowDidBecomeKey(_ notification: Notification) {
-        guard let window = notification.object as? NSWindow,
-              window == onboardingWindow else { return }
-        DictationController.shared.routesToDemoBox = true
-    }
-
-    func windowDidResignKey(_ notification: Notification) {
-        guard let window = notification.object as? NSWindow,
-              window == onboardingWindow else { return }
-        DictationController.shared.routesToDemoBox = false
     }
 
     @objc func openAccessibilitySettings() {
@@ -85,40 +61,68 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
     }
 
-    // MARK: windows
+    // MARK: onboarding window (web)
 
     @objc func showOnboarding() {
-        if onboardingWindow == nil {
-            onboardingWindow = makeWindow(
-                title: "Welcome to typie",
-                size: NSSize(width: 680, height: 560),
-                view: OnboardingView { [weak self] in self?.finishSetup() }
+        if onboardingController == nil {
+            let controller = WebUIController(
+                route: .onboarding,
+                title: AppVariant.isDev ? "Welcome to typie dev" : "Welcome to typie",
+                size: NSSize(width: 680, height: 600)
             )
+            /// Closing the welcome window counts as finishing setup — people
+            /// close windows; they don't always hunt for the footer button.
+            controller.onWillClose = { [weak self] in
+                guard let self, self.onboardingController === controller else { return }
+                self.onboardingController = nil
+                self.finishSetup(closeOnboarding: false)
+            }
+            controller.onComplete = { [weak self] in
+                self?.finishSetup()
+            }
+            /// Route to the practice box only while the welcome window is
+            /// actually frontmost.
+            controller.onBecomeKey = {
+                DictationController.shared.routesToDemoBox = true
+            }
+            controller.onResignKey = {
+                DictationController.shared.routesToDemoBox = false
+            }
+            onboardingController = controller
         }
-        present(onboardingWindow!)
+        onboardingController!.present()
     }
 
-    // MARK: the one window
+    // MARK: the one settings/stats/history window (web)
 
     @objc func openSettings() {
-        showAppWindow(pane: .general)
+        showAppWindow(pane: "settings")
     }
 
     @objc func openHistory() {
-        showAppWindow(pane: .history)
+        showAppWindow(pane: "history")
     }
 
     @objc func openStats() {
-        showAppWindow(pane: .stats)
+        showAppWindow(pane: "stats")
     }
 
-    private func showAppWindow(pane: AppPane) {
-        NSApp.activate(ignoringOtherApps: true)
-        WindowState.shared.pane = pane
-        if appWindow == nil {
-            appWindow = makeWindow(title: "typie", size: NSSize(width: 520, height: 580), view: AppContentView())
+    private func showAppWindow(pane: String) {
+        if appController == nil {
+            appController = WebUIController(
+                route: .app,
+                title: AppVariant.displayName,
+                size: NSSize(width: 520, height: 600)
+            )
         }
-        present(appWindow!)
+        appController!.showPane(pane)
+        appController!.present()
+    }
+
+    /// Always show the notch island — both variants may run side by side,
+    /// and each gets its own island.
+    private func showNotchIfFree() {
+        NotchPanel.shared.show()
     }
 
     /// Menu shortcut: re-paste whatever typie heard last, at the cursor.
@@ -127,26 +131,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             ?? HistoryStore.shared.entries.first?.text else { return }
         AppLog.event("menu: re-pasting previous transcription")
         TextInserter.paste(text)
-    }
-
-    private func makeWindow<V: View>(title: String, size: NSSize, view: V) -> NSWindow {
-        let window = NSWindow(
-            contentRect: NSRect(origin: .zero, size: size),
-            styleMask: [.titled, .closable],
-            backing: .buffered,
-            defer: false
-        )
-        window.title = title
-        window.isReleasedWhenClosed = false
-        window.delegate = self
-        window.center()
-        window.contentView = NSHostingView(rootView: view)
-        window.appearance = NSAppearance(named: .aqua)
-        return window
-    }
-
-    private func present(_ window: NSWindow) {
-        NSApp.activate(ignoringOtherApps: true)
-        window.makeKeyAndOrderFront(nil)
     }
 }

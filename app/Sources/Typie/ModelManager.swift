@@ -65,6 +65,17 @@ final class ModelManager: ObservableObject {
         }
     }
 
+    /// Full ASR result incl. per-token timings — used by the transcribe pane
+    /// to align words with diarization speaker segments.
+    func transcribeDetailed(_ samples: [Float]) async throws -> ASRResult {
+        guard let manager = asrManager else {
+            throw NSError(domain: "typie", code: 1,
+                          userInfo: [NSLocalizedDescriptionKey: "Model not loaded yet"])
+        }
+        var state = try TdtDecoderState(decoderLayers: 2)
+        return try await manager.transcribe(samples, decoderState: &state)
+    }
+
     func transcribe(_ samples: [Float]) async throws -> (text: String, ms: Double) {
         guard let manager = asrManager else {
             throw NSError(domain: "typie", code: 1,

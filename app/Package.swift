@@ -20,6 +20,9 @@ let package = Package(
             ],
             path: "Sources/Typie",
             resources: [
+                // web UI must use .copy: .process flattens the folder tree,
+                // which breaks index.html's relative asset URLs
+                .copy("WebResources"),
                 .process("Resources")
             ]
         )
