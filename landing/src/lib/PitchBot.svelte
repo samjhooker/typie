@@ -92,7 +92,7 @@
   });
 </script>
 
-<div class="pitchbot {variant}">
+<div class="pitchbot pb-{variant}">
   {#if pitch.open}
     <div class="panel">
       <header>
@@ -189,25 +189,25 @@
     display: block;
   }
 
-  .ent .fab {
+  .pb-ent .fab {
     background: #10131a;
     border: 1px solid rgba(52, 211, 153, 0.4);
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
     color: #34d399;
   }
 
-  .ent .fab :global(.robot) {
+  .pb-ent .fab :global(.robot) {
     color: #34d399;
   }
 
-  .edu .fab {
+  .pb-edu .fab {
     background: #fffdf6;
     border: 2px solid rgba(22, 56, 43, 0.85);
     box-shadow: 0 14px 34px rgba(22, 56, 43, 0.24);
     color: #16382b;
   }
 
-  .edu .fab :global(.robot) {
+  .pb-edu .fab :global(.robot) {
     color: #fc5681;
   }
 
@@ -383,169 +383,169 @@
 
   /* ================= enterprise (dark) ================= */
 
-  .ent .panel {
+  .pb-ent .panel {
     background: #10131a;
     border: 1px solid rgba(237, 239, 242, 0.14);
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
     color: #edeff2;
   }
 
-  .ent header {
+  .pb-ent header {
     background: #0d1017;
   }
 
-  .ent .ht strong {
+  .pb-ent .ht strong {
     color: #edeff2;
   }
 
-  .ent .ht span {
+  .pb-ent .ht span {
     color: rgba(237, 239, 242, 0.56);
   }
 
-  .ent .x {
+  .pb-ent .x {
     background: rgba(237, 239, 242, 0.08);
     color: #edeff2;
   }
 
-  .ent .msg.bot {
+  .pb-ent .msg.bot {
     background: #171c26;
     border: 1px solid rgba(237, 239, 242, 0.1);
     color: #edeff2;
   }
 
-  .ent .msg.you {
+  .pb-ent .msg.you {
     background: #34d399;
     color: #06251a;
   }
 
-  .ent .dots {
+  .pb-ent .dots {
     color: rgba(237, 239, 242, 0.45);
   }
 
-  .ent .quick button {
+  .pb-ent .quick button {
     background: rgba(52, 211, 153, 0.1);
     border: 1px solid rgba(52, 211, 153, 0.25);
     color: #6ee7b7;
   }
 
-  .ent .quick button:hover:not(:disabled) {
+  .pb-ent .quick button:hover:not(:disabled) {
     background: rgba(52, 211, 153, 0.22);
   }
 
-  .ent input {
+  .pb-ent input {
     border: 1px solid rgba(237, 239, 242, 0.18);
     background: #0d1017;
     color: #edeff2;
   }
 
-  .ent input:focus {
+  .pb-ent input:focus {
     border-color: rgba(52, 211, 153, 0.6);
   }
 
-  .ent input::placeholder {
+  .pb-ent input::placeholder {
     color: rgba(237, 239, 242, 0.35);
   }
 
-  .ent .send {
+  .pb-ent .send {
     background: #34d399;
     color: #06251a;
     border: none;
   }
 
-  .ent .gh {
+  .pb-ent .gh {
     background: #34d399;
     color: #06251a;
   }
 
-  .ent .gh:hover {
+  .pb-ent .gh:hover {
     filter: brightness(1.08);
   }
 
   /* ================= education (paper) ================= */
 
-  .edu .panel {
+  .pb-edu .panel {
     background: #fffdf6;
     border: 1px solid rgba(22, 56, 43, 0.16);
     box-shadow: 0 30px 70px rgba(22, 56, 43, 0.28);
     color: #16382b;
   }
 
-  .edu header {
+  .pb-edu header {
     background: #ddf2df;
   }
 
-  .edu .hbot :global(.robot) {
+  .pb-edu .hbot :global(.robot) {
     color: #fc5681;
   }
 
-  .edu .ht strong {
+  .pb-edu .ht strong {
     color: #16382b;
   }
 
-  .edu .ht span {
+  .pb-edu .ht span {
     color: rgba(22, 56, 43, 0.64);
   }
 
-  .edu .x {
+  .pb-edu .x {
     background: rgba(22, 56, 43, 0.07);
     color: #16382b;
   }
 
-  .edu .msg.bot {
+  .pb-edu .msg.bot {
     background: #ffffff;
     border: 1px solid rgba(22, 56, 43, 0.12);
     color: #16382b;
   }
 
-  .edu .msg.you {
+  .pb-edu .msg.you {
     background: #fc5681;
     color: #fffdf6;
   }
 
-  .edu .dots {
+  .pb-edu .dots {
     color: rgba(22, 56, 43, 0.45);
   }
 
-  .edu .quick button {
+  .pb-edu .quick button {
     background: rgba(130, 237, 166, 0.3);
     border: none;
     color: #16382b;
   }
 
-  .edu .quick button:hover:not(:disabled) {
+  .pb-edu .quick button:hover:not(:disabled) {
     background: rgba(130, 237, 166, 0.6);
   }
 
-  .edu input {
+  .pb-edu input {
     border: 1.5px solid rgba(22, 56, 43, 0.18);
     background: #ffffff;
     color: #16382b;
   }
 
-  .edu input:focus {
+  .pb-edu input:focus {
     border-color: #fc5681;
   }
 
-  .edu input::placeholder {
+  .pb-edu input::placeholder {
     color: rgba(22, 56, 43, 0.4);
   }
 
-  .edu .send {
+  .pb-edu .send {
     background: #16382b;
     color: #f3efe3;
     border: none;
   }
 
-  .edu .send:hover:not(:disabled) {
+  .pb-edu .send:hover:not(:disabled) {
     background: #fc5681;
   }
 
-  .edu .gh {
+  .pb-edu .gh {
     background: #16382b;
     color: #f3efe3;
   }
 
-  .edu .gh:hover {
+  .pb-edu .gh:hover {
     background: #fc5681;
   }
 </style>
