@@ -1,6 +1,7 @@
 <script>
   import Logo from './Logo.svelte';
   import DownloadCta from './DownloadCta.svelte';
+  import VariantSwitcher from './VariantSwitcher.svelte';
 
   let scrolled = $state(false);
 </script>
@@ -9,9 +10,12 @@
 
 <header class:scrolled>
   <div class="container bar">
-    <a href="#top" class="word" aria-label="Typie home">
-      <Logo size={26} />
-    </a>
+    <div
+      class="word"
+      style="--vn-fg: var(--ink); --vn-accent: var(--hotpink); --vn-menu-bg: var(--paper-raise, #fff); --vn-menu-border: rgba(19, 23, 34, 0.1); --vn-menu-shadow: 0 18px 44px rgba(19, 23, 34, 0.18); --vn-item-fg: var(--ink); --vn-item-muted: rgba(19, 23, 34, 0.55); --vn-item-hover: rgba(19, 23, 34, 0.05);"
+    >
+      <VariantSwitcher variant="personal" logoSize={26} />
+    </div>
 
     <nav class="links" aria-label="primary">
       <a href="#features">Features</a>

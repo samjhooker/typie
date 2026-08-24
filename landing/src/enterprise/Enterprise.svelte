@@ -4,6 +4,7 @@
   import Robot from '../lib/Robot.svelte';
   import TalkWave from '../lib/TalkWave.svelte';
   import { reveal, countup } from './reveal.js';
+  import VariantSwitcher from '../lib/VariantSwitcher.svelte';
   import slack from 'thesvg/slack';
   import outlook from 'thesvg/microsoft-outlook';
   import warp from 'thesvg/warp';
@@ -233,11 +234,12 @@
   <!-- ============ nav ============ -->
   <header class="ent-nav" class:scrolled>
     <div class="container bar">
-      <a href="#top" class="ent-brand" aria-label="typie enterprise home">
-        <Logo size={24} color="#34d399" />
-        <span class="divider" aria-hidden="true"></span>
-        <small>enterprise</small>
-      </a>
+      <div
+        class="ent-brand"
+        style="--vn-fg: var(--bone); --vn-accent: var(--accent); --vn-menu-bg: #10131a; --vn-menu-border: rgba(237, 239, 242, 0.12); --vn-menu-shadow: 0 18px 44px rgba(0, 0, 0, 0.55); --vn-item-fg: var(--bone); --vn-item-muted: var(--muted); --vn-item-hover: rgba(237, 239, 242, 0.06);"
+      >
+        <VariantSwitcher variant="enterprise" logoSize={24} logoColor="#34d399" />
+      </div>
 
       <nav class="ent-links" aria-label="primary">
         <a href="#platform">Platform</a>

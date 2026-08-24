@@ -4,6 +4,7 @@
   import Robot from '../lib/Robot.svelte';
   import TalkWave from '../lib/TalkWave.svelte';
   import { reveal, countup } from '../enterprise/reveal.js';
+  import VariantSwitcher from '../lib/VariantSwitcher.svelte';
   import canva from 'thesvg/canva';
   import googleClassroom from 'thesvg/google-classroom';
   import gmail from 'thesvg/gmail';
@@ -231,11 +232,12 @@
   <!-- ============ nav ============ -->
   <header class="edu-nav" class:scrolled>
     <div class="container bar">
-      <a href="#top" class="edu-brand" aria-label="typie education home">
-        <Logo size={24} />
-        <span class="divider" aria-hidden="true"></span>
-        <small>education</small>
-      </a>
+      <div
+        class="edu-brand"
+        style="--vn-fg: var(--ink); --vn-accent: var(--accent); --vn-menu-bg: var(--paper-raise); --vn-menu-border: var(--line); --vn-menu-shadow: 0 18px 44px rgba(22, 56, 43, 0.16); --vn-item-fg: var(--ink); --vn-item-muted: var(--muted); --vn-item-hover: rgba(22, 56, 43, 0.05);"
+      >
+        <VariantSwitcher variant="education" logoSize={24} />
+      </div>
 
       <nav class="edu-links" aria-label="primary">
         <a href="#why">Why typie</a>
