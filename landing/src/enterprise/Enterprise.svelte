@@ -4,6 +4,10 @@
   import Robot from '../lib/Robot.svelte';
   import TalkWave from '../lib/TalkWave.svelte';
   import { reveal, countup } from './reveal.js';
+  import slack from 'thesvg/slack';
+  import outlook from 'thesvg/microsoft-outlook';
+  import warp from 'thesvg/warp';
+  import { nsSvg } from '../lib/svgid.js';
 
   let scrolled = $state(false);
   let progress = $state(0);
@@ -15,139 +19,159 @@
     progress = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
   };
 
-  /* ---- live demo: hold-to-dictate inside a mock corporate window ---- */
+  /* ---- hero demo: dictation cycling through the enterprise day's apps ----
+     auto-plays above the fold; press & hold (⌥ or the keycap) to try it
+     live in whichever app is on screen. */
 
-  const PHRASE = 'Q3 revenue is up 14 percent and churn held flat at 2.1 percent.';
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let demoEl = $state(null);
-  let demoVisible = $state(false);
-  let phase = $state(REDUCED ? 'done' : 'idle'); // idle | listening | typing | done
-  let chars = $state(REDUCED ? PHRASE.length : 0);
-  let elapsed = $state(0);
+  const SCENES = [
+    {
+      id: 'slack',
+      name: 'Slack',
+      brand: slack.svg,
+      wave: '#36c5f0',
+      title: '#deal-review',
+      meta: '4 members',
+      side: [['# deal-review'], ['# general'], ['# security'], ['# eng-escalations']],
+      text: 'Q3 numbers are final. Churn held flat at 2.1 percent.',
+    },
+    {
+      id: 'outlook',
+      name: 'Outlook',
+      brand: outlook.svg,
+      wave: '#0f6cbd',
+      title: 'New Message',
+      meta: 'To: board@',
+      side: [['Inbox', '3'], ['Drafts'], ['Sent'], ['Archive']],
+      text: 'Revenue is up 14 percent. Details in the deck.',
+    },
+    {
+      id: 'terminal',
+      name: 'Warp',
+      brand: warp.svg,
+      wave: '#34d399',
+      title: 'prod-bastion — ssh',
+      meta: 'tty7',
+      side: [],
+      text: 'verify-backup --vault main --full',
+    },
+  ];
 
-  let timers = [];
-  let rafId = 0;
-  let listenStart = 0;
+  let heroDemoEl = $state(null);
+  let heroVisible = $state(false);
+  let hscene = $state(0);
+  let hphase = $state(REDUCED ? 'done' : 'idle'); // idle | listening | typing | done | switch
+  let hchars = $state(REDUCED ? SCENES[0].text.length : 0);
 
-  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+  let hTimers = [];
+  const hLater = (fn, ms) => hTimers.push(setTimeout(fn, ms));
+  const hClear = () => {
+    hTimers.forEach(clearTimeout);
+    hTimers = [];
+  };
 
-  function clearTimers() {
-    timers.forEach(clearTimeout);
-    timers = [];
-    cancelAnimationFrame(rafId);
+  function hListen(auto = true) {
+    hClear();
+    hphase = 'listening';
+    hchars = 0;
+    /* auto mode schedules its own release; manual holds end on key-up */
+    if (auto) hLater(hEnd, 2100);
   }
 
-  function startListen() {
-    if (phase === 'listening') return;
-    clearTimers();
-    phase = 'listening';
-    chars = 0;
-    elapsed = 0;
-    listenStart = performance.now();
-    const tick = (now) => {
-      elapsed = (now - listenStart) / 1000;
-      if (phase === 'listening') rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
+  /* visitor interaction: press & hold anywhere on the desktop */
+  function hPress() {
+    if (hphase === 'listening' || hphase === 'typing') return;
+    hListen(false);
   }
 
-  function endListen() {
-    if (phase !== 'listening') return;
-    clearTimers();
-    elapsed = Math.max((performance.now() - listenStart) / 1000, 0.4);
-    phase = 'typing';
-    // one short inference beat, then the keystroke burst —
-    // mirrors the real release-to-text latency
-    later(typeOut, 90);
+  function hRelease() {
+    if (hphase !== 'listening') return;
+    hEnd();
   }
 
-  function typeOut() {
-    phase = 'typing';
+  function hEnd() {
+    if (hphase !== 'listening') return;
+    hClear();
+    hphase = 'typing';
+    hLater(hType, 90);
+  }
+
+  function hType() {
+    const full = SCENES[hscene].text;
     if (REDUCED) {
-      chars = PHRASE.length;
-      phase = 'done';
+      hchars = full.length;
+      hphase = 'done';
       return;
     }
-    // CGEvent burst: the whole phrase lands in ~250ms,
-    // not at human typing speed
     const step = () => {
-      chars = Math.min(chars + 4, PHRASE.length);
-      if (chars < PHRASE.length) later(step, 16);
+      hchars = Math.min(hchars + 4, full.length);
+      if (hchars < full.length) hLater(step, 16);
       else {
-        phase = 'done';
-        later(reset, 3400);
+        hphase = 'done';
+        hLater(hNext, 2500);
       }
     };
     step();
   }
 
-  function reset() {
-    phase = 'idle';
-    chars = 0;
-    elapsed = 0;
-    // keep looping for passive viewers while the demo is on screen
-    if (demoVisible) later(autoRun, 1600);
+  function hNext() {
+    hphase = 'switch';
+    hLater(() => {
+      hscene = (hscene + 1) % SCENES.length;
+      hchars = 0;
+      hphase = 'idle';
+      hLater(hListen, 550);
+    }, 420);
   }
 
-  function autoRun() {
-    startListen();
-    later(endListen, 2100);
+  /* dock clicks jump straight to an app */
+  function pick(i) {
+    if (i === hscene && hphase === 'idle') return;
+    hClear();
+    hscene = i;
+    hchars = 0;
+    hphase = 'idle';
+    if (heroVisible && !REDUCED) hLater(hListen, 1200);
   }
 
-  function demoKeydown(e) {
-    if ((e.code === 'Space' || e.code === 'Enter') && !e.repeat) {
-      e.preventDefault();
-      startListen();
-    }
-  }
-
-  function demoKeyup(e) {
-    if (e.code === 'Space' || e.code === 'Enter') {
-      e.preventDefault();
-      endListen();
-    }
-  }
-
-  // the real product binds to option — so does the demo, page-wide,
-  // while the demo section is in view
-  function windowKeydown(e) {
-    if (e.key === 'Alt' && demoVisible && !e.repeat) {
-      e.preventDefault();
-      startListen();
-    }
-  }
-
-  function windowKeyup(e) {
-    if (e.key === 'Alt' && demoVisible) {
-      e.preventDefault();
-      endListen();
-    }
-  }
-
-  // auto-play while the demo is on screen; pause when it leaves
+  // run only while the hero demo is on screen
   $effect(() => {
-    if (REDUCED || !demoEl) return;
+    if (REDUCED || !heroDemoEl) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        demoVisible = entry.isIntersecting;
+        heroVisible = entry.isIntersecting;
         if (entry.isIntersecting) {
-          if (phase === 'idle') autoRun();
+          if (hphase === 'idle' && hchars === 0) hLater(hListen, 1400);
         } else {
-          clearTimers();
-          phase = 'idle';
-          chars = 0;
-          elapsed = 0;
+          hClear();
+          hphase = 'idle';
+          hchars = 0;
         }
       },
-      { threshold: 0.35 }
+      { threshold: 0.3 }
     );
-    io.observe(demoEl);
+    io.observe(heroDemoEl);
     return () => {
       io.disconnect();
-      clearTimers();
+      hClear();
     };
   });
+
+  /* page-wide ⌥ hold-to-talk while the hero demo is in view */
+  function heroKeydown(e) {
+    if (e.key === 'Alt' && heroVisible && !e.repeat) {
+      e.preventDefault();
+      hPress();
+    }
+  }
+
+  function heroKeyup(e) {
+    if (e.key === 'Alt' && heroVisible) {
+      e.preventDefault();
+      hRelease();
+    }
+  }
 
   $effect(() => {
     document.documentElement.classList.add('ent-page');
@@ -203,7 +227,7 @@
   ];
 </script>
 
-<svelte:window onscroll={onScroll} onkeydown={windowKeydown} onkeyup={windowKeyup} />
+<svelte:window onscroll={onScroll} onkeydown={heroKeydown} onkeyup={heroKeyup} onpointerup={hRelease} />
 
 <div class="ent" id="top">
   <!-- ============ nav ============ -->
@@ -216,7 +240,6 @@
       </a>
 
       <nav class="ent-links" aria-label="primary">
-        <a href="#demo">Demo</a>
         <a href="#platform">Platform</a>
         <a href="#security">Security</a>
         <a href="#deployment">Deployment</a>
@@ -235,9 +258,7 @@
       <div>
         <p class="eyebrow hero-eyebrow"><b>typie enterprise</b>&ensp;/&ensp;on-device voice input</p>
         <h1><em>Zero</em> attack surface.</h1>
-      </div>
 
-      <div>
         <p class="sub">
           Enterprise dictation at sub-100ms on every corporate Mac. Audio
           never leaves the device, and there is nothing to breach.
@@ -250,6 +271,137 @@
           <span><b>&gt;</b> apple silicon · macos 14+</span>
           <span><b>&gt;</b> fleet deployment via MDM</span>
         </div>
+      </div>
+
+      <div class="hero-demo" bind:this={heroDemoEl}>
+        <div
+          class="hd-desktop"
+          class:live={hphase === 'listening'}
+          onpointerdown={(e) => { if (e.target.closest?.('.dock-item')) return; e.preventDefault(); hPress(); }}
+        >
+          <div class="island" class:idle={hphase === 'idle' || hphase === 'switch'} class:live={hphase === 'listening'} class:done={hphase === 'done'} aria-hidden="true">
+            {#if hphase === 'listening'}
+              <span class="ibot"><Robot size={15} mood="listening" /></span>
+              <span class="icam"></span>
+              <span class="iwave"><TalkWave n={5} color="#34d399" /></span>
+            {:else if hphase === 'done'}
+              <span class="ibot"><Robot size={17} mood="done" /></span>
+              <span class="icam"></span>
+              <span class="ims">✓ 84ms</span>
+            {:else}
+              <span class="icam"></span>
+            {/if}
+          </div>
+
+          <div class="menubar" aria-hidden="true">
+            <svg class="apple" viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <span class="mitem app">{SCENES[hscene].name}</span>
+            <span class="mitem">File</span>
+            <span class="mitem">Edit</span>
+            <span class="mitem">View</span>
+            <span class="mspace"></span>
+            <span class="net">NET 0 B</span>
+            <svg class="sicn" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M1.5 4.4a10 10 0 0 1 13 0"/><path d="M3.9 7a6.4 6.4 0 0 1 8.2 0"/><circle cx="8" cy="9.9" r="1.15" fill="currentColor" stroke="none"/></svg>
+            <svg class="sicn" viewBox="0 0 25 12" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.6" fill="currentColor"/><path d="M23 4v4a2.2 2.2 0 0 0 0-4z" fill="currentColor"/></svg>
+            <span class="mitem">9:41 AM</span>
+          </div>
+
+          <div
+            class="hd-window theme-{SCENES[hscene].id}"
+            class:live={hphase === 'listening'}
+            class:done={hphase === 'done'}
+            class:switching={hphase === 'switch'}
+          >
+            <div class="titlebar">
+              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="wtitle">{SCENES[hscene].title}</span>
+              <span class="tmeta mono">{SCENES[hscene].meta}</span>
+            </div>
+
+            <div class="winbody">
+              {#if SCENES[hscene].side.length}
+                <aside class="side">
+                  <p class="side-h">
+                    <i class="bmark" aria-hidden="true">{@html nsSvg(SCENES[hscene].brand, 'hsh' + SCENES[hscene].id)}</i>
+                    {SCENES[hscene].name}
+                  </p>
+                  <ul>
+                    {#each SCENES[hscene].side as [label, count], i}
+                      <li class:on={i === 0}><span>{label}</span>{#if count}<b>{count}</b>{/if}</li>
+                    {/each}
+                  </ul>
+                </aside>
+              {/if}
+
+              <div class="paper">
+                {#if hphase === 'listening'}
+                  <div class="talking" aria-hidden="true">
+                    <TalkWave n={13} color={SCENES[hscene].wave} />
+                    <p class="hint2 mono">say anything…</p>
+                  </div>
+                {:else if SCENES[hscene].id === 'terminal'}
+                  <p class="term-line"><span class="prompt">$</span> ssh admin@prod-bastion</p>
+                  <p class="term-line typed">
+                    <span class="prompt">$</span>
+                    {SCENES[hscene].text.slice(0, hchars)}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span class="ghost">words land here, as real keystrokes</span>{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"></span>
+                  </p>
+                {:else if SCENES[hscene].id === 'outlook'}
+                  <div class="fields"><span>To: board@typie.cc</span><span>Subject: Q3 close</span></div>
+                  <p class="mail-text">
+                    {SCENES[hscene].text.slice(0, hchars)}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span class="ghost">words land here, as real keystrokes</span>{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"></span>
+                  </p>
+                  <span class="sendbtn">Send</span>
+                {:else}
+                  <div class="slack-msg">
+                    <i class="sava sa" aria-hidden="true">A</i>
+                    <div class="sbody">
+                      <p class="shead"><b>alex</b><span class="mono">2h ago</span></p>
+                      <p class="stext">ok, who owns the Q3 close narrative?</p>
+                    </div>
+                  </div>
+                  <div class="slack-msg">
+                    <i class="sava sy" aria-hidden="true">Y</i>
+                    <div class="sbody">
+                      <p class="shead"><b>you</b><span class="mono">now</span></p>
+                      <p class="stext">
+                        {SCENES[hscene].text.slice(0, hchars)}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span class="ghost">words land here, as real keystrokes</span>{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"></span>
+                      </p>
+                    </div>
+                  </div>
+                {/if}
+                {#if hphase === 'done'}
+                  <span class="badge mono">✓ typed in 84 ms</span>
+                {/if}
+              </div>
+            </div>
+          </div>
+
+          <nav class="dock">
+            {#each SCENES as s, i}
+              <button class="dock-item" class:on={hscene === i} onclick={() => pick(i)} aria-label={s.name}>
+                <span class="dicon"><i class="dbmark" aria-hidden="true">{@html nsSvg(s.brand, 'dk' + s.id)}</i></span>
+                <i class="dot"></i>
+              </button>
+            {/each}
+          </nav>
+        </div>
+
+        <p class="tryhint">
+          <button
+            class="minikey"
+            class:down={hphase === 'listening'}
+            onpointerdown={(e) => { e.preventDefault(); hPress(); }}
+            onpointerup={hRelease}
+            onpointerleave={hRelease}
+            onkeydown={(e) => { if ((e.code === 'Space' || e.code === 'Enter') && !e.repeat) { e.preventDefault(); hPress(); } }}
+            onkeyup={(e) => { if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); hRelease(); } }}
+            aria-label="press and hold to try typie live"
+          >
+            <b>&#8997;</b>option
+          </button>
+          press &amp; hold to try it live
+        </p>
+        <p class="hd-caption">same key, every app. zero bytes on the wire.</p>
       </div>
     </div>
   </section>
@@ -282,110 +434,10 @@
     </div>
   </section>
 
-  <!-- ============ live demo ============ -->
-  <section class="block ent-demo" id="demo" bind:this={demoEl}>
-    <div class="container">
-      <p class="eyebrow"><b>01</b> / live demo</p>
-      <h2 use:reveal>Hold a key. Say the thing.<br />It's typed.</h2>
-      <p class="lede" use:reveal={{ delay: 0.08 }}>
-        This is the entire product. Hold to dictate, release, and the words
-        land as real keystrokes in whatever app has focus. Try it here, or
-        just watch.
-      </p>
-
-      <div class="stage" use:reveal={{ delay: 0.12 }}>
-        <div class="desktop">
-          <div
-            class="island"
-            class:idle={phase === 'idle'}
-            class:live={phase === 'listening'}
-            class:done={phase === 'done'}
-            aria-hidden="true"
-          >
-            {#if phase === 'listening'}
-              <span class="ibot"><Robot size={17} mood="listening" /></span>
-              <span class="icam"></span>
-              <span class="iwave"><TalkWave n={5} color="#34d399" /></span>
-            {:else if phase === 'done'}
-              <span class="ibot"><Robot size={19} mood="done" /></span>
-              <span class="icam"></span>
-              <span class="ims">✓ 84ms</span>
-            {:else}
-              <span class="icam"></span>
-            {/if}
-          </div>
-
-          <div class="menubar" aria-hidden="true">
-            <span class="mitem app">Notes</span>
-            <span class="mitem">File</span>
-            <span class="mitem">Edit</span>
-            <span class="mitem">View</span>
-            <span class="mspace"></span>
-            <span class="net">NET 0 B</span>
-            <span class="mitem">9:41 AM</span>
-          </div>
-
-          <div class="notepad" class:live={phase === 'listening'}>
-            <div class="titlebar">
-              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="title">Q3 board update</span>
-              <span class="tspace" aria-hidden="true"></span>
-            </div>
-
-            <div class="sheet">
-              <p class="typed">
-                {PHRASE.slice(0, chars)}{#if chars === 0 && phase === 'idle'}<span class="ghost">Dictation will appear here, as real keystrokes.</span>{/if}<span class="caret" class:hidden={phase === 'done'} aria-hidden="true"></span>
-              </p>
-            </div>
-
-            <div class="status">
-              <div class="who">
-                <span class="bot" class:active={phase !== 'idle'}>
-                  <Robot size={34} mood={phase === 'typing' ? 'thinking' : phase} />
-                </span>
-                <span class="bars" aria-hidden="true"><TalkWave n={9} color="#34d399" /></span>
-                <span class="phase-label">
-                  {phase === 'idle'
-                    ? 'idle — hold ⌥ to dictate'
-                    : phase === 'listening'
-                      ? `listening — on-device · ${elapsed.toFixed(1)}s`
-                      : phase === 'typing'
-                        ? 'typing — synthetic keystrokes'
-                        : 'done — 84 ms release-to-text'}
-                </span>
-              </div>
-              <span class="chip" class:show={phase === 'done'}>84 ms</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="controls">
-          <p class="holdline">
-            hold
-            <button
-              class="key"
-              class:down={phase === 'listening'}
-              onpointerdown={(e) => { e.preventDefault(); startListen(); }}
-              onpointerup={endListen}
-              onpointerleave={endListen}
-              onkeydown={demoKeydown}
-              onkeyup={demoKeyup}
-              aria-label="the option key - press and hold to dictate"
-            >
-              <span class="ksym" aria-hidden="true">&#8997;</span>
-              <span class="klbl">option</span>
-            </button>
-            and talk. release, and it's typed.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ platform bento ============ -->
   <section class="block ent-bento" id="platform">
     <div class="container">
-      <p class="eyebrow"><b>02</b> / platform</p>
+      <p class="eyebrow"><b>01</b> / platform</p>
       <h2 use:reveal>Built like infrastructure,<br />not like an app.</h2>
       <p class="lede" use:reveal={{ delay: 0.08 }}>
         One native binary. One dependency. No browser runtime, no background
@@ -463,7 +515,7 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
   <!-- ============ security (raised band) ============ -->
   <section class="block band ent-security" id="security">
     <div class="container">
-      <p class="eyebrow"><b>03</b> / security</p>
+      <p class="eyebrow"><b>02</b> / security</p>
       <h2 use:reveal>Not a privacy policy.<br />An architecture.</h2>
       <p class="lede" use:reveal={{ delay: 0.08 }}>
         Most vendors promise to handle your data carefully. Typie's promise is
@@ -513,7 +565,7 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
   <!-- ============ deployment ============ -->
   <section class="block ent-deploy" id="deployment">
     <div class="container">
-      <p class="eyebrow"><b>04</b> / deployment</p>
+      <p class="eyebrow"><b>03</b> / deployment</p>
       <h2 use:reveal>Pilot to fleet<br />in under two weeks.</h2>
 
       <div class="grid">
@@ -558,7 +610,7 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
   <!-- ============ pricing ============ -->
   <section class="block ent-pricing" id="pricing">
     <div class="container">
-      <p class="eyebrow"><b>05</b> / pricing</p>
+      <p class="eyebrow"><b>04</b> / pricing</p>
       <h2 use:reveal>Per seat. Flat.<br />No usage meters.</h2>
       <p class="lede" use:reveal={{ delay: 0.08 }}>
         Inference runs on your hardware, so our costs do not scale with your
@@ -618,7 +670,7 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
   <!-- ============ faq ============ -->
   <section class="block ent-faq" id="faq">
     <div class="container">
-      <p class="eyebrow"><b>06</b> / faq</p>
+      <p class="eyebrow"><b>05</b> / faq</p>
       <h2 use:reveal>Questions your security<br />team will ask first.</h2>
 
       <div class="list" use:reveal={{ delay: 0.1 }}>

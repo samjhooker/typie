@@ -15,6 +15,7 @@
   import Privacy from './lib/Privacy.svelte';
   import Terms from './lib/Terms.svelte';
   import Enterprise from './enterprise/Enterprise.svelte';
+  import Education from './education/Education.svelte';
   import { app } from './lib/state.svelte.js';
 
   const path = $state(window.location.pathname);
@@ -50,6 +51,8 @@
   <Terms />
 {:else if path === '/enterprise'}
   <Enterprise />
+{:else if path === '/education'}
+  <Education />
 {:else}
   <Nav />
 
