@@ -294,7 +294,7 @@
       </p>
 
       <div class="stage" use:reveal={{ delay: 0.12 }}>
-        <div class="window" class:listening={phase === 'listening'}>
+        <div class="desktop">
           <div
             class="island"
             class:idle={phase === 'idle'}
@@ -315,44 +315,47 @@
             {/if}
           </div>
 
-          <div class="desktop">
-            <div class="menubar" aria-hidden="true">
-              <span class="mitem app">Notes</span>
-              <span class="mitem">File</span>
-              <span class="mitem">Edit</span>
-              <span class="mitem">View</span>
-              <span class="mspace"></span>
-              <span class="net">NET 0 B</span>
-              <span class="mitem">9:41 AM</span>
+          <div class="menubar" aria-hidden="true">
+            <span class="mitem app">Notes</span>
+            <span class="mitem">File</span>
+            <span class="mitem">Edit</span>
+            <span class="mitem">View</span>
+            <span class="mspace"></span>
+            <span class="net">NET 0 B</span>
+            <span class="mitem">9:41 AM</span>
+          </div>
+
+          <div class="notepad" class:live={phase === 'listening'}>
+            <div class="titlebar">
+              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="title">Q3 board update</span>
+              <span class="tspace" aria-hidden="true"></span>
             </div>
-          </div>
 
-          <div class="titlebar">
-            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="title">Q3 board update</span>
-            <span class="tspace" aria-hidden="true"></span>
-          </div>
-
-          <div class="sheet">
-            <p class="typed">
-              {PHRASE.slice(0, chars)}{#if chars === 0 && phase === 'idle'}<span class="ghost">Dictation will appear here, as real keystrokes.</span>{/if}<span class="caret" class:hidden={phase === 'done'} aria-hidden="true"></span>
-            </p>
-          </div>
-
-          <div class="status">
-            <div class="who">
-              <span class="bot" class:active={phase !== 'idle'}>
-                <Robot size={34} mood={phase === 'typing' ? 'thinking' : phase} />
-              </span>
-              <span class="bars" aria-hidden="true"><TalkWave n={9} color="#34d399" /></span>
-              <span class="phase-label">
-                {phase === 'idle' && 'idle — hold to dictate'}
-                {phase === 'listening' && `listening — on-device · ${elapsed.toFixed(1)}s`}
-                {phase === 'typing' && 'typing — synthetic keystrokes'}
-                {phase === 'done' && 'done — 84 ms release-to-text'}
-              </span>
+            <div class="sheet">
+              <p class="typed">
+                {PHRASE.slice(0, chars)}{#if chars === 0 && phase === 'idle'}<span class="ghost">Dictation will appear here, as real keystrokes.</span>{/if}<span class="caret" class:hidden={phase === 'done'} aria-hidden="true"></span>
+              </p>
             </div>
-            <span class="chip" class:show={phase === 'done'}>84 ms</span>
+
+            <div class="status">
+              <div class="who">
+                <span class="bot" class:active={phase !== 'idle'}>
+                  <Robot size={34} mood={phase === 'typing' ? 'thinking' : phase} />
+                </span>
+                <span class="bars" aria-hidden="true"><TalkWave n={9} color="#34d399" /></span>
+                <span class="phase-label">
+                  {phase === 'idle'
+                    ? 'idle — hold ⌥ to dictate'
+                    : phase === 'listening'
+                      ? `listening — on-device · ${elapsed.toFixed(1)}s`
+                      : phase === 'typing'
+                        ? 'typing — synthetic keystrokes'
+                        : 'done — 84 ms release-to-text'}
+                </span>
+              </div>
+              <span class="chip" class:show={phase === 'done'}>84 ms</span>
+            </div>
           </div>
         </div>
 

@@ -631,13 +631,17 @@ section.block.band {
   max-width: 860px;
 }
 
-.ent-demo .window {
+/* the Notes window, floating on the desktop like a real app */
+
+.ent-demo .notepad {
   position: relative;
+  margin: 54px auto 0;
+  width: min(640px, calc(100% - 48px));
   background: #17191f;
-  border: 1px solid rgba(237, 239, 242, 0.1);
-  border-radius: 12px;
+  border: 1px solid rgba(237, 239, 242, 0.12);
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
   transition:
     border-color 300ms var(--ease-inout),
     box-shadow 300ms var(--ease-inout);
@@ -649,13 +653,25 @@ section.block.band {
 
 .ent-demo .desktop {
   position: relative;
-  height: clamp(84px, 11vw, 128px);
   background:
     radial-gradient(130% 160% at 0% -10%, rgba(52, 211, 153, 0.14) 0%, transparent 52%),
     radial-gradient(110% 140% at 100% 0%, rgba(111, 143, 251, 0.08) 0%, transparent 48%),
     linear-gradient(118deg, #10131a 0%, #0c0f15 42%, #121a24 100%);
-  border-bottom: 1px solid var(--line);
+  border: 1px solid rgba(237, 239, 242, 0.1);
+  border-radius: 14px;
   overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  padding-bottom: 46px;
+  transition:
+    border-color 300ms var(--ease-inout),
+    box-shadow 300ms var(--ease-inout);
+}
+
+.ent-demo .desktop:has(.notepad.live) {
+  border-color: rgba(52, 211, 153, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(52, 211, 153, 0.1),
+    0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
 .ent-demo .menubar {
@@ -758,11 +774,11 @@ section.block.band {
   justify-self: end;
 }
 
-.ent-demo .window.listening {
-  border-color: rgba(52, 211, 153, 0.35);
+.ent-demo .notepad.live {
+  border-color: rgba(52, 211, 153, 0.4);
   box-shadow:
-    0 0 0 1px rgba(52, 211, 153, 0.15),
-    0 24px 64px rgba(0, 0, 0, 0.45);
+    0 0 0 1px rgba(52, 211, 153, 0.18),
+    0 30px 70px rgba(0, 0, 0, 0.55);
 }
 
 .ent-demo .titlebar {
@@ -812,8 +828,8 @@ section.block.band {
 }
 
 .ent-demo .sheet {
-  padding: 34px 28px;
-  min-height: 132px;
+  padding: 26px 26px;
+  min-height: 96px;
 }
 
 .ent-demo .typed {
@@ -880,7 +896,7 @@ section.block.band {
   transition: opacity 250ms var(--ease-inout);
 }
 
-.ent-demo .window.listening .bars {
+.ent-demo .notepad.live .bars {
   opacity: 1;
 }
 
@@ -1552,13 +1568,14 @@ section.block.band {
   }
 
   .ent-demo .sheet {
-    padding: 24px 20px;
-    min-height: 104px;
+    padding: 20px 18px;
+    min-height: 84px;
   }
 
   /* homepage mobile proportions */
-  .ent-demo .desktop {
-    height: 78px;
+  .ent-demo .notepad {
+    margin-top: 44px;
+    width: calc(100% - 24px);
   }
 
   .ent-demo .menubar {
