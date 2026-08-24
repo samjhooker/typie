@@ -147,7 +147,7 @@
   .banner {
     position: relative;
     background: var(--butter);
-    border-radius: 28px;
+    border-radius: var(--radius-surface);
     padding: clamp(36px, 5vw, 56px) clamp(20px, 3.5vw, 48px) clamp(150px, 18vw, 210px);
     overflow: hidden;
   }
@@ -189,7 +189,7 @@
 
   .plan {
     background: #fffdf7;
-    border-radius: 22px;
+    border-radius: var(--radius-card);
     padding: 28px 22px 24px;
     display: flex;
     flex-direction: column;

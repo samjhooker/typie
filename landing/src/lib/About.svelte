@@ -70,7 +70,7 @@
 
   .col p:not(.lede) {
     margin-bottom: 14px;
-    color: #2c3342;
+    color: var(--text-2);
     line-height: 1.65;
   }
 

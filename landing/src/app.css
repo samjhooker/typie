@@ -21,6 +21,11 @@
   --periwinkle: #6f8ffb;
   --ink: #131722;
 
+  /* warm text scale (matches gold.css) — replaces the cold blue-gray #2c3342 */
+  --text-1: var(--ink);
+  --text-2: rgba(19, 23, 34, 0.76);
+  --text-3: rgba(19, 23, 34, 0.54);
+
   --card-lavender: #efecfb;
   --card-blue: #dde9fa;
   --card-cream: #fdf3dc;
@@ -59,6 +64,7 @@
   --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
   --radius: 36px;
   --radius-card: 24px;
+  --radius-surface: 28px; /* large wrapped surfaces (pricing banner, panels) */
 }
 
 * {
@@ -76,7 +82,7 @@ html {
 body {
   font-family: var(--sans);
   background: var(--page);
-  color: #2c3342;
+  color: var(--text-2);
   font-size: 16.5px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -130,7 +136,7 @@ button {
   scroll-margin-top: 88px;
 }
 
-.field-cream { background: transparent; color: #2c3342; }
+.field-cream { background: transparent; color: var(--text-2); }
 .field-pink-band { background: var(--pink-band); color: var(--ink); }
 .field-butter { background: var(--butter); color: var(--ink); }
 

@@ -499,10 +499,6 @@
     transition: filter 0.45s var(--ease-out);
   }
 
-  .hero.live .laptop {
-    filter: drop-shadow(0 28px 52px rgba(19, 23, 34, 0.22));
-  }
-
   .laptop::after {
     content: "";
     position: absolute;

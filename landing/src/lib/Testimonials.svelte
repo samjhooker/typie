@@ -99,7 +99,7 @@
     position: relative;
     background: var(--cream);
     border: 1px solid rgba(19, 23, 34, 0.07);
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.05);
     padding: clamp(22px, 2.6vw, 32px);
     display: flex;

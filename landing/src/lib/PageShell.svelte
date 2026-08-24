@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: column;
     background: var(--page);
-    color: #2c3342;
+    color: var(--text-2);
   }
 
   header {

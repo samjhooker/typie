@@ -19,6 +19,18 @@
 
   const path = $state(window.location.pathname);
 
+  /* Geist + Geist Mono are only used by /enterprise - inject on demand
+     so root-landing visitors never download them */
+  $effect(() => {
+    if (path !== '/enterprise' || document.getElementById('fonts-enterprise')) return;
+    const link = Object.assign(document.createElement('link'), {
+      id: 'fonts-enterprise',
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap',
+    });
+    document.head.appendChild(link);
+  });
+
   $effect(() => {
     const live = app.mood === 'listening';
     const typed = app.mood === 'done';

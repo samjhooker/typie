@@ -88,7 +88,7 @@
   section {
     background: #fff;
     border: 1px solid rgba(19, 23, 34, 0.07);
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.04);
     padding: 22px 26px;
   }
@@ -101,7 +101,7 @@
 
   p {
     margin-top: 8px;
-    color: #2c3342;
+    color: var(--text-2);
     line-height: 1.65;
   }
 

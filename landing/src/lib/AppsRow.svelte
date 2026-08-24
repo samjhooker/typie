@@ -119,7 +119,7 @@
     flex: 0 0 auto;
     width: 118px;
     background: #fff;
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.06);
     padding: 18px 10px 14px;
     display: flex;
