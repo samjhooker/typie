@@ -295,7 +295,13 @@
 
       <div class="stage" use:reveal={{ delay: 0.12 }}>
         <div class="window" class:listening={phase === 'listening'}>
-          <div class="island" class:live={phase === 'listening'} class:done={phase === 'done'} aria-hidden="true">
+          <div
+            class="island"
+            class:idle={phase === 'idle'}
+            class:live={phase === 'listening'}
+            class:done={phase === 'done'}
+            aria-hidden="true"
+          >
             {#if phase === 'listening'}
               <span class="ibot"><Robot size={17} mood="listening" /></span>
               <span class="icam"></span>
@@ -309,10 +315,22 @@
             {/if}
           </div>
 
+          <div class="desktop">
+            <div class="menubar" aria-hidden="true">
+              <span class="mitem app">Notes</span>
+              <span class="mitem">File</span>
+              <span class="mitem">Edit</span>
+              <span class="mitem">View</span>
+              <span class="mspace"></span>
+              <span class="net">NET 0 B</span>
+              <span class="mitem">9:41 AM</span>
+            </div>
+          </div>
+
           <div class="titlebar">
-            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="title">New message</span>
-            <span class="net">NET 0 B</span>
+            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="title">Q3 board update</span>
+            <span class="tspace" aria-hidden="true"></span>
           </div>
 
           <div class="sheet">

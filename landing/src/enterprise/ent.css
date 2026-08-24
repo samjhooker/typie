@@ -633,112 +633,175 @@ section.block.band {
 
 .ent-demo .window {
   position: relative;
-  background: var(--bg-raise);
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  background: #17191f;
+  border: 1px solid rgba(237, 239, 242, 0.1);
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
   transition:
     border-color 300ms var(--ease-inout),
     box-shadow 300ms var(--ease-inout);
 }
 
-/* the notch: a real hardware tab, attached to the top edge, black on black.
-   idle = camera only. listening/done = the tab widens to reveal the bot. */
+/* the notch: ported 1:1 from the homepage island, recolored.
+   it lives inside an actual Mac menu bar on a desktop strip,
+   sized to the homepage's screen proportions. */
+
+.ent-demo .desktop {
+  position: relative;
+  height: clamp(84px, 11vw, 128px);
+  background:
+    radial-gradient(130% 160% at 0% -10%, rgba(52, 211, 153, 0.14) 0%, transparent 52%),
+    radial-gradient(110% 140% at 100% 0%, rgba(111, 143, 251, 0.08) 0%, transparent 48%),
+    linear-gradient(118deg, #10131a 0%, #0c0f15 42%, #121a24 100%);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.ent-demo .menubar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 26px;
+  padding: 0 14px;
+  background: rgba(0, 0, 0, 0.38);
+  font-size: 0.68rem;
+  color: rgba(237, 239, 242, 0.6);
+}
+
+.ent-demo .mitem.app {
+  font-weight: 600;
+  color: rgba(237, 239, 242, 0.85);
+}
+
+.ent-demo .mspace {
+  flex: 1;
+}
 
 .ent-demo .island {
   position: absolute;
-  top: -1px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: 6;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 25px;
-  width: 34px;
-  padding: 0 10px;
   background: #000;
-  border-radius: 0 0 11px 11px;
+  color: var(--bone);
+  border-radius: 0 0 14px 14px;
   overflow: hidden;
-  transition: width 380ms var(--ease-snap);
+  transition: width 380ms var(--ease-snap), height 380ms var(--ease-snap);
+}
+
+.ent-demo .island.idle {
+  width: 96px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  padding-bottom: 4px;
 }
 
 .ent-demo .island.live,
 .ent-demo .island.done {
-  width: 188px;
+  width: min(280px, 60%);
+  height: 34px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 16px 4px;
+  border-radius: 0 0 16px 16px;
 }
 
 .ent-demo .icam {
-  flex: none;
-  width: 7px;
-  height: 7px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: #131c28;
+  background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
   box-shadow:
-    inset 0 0 2px #000,
-    0 0 0 1px rgba(255, 255, 255, 0.03);
+    inset 0 0 0 1px rgba(120, 130, 150, 0.4),
+    0 0 0 2px #000;
+  justify-self: center;
 }
 
 .ent-demo .ibot {
   display: block;
+  line-height: 0;
   color: var(--accent);
+  flex-shrink: 0;
+  justify-self: start;
 }
 
-.ent-demo .island :global(.talkwave) {
+.ent-demo .iwave {
+  display: block;
+  width: 40px;
+  justify-self: end;
+}
+
+.ent-demo .iwave :global(.talkwave) {
   height: 14px;
-  gap: 3px;
+  gap: 2px;
 }
 
-.ent-demo .island :global(.talkwave i) {
-  width: 3px;
+.ent-demo .iwave :global(.talkwave i) {
+  width: 2.5px;
 }
 
 .ent-demo .ims {
   font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--accent);
   white-space: nowrap;
+  justify-self: end;
 }
 
 .ent-demo .window.listening {
-  border-color: rgba(52, 211, 153, 0.42);
+  border-color: rgba(52, 211, 153, 0.35);
   box-shadow:
-    0 0 0 1px rgba(52, 211, 153, 0.18),
+    0 0 0 1px rgba(52, 211, 153, 0.15),
     0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
 .ent-demo .titlebar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 13px 20px;
-  /* near-black so the hardware notch blends in, like the real menu bar */
-  background: #06080c;
+  gap: 14px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.025);
   border-bottom: 1px solid var(--line);
 }
 
-.ent-demo .dots {
+.ent-demo .lights {
   display: flex;
-  gap: 7px;
+  gap: 8px;
+  flex: none;
 }
 
-.ent-demo .dots i {
-  width: 10px;
-  height: 10px;
+.ent-demo .lights i {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: rgba(237, 239, 242, 0.14);
+}
+
+.ent-demo .lights i:nth-child(1) { background: #ff5f57; }
+.ent-demo .lights i:nth-child(2) { background: #febc2e; }
+.ent-demo .lights i:nth-child(3) { background: #28c840; }
+
+.ent-demo .tspace {
+  width: 52px;
+  flex: none;
 }
 
 .ent-demo .title {
   flex: 1;
   text-align: center;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--faint);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--muted);
 }
 
 .ent-demo .net {
@@ -1491,6 +1554,35 @@ section.block.band {
   .ent-demo .sheet {
     padding: 24px 20px;
     min-height: 104px;
+  }
+
+  /* homepage mobile proportions */
+  .ent-demo .desktop {
+    height: 78px;
+  }
+
+  .ent-demo .menubar {
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .ent-demo .mitem:not(.app) {
+    display: none;
+  }
+
+  .ent-demo .island.idle {
+    width: 84px;
+    height: 24px;
+  }
+
+  .ent-demo .island.live,
+  .ent-demo .island.done {
+    width: min(220px, 64%);
+    height: 30px;
+  }
+
+  .ent-demo .ims {
+    font-size: 12px;
   }
 
   .ent-demo .controls {
