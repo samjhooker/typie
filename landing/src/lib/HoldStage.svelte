@@ -14,14 +14,6 @@
 
   const pressSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keypress.wav') : null;
   const releaseSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keyrelease.wav') : null;
-  /* example voice track: only ever plays on a user-initiated hold */
-  const blahSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/blah.mp3') : null;
-  if (blahSfx) {
-    blahSfx.loop = true;
-    blahSfx.preload = 'auto';
-    blahSfx.load();
-  }
-  let blahFade = null;
 
   function playSfx(sfx) {
     if (!sfx) return;
@@ -32,42 +24,6 @@
     } catch {}
   }
 
-  /* faded background volume - it's an example, not the real thing */
-  const BLAH_VOL = 0.22;
-
-  function startBlah() {
-    if (!blahSfx) return;
-    try {
-      clearInterval(blahFade);
-      blahSfx.currentTime = 0;
-      blahSfx.volume = 0;
-      blahSfx.play().catch(() => {});
-      blahFade = setInterval(() => {
-        if (!blahSfx) return clearInterval(blahFade);
-        if (blahSfx.volume + 0.04 >= BLAH_VOL) {
-          blahSfx.volume = BLAH_VOL;
-          clearInterval(blahFade);
-        } else {
-          blahSfx.volume += 0.04;
-        }
-      }, 60);
-    } catch {}
-  }
-
-  function stopBlah() {
-    if (!blahSfx) return;
-    clearInterval(blahFade);
-    blahFade = setInterval(() => {
-      if (!blahSfx) return clearInterval(blahFade);
-      if (blahSfx.volume - 0.06 <= 0) {
-        blahSfx.volume = 0;
-        blahSfx.pause();
-        clearInterval(blahFade);
-      } else {
-        blahSfx.volume -= 0.06;
-      }
-    }, 40);
-  }
 
   const scenes = [
     {
@@ -185,7 +141,6 @@
     pressStart = performance.now();
     playSfx(pressSfx);
     hold.demoing = user;
-    if (user) startBlah();
     armWatchdog();
     /* no auto-pop: hold as long as you like (min 600 ms) */
   }
@@ -201,7 +156,6 @@
   function popNow() {
     clearTimers();
     playSfx(releaseSfx);
-    stopBlah();
     hold.demoing = false;
     lastMs = 58 + Math.round(Math.random() * 36);
     app.lastMs = lastMs;
@@ -227,7 +181,6 @@
          killing it - otherwise their first clicks feel like no-ops */
       if (user && !hold.demoing) {
         hold.demoing = true;
-        startBlah();
         armWatchdog();
         return;
       }
@@ -266,7 +219,6 @@
   function pick(i) {
     if (i === step && mode === 'idle') return;
     clearTimers();
-    stopBlah();
     hold.demoing = false;
     step = i;
     lastMs = null;
@@ -293,7 +245,6 @@
   $effect(() => () => {
     if (app.mood !== 'idle') app.mood = 'idle';
     hold.demoing = false;
-    stopBlah();
   });
 
   /* let the hero headline keycap drive the real demo.

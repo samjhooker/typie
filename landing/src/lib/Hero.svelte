@@ -3,6 +3,7 @@
   import { app } from './state.svelte.js';
   import { hold } from './hold.svelte.js';
   import { magnetic } from './magnetic.js';
+  import { untrack } from 'svelte';
 
   let keyDown = $state(false);
   let interacted = $state(false);
@@ -21,7 +22,7 @@
     keyDown = true;
     setTimeout(() => (keyDown = false), 200);
     /* starts live dictation; releasing anywhere stops it (HoldStage listens globally).
-       user-initiated: plays the example voice + blah word pops while held */
+       user-initiated: plays the blah word pops while held */
     hold.press(true);
   }
 
@@ -56,47 +57,80 @@
     return () => clearTimeout(t);
   });
 
-  /* "blah blah blah" erupting out of the option key - only during a
-     user-initiated hold (hold.demoing), never during the auto demo */
+  /* "blah blah blah" streaming out of the word "talk." and arcing into
+     the macbook demo - plays on any live hold, user-initiated or the
+     auto demo.
+     all state writes run untracked: blahs.push() reads the array's
+     length, and tracking that here would make the effect re-trigger
+     itself (effect_update_depth_exceeded) and kill page reactivity */
   let blahs = $state([]);
+  let talkEl = $state(null);
+  let laptopEl = $state(null);
 
   $effect(() => {
     const active =
-      hold.demoing &&
       app.mood === 'listening' &&
       !matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!active) {
-      blahs = [];
-      return;
-    }
 
-    let seq = 0;
-    let timer;
-    const spawn = () => {
-      const id = `${seq++}-${Math.random().toString(36).slice(2, 7)}`;
-      const side = Math.random() < 0.5 ? -1 : 1;
-      blahs.push({
-        id,
-        /* wide spread so words never stack: arc left or right of the key */
-        dx: Math.round(side * (30 + Math.random() * 130)),
-        dy: -Math.round(70 + Math.random() * 80),
-        rot: Math.round(side * (4 + Math.random() * 14)),
-        size: Math.round(20 + Math.random() * 16),
-        dur: Math.round(750 + Math.random() * 450),
-        alt: seq % 2 === 0,
-        txt: Math.random() > 0.82 ? 'blah blah' : 'blah'
-      });
-      setTimeout(() => {
-        blahs = blahs.filter((b) => b.id !== id);
-      }, 1400);
-      /* jittered cadence - feels like speech, not a metronome */
-      timer = setTimeout(spawn, 120 + Math.random() * 160);
-    };
-    spawn();
-    return () => {
-      clearTimeout(timer);
-      blahs = []; /* never let words from an aborted hold pile up */
-    };
+    return untrack(() => {
+      if (!active) {
+        blahs = [];
+        return;
+      }
+
+      let seq = 0;
+      let timer;
+      const spawn = () => {
+        const talk = talkEl?.getBoundingClientRect?.();
+        const mac = laptopEl?.getBoundingClientRect?.();
+        if (!talk || !mac || !mac.width) return;
+
+        /* take off from somewhere on the word "talk." */
+        const cx = talk.left + talk.width / 2;
+        const cy = talk.top + talk.height / 2;
+        const sx = (Math.random() - 0.5) * talk.width * 1.1;
+        const sy = (Math.random() - 0.5) * talk.height * 1.6;
+
+        /* land on a random spot on the macbook screen */
+        const tx =
+          mac.left + mac.width * (0.2 + Math.random() * 0.6) - cx;
+        const ty =
+          mac.top + mac.height * (0.12 + Math.random() * 0.52) - cy;
+
+        const dist = Math.hypot(tx - sx, ty - sy);
+        /* leisurely flight: big words travel visibly, ~1.4-2.3s */
+        const dur = Math.round(
+          Math.min(2300, Math.max(1400, dist * 0.9 + 700 + Math.random() * 350))
+        );
+        const side = Math.random() < 0.5 ? -1 : 1;
+        const id = `${seq++}-${Math.random().toString(36).slice(2, 7)}`;
+
+        blahs.push({
+          id,
+          sx: Math.round(sx),
+          sy: Math.round(sy),
+          tx: Math.round(tx),
+          ty: Math.round(ty),
+          /* projectile-ish wobble: launch lift then gravity sag */
+          lift: -Math.round(18 + Math.random() * 46),
+          rot: Math.round(side * (5 + Math.random() * 14)),
+          fs: Math.round(17 + Math.random() * 16),
+          dur,
+          alt: seq % 2 === 0,
+          txt: Math.random() > 0.82 ? 'blah blah' : 'blah'
+        });
+        setTimeout(() => {
+          blahs = blahs.filter((b) => b.id !== id);
+        }, dur + 140);
+        /* relaxed speech cadence */
+        timer = setTimeout(spawn, 220 + Math.random() * 260);
+      };
+      spawn();
+      return () => {
+        clearTimeout(timer);
+        blahs = []; /* never let words from an aborted hold pile up */
+      };
+    });
   });
 
   /* demo the option key only while the hero is actually on screen */
@@ -191,19 +225,17 @@
               <span class="ksym" aria-hidden="true">&#8997;</span>
               <span class="klbl">option</span>
             </button>
-            {#if hold.demoing && app.mood === 'listening'}
-              <div class="blahs" aria-hidden="true">
+          </span>
+          <span class="talkend" bind:this={talkEl}>and talk{#if app.mood === 'listening'}
+              <span class="blahs" aria-hidden="true">
                 {#each blahs as b (b.id)}
                   <span
                     class="blah hand"
                     class:alt={b.alt}
-                    style="--dx:{b.dx}px; --dy:{b.dy}px; --rot:{b.rot}deg; font-size:{b.size}px; --dur:{b.dur}ms"
-                  >{b.txt}</span>
+                    style="--sx:{b.sx}px; --sy:{b.sy}px; --tx:{b.tx}px; --ty:{b.ty}px; --bump:{b.bump}px; --rot:{b.rot}deg; --fs:{b.fs}px; --dur:{b.dur}ms"
+                  ><i>{b.txt}</i></span>
                 {/each}
-              </div>
-            {/if}
-          </span>
-          and talk
+              </span>{/if}</span>
         </p>
       </div>
     </div>
@@ -211,7 +243,7 @@
     <div class="demo-col">
       <div class="demo">
         <span class="macglow" aria-hidden="true"><b></b><i></i><i></i></span>
-        <div class="laptop">
+        <div class="laptop" bind:this={laptopEl}>
           <div class="lid">
             <HoldStage />
           </div>
@@ -341,6 +373,11 @@
   }
 
   .talk { color: var(--periwinkle); }
+
+  .talkend {
+    position: relative;
+    white-space: nowrap;
+  }
   .typed { color: var(--hotpink); }
 
   .value {
@@ -429,47 +466,75 @@
     display: inline-block;
   }
 
-  /* blah words popping out of the key while the user holds it */
+  /* blah words streaming from "talk." into the macbook while talking.
+     physics split across two layers: the outer span owns horizontal
+     travel - a gentle ease-in-out so the whole journey stays readable,
+     no burst-and-crawl - plus opacity; the inner owns vertical motion
+     (launch lift, gravity sag) plus the rotation drift */
   .blahs {
     position: absolute;
-    left: 50%;
-    top: -4px;
+    inset: 0;
     z-index: 3;
     pointer-events: none;
   }
 
   .blah {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 50%;
+    top: 50%;
     white-space: nowrap;
     font-weight: 700;
     line-height: 1;
+    font-size: var(--fs, 22px);
     color: var(--hotpink);
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
     opacity: 0;
     will-change: transform, opacity;
-    animation: blahpop var(--dur, 900ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: blah-fly var(--dur, 1800ms) cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+  }
+
+  .blah i {
+    display: inline-block;
+    font-style: normal;
+    will-change: transform;
+    animation: blah-toss var(--dur, 1800ms) cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
   }
 
   .blah.alt {
     color: var(--periwinkle);
   }
 
-  @keyframes blahpop {
+  @keyframes blah-fly {
     0% {
       opacity: 0;
-      transform: translate(calc(-50% + 0px), 16px) rotate(calc(var(--rot) / 3)) scale(0.3);
+      transform: translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) scale(0.55);
     }
-    20% {
+    9% {
       opacity: 1;
     }
-    70% {
+    68% {
       opacity: 0.9;
     }
     100% {
       opacity: 0;
-      transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot)) scale(1);
+      transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0.96);
+    }
+  }
+
+  @keyframes blah-toss {
+    0% {
+      transform: translateY(0) rotate(calc(var(--rot) * 0.25));
+    }
+    /* launch: spoken words pop upward off the mouth */
+    26% {
+      transform: translateY(var(--lift)) rotate(calc(var(--rot) * 0.7));
+    }
+    /* gravity wins: sag back through the flight line */
+    68% {
+      transform: translateY(calc(var(--lift) * -0.22)) rotate(calc(var(--rot) * 1.05));
+    }
+    100% {
+      transform: translateY(calc(var(--lift) * -0.05)) rotate(var(--rot));
     }
   }
 
