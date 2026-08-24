@@ -14,6 +14,14 @@
 
   const pressSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keypress.wav') : null;
   const releaseSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keyrelease.wav') : null;
+  /* example voice track: only ever plays on a user-initiated hold */
+  const blahSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/blah.mp3') : null;
+  if (blahSfx) {
+    blahSfx.loop = true;
+    blahSfx.preload = 'auto';
+    blahSfx.load();
+  }
+  let blahFade = null;
 
   function playSfx(sfx) {
     if (!sfx) return;
@@ -22,6 +30,43 @@
       sfx.volume = 0.55;
       sfx.play();
     } catch {}
+  }
+
+  /* faded background volume - it's an example, not the real thing */
+  const BLAH_VOL = 0.22;
+
+  function startBlah() {
+    if (!blahSfx) return;
+    try {
+      clearInterval(blahFade);
+      blahSfx.currentTime = 0;
+      blahSfx.volume = 0;
+      blahSfx.play().catch(() => {});
+      blahFade = setInterval(() => {
+        if (!blahSfx) return clearInterval(blahFade);
+        if (blahSfx.volume + 0.04 >= BLAH_VOL) {
+          blahSfx.volume = BLAH_VOL;
+          clearInterval(blahFade);
+        } else {
+          blahSfx.volume += 0.04;
+        }
+      }, 60);
+    } catch {}
+  }
+
+  function stopBlah() {
+    if (!blahSfx) return;
+    clearInterval(blahFade);
+    blahFade = setInterval(() => {
+      if (!blahSfx) return clearInterval(blahFade);
+      if (blahSfx.volume - 0.06 <= 0) {
+        blahSfx.volume = 0;
+        blahSfx.pause();
+        clearInterval(blahFade);
+      } else {
+        blahSfx.volume -= 0.06;
+      }
+    }, 40);
   }
 
   const scenes = [
@@ -122,26 +167,42 @@
   }
 
   const MIN_HOLD = 600;
+  /* safety net: a demo hold should never outlive this, even if a
+     release event gets lost somewhere */
+  const MAX_HOLD = 12000;
   let pressStart = 0;
 
-  function startListening() {
+  function armWatchdog() {
+    later(() => {
+      if (mode === 'listening') release();
+    }, MAX_HOLD);
+  }
+
+  function startListening(user = false) {
     mode = 'listening';
     app.mood = 'listening';
     notchOpen = true;
     pressStart = performance.now();
     playSfx(pressSfx);
+    hold.demoing = user;
+    if (user) startBlah();
+    armWatchdog();
     /* no auto-pop: hold as long as you like (min 600 ms) */
   }
 
   function release() {
     if (mode !== 'listening') return;
     const held = performance.now() - pressStart;
-    later(popNow, Math.max(0, MIN_HOLD - held));
+    /* short taps still get a quick transcription - never make people wait
+       the full min-hold, and never let a re-press push it further away */
+    later(popNow, Math.max(0, Math.min(320, MIN_HOLD - held)));
   }
 
   function popNow() {
     clearTimers();
     playSfx(releaseSfx);
+    stopBlah();
+    hold.demoing = false;
     lastMs = 58 + Math.round(Math.random() * 36);
     app.lastMs = lastMs;
     mode = 'done';
@@ -158,16 +219,24 @@
     release();
   }
 
-  function press() {
+  function press(user = false) {
     if (!armed) return;
     clearTimers();
     if (mode === 'listening') {
+      /* a user pressing mid-auto-demo takes over the live hold instead of
+         killing it - otherwise their first clicks feel like no-ops */
+      if (user && !hold.demoing) {
+        hold.demoing = true;
+        startBlah();
+        armWatchdog();
+        return;
+      }
       release();
     } else if (mode === 'done') {
       step = (step + 1) % scenes.length;
-      startListening();
+      startListening(user);
     } else {
-      startListening();
+      startListening(user);
     }
   }
 
@@ -183,11 +252,13 @@
     if (!armed || e.repeat || e.key !== key.code) return;
     e.preventDefault();
     down = true;
-    press();
+    press(true);
   }
 
   function onKeyUp(e) {
-    if (e.key !== key.code) return;
+    /* release on ANY modifier keyup - an exact-match check can miss
+       (cycled keys, AltGraph, layout quirks) and leave it stuck live */
+    if (!KEYS.some((k) => k.code === e.key)) return;
     down = false;
     release();
   }
@@ -195,6 +266,8 @@
   function pick(i) {
     if (i === step && mode === 'idle') return;
     clearTimers();
+    stopBlah();
+    hold.demoing = false;
     step = i;
     lastMs = null;
     notchOpen = false;
@@ -219,18 +292,22 @@
 
   $effect(() => () => {
     if (app.mood !== 'idle') app.mood = 'idle';
+    hold.demoing = false;
+    stopBlah();
   });
 
-  /* let the hero headline keycap drive the real demo */
+  /* let the hero headline keycap drive the real demo.
+     user=true only from real interactions (click / keypress); the
+     auto-demo loop calls hold.press() bare, so it stays bloops-only */
   $effect(() => {
-    hold.press = () => {
+    hold.press = (user = false) => {
       armed = true;
-      press();
+      press(user);
     };
   });
 </script>
 
-<svelte:window onkeydown={onKey} onkeyup={onKeyUp} onpointerup={onPointerUp} />
+<svelte:window onkeydown={onKey} onkeyup={onKeyUp} onpointerup={onPointerUp} onpointercancel={onPointerUp} onblur={() => release()} />
 
 <div class="stage" bind:this={root}>
   {#key scene.id}
@@ -238,7 +315,7 @@
     <button
       class="minikey"
       class:down={mode === 'listening'}
-      onpointerdown={(e) => { e.preventDefault(); press(); }}
+      onpointerdown={(e) => { e.preventDefault(); press(true); }}
       aria-label="Press to try Typie live"
     >
       <b>{key.char}</b>{key.name}

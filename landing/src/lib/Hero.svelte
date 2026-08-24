@@ -20,8 +20,9 @@
     markInteracted();
     keyDown = true;
     setTimeout(() => (keyDown = false), 200);
-    /* starts live dictation; releasing anywhere stops it (HoldStage listens globally) */
-    hold.press();
+    /* starts live dictation; releasing anywhere stops it (HoldStage listens globally).
+       user-initiated: plays the example voice + blah word pops while held */
+    hold.press(true);
   }
 
   function onUserKey(e) {
@@ -55,6 +56,49 @@
     return () => clearTimeout(t);
   });
 
+  /* "blah blah blah" erupting out of the option key - only during a
+     user-initiated hold (hold.demoing), never during the auto demo */
+  let blahs = $state([]);
+
+  $effect(() => {
+    const active =
+      hold.demoing &&
+      app.mood === 'listening' &&
+      !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!active) {
+      blahs = [];
+      return;
+    }
+
+    let seq = 0;
+    let timer;
+    const spawn = () => {
+      const id = `${seq++}-${Math.random().toString(36).slice(2, 7)}`;
+      const side = Math.random() < 0.5 ? -1 : 1;
+      blahs.push({
+        id,
+        /* wide spread so words never stack: arc left or right of the key */
+        dx: Math.round(side * (30 + Math.random() * 130)),
+        dy: -Math.round(70 + Math.random() * 80),
+        rot: Math.round(side * (4 + Math.random() * 14)),
+        size: Math.round(20 + Math.random() * 16),
+        dur: Math.round(750 + Math.random() * 450),
+        alt: seq % 2 === 0,
+        txt: Math.random() > 0.82 ? 'blah blah' : 'blah'
+      });
+      setTimeout(() => {
+        blahs = blahs.filter((b) => b.id !== id);
+      }, 1400);
+      /* jittered cadence - feels like speech, not a metronome */
+      timer = setTimeout(spawn, 120 + Math.random() * 160);
+    };
+    spawn();
+    return () => {
+      clearTimeout(timer);
+      blahs = []; /* never let words from an aborted hold pile up */
+    };
+  });
+
   /* demo the option key only while the hero is actually on screen */
   $effect(() => {
     if (!heroEl) return;
@@ -73,13 +117,16 @@
       return;
     }
     const holdMs = 2200;
+    let autoHolding = false;
     let loop;
     const timers = [];
     const beat = () => {
       if (interacted || !inView || document.visibilityState !== 'visible') return;
+      autoHolding = true;
       hold.press();
       timers.push(
         setTimeout(() => {
+          autoHolding = false;
           if (!interacted && inView) hold.press();
         }, holdMs)
       );
@@ -93,7 +140,12 @@
       clearTimeout(kickoff);
       clearInterval(loop);
       timers.forEach(clearTimeout);
-      if (!interacted && app.mood === 'listening') hold.press();
+      /* only ever cancel a hold the AUTO DEMO started - never one the
+         user just began, otherwise their first click silently kills itself */
+      if (autoHolding) {
+        autoHolding = false;
+        hold.press();
+      }
     };
   });
 </script>
@@ -139,6 +191,17 @@
               <span class="ksym" aria-hidden="true">&#8997;</span>
               <span class="klbl">option</span>
             </button>
+            {#if hold.demoing && app.mood === 'listening'}
+              <div class="blahs" aria-hidden="true">
+                {#each blahs as b (b.id)}
+                  <span
+                    class="blah hand"
+                    class:alt={b.alt}
+                    style="--dx:{b.dx}px; --dy:{b.dy}px; --rot:{b.rot}deg; font-size:{b.size}px; --dur:{b.dur}ms"
+                  >{b.txt}</span>
+                {/each}
+              </div>
+            {/if}
           </span>
           and talk
         </p>
@@ -364,6 +427,50 @@
     position: relative;
     z-index: 1;
     display: inline-block;
+  }
+
+  /* blah words popping out of the key while the user holds it */
+  .blahs {
+    position: absolute;
+    left: 50%;
+    top: -4px;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .blah {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--hotpink);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: blahpop var(--dur, 900ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .blah.alt {
+    color: var(--periwinkle);
+  }
+
+  @keyframes blahpop {
+    0% {
+      opacity: 0;
+      transform: translate(calc(-50% + 0px), 16px) rotate(calc(var(--rot) / 3)) scale(0.3);
+    }
+    20% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot)) scale(1);
+    }
   }
 
   .rings {
