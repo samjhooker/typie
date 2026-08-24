@@ -9,6 +9,8 @@
   import googleClassroom from 'thesvg/google-classroom';
   import gmail from 'thesvg/gmail';
   import { nsSvg } from '../lib/svgid.js';
+  import PitchBot from '../lib/PitchBot.svelte';
+  import { pitch } from '../lib/pitchbot.svelte.js';
 
   let scrolled = $state(false);
   let progress = $state(0);
@@ -247,7 +249,11 @@
         <a href="#faq">FAQ</a>
       </nav>
 
-      <a href="mailto:sales@typie.cc?subject=Education%20pilot" class="btn btn-solid btn-sm">Book a pilot</a>
+      <a
+        href="mailto:sales@typie.cc?subject=Education%20pilot"
+        class="btn btn-solid btn-sm"
+        onclick={(e) => { e.preventDefault(); pitch.show(); }}
+      >Book a pilot</a>
     </div>
     <div class="progress" style="--p:{progress}" aria-hidden="true"></div>
   </header>
@@ -280,7 +286,11 @@
           audio never leaves the device, because there is no cloud to send it to.
         </p>
         <div class="cta">
-          <a href="mailto:sales@typie.cc?subject=Education%20pilot" class="btn btn-solid">Bring typie to your campus</a>
+          <a
+            href="mailto:sales@typie.cc?subject=Education%20pilot"
+            class="btn btn-solid"
+            onclick={(e) => { e.preventDefault(); pitch.show(); }}
+          >Bring typie to your campus</a>
         </div>
       </div>
 
@@ -682,7 +692,11 @@ breach surface           ▸ <b>n/a</b></pre>
               <li>Priority support with SLA</li>
               <li>District-wide rollout planning</li>
             </ul>
-            <a href="mailto:sales@typie.cc?subject=Campus%20licensing" class="btn btn-ghost">Contact us</a>
+            <a
+              href="mailto:sales@typie.cc?subject=Campus%20licensing"
+              class="btn btn-ghost"
+              onclick={(e) => { e.preventDefault(); pitch.show(); }}
+            >Contact us</a>
           </div>
         </div>
       </div>
@@ -721,7 +735,11 @@ breach surface           ▸ <b>n/a</b></pre>
     <div class="container">
       <h2 use:reveal>Give every classroom<br />a voice<em>.</em></h2>
       <div class="actions" use:reveal={{ delay: 0.12 }}>
-        <a href="mailto:sales@typie.cc?subject=Education%20pilot" class="btn btn-solid">Book a campus pilot</a>
+        <a
+          href="mailto:sales@typie.cc?subject=Education%20pilot"
+          class="btn btn-solid"
+          onclick={(e) => { e.preventDefault(); pitch.show(); }}
+        >Book a campus pilot</a>
       </div>
     </div>
   </section>
@@ -755,7 +773,10 @@ breach surface           ▸ <b>n/a</b></pre>
         <div>
           <h4>Contact</h4>
           <ul>
-            <li><a href="mailto:sales@typie.cc?subject=Education">sales@typie.cc</a></li>
+            <li><a
+              href="mailto:sales@typie.cc?subject=Education"
+              onclick={(e) => { e.preventDefault(); pitch.show(); }}
+            >sales@typie.cc</a></li>
             <li><a href="/about">About</a></li>
           </ul>
         </div>
@@ -775,6 +796,8 @@ breach surface           ▸ <b>n/a</b></pre>
       <span>zero bytes transmitted since install</span>
     </div>
   </footer>
+
+  <PitchBot variant="edu" />
 </div>
 
 <style>

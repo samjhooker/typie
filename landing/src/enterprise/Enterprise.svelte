@@ -9,6 +9,8 @@
   import outlook from 'thesvg/microsoft-outlook';
   import warp from 'thesvg/warp';
   import { nsSvg } from '../lib/svgid.js';
+  import PitchBot from '../lib/PitchBot.svelte';
+  import { pitch } from '../lib/pitchbot.svelte.js';
 
   let scrolled = $state(false);
   let progress = $state(0);
@@ -249,7 +251,11 @@
         <a href="#faq">FAQ</a>
       </nav>
 
-      <a href="mailto:sales@typie.cc?subject=Enterprise%20briefing" class="btn btn-solid btn-sm">Book a briefing</a>
+      <a
+        href="mailto:sales@typie.cc?subject=Enterprise%20briefing"
+        class="btn btn-solid btn-sm"
+        onclick={(e) => { e.preventDefault(); pitch.show(); }}
+      >Book a briefing</a>
     </div>
     <div class="progress" style="--p:{progress}" aria-hidden="true"></div>
   </header>
@@ -266,7 +272,11 @@
           never leaves the device, and there is nothing to breach.
         </p>
         <div class="cta">
-          <a href="mailto:sales@typie.cc?subject=Enterprise%20briefing" class="btn btn-solid">Book a security briefing</a>
+          <a
+            href="mailto:sales@typie.cc?subject=Enterprise%20briefing"
+            class="btn btn-solid"
+            onclick={(e) => { e.preventDefault(); pitch.show(); }}
+          >Book a security briefing</a>
         </div>
         <div class="meta">
           <span><b>&gt;</b> on-device speech infrastructure</span>
@@ -630,7 +640,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
               <li>Email support</li>
               <li>Security whitepaper access</li>
             </ul>
-            <a href="mailto:sales@typie.cc?subject=Pilot%20program" class="btn btn-ghost">Start a pilot</a>
+            <a
+              href="mailto:sales@typie.cc?subject=Pilot%20program"
+              class="btn btn-ghost"
+              onclick={(e) => { e.preventDefault(); pitch.show(); }}
+            >Start a pilot</a>
           </div>
         </div>
 
@@ -648,7 +662,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
               <li>DPA + security review support</li>
               <li>Priority support, 4-hour SLA</li>
             </ul>
-            <a href="mailto:sales@typie.cc?subject=Enterprise%20plan" class="btn btn-solid">Contact sales</a>
+            <a
+              href="mailto:sales@typie.cc?subject=Enterprise%20plan"
+              class="btn btn-solid"
+              onclick={(e) => { e.preventDefault(); pitch.show(); }}
+            >Contact sales</a>
           </div>
         </div>
 
@@ -662,7 +680,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
               <li>Custom SLA and procurement terms</li>
               <li>Regulated-industry deployment review</li>
             </ul>
-            <a href="mailto:sales@typie.cc?subject=Sovereign%20deployment" class="btn btn-ghost">Talk to us</a>
+            <a
+              href="mailto:sales@typie.cc?subject=Sovereign%20deployment"
+              class="btn btn-ghost"
+              onclick={(e) => { e.preventDefault(); pitch.show(); }}
+            >Talk to us</a>
           </div>
         </div>
       </div>
@@ -701,7 +723,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
     <div class="container">
       <h2 use:reveal>Put a voice interface<br />on every corporate Mac.</h2>
       <div class="actions" use:reveal={{ delay: 0.12 }}>
-        <a href="mailto:sales@typie.cc?subject=Enterprise%20briefing" class="btn btn-solid">Book a security briefing</a>
+        <a
+          href="mailto:sales@typie.cc?subject=Enterprise%20briefing"
+          class="btn btn-solid"
+          onclick={(e) => { e.preventDefault(); pitch.show(); }}
+        >Book a security briefing</a>
       </div>
     </div>
   </section>
@@ -728,7 +754,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
           <h4>Company</h4>
           <ul>
             <li><a href="/about" use:reveal={{ delay: 0.18 }}>About</a></li>
-            <li><a href="mailto:sales@typie.cc" use:reveal={{ delay: 0.24 }}>sales@typie.cc</a></li>
+            <li><a
+              href="mailto:sales@typie.cc"
+              use:reveal={{ delay: 0.24 }}
+              onclick={(e) => { e.preventDefault(); pitch.show(); }}
+            >sales@typie.cc</a></li>
           </ul>
         </div>
         <div>
@@ -747,6 +777,8 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
       <span>zero bytes transmitted since install</span>
     </div>
   </footer>
+
+  <PitchBot variant="ent" />
 </div>
 
 <style>
