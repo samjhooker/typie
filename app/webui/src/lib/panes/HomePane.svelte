@@ -77,22 +77,23 @@
     </section>
 
     <section class="feat card recs">
-      <div class="feat-head"><Glyph name="record" size={16} /><h4>record</h4></div>
-      <p>{meetings.length === 0 ? 'capture a call, get a diarized transcript.' : `${meetings.length} meeting${meetings.length === 1 ? '' : 's'} captured.`}</p>
+      <div class="feat-head"><Glyph name="record" size={16} /><h4>call capture</h4></div>
+      <p>{meetings.length === 0 ? 'save the whole call offline — every voice, split by speaker.' : `${meetings.length} call${meetings.length === 1 ? '' : 's'} captured.`}</p>
       <div class="acts">
         <button
-          class="btn btn-mint small"
+          class="btn small"
+          class:btn-mint={!ui.meeting.isCapturing}
+          class:btn-stop={ui.meeting.isCapturing}
           onclick={() => {
             if (!ui.permissions.screen) send({ type:'requestScreenPermission' })
             send({ type:'toggleMeetingRecording' })
-            local.libraryTab = 'recordings'
-            local.pane = 'library'
+            if (!ui.meeting.isCapturing) local.pane = 'library'
           }}
         >
           {#if !ui.permissions.screen}<ShieldCheck size={12} />{:else}<MonitorUp size={12} />{/if}
-          {!ui.permissions.screen ? 'grant & record' : 'start recording'}
+          {!ui.permissions.screen ? 'grant & record' : ui.meeting.isCapturing ? 'stop capture' : 'start capture'}
         </button>
-        <button class="btn btn-ghost small" onclick={() => { local.libraryTab = 'recordings'; go('library')() }}>past <ArrowRight size={11} /></button>
+        <button class="btn btn-ghost small" onclick={go('library')}>past calls <ArrowRight size={11} /></button>
       </div>
     </section>
   </div>

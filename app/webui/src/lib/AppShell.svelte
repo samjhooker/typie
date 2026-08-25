@@ -21,7 +21,6 @@
   window.__typie.setPane = (p) => {
     if (p?.startsWith('transcript:')) {
       local.pane = 'library'
-      local.libraryTab = 'transcripts'
       local.selectedTranscriptId = p.split(':')[1]
       return
     }
@@ -32,7 +31,6 @@
       stats: 'home',
     }
     const nid = map[p] ?? p
-    if (nid === 'library') local.libraryTab = p === 'recordings' ? 'recordings' : 'transcripts'
     if (['home','notes','library','history','settings'].includes(nid)) local.pane = nid
   }
 

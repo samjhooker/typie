@@ -104,6 +104,7 @@ private final class SchemeHandler: NSObject, WKURLSchemeHandler {
                     "Content-Length": String(range.length),
                     "Content-Range": "bytes \(range.offset)-\(range.offset + range.length - 1)/\(data.count)",
                     "Accept-Ranges": "bytes",
+                    "Cache-Control": "no-store",
                 ]
             )!
             task.didReceive(response)
@@ -112,12 +113,18 @@ private final class SchemeHandler: NSObject, WKURLSchemeHandler {
             return
         }
 
-        let response = URLResponse(
-            url: url,
-            mimeType: mime,
-            expectedContentLength: data.count,
-            textEncodingName: ext == "html" || ext == "js" || ext == "css" || ext == "json" ? "utf-8" : nil
-        )
+        // NB: no-store is load-bearing — without cache headers WebKit
+        // heuristically caches typie:// responses, and a stale index.html
+        // keeps serving an old UI bundle across app updates.
+        let response = HTTPURLResponse(
+            url: url, statusCode: 200, httpVersion: nil,
+            headerFields: [
+                "Content-Type": mime,
+                "Content-Length": String(data.count),
+                "Cache-Control": "no-store",
+                "Content-Encoding": "identity",
+            ]
+        )!
         task.didReceive(response)
         task.didReceive(data)
         task.didFinish()
@@ -289,6 +296,9 @@ final class WebUIController: NSObject, NSWindowDelegate {
         DictationController.shared.objectWillChange
             .sink { [weak self] _ in self?.schedulePush() }
             .store(in: &cancellables)
+        MeetingController.shared.objectWillChange
+            .sink { [weak self] _ in self?.schedulePush() }
+            .store(in: &cancellables)
     }
 
     /// Permissions don't publish — poll while the window exists so the
@@ -348,6 +358,11 @@ final class WebUIController: NSObject, NSWindowDelegate {
             ],
             "model": modelStatusDict(),
             "modelsExist": ModelManager.modelsExist(),
+            "meeting": [
+                "isCapturing": MeetingController.shared.isCapturing,
+                "processing": MeetingController.shared.processing,
+                "startedAt": MeetingController.shared.startedAt.map { Self.iso8601.string(from: $0) } ?? "",
+            ],
             "stats": [
                 "totalWords": stats.totalWords,
                 "totalDictations": stats.totalDictations,

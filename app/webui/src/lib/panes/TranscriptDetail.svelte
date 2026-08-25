@@ -1,5 +1,5 @@
 <script>
-  import { ui, send, transcriptCache } from '../bridge.svelte.js'
+  import { ui, send, transcriptCache, local } from '../bridge.svelte.js'
   import InlineEdit from '../InlineEdit.svelte'
   import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check } from 'lucide-svelte'
   import { infinite } from '../infinite.js'
@@ -21,6 +21,8 @@
   let shown = $state(TURN_PAGE)
 
   const meta = $derived(ui.transcripts.find(x => x.id === id))
+  // once a transcript has been opened it's no longer "new"
+  $effect(() => { if (id) local.openedIds[id] = true })
   const cached = $derived(transcriptCache[id])
   // metadata arrives via the global push; turns/words arrive on demand —
   // request (or refresh) whenever the stored turnCount moves ahead of cache
@@ -151,20 +153,24 @@
   </div>
 {:else}
 <div class="wrap" class:docked={t.audioUrl}>
-  <!-- header -->
+  <!-- sticky header: name + back stay visible while the transcript scrolls -->
   <header>
-    <button class="back" onclick={onBack}><ArrowLeft size={14} /> all transcripts</button>
-    <div class="titlerow">
-      <div>
-        <h2><InlineEdit value={t.fileName} size="lg" onSave={(v) => send({ type:'transcriptsRename', id:t.id, name:v })} /></h2>
-        <p class="meta mono-kicker">{fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length} speaker{speakers.length === 1 ? '' : 's'}{t.isMeeting ? ' · meeting' : ''}</p>
-      </div>
+    <div class="toprow">
+      <button class="back" onclick={onBack}><ArrowLeft size={13} /> all transcripts</button>
       <div class="exports">
         <button class="btn btn-ghost small" onclick={() => send({ type:'transcriptExport', id:t.id, format:'md' })}><Download size={13} /> .md</button>
         <button class="btn btn-ghost small" onclick={() => send({ type:'transcriptExport', id:t.id, format:'txt' })}><Download size={13} /> .txt</button>
       </div>
     </div>
+    <div class="titlerow">
+      <div>
+        <h2><InlineEdit value={t.fileName} size="lg" onSave={(v) => send({ type:'transcriptsRename', id:t.id, name:v })} /></h2>
+        <p class="meta mono-kicker">{fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length} speaker{speakers.length === 1 ? '' : 's'}{t.isMeeting ? ' · call' : ''}</p>
+      </div>
+    </div>
+  </header>
 
+  <div class="filters">
     <label class="input search">
       <Search size={14} />
       <input bind:value={query} placeholder="search this transcript…" spellcheck="false" />
@@ -191,7 +197,7 @@
         {/each}
       </div>
     {/if}
-  </header>
+  </div>
 
   <!-- transcript — otter-style blocks -->
   {#if turns.length === 0}
@@ -292,16 +298,25 @@
 <style>
   .wrap{ padding:24px 32px 48px; max-width:880px; margin:0 auto; height:100%; display:flex; flex-direction:column }
   .wrap.docked{ padding-bottom:12px }
-  header{ flex-shrink:0 }
+  /* ── sticky header ── */
+  header{
+    position:sticky; top:0; z-index:30;
+    margin:-24px -32px 14px; padding:16px 32px 12px;
+    background:rgba(255,253,247,.9);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .wrap.docked header{ margin-top:-24px } /* docked keeps the same top pad */
+  .toprow{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px }
   .missing{ padding:60px; text-align:center; display:flex; flex-direction:column; gap:14px; align-items:center }
 
   .back{
     display:inline-flex; align-items:center; gap:6px;
-    padding:7px 16px 7px 12px;
+    padding:5px 13px 5px 9px;
     border-radius:999px;
     background:var(--paper); border:1px solid var(--line);
-    font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--text-2); margin-bottom:14px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--text-2);
     transition:
       border-color .18s var(--ease-out),
       color .18s var(--ease-out),
@@ -317,11 +332,12 @@
 
   .titlerow{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px }
   h2 :global(.ie .txt){ white-space:normal }
-  h2 :global(.ie input){ font-size:24px; font-weight:800; letter-spacing:-.02em }
-  .meta{ margin-top:5px }
+  h2 :global(.ie input){ font-size:22px; font-weight:800; letter-spacing:-.02em }
+  .meta{ margin-top:4px }
 
   .exports{ display:flex; gap:8px; flex-shrink:0 }
-  .search{ max-width:420px; margin-top:18px }
+  .filters{ display:flex; flex-direction:column; align-items:flex-start; gap:12px; margin-top:2px }
+  .search{ max-width:420px }
 
   .legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px }
   .pill{

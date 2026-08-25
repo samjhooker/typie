@@ -42,13 +42,14 @@ export const ui = $state({
   transcripts: [],
   dictation: { phase: 'idle', lastMs: -1 },
   capturingHotkey: false,
+  meeting: { isCapturing: false, processing: false, startedAt: '' },
 })
 
 /** purely local UI state the native side doesn't care about */
 export const local = $state({
   pane: 'home',
-  libraryTab: 'transcripts', // 'transcripts' | 'recordings'
   selectedTranscriptId: null,
+  openedIds: {}, // transcripts opened at least once — the "new" chip retires
   step: 0,
   practice: '',
   flash: false,
@@ -94,6 +95,7 @@ export function applyPush(s) {
   if (s.storage) Object.assign(ui.storage, s.storage)
   Object.assign(ui.dictation, s.dictation)
   ui.capturingHotkey = s.capturingHotkey
+  if (s.meeting) Object.assign(ui.meeting, s.meeting)
   if (!ui.ready || wasRoute !== s.route) {
     // first snapshot or route change: adopt it wholesale
     ui.route = s.route
