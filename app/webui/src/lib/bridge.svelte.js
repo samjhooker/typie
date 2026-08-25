@@ -43,6 +43,7 @@ export const ui = $state({
   dictation: { phase: 'idle', lastMs: -1 },
   capturingHotkey: false,
   meeting: { isCapturing: false, processing: false, startedAt: '' },
+  aiAvailable: false,
 })
 
 /** purely local UI state the native side doesn't care about */
@@ -54,6 +55,12 @@ export const local = $state({
   practice: '',
   flash: false,
   copiedId: null,
+  // remember that screen permission was granted (or requested) so we don't
+  // re-ask on every navigation — macOS needs a restart for CGPreflight to
+  // flip, so we optimistically cache the grant
+  askedScreenPermission: (() => {
+    try { return localStorage.getItem('typie:askedScreen') === '1' } catch { return false }
+  })(),
 })
 
 let seenTranscript = ''
@@ -74,6 +81,11 @@ export function markCopied(id) {
 }
 
 export function send(msg) {
+  // remember screen permission request so Library/Home don't keep re-asking
+  if (msg?.type === 'requestScreenPermission') {
+    local.askedScreenPermission = true
+    try { localStorage.setItem('typie:askedScreen', '1') } catch {}
+  }
   window.webkit?.messageHandlers.typie.postMessage(msg)
 }
 
@@ -84,6 +96,11 @@ export function applyPush(s) {
   ui.variant = s.variant ?? 'prod'
   Object.assign(ui.settings, s.settings)
   Object.assign(ui.permissions, s.permissions)
+  // if the OS finally reports granted, persist it so first render is correct
+  if (s.permissions?.screen) {
+    local.askedScreenPermission = true
+    try { localStorage.setItem('typie:askedScreen', '1') } catch {}
+  }
   Object.assign(ui.model, s.model)
   ui.modelsExist = s.modelsExist
   ui.eta = s.eta ?? ''
@@ -96,6 +113,7 @@ export function applyPush(s) {
   Object.assign(ui.dictation, s.dictation)
   ui.capturingHotkey = s.capturingHotkey
   if (s.meeting) Object.assign(ui.meeting, s.meeting)
+  if ('aiAvailable' in s) ui.aiAvailable = !!s.aiAvailable
   if (!ui.ready || wasRoute !== s.route) {
     // first snapshot or route change: adopt it wholesale
     ui.route = s.route

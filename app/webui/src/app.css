@@ -115,13 +115,9 @@ input,textarea{ font:inherit; color:inherit }
 
 /* ── atmosphere (ported from gold.css) ───────────────────── */
 
-/* soft warm glows behind the content — felt, not seen */
+/* rhs is always white — no yellow gradient per request */
 body::before{
-  content:''; position:fixed; inset:0;
-  pointer-events:none; z-index:0;
-  background:
-    radial-gradient(ellipse 60% 42% at 18% -4%, rgba(255,218,138,.2) 0%, transparent 62%),
-    radial-gradient(ellipse 52% 38% at 88% 2%, rgba(252,86,129,.08) 0%, transparent 58%);
+  content:none;
 }
 
 /* film grain — the anti-flat. fixed, inert, invisible until gone */

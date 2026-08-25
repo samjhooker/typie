@@ -31,6 +31,16 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     /// hand-set names, keyed by speaker index ("Speaker 1" → "Sam")
     var speakerNames: [Int: String] = [:]
     var turns: [StoredTurn]
+    // MARK: Apple FoundationModels — on-device meeting intelligence
+    /// Auto-generated title (e.g. "Q3 Planning Session")
+    var aiTitle: String?
+    /// 2-3 sentence summary shown at the top of the transcript
+    var aiSummary: String?
+    /// Interesting timestamps / topic pills with jump-to-time
+    var aiTopics: [AITopic]?
+    /// Lifecycle of the AI pass: nil | "pending" | "done" | "failed"
+    var aiStatus: String?
+    var aiGeneratedAt: Date?
 
     init(from result: DiarizeStore.JobResult) {
         self.id = UUID()
@@ -93,6 +103,10 @@ final class TranscriptStore: ObservableObject {
         }
         transcripts.insert(transcript, at: 0)
         persist(transcript)
+        // AI for uploaded files too when they are sizable
+        if !transcript.turns.isEmpty {
+            Task { await self.generateAI(for: transcript.id) }
+        }
 
         // Keep the audio (while the setting says so) so the transcript is
         // scrubbable word-by-word. Staged uploads (typie's own copies) are
@@ -166,7 +180,52 @@ final class TranscriptStore: ObservableObject {
             }
         }
         AppLog.event("transcripts: transcript attached to \(id.uuidString)")
+        // kick off on-device AI for meetings (and any transcript > 30s)
+        if let t = transcripts.first(where: { $0.id == id }), !t.turns.isEmpty {
+            Task { await self.generateAI(for: id) }
+        }
         return true
+    }
+
+    // MARK: Apple FoundationModels — generation
+
+    /// Whether another AI pass is already running for this id
+    private var aiTasks: [UUID: Task<Void, Never>] = [:]
+
+    /// Trigger (or re-trigger) AI for a transcript. Updates aiStatus to pending → done/failed.
+    func generateAI(for id: UUID) async {
+        guard let transcript = transcripts.first(where: { $0.id == id }) else { return }
+        guard !transcript.turns.isEmpty else { return }
+        // coalesce: if already pending, don't stack
+        if transcript.aiStatus == "pending" { return }
+        mutate(id) { $0.aiStatus = "pending" }
+        objectWillChange.send()
+        AppLog.event("ai: starting generation for \(id.uuidString) — \(transcript.turns.count) turns")
+        let ai = await MeetingAIService.shared.generate(for: transcript)
+        guard let result = ai else {
+            mutate(id) { $0.aiStatus = "failed"; $0.aiGeneratedAt = Date() }
+            AppLog.event("ai: generation failed for \(id.uuidString)")
+            return
+        }
+        mutate(id) { t in
+            t.aiTitle = result.title
+            t.aiSummary = result.summary
+            t.aiTopics = result.topics
+            t.aiStatus = "done"
+            t.aiGeneratedAt = Date()
+            // auto-name: if the placeholder name is still "Meeting · ..." use the AI title
+            if t.fileName.hasPrefix("Meeting ·") {
+                t.fileName = result.title
+            }
+        }
+        AppLog.event("ai: done for \(id.uuidString) — \(result.title)")
+        // notify detail pane if open — pushState will fire via objectWillChange
+    }
+
+    func clearAI(for id: UUID) {
+        mutate(id) { t in
+            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiStatus = nil; t.aiGeneratedAt = nil
+        }
     }
 
     static var uploadsDir: URL {
@@ -272,6 +331,13 @@ final class TranscriptStore: ObservableObject {
         \(formatClock(t.durationSeconds)) · \(t.speakerCount) speakers
 
         """
+        if let title = t.aiTitle, !title.isEmpty { out += "\n## \(title)\n" }
+        if let summary = t.aiSummary, !summary.isEmpty { out += "\n\(summary)\n" }
+        if let topics = t.aiTopics, !topics.isEmpty {
+            out += "\n### Topics\n"
+            for topic in topics { out += "- [\(formatClock(topic.startSeconds))] \(topic.title): \(topic.summary)\n" }
+            out += "\n"
+        }
         for turn in t.turns {
             let who = store?.displayName(for: t, speakerIndex: turn.speakerIndex)
                 ?? t.speakerNames[turn.speakerIndex] ?? "Speaker \(turn.speakerIndex + 1)"

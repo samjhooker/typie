@@ -19,14 +19,8 @@
     { id:'oldest',  label:'oldest' },
     { id:'longest', label:'longest' },
   ]
-  const FILTERS = [
-    { id:'all',     label:'all' },
-    { id:'calls',   label:'calls' },
-    { id:'uploads', label:'uploads' },
-  ]
   const PAGE = 60
   let sortBy = $state('newest')
-  let filter = $state('all')
   let shown = $state(PAGE)
 
   // staged deletions vanish instantly; native delete fires after the grace window
@@ -35,8 +29,6 @@
 
   const filtered = $derived.by(() => {
     let arr = library
-    if (filter === 'calls') arr = arr.filter(x => x.isMeeting)
-    else if (filter === 'uploads') arr = arr.filter(x => !x.isMeeting)
     if (query.trim()) {
       const q = query.trim().toLowerCase()
       arr = arr.filter(x => `${x.fileName} ${x.preview ?? ''} ${(x.turns ?? []).map(t => t.text).join(' ')}`.toLowerCase().includes(q))
@@ -53,8 +45,8 @@
     }
   })
   const visible = $derived(sorted.slice(0, shown))
-  // any change to search/filter/order resets paging back to the first page
-  $effect(() => { query; sortBy; filter; shown = PAGE })
+  // any change to search/order resets paging back to the first page
+  $effect(() => { query; sortBy; shown = PAGE })
 
   const hasWork = $derived(uploading !== null || ui.transcribe.busy || ui.transcribe.queued > 0)
   const waitList = $derived(ui.transcribe.busy ? ui.transcribe.queue.slice(1) : ui.transcribe.queue)
@@ -85,6 +77,7 @@
 
   // ── call capture live state — mirrors HomePane's chip (toggle + elapsed) ──
   const capturing = $derived(ui.meeting.isCapturing)
+  const hasScreen = $derived(ui.permissions.screen || local.askedScreenPermission)
   // 1s tick while capturing so the elapsed time breathes
   let nowTick = $state(Date.now())
   $effect(() => {
@@ -183,16 +176,16 @@
             {:else}
               <button
                 class="btn small"
-                class:btn-mint={!capturing && ui.permissions.screen}
+                class:btn-mint={!capturing && hasScreen}
                 class:btn-stop={capturing}
-                class:btn-pink={!ui.permissions.screen && !capturing}
+                class:btn-pink={!hasScreen && !capturing}
                 onclick={() => {
-                  if (!ui.permissions.screen) send({ type:'requestScreenPermission' })
+                  if (!hasScreen) send({ type:'requestScreenPermission' })
                   send({ type:'toggleMeetingRecording' })
                 }}
               >
-                {#if !ui.permissions.screen}<ShieldCheck size={12} />{:else if capturing}<Glyph name="stop" size={11} />{:else}<MonitorUp size={12} />{/if}
-                {!ui.permissions.screen ? 'grant & record' : capturing ? 'stop capture' : 'start capture'}
+                {#if !hasScreen}<ShieldCheck size={12} />{:else if capturing}<Glyph name="stop" size={11} />{:else}<MonitorUp size={12} />{/if}
+                {!hasScreen ? 'grant & record' : capturing ? 'stop capture' : 'start capture'}
               </button>
               {#if capturing}
                 <span class="livedot"><i></i>{elapsedLabel}</span>
@@ -252,7 +245,6 @@
   <div class="lib-head">
     <h3>All conversations <span class="count">{sorted.length}</span></h3>
     <div class="lib-tools">
-      <SortSeg options={FILTERS} bind:value={filter} />
       <SortSeg options={SORTS} bind:value={sortBy} />
       <label class="input search">
         <Search size={14} />
@@ -280,7 +272,6 @@
               {:else if !local.openedIds[item.id]}
                 <span class="chip new">new</span>
               {/if}
-              <span class="typechip" class:call={item.isMeeting}>{item.isMeeting ? 'call' : 'uploaded'}</span>
             </span>
           </div>
           <h4><InlineEdit value={item.fileName} onSave={(v) => send({ type:'transcriptsRename', id:item.id, name:v })} /></h4>
@@ -459,13 +450,6 @@
     font-size:12.5px; color:var(--text-3); line-height:1.5;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
   }
-
-  .typechip{
-    font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase;
-    padding:2px 8px; border-radius:999px;
-    background:var(--card-blue); color:var(--peri-ink);
-  }
-  .typechip.call{ background:var(--pink-band); color:var(--red-ink) }
 
   .acts{ position:absolute; top:12px; right:12px; display:flex; gap:2px; opacity:0; transition:opacity .18s var(--ease-out); background:var(--cream); border-radius:9px }
   .tcard:hover .acts, .tcard:focus-within .acts{ opacity:1 }

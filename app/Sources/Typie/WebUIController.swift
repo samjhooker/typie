@@ -213,6 +213,17 @@ final class WebUIController: NSObject, NSWindowDelegate {
         win.appearance = NSAppearance(named: .aqua)
         win.contentView = view
         win.center()
+
+        // onboarding: seamless chrome — the web header IS the top bar, with
+        // the traffic lights floating over the cream page (web side pads
+        // its header to clear them)
+        if route == .onboarding {
+            win.styleMask.insert(.fullSizeContentView)
+            win.titlebarAppearsTransparent = true
+            win.titleVisibility = .hidden
+            win.isMovableByWindowBackground = true
+        }
+
         window = win
 
         super.init()
@@ -291,6 +302,9 @@ final class WebUIController: NSObject, NSWindowDelegate {
             .sink { [weak self] _ in self?.schedulePush() }
             .store(in: &cancellables)
         TranscriptStore.shared.objectWillChange
+            .sink { [weak self] _ in self?.schedulePush() }
+            .store(in: &cancellables)
+        MeetingAIService.shared.objectWillChange
             .sink { [weak self] _ in self?.schedulePush() }
             .store(in: &cancellables)
         DictationController.shared.objectWillChange
@@ -404,10 +418,15 @@ final class WebUIController: NSObject, NSWindowDelegate {
                     "hasAudio": transcript.audioFile != nil,
                     "audioUrl": transcript.audioFile.map { "transcript-audio/\($0)" } ?? "",
                     "turnCount": transcript.turns.count,
-                    "preview": String(transcript.turns.first?.text.prefix(120) ?? ""),
+                    "preview": (transcript.aiSummary ?? String(transcript.turns.first?.text.prefix(120) ?? "")),
                     "speakerNames": Dictionary(uniqueKeysWithValues: transcript.speakerNames.map { (String($0.key), $0.value) }),
+                    "aiTitle": transcript.aiTitle ?? "",
+                    "aiSummary": transcript.aiSummary ?? "",
+                    "aiStatus": transcript.aiStatus ?? "",
+                    "aiTopics": (transcript.aiTopics ?? []).map { t in ["title": t.title, "start": t.startSeconds, "summary": t.summary] as [String: Any] },
                 ] as [String: Any]
             },
+            "aiAvailable": MeetingAIService.shared.isSupported,
             "dictation": [
                 "phase": phaseString(controller.phase),
                 "lastMs": phaseMs(controller.phase),
@@ -835,6 +854,11 @@ extension WebUIController: WKNavigationDelegate {
                     "hasAudio": t.audioFile != nil,
                     "audioUrl": t.audioFile.map { "transcript-audio/\($0)" } ?? "",
                     "speakerNames": Dictionary(uniqueKeysWithValues: t.speakerNames.map { (String($0.key), $0.value) }),
+                    "aiTitle": t.aiTitle ?? "",
+                    "aiSummary": t.aiSummary ?? "",
+                    "aiStatus": t.aiStatus ?? "",
+                    "aiGeneratedAt": t.aiGeneratedAt.map { Self.iso8601.string(from: $0) } ?? "",
+                    "aiTopics": (t.aiTopics ?? []).map { topic in ["title": topic.title, "start": topic.startSeconds, "summary": topic.summary] as [String: Any] },
                     "turns": t.turns.map { turn in
                         [
                             "speaker": turn.speakerIndex,
@@ -853,6 +877,16 @@ extension WebUIController: WKNavigationDelegate {
                         .replacingOccurrences(of: "\u{2029}", with: "\\u2029")
                     webView.evaluateJavaScript("window.__typie.setTranscript && window.__typie.setTranscript(\(json))")
                 }
+            }
+
+        case "transcriptGenerateAI":
+            if let id = Self.uuid(from: body) {
+                Task { await TranscriptStore.shared.generateAI(for: id) }
+            }
+
+        case "transcriptClearAI":
+            if let id = Self.uuid(from: body) {
+                TranscriptStore.shared.clearAI(for: id)
             }
 
         case "log":

@@ -22,6 +22,9 @@
       default:             return null
     }
   })
+
+  // effective screen permission — respects OS + cached grant (avoids re-asking on nav)
+  const hasScreen = $derived(ui.permissions.screen || local.askedScreenPermission)
 </script>
 
 <div class="wrap">
@@ -84,13 +87,13 @@
           class:btn-mint={!ui.meeting.isCapturing}
           class:btn-stop={ui.meeting.isCapturing}
           onclick={() => {
-            if (!ui.permissions.screen) send({ type:'requestScreenPermission' })
+            if (!hasScreen) send({ type:'requestScreenPermission' })
             send({ type:'toggleMeetingRecording' })
             if (!ui.meeting.isCapturing) local.pane = 'library'
           }}
         >
-          {#if !ui.permissions.screen}<ShieldCheck size={12} />{:else}<MonitorUp size={12} />{/if}
-          {!ui.permissions.screen ? 'grant & record' : ui.meeting.isCapturing ? 'stop capture' : 'start capture'}
+          {#if !hasScreen}<ShieldCheck size={12} />{:else}<MonitorUp size={12} />{/if}
+          {!hasScreen ? 'grant & record' : ui.meeting.isCapturing ? 'stop capture' : 'start capture'}
         </button>
         <button class="btn btn-ghost small" onclick={go('library')}>past calls <ArrowRight size={11} /></button>
       </div>

@@ -1,7 +1,7 @@
 <script>
   import { ui, send, transcriptCache, local } from '../bridge.svelte.js'
   import InlineEdit from '../InlineEdit.svelte'
-  import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check } from 'lucide-svelte'
+  import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check, Sparkles, Clock, Loader2, Wand2 } from 'lucide-svelte'
   import { infinite } from '../infinite.js'
 
   let { id, onBack } = $props()
@@ -28,12 +28,18 @@
   // request (or refresh) whenever the stored turnCount moves ahead of cache
   $effect(() => {
     if (!id || !meta) return
-    if (!cached || cached.turns.length !== meta.turnCount || cached.fileName !== meta.fileName) {
+    const needsAI = !cached || cached.aiStatus !== meta.aiStatus || cached.aiSummary !== meta.aiSummary || cached.aiTitle !== meta.aiTitle
+    if (!cached || cached.turns.length !== meta.turnCount || cached.fileName !== meta.fileName || needsAI) {
       send({ type:'transcriptGet', id })
     }
   })
   const t = $derived(meta
-    ? { ...meta, ...(cached ?? {}), speakerNames: { ...(meta.speakerNames ?? {}), ...(cached?.speakerNames ?? {}) } }
+    ? { ...meta, ...(cached ?? {}), speakerNames: { ...(meta.speakerNames ?? {}), ...(cached?.speakerNames ?? {}) },
+        // AI fields: prefer cached when it has real content, but fall through to meta when cached is empty/stale
+        aiTitle: (cached?.aiTitle && cached.aiTitle !== '' ? cached.aiTitle : (meta.aiTitle ?? '')),
+        aiSummary: (cached?.aiSummary && cached.aiSummary !== '' ? cached.aiSummary : (meta.aiSummary ?? '')),
+        aiStatus: (cached?.aiStatus && cached.aiStatus !== '' ? cached.aiStatus : (meta.aiStatus ?? '')),
+        aiTopics: (cached?.aiTopics && cached.aiTopics.length ? cached.aiTopics : (meta.aiTopics ?? [])) }
     : null)
   // turns arrive via the on-demand fetch; metadata alone has none yet
   const turns = $derived(t ? (t.turns ?? []) : [])
@@ -138,6 +144,15 @@
     playing = false; currentTime = 0; duration = 0; rate = 1; shown = TURN_PAGE
   })
 
+  // ── AI helpers ───────────────────────────────────────────────
+  const aiTopics = $derived(t?.aiTopics ?? [])
+  const aiSummary = $derived(t?.aiSummary ?? '')
+  const aiTitle = $derived(t?.aiTitle ?? '')
+  const aiStatus = $derived(t?.aiStatus ?? '')
+  const aiAvailable = $derived(ui.aiAvailable ?? false)
+  function generateAI(){ if (t) send({ type:'transcriptGenerateAI', id:t.id }) }
+  function clearAI(){ if (t) send({ type:'transcriptClearAI', id:t.id }) }
+
   // esc returns to the library (unless a speaker rename is in progress)
   function onKeydown(e){
     if (e.key === 'Escape' && renaming == null) onBack()
@@ -153,22 +168,60 @@
   </div>
 {:else}
 <div class="wrap" class:docked={t.audioUrl}>
-  <!-- sticky header: name + back stay visible while the transcript scrolls -->
+  <!-- sticky header: arrow + title + exports on one line -->
   <header>
-    <div class="toprow">
-      <button class="back" onclick={onBack}><ArrowLeft size={13} /> all transcripts</button>
+    <div class="titlerow">
+      <button class="back-arrow" onclick={onBack} aria-label="back"><ArrowLeft size={18} /></button>
+      <div class="titleblock">
+        <h2><InlineEdit value={t.fileName} size="lg" onSave={(v) => send({ type:'transcriptsRename', id:t.id, name:v })} /></h2>
+        <p class="meta mono-kicker">{fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length} speaker{speakers.length === 1 ? '' : 's'}{t.isMeeting ? ' · call' : ''}</p>
+      </div>
       <div class="exports">
         <button class="btn btn-ghost small" onclick={() => send({ type:'transcriptExport', id:t.id, format:'md' })}><Download size={13} /> .md</button>
         <button class="btn btn-ghost small" onclick={() => send({ type:'transcriptExport', id:t.id, format:'txt' })}><Download size={13} /> .txt</button>
       </div>
     </div>
-    <div class="titlerow">
-      <div>
-        <h2><InlineEdit value={t.fileName} size="lg" onSave={(v) => send({ type:'transcriptsRename', id:t.id, name:v })} /></h2>
-        <p class="meta mono-kicker">{fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length} speaker{speakers.length === 1 ? '' : 's'}{t.isMeeting ? ' · call' : ''}</p>
-      </div>
-    </div>
   </header>
+
+  <!-- AI summary + topics — on-device via Apple Foundation Models -->
+  {#if aiSummary || aiStatus === 'pending' || aiStatus === 'failed' || (t.turns?.length > 0 && !aiSummary)}
+    <div class="ai card">
+      <div class="ai-head">
+        <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
+        {#if aiStatus === 'pending'}
+          <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
+        {:else if aiSummary}
+          <button class="btn btn-ghost small ai-regen" onclick={generateAI} title="regenerate"><Wand2 size={12} /> regenerate</button>
+        {:else if aiStatus === 'failed'}
+          <span class="mono-kicker" style="color:var(--red-ink)">failed — try again</span>
+        {/if}
+      </div>
+      {#if aiStatus === 'pending'}
+        <p class="ai-pending-text hand">writing your meeting notes… this runs entirely on this Mac, no network</p>
+        <div class="progress" style="margin-top:10px"><div style="width:30%" class="indet"></div></div>
+      {:else if aiSummary}
+        {#if aiTitle}<h3 class="ai-title">{aiTitle}</h3>{/if}
+        <p class="ai-summary">{aiSummary}</p>
+        {#if aiTopics.length > 0}
+          <div class="ai-topics">
+            {#each aiTopics as topic (topic.title + topic.start)}
+              <button class="topic pill" onclick={() => seekTo(topic.start, true)} title={topic.summary}>
+                <Clock size={11} /> {fmtDur(topic.start)} · {topic.title}
+              </button>
+            {/each}
+          </div>
+        {/if}
+      {:else}
+        <p class="ai-empty">no summary yet</p>
+        {#if aiAvailable}
+          <button class="btn btn-pink small" onclick={generateAI}><Sparkles size={13} /> generate title + summary + topics</button>
+        {:else}
+          <p class="mono-kicker ai-hint">requires macOS 26 with Apple Intelligence enabled — or enjoy the local heuristic on this device</p>
+          <button class="btn btn-ghost small" onclick={generateAI}><Wand2 size={13} /> generate with heuristic</button>
+        {/if}
+      {/if}
+    </div>
+  {/if}
 
   <div class="filters">
     <label class="input search">
@@ -249,9 +302,9 @@
     </div>
   {/if}
 
-  <!-- bottom dock: transport + speaker-colored scrubber -->
+  <!-- bottom bar: static, stuck to viewport bottom like header -->
   {#if t.audioUrl}
-    <div class="dock card">
+    <div class="dock">
       <button class="play" onclick={togglePlay}>
         {#if playing}<Pause size={16} />{:else}<Play size={16} />{/if}
       </button>
@@ -296,41 +349,30 @@
 {/if}
 
 <style>
-  .wrap{ padding:24px 32px 48px; max-width:880px; margin:0 auto; height:100%; display:flex; flex-direction:column }
-  .wrap.docked{ padding-bottom:12px }
-  /* ── sticky header ── */
+  .wrap{ padding:24px 32px 80px; max-width:880px; margin:0 auto; flex:1; min-height:100%; display:flex; flex-direction:column }
+  .wrap.docked{ padding-bottom:80px }
+  /* ── sticky header — pinned to top of viewport ── */
   header{
     position:sticky; top:0; z-index:30;
     margin:-24px -32px 14px; padding:16px 32px 12px;
-    background:rgba(255,253,247,.9);
+    background:#fff;
     backdrop-filter:blur(12px);
     border-bottom:1px solid var(--line);
   }
-  .wrap.docked header{ margin-top:-24px } /* docked keeps the same top pad */
-  .toprow{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px }
+  .wrap.docked header{ margin-top:-24px }
   .missing{ padding:60px; text-align:center; display:flex; flex-direction:column; gap:14px; align-items:center }
 
-  .back{
-    display:inline-flex; align-items:center; gap:6px;
-    padding:5px 13px 5px 9px;
-    border-radius:999px;
-    background:var(--paper); border:1px solid var(--line);
-    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  .back-arrow{
+    display:grid; place-items:center; flex-shrink:0;
+    width:32px; height:32px; border-radius:999px;
     color:var(--text-2);
-    transition:
-      border-color .18s var(--ease-out),
-      color .18s var(--ease-out),
-      transform .18s var(--spring),
-      box-shadow .18s var(--ease-out);
+    transition:background .15s var(--ease-out), color .15s var(--ease-out);
   }
-  .back:hover{
-    border-color:var(--hotpink); color:var(--hotpink);
-    transform:translateX(-3px);
-    box-shadow:0 4px 12px rgba(252,86,129,.16);
-  }
-  .back:active{ transform:translateX(-1px) scale(.98) }
+  .back-arrow:hover{ background:rgba(19,23,34,.06); color:var(--ink) }
+  .back-arrow:active{ transform:scale(.96) }
 
-  .titlerow{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px }
+  .titlerow{ display:flex; align-items:center; gap:14px }
+  .titleblock{ flex:1; min-width:0 }
   h2 :global(.ie .txt){ white-space:normal }
   h2 :global(.ie input){ font-size:22px; font-weight:800; letter-spacing:-.02em }
   .meta{ margin-top:4px }
@@ -425,13 +467,13 @@
   .pending .big{ font-size:26px; color:var(--ink) }
 
   .dock{
-    position:sticky; bottom:12px; z-index:5;
+    position:sticky; bottom:0; z-index:5;
     margin-top:auto;
-    padding:11px 16px;
+    margin-left:-32px; margin-right:-32px; margin-bottom:-80px;
+    padding:11px 32px;
     display:flex; align-items:center; gap:13px;
-    box-shadow:0 -2px 10px rgba(19,23,34,.05), 0 8px 26px rgba(19,23,34,.14);
-    backdrop-filter:blur(6px);
-    background:rgba(255,253,247,.94);
+    background:#fff;
+    border-top:1px solid var(--line);
   }
   .play{
     display:grid; place-items:center; flex-shrink:0;
@@ -472,6 +514,25 @@
     font-family:var(--mono); font-size:10px; color:var(--text-3);
     transition:background .15s var(--ease-out), color .15s var(--ease-out);
   }
+  .ai{ padding:18px 20px; margin:14px 0 6px; background:linear-gradient(135deg, var(--cream) 40%, var(--card-mint)); border-color:rgba(3,89,77,.12) }
+  .ai-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px }
+  .ai-badge{ display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:var(--ink); color:#fffdf7; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase }
+  .ai-badge :global(svg){ color:var(--mint) }
+  .ai-pending{ display:inline-flex; align-items:center; gap:6px; color:var(--text-3) }
+  .ai-pending :global(svg){ animation:spin 1s linear infinite }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+  .ai-pending-text{ font-size:16px; color:var(--text-2) }
+  .ai-title{ font-size:18px; margin:6px 0 6px }
+  .ai-summary{ font-size:13.5px; line-height:1.6; color:var(--text-1); user-select:text }
+  .ai-topics{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px }
+  .topic{ background:var(--paper); border:1px solid var(--line); color:var(--ink); cursor:pointer }
+  .topic:hover{ border-color:var(--hotpink); color:var(--hotpink) }
+  .ai-empty{ font-size:13px; color:var(--text-3); margin-bottom:10px }
+  .ai-hint{ font-size:10px; margin:8px 0 10px; line-height:1.4 }
+  .ai-regen{ padding:5px 10px; font-size:11px }
+  .progress .indet{ animation:pulsebar 1.4s ease-in-out infinite alternate }
+  @keyframes pulsebar{ from{ opacity:.4 } to{ opacity:1 } }
+
   .rate:hover{ background:rgba(19,23,34,.06); color:var(--ink) }
   .rate.on{ background:var(--ink); color:#fff }
 </style>

@@ -87,7 +87,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let controller = WebUIController(
                 route: .onboarding,
                 title: AppVariant.displayName,
-                size: NSSize(width: 1160, height: 720)
+                size: NSSize(width: 1276, height: 792)
             )
             /// Closing the welcome window counts as finishing setup — people
             /// close windows; they don't always hunt for the footer button.
@@ -98,6 +98,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             controller.onComplete = { [weak self] in
                 self?.finishSetup()
+                // "explore typie" lands you straight in the main app
+                self?.showAppWindow(pane: "home")
             }
             /// Route to the practice box only while the welcome window is
             /// actually frontmost.
@@ -139,7 +141,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             appController = WebUIController(
                 route: .app,
                 title: AppVariant.displayName,
-                size: NSSize(width: 1160, height: 720)
+                size: NSSize(width: 1276, height: 792)
             )
         }
         appController!.showPane(pane)

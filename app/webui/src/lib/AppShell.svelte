@@ -157,7 +157,11 @@
   .local-card p{ font-size:10.5px; line-height:1.45; color:rgba(2,69,60,.62) }
 
   /* ── main ── */
-  .main{ margin-left:var(--sidebar-w); flex:1; min-width:0; display:flex; flex-direction:column }
+  .main{
+    margin-left:var(--sidebar-w); flex:1; min-width:0; display:flex; flex-direction:column; background:#fff;
+    /* RHS cards/inputs were cream/paper (yellow) — force white inside main only */
+    --page:#fff; --cream:#fff; --paper:#fff; --card-cream:#fff;
+  }
 
   /* dictation status pill — sidebar, under the nav */
   .livepill{
@@ -170,7 +174,7 @@
   .livepill.live{ background:var(--pink); color:var(--red-ink) }
   .livepill.think{ background:var(--card-blue); color:var(--peri-ink) }
 
-  .content{ flex:1; overflow-y:auto }
+  .content{ flex:1; overflow-y:auto; background:#fff; display:flex; flex-direction:column }
 
   /* every pane lands with the site's fade-up-deblur on switch */
   .content > :global(*){ animation:enter-up .55s var(--spring-snappy,ease) both }
