@@ -113,6 +113,12 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             menu.addItem(repaste)
         }
 
+        let openItem = NSMenuItem(
+            title: "Open Typie…", action: #selector(AppDelegate.openHome), keyEquivalent: "o")
+        openItem.target = appDelegate
+        openItem.keyEquivalentModifierMask = [.command]
+        menu.addItem(openItem)
+
         let settingsItem = NSMenuItem(
             title: "Settings…", action: #selector(AppDelegate.openSettings), keyEquivalent: ",")
         settingsItem.target = appDelegate

@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "typie",
     platforms: [
-        .macOS(.v14)
+        .macOS("14.2")
     ],
     products: [
         .executable(name: "typie", targets: ["Typie"])

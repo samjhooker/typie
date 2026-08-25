@@ -1,217 +1,252 @@
-/* typie app UI — design tokens lifted from the landing's src/app.css.
-   fonts are bundled locally (public/fonts) so everything works offline. */
+/* typie web UI — same design system as typie.cc.
+   cream paper, ink text, hot pink + butter + mint + periwinkle accents,
+   IBM Plex Mono kickers, Caveat hand annotations. */
 
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/w-Inter.ttf') format('truetype');
-  font-weight: 100 900;
-  font-display: block;
-}
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('/fonts/w-IBMPlexMono-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-display: block;
-}
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('/fonts/w-IBMPlexMono-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-display: block;
-}
-@font-face {
-  font-family: 'Caveat';
-  src: url('/fonts/w-Caveat.ttf') format('truetype');
-  font-weight: 400 700;
-  font-display: block;
-}
+/* local fonts (bundled, offline) */
+@font-face { font-family:'Bricolage Grotesque'; src:url('/fonts/w-BricolageGrotesque.woff2') format('woff2'); font-weight:200 800; font-stretch:100%; font-display:block; }
+@font-face { font-family:'Inter'; src:url('/fonts/w-Inter.ttf') format('truetype'); font-weight:100 900; font-display:block; }
+@font-face { font-family:'IBM Plex Mono'; src:url('/fonts/w-IBMPlexMono-Regular.ttf') format('truetype'); font-weight:400; font-display:block; }
+@font-face { font-family:'IBM Plex Mono'; src:url('/fonts/w-IBMPlexMono-Medium.ttf') format('truetype'); font-weight:500; font-display:block; }
+@font-face { font-family:'Caveat'; src:url('/fonts/w-Caveat.ttf') format('truetype'); font-weight:400 700; font-display:block; }
 
-:root {
-  --mint: #82eda6;
-  --mint-live: #6ee89a;
-  --green: #03594d;
-  --green-deep: #02453c;
-  --cream: #fffdf7;
-  --page: #fffdf7;
-  --paper: #fdf8ee;
-  --butter: #ffda8a;
-  --sun: #fdc068;
-  --gold-ink: #e59e12;
-  --sky: #bcd6ff;
-  --pink: #ffd3e0;
-  --hotpink: #fc5681;
-  --lavender: #ddd8ff;
-  --lime: #d8e268;
-  --orange: #ff9124;
-  --purple: #c88cfd;
-  --periwinkle: #6f8ffb;
-  --ink: #131722;
+:root{
+  --page:#fffdf7;
+  --cream:#fffdf7;
+  --paper:#fdf8ee;
 
-  --text-1: var(--ink);
-  --text-2: rgba(19, 23, 34, 0.76);
-  --text-3: rgba(19, 23, 34, 0.54);
+  --ink:#131722;
+  --text-1:var(--ink);
+  --text-2:rgba(19,23,34,.76);
+  --text-3:rgba(19,23,34,.54);
 
-  --card-lavender: #efecfb;
-  --card-blue: #dde9fa;
-  --card-cream: #fdf3dc;
-  --card-mint: #dff0e4;
+  /* accents — never as body text */
+  --mint:#82eda6;
+  --mint-live:#6ee89a;
+  --green:#03594d;
+  --green-deep:#02453c;
+  --butter:#ffda8a;
+  --sun:#fdc068;
+  --gold-ink:#e59e12;
+  --sky:#bcd6ff;
+  --pink:#ffd3e0;
+  --hotpink:#fc5681;
+  --lavender:#ddd8ff;
+  --lime:#d8e268;
+  --orange:#ff9124;
+  --purple:#c88cfd;
+  --periwinkle:#6f8ffb;
+  --pink-band:#fbdae4;
 
-  --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --display: 'Inter', -apple-system, system-ui, sans-serif;
-  --sans: 'Inter', -apple-system, system-ui, sans-serif;
-  --hand: 'Caveat', cursive;
+  /* card tints */
+  --card-lavender:#efecfb;
+  --card-blue:#dde9fa;
+  --card-cream:#fdf3dc;
+  --card-mint:#dff0e4;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
-  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
-  --snap: cubic-bezier(0.2, 1.4, 0.35, 1);
-  --radius-card: 20px;
-}
+  /* speaker palette (diarized turns) */
+  --sp1:#fc5681;
+  --sp2:#6f8ffb;
+  --sp3:#c88cfd;
+  --sp4:#ff9124;
+  --sp5:#03594d;
+  --sp6:#e59e12;
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  /* dark "ink" variants of the accents — for text/icons ON a tint of
+     the same hue (sky chip needs a deeper blue than periwinkle) */
+  --peri-ink:#3a5a9a;
+  --violet-ink:#6a52c9;
+  --red-ink:#c22e56;
 
-html {
-  background: var(--page);
-  color-scheme: light;
-}
+  --glow-pink:rgba(252,86,129,.22);
+  --glow-mint:rgba(130,237,166,.28);
 
-body {
-  font-family: var(--sans);
-  background: var(--page);
-  color: var(--text-2);
-  font-size: 14px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  overflow: hidden; /* the window scrolls its panes, not the page */
-  user-select: none;
-}
+  /* soft hairlines tinted with the footer green, like the landing */
+  --line:rgba(3,89,77,.12);
+  --line-strong:rgba(3,89,77,.22);
 
-::selection {
-  background: var(--butter);
-  color: var(--ink);
+  --mono:'IBM Plex Mono', ui-monospace, monospace;
+  --display:'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
+  --sans:'Inter', -apple-system, system-ui, sans-serif;
+  --hand:'Caveat', cursive;
+
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --snap:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.22,1.2,.36,1);
+  --ease-inout:cubic-bezier(.65,0,.35,1);
+
+  /* true spring physics via linear() — ported from the landing's gold.css.
+     Unsupported engines fall back to `ease` (invalid at computed-value time). */
+  --spring-snappy:linear(
+    0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%,
+    0.938 16.7%, 1.017 19.4%, 1.067 22.5%, 1.089 26.0%,
+    1.079 30.3%, 1.049 36.0%, 1.024 42.6%, 1.011 50.3%,
+    1.004 59.2%, 1.001 69.3%, 1
+  );
+  --spring-smooth:linear(
+    0, 0.004, 0.016 2.3%, 0.063 4.7%, 0.141 7.2%,
+    0.25 9.9%, 0.601 16.5%, 0.815 21.0%, 0.929 25.2%,
+    0.987 29.0%, 1.025 33.5%, 1.042 38.0%, 1.04 43.5%,
+    1.027 50.0%, 1.013 57.5%, 1.005 67.0%, 1.001 79.0%, 1
+  );
+
+  --radius-card:20px;
+  --sidebar-w:236px;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--display);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  color: var(--ink);
+*{ box-sizing:border-box; margin:0; padding:0 }
+html{ background:var(--page); color-scheme:light }
+html,body{ height:100% }
+body{
+  font-family:var(--sans);
+  background:var(--page);
+  color:var(--text-2);
+  font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden; user-select:none;
+}
+h1,h2,h3{ font-family:var(--display); font-weight:800; line-height:1.02; letter-spacing:-.03em; color:var(--ink); text-wrap:balance }
+a{ color:inherit; text-decoration:none }
+button{ font:inherit; cursor:pointer; border:none; background:none; color:inherit }
+input,textarea{ font:inherit; color:inherit }
+::selection{ background:var(--hotpink); color:#fffdf7 }
+
+/* keyboard users deserve designed focus — same as the landing */
+:focus-visible{ outline:2.5px solid var(--hotpink); outline-offset:3px; border-radius:6px }
+
+/* ── atmosphere (ported from gold.css) ───────────────────── */
+
+/* soft warm glows behind the content — felt, not seen */
+body::before{
+  content:''; position:fixed; inset:0;
+  pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 60% 42% at 18% -4%, rgba(255,218,138,.2) 0%, transparent 62%),
+    radial-gradient(ellipse 52% 38% at 88% 2%, rgba(252,86,129,.08) 0%, transparent 58%);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* film grain — the anti-flat. fixed, inert, invisible until gone */
+body::after{
+  content:''; position:fixed; inset:0;
+  pointer-events:none; z-index:2147483647; opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-button {
-  font: inherit;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: inherit;
+#app:empty{ background:var(--page) } /* no white flash before first snapshot */
+
+/* ── shared bits ─────────────────────────────────────────── */
+
+.mono-kicker{
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--text-3);
 }
 
-input,
-textarea {
-  font: inherit;
-  color: inherit;
+.hand{ font-family:var(--hand); font-weight:600; letter-spacing:.01em }
+
+.card{
+  background:var(--cream);
+  border:1px solid var(--line);
+  border-radius:var(--radius-card);
+  box-shadow:0 2px 10px rgba(19,23,34,.04);
 }
 
-.hand {
-  font-family: var(--hand);
-  letter-spacing: 0.01em;
-  font-weight: 600;
-}
-
-.mono-kicker {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(19, 23, 34, 0.5);
-}
-
-/* ── buttons ─────────────────────────────────────────────── */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  padding: 11px 24px;
-  border-radius: 999px;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:11px 22px; border-radius:999px;
+  font-size:13.5px; font-weight:600; letter-spacing:-.01em;
   transition:
-    transform 0.18s var(--spring),
-    background 0.2s var(--ease-out),
-    box-shadow 0.18s var(--ease-out),
-    opacity 0.2s var(--ease-out);
+    transform .35s var(--snap),
+    background-color .25s var(--ease-out),
+    box-shadow .35s var(--snap),
+    color .25s var(--ease-out),
+    border-color .2s var(--ease-out);
+}
+.btn:hover{ transform:translateY(-2px) }
+.btn:active{ transform:translateY(1px) scale(.98); transition-duration:.12s }
+.btn:disabled{ opacity:.45; cursor:default; transform:none }
+
+.btn-pink{
+  background:var(--hotpink); color:#fff;
+  box-shadow:0 4px 14px rgba(252,86,129,.35);
+}
+.btn-pink:hover{ box-shadow:0 7px 18px rgba(252,86,129,.42) }
+
+.btn-butter{
+  background:var(--butter); color:var(--ink);
+  box-shadow:0 4px 12px rgba(19,23,34,.12);
+}
+.btn-butter:hover{ background:var(--sun) }
+
+.btn-green{
+  background:var(--ink); color:#fff;
+  box-shadow:0 4px 12px rgba(19,23,34,.2);
 }
 
-.btn:hover {
-  transform: translateY(-2px);
+.btn-ghost{
+  border:2px solid var(--line-strong); color:var(--ink); background:transparent;
+}
+.btn-ghost:hover{ border-color:var(--ink); background:rgba(19,23,34,.05) }
+
+.btn.small{ padding:7px 15px; font-size:12px }
+
+.chip{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 10px; border-radius:999px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
 }
 
-.btn:active {
-  transform: translateY(1px);
+/* icon button — quiet square that fills on hover */
+.icon-btn{
+  display:inline-grid; place-items:center;
+  width:30px; height:30px; border-radius:9px;
+  color:var(--text-3);
+  transition:background .18s var(--ease-out), color .18s var(--ease-out);
+}
+.icon-btn:hover{ background:rgba(19,23,34,.07); color:var(--ink) }
+
+/* text input — pill, cream on cream */
+.input{
+  display:flex; align-items:center; gap:9px;
+  padding:10px 16px; border-radius:999px;
+  background:var(--paper); border:1px solid var(--line);
+  outline:none; width:100%;
+  transition:border-color .2s var(--ease-out), box-shadow .2s var(--ease-out);
+}
+.input:focus-within{ border-color:var(--hotpink); box-shadow:0 0 0 3px rgba(252,86,129,.14) }
+.input input{ flex:1; min-width:0; background:none; border:none; outline:none; font-size:13.5px; color:var(--ink) }
+.input input::placeholder{ color:var(--text-3) }
+
+/* progress bar */
+.progress{
+  height:13px; border-radius:999px;
+  background:rgba(3,89,77,.1); overflow:hidden;
+}
+.progress > div{
+  height:100%; border-radius:999px;
+  background:linear-gradient(90deg,var(--mint),var(--mint-live));
+  transition:width .35s var(--ease-out);
 }
 
-.btn-pink {
-  background: var(--hotpink);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(252, 86, 129, 0.35);
+/* scrollbars — thin and green-tinted, not hidden (dashboards scroll a lot) */
+::-webkit-scrollbar{ width:10px; height:10px }
+::-webkit-scrollbar-thumb{
+  background:rgba(3,89,77,.18); border-radius:99px;
+  border:3px solid var(--page);
 }
+::-webkit-scrollbar-track{ background:transparent }
 
-.btn-pink:hover {
-  background: #fb3f70;
-  box-shadow: 0 8px 20px rgba(252, 86, 129, 0.4);
-}
-
-.btn-pink:disabled {
-  background: rgba(3, 89, 77, 0.18);
-  color: rgba(255, 253, 247, 0.85);
-  box-shadow: none;
-  cursor: default;
-  transform: none;
-}
-
-.btn-ghost {
-  border: 2px solid rgba(19, 23, 34, 0.22);
-  color: var(--ink);
-  padding: 9px 20px;
-}
-
-.btn-ghost:hover {
-  border-color: var(--ink);
-  background: rgba(19, 23, 34, 0.05);
-}
-
-/* ── cards ───────────────────────────────────────────────── */
-
-.card {
-  padding: 16px;
-  border-radius: var(--radius-card);
-  border: 1px solid rgba(3, 89, 77, 0.1);
-  background: var(--cream);
-  box-shadow: 0 3px 8px rgba(3, 89, 77, 0.05);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
   }
 }
+
+/* ── entry: fade-up-deblur, ported from the landing's gold.css ──
+   Applied to pane content so switching panes feels like the site's
+   sections landing. Real spring curve; falls back to ease. */
+@keyframes enter-up{
+  from{ opacity:0; transform:translateY(18px); filter:blur(5px) }
+  to{ opacity:1; transform:translateY(0); filter:blur(0) }
+}
+.enter-up{ animation:enter-up .55s var(--spring-snappy,ease) both }

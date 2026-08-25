@@ -9,6 +9,14 @@ final class AudioCapture {
     private var samples: [Float] = []
     private var levelTimer: Timer?
 
+    /// pause gate: while true, incoming buffers are dropped (meetings pause)
+    private let gate = NSLock()
+    private var pausedFlag = false
+    var isPaused: Bool {
+        get { gate.withLock { pausedFlag } }
+        set { gate.withLock { pausedFlag = newValue } }
+    }
+
     /// Called on the main thread with 0...1 loudness.
     var onLevel: ((Float) -> Void)?
 
@@ -51,6 +59,7 @@ final class AudioCapture {
     }
 
     private func handle(_ buffer: AVAudioPCMBuffer) {
+        guard !isPaused else { return }
         guard let converter else { return }
 
         var rms: Float = 0

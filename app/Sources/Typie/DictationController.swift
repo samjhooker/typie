@@ -156,7 +156,7 @@ final class DictationController: ObservableObject {
             }
             StatsStore.shared.record(text: text, latencyMs: ms, audioSeconds: seconds)
             if let settings {
-                HistoryStore.shared.add(text: text, latencyMs: ms, enabled: settings.historyEnabled)
+                HistoryStore.shared.add(text: text, latencyMs: ms, enabled: settings.historyEnabled, samples: samples)
             }
             phase = .done(ms: Double(Int(ms.rounded())))
             scheduleIdleReset()

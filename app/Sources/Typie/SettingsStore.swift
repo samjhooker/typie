@@ -85,6 +85,21 @@ final class SettingsStore: ObservableObject {
     @Published var onboardingDone: Bool {
         didSet { defaults.set(onboardingDone, forKey: "onboardingDone") }
     }
+    /// voice notes keep their raw audio for replay (PRD F2 — default off)
+    @Published var notesKeepAudio: Bool {
+        didSet { defaults.set(notesKeepAudio, forKey: "notesKeepAudio") }
+    }
+    /// meeting capture mixes the user's mic into the system-audio track (F4)
+    /// default ON — a meeting transcript should contain BOTH sides of the
+    /// call (system audio = everyone else, mic = you), not just one
+    @Published var meetingMixMic: Bool {
+        didSet { defaults.set(meetingMixMic, forKey: "meetingMixMic") }
+    }
+    /// transcribes + meetings keep their audio so transcripts are scrubbable
+    /// word-by-word (default ON — replay is the whole point of a transcript)
+    @Published var transcriptsKeepAudio: Bool {
+        didSet { defaults.set(transcriptsKeepAudio, forKey: "transcriptsKeepAudio") }
+    }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -93,6 +108,11 @@ final class SettingsStore: ObservableObject {
         historyEnabled = defaults.object(forKey: "historyEnabled") as? Bool ?? true
         launchAtLogin = defaults.object(forKey: "launchAtLogin") as? Bool ?? true
         onboardingDone = defaults.bool(forKey: "onboardingDone")
+        // default ON — user explicitly asked for audio to be saved
+        notesKeepAudio = defaults.object(forKey: "notesKeepAudio") as? Bool ?? true
+        // default ON — both sides of every call, out of the box
+        meetingMixMic = defaults.object(forKey: "meetingMixMic") as? Bool ?? true
+        transcriptsKeepAudio = defaults.object(forKey: "transcriptsKeepAudio") as? Bool ?? true
     }
 
     /// Applies the current launch-at-login preference to the system.

@@ -53,7 +53,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
-    <string>14.0</string>
+    <string>14.2</string>
     <key>LSUIElement</key>
     <true/>
     <key>NSHighResolutionCapable</key>

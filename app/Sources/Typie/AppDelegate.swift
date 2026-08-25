@@ -33,6 +33,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.menuController.refreshMenuTitle() }
 
+        // notch shelf actions (PRD §3)
+        ShelfController.shared.onTranscribeChosen = { [weak self] in
+            self?.showAppWindow(pane: "transcripts")
+        }
+        ShelfController.shared.onTranscribeDropped = { [weak self] url in
+            Task { await DiarizeStore.shared.process(url: url) }
+            self?.showAppWindow(pane: "transcripts")
+        }
+        ShelfController.shared.onOpenApp = { [weak self] in
+            self?.showAppWindow(pane: "home")
+        }
+        ShelfController.shared.onOpenAppPane = { [weak self] pane in
+            self?.showAppWindow(pane: pane)
+        }
+        // make sure the transcript library is hooked into job completions
+        // even if no window was ever opened
+        _ = TranscriptStore.shared
+
         if settings.onboardingDone && ModelManager.modelsExist() {
             AppLog.event("launch path: setup complete — going straight to live mode")
             // model files are on disk but not in memory yet — load them
@@ -65,10 +83,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func showOnboarding() {
         if onboardingController == nil {
+            // unified size: same chrome as main app so onboarding feels in-flow (overlay handles steps)
             let controller = WebUIController(
                 route: .onboarding,
-                title: AppVariant.isDev ? "Welcome to typie dev" : "Welcome to typie",
-                size: NSSize(width: 680, height: 600)
+                title: AppVariant.displayName,
+                size: NSSize(width: 1160, height: 720)
             )
             /// Closing the welcome window counts as finishing setup — people
             /// close windows; they don't always hunt for the footer button.
@@ -107,12 +126,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showAppWindow(pane: "stats")
     }
 
-    private func showAppWindow(pane: String) {
+    @objc func openTranscribe() {
+        showAppWindow(pane: "transcripts")
+    }
+
+    @objc func openHome() {
+        showAppWindow(pane: "home")
+    }
+
+    func showAppWindow(pane: String) {
         if appController == nil {
             appController = WebUIController(
                 route: .app,
                 title: AppVariant.displayName,
-                size: NSSize(width: 520, height: 600)
+                size: NSSize(width: 1160, height: 720)
             )
         }
         appController!.showPane(pane)

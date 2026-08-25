@@ -51,7 +51,7 @@
     font-family: var(--display);
     font-size: 13px;
     font-weight: 600;
-    color: rgba(44, 51, 66, 0.7);
+    color: var(--text-2);
     transition:
       background 0.2s var(--ease-out),
       color 0.2s var(--ease-out);

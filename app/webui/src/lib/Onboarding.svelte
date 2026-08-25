@@ -10,9 +10,9 @@
 
   const robotMood = $derived(
     local.step === 2
-      ? ui.model.status === 'ready'
+      ? (allDownloadsReady)
         ? 'done'
-        : ui.model.status === 'downloading' || ui.model.status === 'loading'
+        : (ui.model.status === 'downloading' || ui.model.status === 'loading' || diarizerBusy)
           ? 'thinking'
           : 'idle'
       : local.step === 3
@@ -26,6 +26,16 @@
     ui.model.status !== 'notDownloaded' || ui.modelsExist,
   )
 
+  // speaker-label models (diarization) — downloaded alongside the main brain
+  const diarizerState = $derived(ui.transcribe.model.state)
+  const diarizerReady = $derived(diarizerState === 'ready')
+  const diarizerBusy = $derived(
+    diarizerState === 'downloading' || diarizerState === 'compiling' || diarizerState === 'unknown'
+  )
+  const diarizerFraction = $derived(ui.transcribe.model.fraction || 0)
+  const allDownloadsReady = $derived(modelReady && diarizerReady)
+  const anythingFailed = $derived(ui.model.status === 'failed' || diarizerState === 'failed')
+
   const buttonLabel = $derived.by(() => {
     switch (local.step) {
       case 0:
@@ -33,11 +43,13 @@
       case 1:
         return allPermissionsDone ? 'next' : 'waiting…'
       case 2:
-        return modelReady
+        return allDownloadsReady
           ? 'continue'
-          : downloadApproved
-            ? 'downloading…'
-            : 'approve below'
+          : anythingFailed
+            ? 'continue anyway'
+            : modelReady
+              ? 'finishing speaker labels…'
+              : 'downloading…'
       default:
         return ''
     }
@@ -46,18 +58,21 @@
   const nextEnabled = $derived(
     local.step === 0 ||
       (local.step === 1 && allPermissionsDone) ||
-      (local.step === 2 && modelReady),
+      (local.step === 2 && modelReady && (diarizerReady || diarizerState === 'failed')),
   )
 
   const stepHint = $derived(
-    ['no account, no cloud, ever ↓', 'one-time things. we’ll never ask again', 'the whole brain, downloaded to this Mac', ''][local.step],
+    ['no account, no cloud, ever ↓', 'one-time things. we’ll never ask again', 'the whole brain + ears, downloaded to this Mac', ''][local.step],
   )
 
   function next() {
     if (local.step === 0) {
       local.step = 1
     } else if (local.step === 1) {
-      if (ui.modelsExist) send({ type: 'startModelDownload' })
+      // kick off BOTH downloads up front — main brain + speaker labels —
+      // so transcription just works the moment onboarding ends
+      if (!modelReady) send({ type: 'startModelDownload' })
+      if (!diarizerReady) send({ type: 'startDiarizerDownload' })
       local.step = 2
     } else if (local.step === 2) {
       // hotkey must go live HERE so the practice box works pre-"done"
@@ -81,7 +96,7 @@
     {#if local.step === 0}
       <section class="welcome">
         <div class="big-bot"><Robot size={54} mood="idle" /></div>
-        <h1>HOLD A KEY. SAY THE THING.</h1>
+        <h1>hold a key. say the thing.</h1>
         <p class="sub">Your words appear wherever your cursor is — entirely on this Mac.</p>
         <div class="trio">
           <div class="card">
@@ -134,38 +149,68 @@
             </button>
           {/if}
         </div>
+
+        <div class="card perm optional" class:granted={ui.permissions.screen}>
+          <span class="icon" style="background:var(--card-blue)">📺</span>
+          <div>
+            <strong>Screen audio</strong>
+            <p>for meeting recordings — captures call sound so transcripts include everyone.</p>
+          </div>
+          {#if ui.permissions.screen}
+            <em class="ok">granted ✓</em>
+          {:else}
+            <button class="btn btn-butter small" onclick={() => send({ type: 'requestScreenPermission' })}>
+              allow
+            </button>
+          {/if}
+          <em class="later">macOS may finish this after a relaunch — fine to do later</em>
+        </div>
       </section>
     {:else if local.step === 2}
       <section class="model">
         <div class="halo">
           <Robot size={56} mood={robotMood} />
         </div>
-        <h1>{modelReady ? 'All set.' : 'One-time download'}</h1>
+        <h1>{allDownloadsReady ? 'All set.' : 'One-time downloads'}</h1>
 
-        {#if ui.model.status === 'downloading'}
-          <div class="progress"><div style="width:{Math.max(3, ui.model.fraction * 100)}%"></div></div>
-          <p class="stat">{Math.round(ui.model.fraction * 100)}% · {Math.round(ui.model.fraction * 470)} / ~470 mb{ui.eta ? ` · ${ui.eta}` : ''}</p>
-          <p class="note">typie's brain, downloaded straight onto this Mac.<br />after this, it never needs the internet again.</p>
-        {:else if ui.model.status === 'loading'}
-          <div class="progress"><div style="width:98%"></div></div>
-          <p class="stat">waking it up…</p>
-        {:else if modelReady}
-          <p class="note">📶 ⃠ &nbsp;already installed — from here on, everything happens offline.</p>
-        {:else if ui.model.status === 'failed'}
-          <p class="error">{ui.model.error}</p>
-          <button class="btn btn-pink" onclick={() => send({ type: 'startModelDownload' })}>
-            try again
-          </button>
-        {:else if downloadApproved}
-          <p class="stat">getting ready…</p>
+        {#if modelReady && diarizerReady}
+          <p class="note">📶 ⃠ &nbsp;everything's installed — from here on, everything happens offline.</p>
         {:else}
-          <p class="note big-note">
-            typie transcribes your speech with a voice model that runs entirely on this Mac.
-          </p>
-          <p class="stat">~470 mb · downloaded once · offline forever after</p>
-          <button class="btn btn-pink" onclick={() => send({ type: 'startModelDownload' })}>
-            ↓ &nbsp;ok — download it
-          </button>
+          <!-- main ASR model -->
+          <div class="dlrow" class:done={modelReady} class:failed={ui.model.status === 'failed'}>
+            <header><strong>the brain</strong><span class="mono-kicker">dictation · ~470 mb</span></header>
+            {#if ui.model.status === 'downloading' || ui.model.status === 'loading'}
+              <div class="progress"><div style="width:{Math.max(3, ui.model.fraction * 100)}%"></div></div>
+              <p class="stat">{ui.model.status === 'loading' ? 'waking it up…' : `${Math.round(ui.model.fraction * 100)}% · ${Math.round(ui.model.fraction * 470)} / ~470 mb${ui.eta ? ` · ${ui.eta}` : ''}`}</p>
+            {:else if modelReady}
+              <p class="stat done">ready ✓</p>
+            {:else if ui.model.status === 'failed'}
+              <p class="error">{ui.model.error}</p>
+              <button class="btn btn-pink small" onclick={() => send({ type: 'startModelDownload' })}>try again</button>
+            {:else if downloadApproved}
+              <p class="stat">getting ready…</p>
+            {:else}
+              <p class="stat">waiting for approval…</p>
+            {/if}
+          </div>
+
+          <!-- speaker-label models -->
+          <div class="dlrow" class:done={diarizerReady} class:failed={diarizerState === 'failed'}>
+            <header><strong>the ears</strong><span class="mono-kicker">speaker labels · ~{ui.transcribe.downloadMB || 22} mb</span></header>
+            {#if diarizerBusy && !diarizerReady}
+              <div class="progress"><div style="width:{Math.max(3, (diarizerState === 'compiling' ? 1 : diarizerFraction) * 100)}%"></div></div>
+              <p class="stat">{diarizerState === 'compiling' ? 'waking them up…' : `${Math.round(diarizerFraction * 100)}% downloading…`}</p>
+            {:else if diarizerReady}
+              <p class="stat done">ready ✓</p>
+            {:else if diarizerState === 'failed'}
+              <p class="error">{ui.transcribe.model.error}</p>
+              <button class="btn btn-pink small" onclick={() => send({ type: 'startDiarizerDownload' })}>try again</button>
+            {:else}
+              <p class="stat">queued…</p>
+            {/if}
+          </div>
+
+          <p class="note">typie's voice engine + speaker labels, downloaded straight onto this Mac.<br />after this, it never needs the internet again.</p>
         {/if}
       </section>
     {:else}
@@ -252,7 +297,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 26px;
-    border-bottom: 1px solid rgba(3, 89, 77, 0.15);
+    border-bottom: 1px solid var(--line-strong);
   }
 
   .brand {
@@ -340,7 +385,7 @@
 
   .trio span {
     font-size: 11px;
-    color: rgba(44, 51, 66, 0.65);
+    color: var(--text-3);
   }
 
   /* ── permissions ── */
@@ -393,13 +438,30 @@
 
   .perm p {
     font-size: 12.5px;
-    color: rgba(44, 51, 66, 0.7);
+    color: var(--text-2);
   }
 
   .perm .small {
     padding: 8px 17px;
     font-size: 12.5px;
     flex-shrink: 0;
+  }
+
+  /* screen-audio card: nice-to-have, never blocks */
+  .perm.optional {
+    border-style: dashed;
+    position: relative;
+  }
+  .perm .later {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+    flex-shrink: 0;
+    max-width: 110px;
+    text-align: right;
+    line-height: 1.5;
   }
 
   .ok {
@@ -450,6 +512,46 @@
     transition: width 0.35s var(--ease-out);
   }
 
+  /* two download rows: the brain + the ears */
+  .dlrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: min(400px, 100%);
+    padding: 14px 18px;
+    border-radius: 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .dlrow.done {
+    background: var(--card-mint);
+    border-color: transparent;
+  }
+  .dlrow.failed {
+    background: rgba(252, 86, 129, 0.07);
+    border-color: rgba(252, 86, 129, 0.25);
+  }
+  .dlrow header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .dlrow strong {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .dlrow .stat.done {
+    color: var(--green-deep);
+    font-weight: 600;
+  }
+  .dlrow .error {
+    max-width: none;
+    font-size: 12px;
+  }
+
   .stat {
     font-family: var(--mono);
     font-size: 11px;
@@ -459,13 +561,13 @@
 
   .note {
     font-size: 13px;
-    color: rgba(44, 51, 66, 0.7);
+    color: var(--text-2);
   }
 
   .big-note {
     font-size: 14.5px;
     max-width: 380px;
-    color: rgba(44, 51, 66, 0.85);
+    color: var(--text-1);
   }
 
   .error {
@@ -490,7 +592,7 @@
   .vline {
     width: 1px;
     height: 40px;
-    background: rgba(3, 89, 77, 0.15);
+    background: var(--line-strong);
   }
 
   .trigger {
@@ -511,7 +613,7 @@
     align-items: center;
     gap: 11px;
     font-size: 13.5px;
-    color: rgba(44, 51, 66, 0.85);
+    color: var(--text-1);
   }
 
   li b {
@@ -523,7 +625,7 @@
     background: rgba(130, 237, 166, 0.4);
     font-weight: 800;
     font-size: 12px;
-    color: var(--slate, #2c3342);
+    color: var(--green-deep);
   }
 
   li i {
@@ -537,7 +639,7 @@
     flex-direction: column;
     gap: 7px;
     border-width: 2px;
-    border-color: rgba(3, 89, 77, 0.12);
+    border-color: var(--line);
     transition:
       border-color 0.3s var(--ease-out),
       box-shadow 0.3s var(--ease-out);

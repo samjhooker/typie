@@ -47,7 +47,7 @@
 <!-- the one and only typie glyph - split into its own subpaths so
      pillars can be ears and key squares can be eyes. fill follows `color`. -->
 <div class="robot {mood}" bind:this={root} style="width:{size}px;--eye:{eye};--ex:{ex}px;--ey:{ey}px" aria-hidden="true">
-  <svg viewBox="-1 -0.5 26 25" fill="currentColor" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round">
+  <svg viewBox="-1 -0.5 26 25" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
     {#if bg !== 'none'}
       <path fill={bg} stroke="none" d="M5 7h14v12H5z" />
     {/if}
@@ -59,8 +59,8 @@
     <path class="ear ear-r" d="M21 13h2v2h-2v4h-2V9h2v4Z" />
 
     <!-- eyes (the two key squares) -->
-    <path class="eye eye-l" fill={eye} stroke-width="0.55" d="M10 16H8v-4h2v4Z" />
-    <path class="eye eye-r" fill={eye} stroke-width="0.55" d="M16 16h-2v-4h2v4Z" />
+    <path class="eye eye-l" fill={eye} d="M10 16H8v-4h2v4Z" />
+    <path class="eye eye-r" fill={eye} d="M16 16h-2v-4h2v4Z" />
 
     <!-- screen + flag -->
     <path d="M13 7h6v2H5V7h6V5h2v2Z" />

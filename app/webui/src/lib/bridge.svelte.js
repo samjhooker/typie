@@ -15,8 +15,11 @@ export const ui = $state({
     triggerMode: 'both',
     historyEnabled: true,
     launchAtLogin: true,
+    notesKeepAudio: true,
+    meetingMixMic: false,
+    transcriptsKeepAudio: true,
   },
-  permissions: { mic: false, ax: false },
+  permissions: { mic: false, ax: false, screen: false },
   model: { status: 'notDownloaded', fraction: 0, error: '' },
   modelsExist: false,
   eta: '',
@@ -26,18 +29,26 @@ export const ui = $state({
     busy: false,
     stage: '',
     progress: null,
+    eta: '',
+    queued: 0,
+    queue: [],
     error: '',
     result: null,
   },
   stats: { totalWords: 0, totalDictations: 0, totalAudioSeconds: 0, avgLatencyMs: 0 },
+  storage: { usedBytes: 0, freeBytes: 0, totalBytes: 0 },
   history: [],
+  notes: [],
+  transcripts: [],
   dictation: { phase: 'idle', lastMs: -1 },
   capturingHotkey: false,
 })
 
 /** purely local UI state the native side doesn't care about */
 export const local = $state({
-  pane: 'settings',
+  pane: 'home',
+  libraryTab: 'transcripts', // 'transcripts' | 'recordings'
+  selectedTranscriptId: null,
   step: 0,
   practice: '',
   flash: false,
@@ -46,6 +57,13 @@ export const local = $state({
 
 let seenTranscript = ''
 let flashTimer = 0
+
+/** full transcripts (turns + words) fetched on demand by the detail pane */
+export const transcriptCache = $state({})
+
+function setTranscript(data){
+  if (data?.id) transcriptCache[data.id] = data
+}
 
 let copyTimer = 0
 export function markCopied(id) {
@@ -71,6 +89,9 @@ export function applyPush(s) {
   Object.assign(ui.transcribe, s.transcribe)
   Object.assign(ui.stats, s.stats)
   ui.history = s.history
+  ui.notes = s.notes ?? []
+  ui.transcripts = s.transcripts ?? []
+  if (s.storage) Object.assign(ui.storage, s.storage)
   Object.assign(ui.dictation, s.dictation)
   ui.capturingHotkey = s.capturingHotkey
   if (!ui.ready || wasRoute !== s.route) {
@@ -90,7 +111,7 @@ export function applyPush(s) {
   }
 }
 
-window.__typie = { push: applyPush }
+window.__typie = { push: applyPush, setTranscript }
 
 // tell the Swift host the page is live so it starts pushing state
 if (typeof window !== 'undefined') {
