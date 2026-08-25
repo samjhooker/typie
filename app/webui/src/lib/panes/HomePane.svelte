@@ -43,7 +43,6 @@
     {#if phaseLabel}
       <span class="livepill {phaseLabel.cls}"><i></i>{phaseLabel.text}</span>
     {/if}
-    <span class="hand corner">that's the whole product ↑</span>
   </section>
 
   <!-- ── secondary: notes · transcripts · recordings ── -->
