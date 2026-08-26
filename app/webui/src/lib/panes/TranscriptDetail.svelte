@@ -185,8 +185,10 @@
     </div>
   </header>
 
-  <!-- AI summary + topics — on-device via Apple Foundation Models -->
-  {#if aiSummary || aiStatus === 'pending' || aiStatus === 'failed' || (t.turns?.length > 0 && !aiSummary)}
+  <!-- AI summary + topics — on-device via Apple Foundation Models.
+       Hidden entirely when the model isn't available: no hint rows, no
+       heuristic fallback UI, nothing that pretends. -->
+  {#if aiAvailable && (aiSummary || aiStatus === 'pending' || aiStatus === 'failed' || t.turns?.length > 0)}
     <div class="ai card">
       <div class="ai-head">
         {#if aiEngine === 'heuristic'}
@@ -219,12 +221,7 @@
         {/if}
       {:else}
         <p class="ai-empty">no summary yet</p>
-        {#if aiAvailable}
-          <button class="btn btn-pink small" onclick={generateAI}><Sparkles size={13} /> generate title + summary + topics</button>
-        {:else}
-          <p class="mono-kicker ai-hint">requires macOS 26 with Apple Intelligence enabled — or enjoy the local heuristic on this device</p>
-          <button class="btn btn-ghost small" onclick={generateAI}><Wand2 size={13} /> generate with heuristic</button>
-        {/if}
+        <button class="btn btn-pink small" onclick={generateAI}><Sparkles size={13} /> generate title + summary + topics</button>
       {/if}
     </div>
   {/if}
