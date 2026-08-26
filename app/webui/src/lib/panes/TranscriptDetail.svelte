@@ -3,6 +3,8 @@
   import InlineEdit from '../InlineEdit.svelte'
   import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check, Sparkles, Clock, Loader2, Wand2, X, PanelRightClose } from 'lucide-svelte'
   import { infinite } from '../infinite.js'
+  import { fly } from 'svelte/transition'
+  import { cubicOut } from 'svelte/easing'
 
   let { id, onBack } = $props()
 
@@ -152,6 +154,10 @@
   // rail visibility — remembered across sessions, reopenable from the edge tab
   let railOpen = $state((() => { try { return localStorage.getItem('typie:aiRailOpen') !== '0' } catch { return true } })())
   function setRailOpen(v){ railOpen = v; try { localStorage.setItem('typie:aiRailOpen', v ? '1' : '0') } catch {} }
+  // the skeleton deserves an audience — present the rail when generation kicks off
+  $effect(() => {
+    if (aiAvailable && aiStatus === 'pending') setRailOpen(true)
+  })
   const aiSummary = $derived(t?.aiSummary ?? '')
   const aiTitle = $derived(t?.aiTitle ?? '')
   const aiStatus = $derived(t?.aiStatus ?? '')
@@ -177,7 +183,7 @@
     <button class="btn btn-ghost small" onclick={onBack}>← back</button>
   </div>
 {:else}
-<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable}>
+<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable} class:rail-open={aiAvailable && railOpen}>
   <div class="cols">
    <div class="content-col">
   <!-- sticky header: arrow + title + exports on one line -->
@@ -286,9 +292,9 @@
    </div><!-- /.content-col -->
 
    {#if aiAvailable}
-   <!-- Apple Intelligence rail — collapsible; skeleton while generating -->
+   <!-- Apple Intelligence rail — a fixed panel that slides like the menu -->
    {#if railOpen}
-   <aside class="ai-rail">
+   <aside class="ai-rail" transition:fly={{ x: 380, duration: 420, easing: cubicOut }}>
     <div class="ai card">
       <div class="ai-head">
         {#if aiEngine === 'heuristic'}
@@ -438,8 +444,9 @@
 
 <style>
   .wrap{ padding:24px 32px 80px; max-width:880px; margin:0 auto; flex:1; min-height:100%; display:flex; flex-direction:column }
-  /* with the AI rail present the whole view widens and goes two-column */
-  .wrap.split{ max-width:1220px }
+  /* with the rail open the conversation makes room; it glides with the panel */
+  .wrap.split{ max-width:none; padding-right:364px; transition:padding-right .42s cubic-bezier(.32,.9,.28,1) }
+  .wrap.split:not(.rail-open){ padding-right:32px }
   .wrap.docked{ padding-bottom:80px }
 
   /* ── availability hint — reuses the shared .card component ── */
@@ -467,12 +474,23 @@
   .wrap.split .cols{ flex-direction:row; gap:24px; align-items:flex-start }
   .content-col{ min-width:0; flex:1 }
   .ai-rail{
-    position:sticky; top:70px;
-    width:292px; flex-shrink:0;
-    max-height:calc(100vh - 90px); overflow-y:auto;
-    animation:nudge-in .45s var(--ease-out) both;
+    position:fixed; top:0; right:0; bottom:0; z-index:60;
+    width:min(340px, 88vw);
+    background:#fff;
+    border-left:1px solid var(--line);
+    box-shadow:-14px 0 36px rgba(19,23,34,.08);
+    padding:84px 20px 28px;
+    overflow-y:auto;
   }
-  .ai-rail .card{ padding:18px }
+  /* ride above the playback dock instead of covering it */
+  .wrap.docked .ai-rail{ bottom:76px }
+  .wrap:not(.docked) .ai-rail{ bottom:0 }
+  /* the panel is the surface — the card inside goes completely flat.
+     no cream, no mint gradient: clean white, calm. */
+  .ai-rail .card,
+  .ai-rail .ai{
+    background:transparent; border:none; box-shadow:none; padding:0; margin:0;
+  }
   .rail-actions{ margin-left:auto; display:flex; align-items:center; gap:6px }
   .rail-close{
     display:inline-grid; place-items:center;

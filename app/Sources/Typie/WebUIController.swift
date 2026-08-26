@@ -877,6 +877,13 @@ extension WebUIController: WKNavigationDelegate {
                         ] as [String: Any]
                     },
                 ]
+                // stale heuristic summary + the real model now available →
+                // quietly regenerate so opening an old transcript upgrades it
+                if t.aiEngine == "heuristic", t.aiStatus == "done",
+                   MeetingAIService.shared.isSupported {
+                    AppLog.event("ai: upgrading heuristic summary to FoundationModels — \(t.fileName)")
+                    Task { await TranscriptStore.shared.generateAI(for: id) }
+                }
                 if let data = try? JSONSerialization.data(withJSONObject: payload),
                    var json = String(data: data, encoding: .utf8) {
                     json = json.replacingOccurrences(of: "\u{2028}", with: "\\u2028")
