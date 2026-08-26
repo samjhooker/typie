@@ -493,7 +493,7 @@ struct PlusButton: View {
         .buttonStyle(.plain)
         .pointingHandCursor()
         .onHover { hovering = $0 }
-        .help(active ? "Close menu" : "Create — quick note, transcribe file, record screen")
+        .help(active ? "Close menu" : "Create — quick note, record call, upload file")
         .animation(.easeOut(duration: 0.18), value: hovering)
         .animation(Theme.springy, value: active)
     }

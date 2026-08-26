@@ -194,13 +194,16 @@ final class NotchPanel: NSPanel {
         if let m = plusEscMonitor { NSEvent.removeMonitor(m); plusEscMonitor = nil }
     }
 
+    /// Height of the horizontal 3-up row below the pill (compact, not the old 368pt slab)
+    private let plusDropdownHeight: CGFloat = 84
+
     private func positionPlusMenu() {
         guard let screen = NSScreen.main else { return }
         let panelFrame = frame
         // same width as the notch pill — now from y=0 (very top of screen) so
         // the black is seamless from the menu bar down; no border
         let width = panelFrame.width
-        let height: CGFloat = 368 + panelFrame.height
+        let height: CGFloat = plusDropdownHeight + panelFrame.height
         let x = panelFrame.minX
         let y = screen.frame.maxY - height
         plusPanel.setFrame(NSRect(x: x, y: y, width: width, height: height), display: true)
@@ -210,7 +213,7 @@ final class NotchPanel: NSPanel {
         guard let screen = NSScreen.main else { return }
         let panelFrame = frame
         let width = panelFrame.width
-        let height: CGFloat = 368 + panelFrame.height
+        let height: CGFloat = plusDropdownHeight + panelFrame.height
         let targetFrame = NSRect(x: panelFrame.minX, y: screen.frame.maxY - height, width: width, height: height)
         let collapsedFrame = NSRect(x: panelFrame.minX, y: screen.frame.maxY, width: width, height: 0)
 
@@ -296,29 +299,34 @@ final class PlusDropdownPanel: NSPanel {
 private struct PlusMenuView: View {
     var body: some View {
         VStack(spacing: 0) {
-            // top padding so content starts below the pill area — appropriate
-            // breathing room from y=0, then rows sit flush under the pill
-            Color.black.frame(height: NotchPanel.notchHeight + 16)
-            VStack(spacing: 0) {
-                PlusRow(icon: "mic", tint: Theme.hotpink, title: "Quick note", subtitle: "Hold a key, say the thing,\nit's typed.") {
+            // seamless black from the very top of the screen down through the pill — trimmed from +8 to +4 to reduce top argin
+            Color.black.frame(height: NotchPanel.notchHeight + 4)
+            // horizontal 3-up — compact, minimal, no descriptions (per screenshot)
+            // uses the cute glyph SVGs (same as the main app — Glyph.svelte)
+            HStack(spacing: 0) {
+                PlusItem(icon: "glyph-note", tint: Theme.hotpink, title: "quick note") {
                     ShelfController.shared.plusMenuVisible = false
                     NoteStore.shared.startRecording()
                 }
-                PlusRow(icon: "upload", tint: Color(hex: 0x9B7CFF), title: "Transcribe file", subtitle: "Upload an audio or video file\nto get a transcript.") {
-                    ShelfController.shared.plusMenuVisible = false
-                    ShelfController.shared.requestTranscribeFile()
-                }
-                PlusRow(icon: "monitor", tint: Theme.mintLive, title: "Record entire screen", subtitle: "Record your screen and audio.\nGet a transcript when you stop.") {
+                Rectangle()
+                    .fill(Color.white.opacity(0.12))
+                    .frame(width: 1)
+                    .padding(.vertical, 12)
+                PlusItem(icon: "glyph-record", tint: Theme.mintLive, title: "record call") {
                     ShelfController.shared.plusMenuVisible = false
                     MeetingController.shared.start()
                 }
-                Divider().background(Color.white.opacity(0.08)).padding(.horizontal, 16).padding(.vertical, 8)
-                PlusRow(icon: "settings", tint: Color.white.opacity(0.6), title: "Settings", subtitle: "Preferences, shortcuts\nand more.") {
+                Rectangle()
+                    .fill(Color.white.opacity(0.12))
+                    .frame(width: 1)
+                    .padding(.vertical, 12)
+                PlusItem(icon: "glyph-transcript", tint: Color(hex: 0x9B7CFF), title: "upload file") {
                     ShelfController.shared.plusMenuVisible = false
-                    ShelfController.shared.onOpenAppPane?("settings")
+                    ShelfController.shared.requestTranscribeFile()
                 }
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 6)
             .background(Color.black)
         }
         .background(Color.black)
@@ -334,34 +342,31 @@ private struct PlusMenuView: View {
     }
 }
 
-private struct PlusRow: View {
+private struct PlusItem: View {
     let icon: String
     let tint: Color
     let title: String
-    let subtitle: String
     let action: () -> Void
     @State private var hovering = false
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
-                Image(nsImage: Lucide.image(icon, pointSize: 28))
+            VStack(spacing: 8) {
+                Image(nsImage: Lucide.image(icon, pointSize: 22))
                     .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 26, height: 26)
+                    .frame(width: 22, height: 22)
                     .foregroundStyle(tint)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title).font(.system(size: 14, weight: .semibold)).foregroundStyle(.white)
-                    Text(subtitle).font(.system(size: 12)).foregroundStyle(Color.white.opacity(0.55)).lineLimit(2).fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 0)
+                    .scaleEffect(hovering ? 1.18 : 1)
+                    .animation(Theme.springy, value: hovering)
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white.opacity(hovering ? 1 : 0.88))
+                    .lineLimit(1)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(hovering ? Color.white.opacity(0.07) : Color.clear)
-            )
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 4)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
