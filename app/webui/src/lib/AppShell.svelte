@@ -1,5 +1,5 @@
 <script>
-  import { ui, local, send, dismissAiNudge } from './bridge.svelte.js'
+  import { ui, local, send } from './bridge.svelte.js'
   import Robot from './Robot.svelte'
   import DevTag from './DevTag.svelte'
   import Toast from './Toast.svelte'
@@ -9,7 +9,6 @@
   import HistoryPane from './panes/HistoryPane.svelte'
   import SettingsPane from './panes/SettingsPane.svelte'
   import Glyph from './Glyph.svelte'
-  import { Sparkles, X } from 'lucide-svelte'
 
   const nav = [
     { id:'home',       label:'Home',       glyph: 'home' },
@@ -47,7 +46,6 @@
 
   // Slack-style: reading a conversation → the rail collapses to icons
   const compact = $derived(local.pane === 'library' && !!local.selectedTranscriptId)
-  const showAiNudge = $derived(ui.aiAvailable === false && !local.aiNudgeDismissed)
 </script>
 
 <div class="shell" class:compact>
@@ -79,24 +77,6 @@
       <div class="livepill {phaseLabel.cls}" title={phaseLabel.text}>
         <i></i>{#if !compact}{phaseLabel.text}{/if}
       </div>
-    {/if}
-
-    <!-- nudge: the real AI is one settings-toggle away -->
-    {#if showAiNudge}
-      <button class="ai-nudge" title="enable Apple Intelligence in System Settings for on-device summaries">
-        <span class="nudge-ico"><Sparkles size={13} /></span>
-        {#if !compact}
-          <span class="nudge-text">
-            <strong>want the full AI experience?</strong>
-            enable Apple Intelligence in System Settings.
-          </span>
-          <span
-            class="nudge-x" role="button" tabindex="-1"
-            onclick={(e) => { e.stopPropagation(); dismissAiNudge() }}
-            onkeydown={(e) => e.key === 'Enter' && dismissAiNudge()}
-          ><X size={11} /></span>
-        {/if}
-      </button>
     {/if}
 
     <div class="spacer"></div>
@@ -178,9 +158,6 @@
   .shell.compact .nav-label{ display:none }
   .shell.compact .livepill{ align-self:center; margin-left:0; margin-right:0; padding:5px 7px }
   .shell.compact .local-card{ display:none }
-  .shell.compact .ai-nudge{ justify-content:center; padding:9px 0 }
-  .shell.compact .nudge-text,
-  .shell.compact .nudge-x{ display:none }
 
   .spacer{ flex:1 }
 
@@ -204,31 +181,6 @@
     /* RHS cards/inputs were cream/paper (yellow) — force white inside main only */
     --page:#fff; --cream:#fff; --paper:#fff; --card-cream:#fff;
   }
-
-  /* ── AI nudge ── */
-  .ai-nudge{
-    display:flex; align-items:center; gap:9px;
-    margin:8px 4px 0; padding:10px 12px;
-    border-radius:14px;
-    background:linear-gradient(120deg, var(--lavender), var(--pink));
-    border:1px solid rgba(252,86,129,.35);
-    text-align:left; cursor:pointer;
-    animation:nudge-in .5s var(--spring-snappy,ease) both;
-    transition:box-shadow .2s var(--ease-out), transform .2s var(--spring,ease);
-  }
-  .ai-nudge:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(252,86,129,.22) }
-  @keyframes nudge-in{ from{ opacity:0; transform:translateY(8px) } to{ opacity:1; transform:none } }
-  .nudge-ico{ display:inline-grid; place-items:center; flex-shrink:0; width:26px; height:26px; border-radius:9px; background:rgba(255,255,255,.75); color:var(--hotpink) }
-  .nudge-text{ font-size:11px; line-height:1.45; color:var(--ink) }
-  .nudge-text strong{ display:block; font-size:11.5px; font-weight:800; color:var(--hotpink); margin-bottom:1px }
-  .nudge-x{
-    margin-left:auto; align-self:flex-start; flex-shrink:0;
-    display:inline-grid; place-items:center;
-    width:20px; height:20px; border-radius:7px;
-    color:var(--text-3); cursor:pointer;
-    transition:background .15s var(--ease-out), color .15s var(--ease-out);
-  }
-  .nudge-x:hover{ background:rgba(19,23,34,.08); color:var(--ink) }
 
   /* dictation status pill — sidebar, under the nav */
   .livepill{

@@ -1,7 +1,7 @@
 <script>
-  import { ui, send, transcriptCache, local } from '../bridge.svelte.js'
+  import { ui, send, transcriptCache, local, dismissAiNudge } from '../bridge.svelte.js'
   import InlineEdit from '../InlineEdit.svelte'
-  import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check, Sparkles, Clock, Loader2, Wand2 } from 'lucide-svelte'
+  import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check, Sparkles, Clock, Loader2, Wand2, X } from 'lucide-svelte'
   import { infinite } from '../infinite.js'
 
   let { id, onBack } = $props()
@@ -152,6 +152,9 @@
   const aiStatus = $derived(t?.aiStatus ?? '')
   const aiEngine = $derived(t?.aiEngine ?? '')
   const aiAvailable = $derived(ui.aiAvailable ?? false)
+  // subtle in-context hint: only inside a conversation, only while the real
+  // model is unavailable, quietly retireable
+  const showAiBanner = $derived(!aiAvailable && (t?.turns?.length ?? 0) > 0 && !local.aiNudgeDismissed)
   function generateAI(){ if (t) send({ type:'transcriptGenerateAI', id:t.id }) }
   function clearAI(){ if (t) send({ type:'transcriptClearAI', id:t.id }) }
 
@@ -169,7 +172,18 @@
     <button class="btn btn-ghost small" onclick={onBack}>← back</button>
   </div>
 {:else}
-<div class="wrap" class:docked={t.audioUrl}>
+<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable}>
+  <!-- subtle one-liner: only here, only while Apple Intelligence is off -->
+  {#if showAiBanner}
+    <div class="ai-banner">
+      <Sparkles size={13} />
+      <span><b>want summaries & topics?</b> enable Apple Intelligence in System Settings.</span>
+      <button class="banner-x" onclick={dismissAiNudge} aria-label="dismiss"><X size={12} /></button>
+    </div>
+  {/if}
+
+  <div class="cols">
+   <div class="content-col">
   <!-- sticky header: arrow + title + exports on one line -->
   <header>
     <div class="titlerow">
@@ -184,47 +198,6 @@
       </div>
     </div>
   </header>
-
-  <!-- AI summary + topics — on-device via Apple Foundation Models.
-       Hidden entirely when the model isn't available: no hint rows, no
-       heuristic fallback UI, nothing that pretends. -->
-  {#if aiAvailable && (aiSummary || aiStatus === 'pending' || aiStatus === 'failed' || t.turns?.length > 0)}
-    <div class="ai card">
-      <div class="ai-head">
-        {#if aiEngine === 'heuristic'}
-          <span class="ai-badge" title="generated locally without the language model — enable Apple Intelligence for real summaries"><Sparkles size={13} /> local heuristic</span>
-        {:else}
-          <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
-        {/if}
-        {#if aiStatus === 'pending'}
-          <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
-        {:else if aiSummary}
-          <button class="btn btn-ghost small ai-regen" onclick={generateAI} title="regenerate"><Wand2 size={12} /> regenerate</button>
-        {:else if aiStatus === 'failed'}
-          <span class="mono-kicker" style="color:var(--red-ink)">failed — try again</span>
-        {/if}
-      </div>
-      {#if aiStatus === 'pending'}
-        <p class="ai-pending-text hand">writing your meeting notes… this runs entirely on this Mac, no network</p>
-        <div class="progress" style="margin-top:10px"><div style="width:30%" class="indet"></div></div>
-      {:else if aiSummary}
-        {#if aiTitle}<h3 class="ai-title">{aiTitle}</h3>{/if}
-        <p class="ai-summary">{aiSummary}</p>
-        {#if aiTopics.length > 0}
-          <div class="ai-topics">
-            {#each aiTopics as topic (topic.title + topic.start)}
-              <button class="topic pill" onclick={() => seekTo(topic.start, true)} title={topic.summary}>
-                <Clock size={11} /> {fmtDur(topic.start)} · {topic.title}
-              </button>
-            {/each}
-          </div>
-        {/if}
-      {:else}
-        <p class="ai-empty">no summary yet</p>
-        <button class="btn btn-pink small" onclick={generateAI}><Sparkles size={13} /> generate title + summary + topics</button>
-      {/if}
-    </div>
-  {/if}
 
   <div class="filters">
     <label class="input search">
@@ -304,6 +277,49 @@
       {/if}
     </div>
   {/if}
+   </div><!-- /.content-col -->
+
+   {#if aiAvailable}
+   <!-- Apple Intelligence rail: summary + topics live beside the conversation -->
+   <aside class="ai-rail">
+    <div class="ai card">
+      <div class="ai-head">
+        {#if aiEngine === 'heuristic'}
+          <span class="ai-badge" title="generated locally without the language model — enable Apple Intelligence for real summaries"><Sparkles size={13} /> local heuristic</span>
+        {:else}
+          <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
+        {/if}
+        {#if aiStatus === 'pending'}
+          <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
+        {:else if aiSummary}
+          <button class="btn btn-ghost small ai-regen" onclick={generateAI} title="regenerate"><Wand2 size={12} /></button>
+        {:else if aiStatus === 'failed'}
+          <span class="mono-kicker" style="color:var(--red-ink)">failed — try again</span>
+        {/if}
+      </div>
+      {#if aiStatus === 'pending'}
+        <p class="ai-pending-text hand">writing your meeting notes… entirely on this Mac, no network</p>
+        <div class="progress" style="margin-top:10px"><div style="width:30%" class="indet"></div></div>
+      {:else if aiSummary}
+        {#if aiTitle}<h3 class="ai-title">{aiTitle}</h3>{/if}
+        <p class="ai-summary">{aiSummary}</p>
+        {#if aiTopics.length > 0}
+          <div class="ai-topics">
+            {#each aiTopics as topic (topic.title + topic.start)}
+              <button class="topic pill" onclick={() => seekTo(topic.start, true)} title={topic.summary}>
+                <Clock size={11} /> {fmtDur(topic.start)} · {topic.title}
+              </button>
+            {/each}
+          </div>
+        {/if}
+      {:else}
+        <p class="ai-empty">no summary yet</p>
+        <button class="btn btn-pink small" onclick={generateAI}><Sparkles size={13} /> summarize with Apple Intelligence</button>
+      {/if}
+    </div>
+   </aside>
+   {/if}
+  </div><!-- /.cols -->
 
   <!-- bottom bar: static, stuck to viewport bottom like header -->
   {#if t.audioUrl}
@@ -353,7 +369,41 @@
 
 <style>
   .wrap{ padding:24px 32px 80px; max-width:880px; margin:0 auto; flex:1; min-height:100%; display:flex; flex-direction:column }
+  /* with the AI rail present the whole view widens and goes two-column */
+  .wrap.split{ max-width:1220px }
   .wrap.docked{ padding-bottom:80px }
+
+  /* ── subtle availability banner ── */
+  .ai-banner{
+    display:flex; align-items:center; gap:9px;
+    margin:-6px 0 16px; padding:8px 12px;
+    border-radius:12px;
+    background:rgba(252,86,129,.06);
+    border:1px dashed rgba(252,86,129,.3);
+    font-size:12px; color:var(--text-2);
+    animation:nudge-in .4s var(--ease-out) both;
+  }
+  .ai-banner :global(svg){ color:var(--hotpink); flex-shrink:0 }
+  .ai-banner b{ color:var(--hotpink); font-weight:700 }
+  .banner-x{
+    margin-left:auto; display:inline-grid; place-items:center;
+    width:20px; height:20px; border-radius:7px;
+    color:var(--text-3); flex-shrink:0;
+    transition:background .15s var(--ease-out), color .15s var(--ease-out);
+  }
+  .banner-x:hover{ background:rgba(19,23,34,.07); color:var(--ink) }
+  @keyframes nudge-in{ from{ opacity:0; transform:translateY(-6px) } to{ opacity:1; transform:none } }
+
+  /* ── two-column layout: conversation + AI rail ── */
+  .cols{ display:flex; flex-direction:column; flex:1; min-height:0 }
+  .wrap.split .cols{ flex-direction:row; gap:24px; align-items:flex-start }
+  .content-col{ min-width:0; flex:1 }
+  .ai-rail{
+    position:sticky; top:70px;
+    width:292px; flex-shrink:0;
+    animation:nudge-in .45s var(--ease-out) both;
+  }
+  .ai-rail .card{ padding:18px }
   /* ── sticky header — pinned to top of viewport ── */
   header{
     position:sticky; top:0; z-index:30;
