@@ -183,7 +183,7 @@
     <button class="btn btn-ghost small" onclick={onBack}>← back</button>
   </div>
 {:else}
-<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable}>
+<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable} class:rail-open={aiAvailable && railOpen}>
   <div class="cols">
    <div class="content-col">
   <!-- sticky header: arrow + title + exports on one line -->
@@ -439,7 +439,9 @@
 
 <style>
   .wrap{ padding:24px 32px 80px; max-width:880px; margin:0 auto; flex:1; min-height:100%; display:flex; flex-direction:column }
-  .wrap.split{ max-width:1280px }
+  /* with the rail open the conversation makes room — same glide as the left menu */
+  .wrap.split{ max-width:none; padding-right:372px; transition:padding-right .42s cubic-bezier(.32,.9,.28,1) }
+  .wrap.split:not(.rail-open){ padding-right:32px }
   .wrap.docked{ padding-bottom:80px }
 
   /* ── availability hint — reuses the shared .card component ── */
@@ -467,22 +469,17 @@
   .wrap.split .cols{ flex-direction:row; gap:24px; align-items:flex-start }
   .content-col{ min-width:0; flex:1 }
   .ai-rail{
-    /* sticky, not fixed — lives on the page, scrolls independently,
-       never hijacked by the pane's entry animation */
-    position:sticky; top:76px;
-    width:340px; flex-shrink:0;
-    height:calc(100vh - 170px);
+    /* a true side menu — mirror of the left sidebar: full height, flat,
+       fixed to the edge; the conversation column glides to make room */
+    position:fixed; top:0; right:0; bottom:0; z-index:35;
+    width:340px;
+    background:var(--paper);
+    border-left:1px solid var(--line);
+    padding:24px 20px 100px;
     overflow-y:auto; overscroll-behavior:contain;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:18px;
-    box-shadow:0 6px 24px rgba(19,23,34,.06);
-    padding:18px;
   }
-  /* leave room for the playback dock */
-  .wrap.docked .ai-rail{ height:calc(100vh - 250px) }
   /* the panel is the surface — the card inside goes completely flat.
-     no cream, no mint gradient: clean white, calm. */
+     no cream, no mint gradient, no card chrome. */
   .ai-rail .card,
   .ai-rail .ai{
     background:transparent; border:none; box-shadow:none; padding:0; margin:0;
