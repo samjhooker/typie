@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -126,7 +127,7 @@ final class TranscriptStore: ObservableObject {
         let id = transcript.id
         let moveIt = src.path.hasPrefix(Self.uploadsDir.path)
         let name = await Task.detached(priority: .userInitiated) {
-            Self.adoptAudio(src, id: id, move: moveIt)
+            await Self.adoptAudio(src, id: id, move: moveIt)
         }.value
         guard let name else { return true }
         mutate(id) { $0.audioFile = name } // persists + publishes → player appears
@@ -152,7 +153,7 @@ final class TranscriptStore: ObservableObject {
             return id
         }
         let name = await Task.detached(priority: .userInitiated) {
-            Self.adoptAudio(audioSource, id: id, move: moveIt)
+            await Self.adoptAudio(audioSource, id: id, move: moveIt)
         }.value
         if let name {
             mutate(id) { $0.audioFile = name }
@@ -234,12 +235,41 @@ final class TranscriptStore: ObservableObject {
         return dir
     }
 
+    /// Containers WKWebView can seek frame-exactly: they carry explicit
+    /// sample/chunk tables (or raw PCM), so time→byte mapping never relies on
+    /// header guesses. Everything else — VBR MP3 above all — gets transcoded
+    /// to M4A before stashing (see adoptAudio).
+    private nonisolated static let seekSafeExtensions: Set<String> = ["wav", "caf", "m4a", "mp4", "mov"]
+
     /// Move-or-copy a finished job's audio into transcripts/audio/<uuid>.<ext>.
+    /// Compressed sources without exact seek tables (mp3, adts aac, …) are
+    /// first transcoded to M4A: players map seek time→byte offset through the
+    /// container's sample table, and for VBR MP3 they fall back to the Xing
+    /// TOC — which YouTube rips and similar encoders routinely write as a
+    /// linear approximation. On such files every click-a-word jump lands
+    /// progressively further from the requested word (seconds deep into the
+    /// file), which reads as "diarization drifts from the audio" even though
+    /// the stored word timings are frame-exact. AAC-in-MP4 keeps full quality
+    /// at a similar size while making seeks sample-exact.
     /// Returns the stored name, or nil on failure. Runs OFF the main actor.
-    private nonisolated static func adoptAudio(_ src: URL, id: UUID, move: Bool) -> String? {
+    private nonisolated static func adoptAudio(_ src: URL, id: UUID, move: Bool) async -> String? {
         let audioDir = AppPaths.supportDir.appendingPathComponent("transcripts/audio", isDirectory: true)
         try? FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
         let ext = src.pathExtension.isEmpty ? "wav" : src.pathExtension
+
+        if !seekSafeExtensions.contains(ext.lowercased()) {
+            let m4aName = "\(id.uuidString).m4a"
+            let dest = audioDir.appendingPathComponent(m4aName)
+            try? FileManager.default.removeItem(at: dest)
+            if await Self.transcodeToM4A(src: src, dest: dest) {
+                if move { try? FileManager.default.removeItem(at: src) }
+                return m4aName
+            }
+            try? FileManager.default.removeItem(at: dest) // don't leave half-written output
+            AppLog.event("transcripts: m4a transcode failed for \"\(src.lastPathComponent)\" — stashing original")
+            // fall through to the plain move/copy below
+        }
+
         let name = "\(id.uuidString).\(ext)"
         do {
             let dest = audioDir.appendingPathComponent(name)
@@ -254,6 +284,26 @@ final class TranscriptStore: ObservableObject {
             AppLog.event("transcripts: audio stash failed — \(error.localizedDescription)")
             return nil
         }
+    }
+
+    /// One-shot audio-only AAC export. False on any failure — callers fall
+    /// back to stashing the original file untouched.
+    private nonisolated static func transcodeToM4A(src: URL, dest: URL) async -> Bool {
+        let asset = AVURLAsset(url: src)
+        guard let session = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A) else {
+            return false
+        }
+        session.outputURL = dest
+        session.outputFileType = .m4a
+        session.shouldOptimizeForNetworkUse = true
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            session.exportAsynchronously { continuation.resume() }
+        }
+        guard session.status == .completed else {
+            AppLog.event("transcripts: export error — \(session.error?.localizedDescription ?? "unknown")")
+            return false
+        }
+        return true
     }
 
     func delete(_ id: UUID) {
