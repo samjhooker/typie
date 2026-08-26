@@ -8,7 +8,19 @@
     },
     {
       q: 'Does my voice ever leave my Mac?',
-      a: 'No. Audio is processed on your Mac by the built-in model, then thrown away. We can’t hear you. We don’t want to.'
+      a: 'No. Audio is processed on your Mac by the built-in model, then thrown away. We can’t hear you. We don’t want to. There is no server to send it to.'
+    },
+    {
+      q: 'Can Typie record my Zoom or phone calls?',
+      a: 'Yes. Call capture records straight from your Mac’s system audio - so it works with Zoom, Meet, Slack huddles, FaceTime, whatever. It can mix in your mic too, so both sides of the call end up in one track, split by speaker.'
+    },
+    {
+      q: 'How do the meeting summaries work?',
+      a: 'Apple Intelligence runs entirely on your Mac (macOS 26+) and writes the title, executive summary, key points and verbatim quotes from your transcript. No cloud round-trip, no bot in your calendar invites. On older macOS you still get the full transcript, speaker labels and export.'
+    },
+    {
+      q: 'Does a bot join my meetings like Otter?',
+      a: 'Never. Nothing joins anything. The recording happens locally on your machine, so private calls stay private and nobody sees “notetaker” appear in the participant list.'
     },
     {
       q: 'Does it work in any app?',
@@ -16,7 +28,7 @@
     },
     {
       q: 'Why is it free?',
-      a: 'Honestly? Payment infrastructure is expensive and I couldn’t be bothered. $0 means $0.'
+      a: 'Honestly? Payment infrastructure is expensive and I couldn’t be bothered. $0 means $0 - not a free tier, not a trial, not “free for now”.'
     },
     {
       q: 'What do I have to download?',

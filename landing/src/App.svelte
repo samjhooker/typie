@@ -1,12 +1,18 @@
 <script>
   import Nav from './lib/Nav.svelte';
   import Hero from './lib/Hero.svelte';
+  import Ticker from './lib/Ticker.svelte';
+  import ShelfShowcase from './lib/ShelfShowcase.svelte';
+  import Superpowers from './lib/Superpowers.svelte';
+  import AirplaneTest from './lib/AirplaneTest.svelte';
+  import Verdict from './lib/Verdict.svelte';
+  import PriceMoment from './lib/PriceMoment.svelte';
+  import Manifesto from './lib/Manifesto.svelte';
+  import PrivacyPipe from './lib/PrivacyPipe.svelte';
   import AppsRow from './lib/AppsRow.svelte';
-  import FeatureCards from './lib/FeatureCards.svelte';
   import Languages from './lib/Languages.svelte';
   import MetricBar from './lib/MetricBar.svelte';
   import Testimonials from './lib/Testimonials.svelte';
-  import CtaBanner from './lib/CtaBanner.svelte';
   import Faq from './lib/Faq.svelte';
   import FinalCta from './lib/FinalCta.svelte';
   import Footer from './lib/Footer.svelte';
@@ -16,9 +22,67 @@
   import Terms from './lib/Terms.svelte';
   import Enterprise from './enterprise/Enterprise.svelte';
   import Education from './education/Education.svelte';
+  import HoldCursor from './lib/HoldCursor.svelte';
   import { app } from './lib/state.svelte.js';
+  import { sound, blip } from './lib/sound.svelte.js';
 
   const path = $state(window.location.pathname);
+
+  /* ---- page-wide hold: the site itself obeys the product's gesture ---- */
+  let holding = $state(false);
+  let holdTimer;
+
+  /* the hold is desktop-pointer delight only; vestibular-safe users opt out */
+  const HOLD_OK =
+    matchMedia('(pointer: fine)').matches &&
+    !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function onDown(e) {
+    if (!HOLD_OK) return;
+    if (!e.isTrusted || e.button !== 0) return;
+    if (e.target?.closest?.('a, button, input, textarea, select, [role="switch"], [role="tab"]')) return;
+    clearTimeout(holdTimer);
+    holdTimer = setTimeout(() => {
+      holding = true;
+      document.documentElement.classList.add('is-holding');
+      blip(660);
+    }, 170);
+  }
+
+  function onUp() {
+    clearTimeout(holdTimer);
+    if (holding) {
+      holding = false;
+      document.documentElement.classList.remove('is-holding');
+      blip(340, 0.1);
+    }
+  }
+
+  /* ---- mood morph: the page washes tint as chapters scroll past ---- */
+  $effect(() => {
+    const moods = {
+      top: '#fffdf7',
+      notch: '#f3effc',
+      features: '#fffcf0',
+      offline: '#edf3fd',
+      versus: '#fdf8ee'
+    };
+    const els = Object.keys(moods)
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting) {
+            document.documentElement.style.setProperty('--page', moods[en.target.id]);
+          }
+        }
+      },
+      { rootMargin: '-42% 0px -52% 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  });
 
   /* Geist + Geist Mono are only used by /enterprise - inject on demand
      so root-landing visitors never download them */
@@ -43,6 +107,13 @@
   });
 </script>
 
+<svelte:window
+  onpointerdown={onDown}
+  onpointerup={onUp}
+  onpointercancel={onUp}
+  onblur={onUp}
+/>
+
 {#if path === '/about'}
   <About />
 {:else if path === '/privacy'}
@@ -58,12 +129,18 @@
 
   <main>
     <Hero />
-    <FeatureCards />
+    <Ticker />
+    <ShelfShowcase />
+    <Superpowers />
+    <AirplaneTest />
+    <Verdict />
+    <PriceMoment />
+    <Manifesto />
+    <PrivacyPipe />
+    <MetricBar />
     <AppsRow />
     <Languages />
-    <MetricBar />
     <Testimonials />
-    <CtaBanner />
     <Faq />
 
     <!-- pink band runs unbroken into the footer wave -->
@@ -74,6 +151,7 @@
   </main>
 
   <ChatBot />
+  <HoldCursor />
 {/if}
 
 <style>

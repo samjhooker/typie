@@ -132,6 +132,10 @@ button {
 #features,
 #languages,
 #pricing,
+#versus,
+#notch,
+#offline,
+#why,
 #faq {
   scroll-margin-top: 88px;
 }
@@ -306,4 +310,36 @@ button {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---- page-wide hold state (the site listens) ---- */
+html.is-holding {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing;
+}
+
+html.is-holding body {
+  transform: scale(1.004);
+}
+
+body {
+  transition:
+    background 0.55s var(--ease-out),
+    transform 0.4s var(--ease-out);
+}
+
+/* every robot on the page starts boogieing while you hold */
+.is-holding .robot svg {
+  animation: boogie-global 0.45s var(--ease-inout) infinite alternate !important;
+}
+
+@keyframes boogie-global {
+  from { transform: rotate(-5deg) scale(1); }
+  to { transform: rotate(5deg) scale(1.07); }
+}
+
+/* the manifesto ticker sprints while you hold */
+.is-holding .belt {
+  animation-duration: 7s !important;
 }

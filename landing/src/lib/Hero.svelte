@@ -12,6 +12,34 @@
   let keyEl;
   let heroEl = $state(null);
 
+  /* "It's typed." types itself after landing - the headline demonstrates
+     the product before anything else moves */
+  const TYPED = 'It’s typed.';
+  let chars = $state(0);
+  let typeDone = $state(false);
+
+  $effect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      chars = TYPED.length;
+      typeDone = true;
+      return;
+    }
+    let iv;
+    const start = setTimeout(() => {
+      iv = setInterval(() => {
+        chars += 1;
+        if (chars >= TYPED.length) {
+          clearInterval(iv);
+          typeDone = true;
+        }
+      }, 58);
+    }, 780);
+    return () => {
+      clearTimeout(start);
+      if (iv) clearInterval(iv);
+    };
+  });
+
   function markInteracted() {
     interacted = true;
     nudge = false;
@@ -198,16 +226,23 @@
     <div class="copy">
       <h1 class="kinetic">
         <span class="press">Just <span class="talk">talk.</span></span>
-        <span class="typed">It’s typed.</span>
+        <span class="typed" class:caret={!typeDone}>{TYPED.slice(0, chars)}</span>
       </h1>
 
       <p
         class="value enter-up"
         style="--stagger: 180ms"
       >
-        Stupidly good voice dictation for macOS. Fully offline, almost
-        instant, works in any app, free forever.
+        Dictation, voice notes, call capture and meeting summaries — the
+        whole thing lives on your Mac. No account. No cloud. No subscription.
+        Ever.
       </p>
+
+      <ul class="promises enter-up" style="--stagger: 250ms" aria-label="the three promises">
+        <li><b>100%</b> offline</li>
+        <li><b>$0</b> forever</li>
+        <li><b>0 bytes</b> uploaded</li>
+      </ul>
 
       <div class="holdline enter-up" style="--stagger: 320ms">
         <p>
@@ -353,7 +388,24 @@
 
   .typed {
     display: block;
-    animation: line-up 0.9s var(--spring-snappy) 0.14s both;
+    color: var(--hotpink);
+    min-height: 1em;
+  }
+
+  /* blinking bar while the headline is still typing itself */
+  .typed.caret::after {
+    content: '';
+    display: inline-block;
+    width: 0.08em;
+    height: 0.82em;
+    margin-left: 0.06em;
+    background: var(--hotpink);
+    vertical-align: -0.04em;
+    animation: caret 0.8s steps(1) infinite;
+  }
+
+  @keyframes caret {
+    50% { opacity: 0; }
   }
 
   /* masked line reveal: each line rises out of its own clip window */
@@ -390,6 +442,52 @@
 
   .micro {
     letter-spacing: 0.06em;
+  }
+
+  /* the three promises: pill badges that each get their own color */
+  .promises {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: clamp(20px, 3vh, 28px);
+    padding: 0;
+    list-style: none;
+    font-size: clamp(14px, 1.35vw, 16.5px);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .promises li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    background: var(--card-mint);
+    box-shadow: 2px 2px 0 rgba(19, 23, 34, 0.9);
+    transform: rotate(-1deg);
+    transition: transform 0.25s var(--spring), box-shadow 0.25s var(--spring);
+  }
+
+  .promises li:nth-child(2) {
+    background: var(--butter);
+    transform: rotate(1.2deg);
+  }
+
+  .promises li:nth-child(3) {
+    background: var(--pink);
+    transform: rotate(-0.8deg);
+  }
+
+  .promises li:hover {
+    transform: rotate(0deg) translateY(-2px);
+    box-shadow: 3px 4px 0 rgba(19, 23, 34, 0.9);
+  }
+
+  .promises b {
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   .holdline {

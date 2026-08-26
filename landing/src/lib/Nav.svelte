@@ -2,6 +2,7 @@
   import Logo from './Logo.svelte';
   import DownloadCta from './DownloadCta.svelte';
   import VariantSwitcher from './VariantSwitcher.svelte';
+  import { sound, blip } from './sound.svelte.js';
 
   let scrolled = $state(false);
 </script>
@@ -18,7 +19,9 @@
     </div>
 
     <nav class="links" aria-label="primary">
+      <a href="#notch">The notch</a>
       <a href="#features">Features</a>
+      <a href="#versus">vs. the rest</a>
       <a href="#languages">Languages</a>
       <a href="#pricing" class="price-link">
         <span class="struck">Pricing</span>
@@ -27,7 +30,20 @@
       <a href="#faq">FAQ</a>
     </nav>
 
-    <DownloadCta kind="green" />
+    <div class="right">
+      <button
+        class="soundbtn mono"
+        aria-pressed={sound.on}
+        title={sound.on ? 'mute the little sounds' : 'tiny synth sounds, made by this page'}
+        onclick={() => {
+          sound.on = !sound.on;
+          if (sound.on) blip(720, 0.12, 'sine', 0.06);
+        }}
+      >
+        {sound.on ? '🔊 on' : '🔇 off'}
+      </button>
+      <DownloadCta kind="green" />
+    </div>
   </div>
 </header>
 
@@ -123,6 +139,27 @@
     transform: translateX(-50%) rotate(-9deg);
     white-space: nowrap;
     pointer-events: none;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .soundbtn {
+    padding: 8px 13px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(19, 23, 34, 0.25);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    transition: border-color 0.25s var(--ease-out), background 0.25s var(--ease-out);
+  }
+
+  .soundbtn[aria-pressed='true'] {
+    border-color: var(--hotpink);
+    background: rgba(252, 86, 129, 0.08);
   }
 
   @media (max-width: 860px) {
