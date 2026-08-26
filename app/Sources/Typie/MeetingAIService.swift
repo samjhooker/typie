@@ -21,6 +21,49 @@ struct AIResult: Equatable {
     var title: String
     var summary: String
     var topics: [AITopic]
+    // hierarchical breakdown + verbatim highlights (empty for legacy results)
+    var sections: [AISection]
+    var quotes: [AIQuote]
+}
+
+// One point inside a breakdown section — a lower-level observation with its
+// own timestamp, so the whole conversation is tokenized into a topic tree.
+struct AIPoint: Codable, Equatable {
+    var text: String
+    var startSeconds: Double
+}
+
+// A high-level topic covering a stretch of the conversation, with the
+// lower-level points that live inside it.
+struct AISection: Codable, Equatable, Identifiable {
+    var id: String { title + String(startSeconds) }
+    var title: String
+    var startSeconds: Double
+    var points: [AIPoint]
+    // human timestamp like "04:12"
+    var timestampLabel: String {
+        let s = max(0, Int(startSeconds.rounded()))
+        if s >= 3600 {
+            return String(format: "%d:%02d:%02d", s/3600, (s%3600)/60, s%60)
+        }
+        return String(format: "%d:%02d", s/60, s%60)
+    }
+}
+
+// A short verbatim quote worth hearing again.
+struct AIQuote: Codable, Equatable, Identifiable {
+    var id: String { text + String(startSeconds) }
+    var text: String
+    var speaker: String
+    var startSeconds: Double
+    // human timestamp like "04:12"
+    var timestampLabel: String {
+        let s = max(0, Int(startSeconds.rounded()))
+        if s >= 3600 {
+            return String(format: "%d:%02d:%02d", s/3600, (s%3600)/60, s%60)
+        }
+        return String(format: "%d:%02d", s/60, s%60)
+    }
 }
 
 #if canImport(FoundationModels)
@@ -142,8 +185,12 @@ final class MeetingAIService: ObservableObject {
         Transcript:
         \(text)
 
-        Return JSON with keys: title (3-7 words, Title Case), summary (2-3 sentences), topics: array of {title (2-5 words), timestamp as MM:SS matching a marker, summary (one sentence)}.
-        3 to 7 topics, chronological. JSON only, no markdown, no code fences.
+        Tokenize the ENTIRE conversation into a hierarchical breakdown. Return JSON with keys:
+        - title (3-7 words, Title Case)
+        - summary (2-3 sentence executive summary)
+        - sections: array of {title (2-5 words), timestamp (MM:SS matching a marker), points: array of {text (one sentence observation), timestamp (MM:SS)}}. 3-6 sections covering the WHOLE timeline chronologically, each with 2-5 points.
+        - quotes: array of {text (short verbatim quote), speaker, timestamp (MM:SS)}. 3-6 memorable quotes.
+        Use only timestamps shown like [MM:SS] or [HH:MM:SS]. Never invent timestamps. JSON only, no markdown, no code fences.
         """
         do {
             let resp = try await session.respond(to: prompt)
@@ -164,45 +211,48 @@ final class MeetingAIService: ObservableObject {
         let chunks = makeChunks(transcript: transcript)
         guard !chunks.isEmpty else { return nil }
         AppLog.event("ai chunked: \(chunks.count) chunks for \(transcript.turns.count) turns")
-        var chunkSummaries: [(summary: String, topics: [[String: String]], range: ClosedRange<Double>)] = []
+        var chunkSummaries: [(summary: String, sections: [[String: Any]], quotes: [[String: Any]], range: ClosedRange<Double>)] = []
         for chunk in chunks {
             if let parsed = await analyzeChunk(chunk.text, range: chunk.timeRange) {
                 chunkSummaries.append(parsed)
             } else {
-                chunkSummaries.append(("", [], chunk.timeRange))
+                chunkSummaries.append(("", [], [], chunk.timeRange))
             }
         }
         let combinedSummaryText = chunkSummaries.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
-        let allTopicsFlat: [[String: String]] = chunkSummaries.flatMap { $0.topics }
-        if let final = await reduceSummaries(combinedSummaryText: combinedSummaryText, topics: allTopicsFlat, transcript: transcript) {
+        let allSections = chunkSummaries.flatMap { $0.sections }
+        let allQuotes = chunkSummaries.flatMap { $0.quotes }
+        if let final = await reduceSummaries(combinedSummaryText: combinedSummaryText, sections: allSections, quotes: allQuotes, transcript: transcript) {
             return final
         }
-        // Fallback synthesis
-        let fallbackTopics = makeTopicsFromDicts(allTopicsFlat, transcript: transcript)
+        // Fallback synthesis — merge chunk output directly
+        let fallbackSections = makeSectionsFromDicts(allSections, transcript: transcript)
+        let fallbackQuotes = makeQuotesFromDicts(allQuotes, transcript: transcript)
+        let fallbackTopics = makeTopicsFromDicts(allSections.map { d in
+            ["title": (d["title"] as? String) ?? "", "timestamp": (d["timestamp"] as? String) ?? "", "summary": ""]
+        }, transcript: transcript)
         let fallbackTitle = await titleFromSummaries(combinedSummaryText) ?? heuristicTitle(transcript)
         let fallbackSummary = combinedSummaryText.isEmpty ? heuristicSummary(transcript) : String(combinedSummaryText.prefix(600))
-        return AIResult(title: fallbackTitle, summary: fallbackSummary, topics: Array(fallbackTopics.prefix(7)))
+        return AIResult(title: fallbackTitle, summary: fallbackSummary, topics: Array(fallbackTopics.prefix(7)), sections: fallbackSections, quotes: fallbackQuotes)
     }
 
     @available(macOS 26, *)
-    private func analyzeChunk(_ text: String, range: ClosedRange<Double>) async -> (summary: String, topics: [[String: String]], range: ClosedRange<Double>)? {
+    private func analyzeChunk(_ text: String, range: ClosedRange<Double>) async -> (summary: String, sections: [[String: Any]], quotes: [[String: Any]], range: ClosedRange<Double>)? {
         let session = LanguageModelSession(instructions: "You are a meeting assistant. Return valid JSON only.")
         let prompt = """
         Excerpt (\(formatClock(range.lowerBound))–\(formatClock(range.upperBound))):
         \(text)
 
-        Return JSON: { "summary": "1-2 sentences", "topics": [ {"title": "2-5 words", "timestamp": "MM:SS matching a marker", "summary": "one sentence"} ] } 1-3 topics. JSON only.
+        Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS matching a marker", "points": [{"text": "one sentence", "timestamp": "MM:SS"}] } ], "quotes": [ {"text": "short verbatim quote", "speaker": "Speaker N", "timestamp": "MM:SS"} ] } — 1-3 sections with 2-4 points each covering this whole excerpt, 1-3 quotes. JSON only.
         """
         do {
             let resp = try await session.respond(to: prompt)
-            if let data = resp.content.data(using: .utf8),
-               let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            if let obj = Self.jsonObject(resp.content) {
                 let summary = obj["summary"] as? String ?? ""
-                let topics = obj["topics"] as? [[String: String]] ?? []
-                return (summary, topics, range)
+                let sections = obj["sections"] as? [[String: Any]] ?? []
+                let quotes = obj["quotes"] as? [[String: Any]] ?? []
+                return (summary, sections, quotes, range)
             }
-            // try parse with fences
-            if let parsed = parseChunkFallback(resp.content) { return (parsed.0, parsed.1, range) }
             return nil
         } catch {
             AppLog.event("ai analyzeChunk error: \(error.localizedDescription)")
@@ -210,27 +260,31 @@ final class MeetingAIService: ObservableObject {
         }
     }
 
-    private func parseChunkFallback(_ s: String) -> (String, [[String: String]])? {
-        var t = s.trimmingCharacters(in: .whitespacesAndNewlines)
-        if t.contains("```") { t = t.components(separatedBy: "```").dropFirst().joined().trimmingCharacters(in: .whitespacesAndNewlines) }
-        guard let data = t.data(using: .utf8),
-              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
-        return (obj["summary"] as? String ?? "", obj["topics"] as? [[String: String]] ?? [])
-    }
-
     @available(macOS 26, *)
-    private func reduceSummaries(combinedSummaryText: String, topics: [[String: String]], transcript: StoredTranscript) async -> AIResult? {
-        let topicsText = topics.map { d in "- \(d["title"] ?? "") [\(d["timestamp"] ?? "")]: \(d["summary"] ?? "")" }.joined(separator: "\n")
-        let session = LanguageModelSession(instructions: "You are a meeting assistant. Given chunk summaries and topics, produce final title, summary and deduplicated topics. Return valid JSON only.")
+    private func reduceSummaries(combinedSummaryText: String, sections: [[String: Any]], quotes: [[String: Any]], transcript: StoredTranscript) async -> AIResult? {
+        let sectionsText = sections.map { d in
+            let pts = (d["points"] as? [[String: Any]])?.compactMap { $0["text"] as? String }.joined(separator: " | ") ?? ""
+            return "- \(d["title"] ?? "") [\(d["timestamp"] ?? "")]: \(pts)"
+        }.joined(separator: "\n")
+        let quotesText = quotes.map { d in "- \"\(d["text"] ?? "")\" — \(d["speaker"] ?? "") [\(d["timestamp"] ?? "")]" }.joined(separator: "\n")
+        let session = LanguageModelSession(instructions: "You are a meeting assistant. Given per-chunk breakdowns, produce the final title, executive summary, merged hierarchical sections and the best quotes. Return valid JSON only.")
         let prompt = """
         // Combined inputs capped well under the 4096-token context window.
-        Chunk summaries combined:
-        \(combinedSummaryText.prefix(3500))
+        Chunk summaries:
+        \(combinedSummaryText.prefix(3000))
 
-        Extracted topics:
-        \(topicsText.prefix(2500))
+        Extracted sections:
+        \(sectionsText.prefix(2500))
 
-        Return JSON with keys: title (3-7 words), summary (2-3 sentences), topics: array of {title, timestamp as MM:SS, summary}. 3-7 topics, chronological, deduplicate. JSON only.
+        Extracted quotes:
+        \(quotesText.prefix(1200))
+
+        Return JSON with keys:
+        - title (3-7 words)
+        - summary (2-3 sentence executive summary)
+        - sections: array of {title, timestamp (MM:SS), points: [{text, timestamp}]} — 3-6 sections covering the WHOLE timeline chronologically, deduplicated
+        - quotes: array of {text, speaker, timestamp} — 3-6 best verbatim quotes
+        JSON only.
         """
         do {
             let resp = try await session.respond(to: prompt)
@@ -266,26 +320,78 @@ final class MeetingAIService: ObservableObject {
         return dedupTopics(out)
     }
 
+    /// Tolerant JSON extraction: strips code fences and surrounding prose.
+    static func jsonObject(_ s: String) -> [String: Any]? {
+        var t = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !t.hasPrefix("{") {
+            if let start = t.firstIndex(of: "{"), let end = t.lastIndex(of: "}") {
+                t = String(t[start...end])
+            }
+        }
+        guard let data = t.data(using: .utf8) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+    }
+
+    private func makeSectionsFromDicts(_ dicts: [[String: Any]], transcript: StoredTranscript) -> [AISection] {
+        let turnStarts = transcript.turns.map(\.startSeconds).sorted()
+        var out: [AISection] = []
+        for d in dicts {
+            guard let sTitle = d["title"] as? String,
+                  let ts = d["timestamp"] as? String,
+                  let secs = parseTimestamp(ts) else { continue }
+            let snapped = snapToNearest(secs, candidates: turnStarts) ?? secs
+            var points: [AIPoint] = []
+            if let pts = d["points"] as? [[String: Any]] {
+                for p in pts {
+                    guard let text = p["text"] as? String else { continue }
+                    var pSecs = snapped
+                    if let pts = p["timestamp"] as? String, let parsed = parseTimestamp(pts) {
+                        pSecs = snapToNearest(parsed, candidates: turnStarts) ?? parsed
+                    }
+                    points.append(AIPoint(text: text.trimmingCharacters(in: .whitespacesAndNewlines), startSeconds: pSecs))
+                }
+            }
+            out.append(AISection(title: sTitle.trimmingCharacters(in: .whitespacesAndNewlines),
+                                 startSeconds: snapped,
+                                 points: points))
+        }
+        out.sort { $0.startSeconds < $1.startSeconds }
+        // drop near-duplicate sections (same title within a minute)
+        var deduped: [AISection] = []
+        for s in out {
+            if let last = deduped.last, last.title.lowercased() == s.title.lowercased(), abs(last.startSeconds - s.startSeconds) < 60 { continue }
+            deduped.append(s)
+        }
+        return deduped
+    }
+
+    private func makeQuotesFromDicts(_ dicts: [[String: Any]], transcript: StoredTranscript) -> [AIQuote] {
+        let turnStarts = transcript.turns.map(\.startSeconds).sorted()
+        var out: [AIQuote] = []
+        for d in dicts {
+            guard let text = d["text"] as? String, !text.isEmpty,
+                  let ts = d["timestamp"] as? String,
+                  let secs = parseTimestamp(ts) else { continue }
+            let snapped = snapToNearest(secs, candidates: turnStarts) ?? secs
+            let speaker = (d["speaker"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            out.append(AIQuote(text: text.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "\"")),
+                               speaker: speaker,
+                               startSeconds: snapped))
+        }
+        // dedupe identical quotes, cap the list
+        var seen = Set<String>()
+        return out.filter { seen.insert($0.text.lowercased()).inserted }.prefix(6).map { $0 }
+    }
+
     private func parseJSONResponse(_ json: String, transcript: StoredTranscript) -> AIResult? {
-        var s = json.trimmingCharacters(in: .whitespacesAndNewlines)
-        if s.hasPrefix("```") {
-            // strip fences: take content between first { and last }
-            if let start = s.firstIndex(of: "{"), let end = s.lastIndex(of: "}") {
-                s = String(s[start...end])
-            } else {
-                s = s.components(separatedBy: "```").dropFirst().joined().trimmingCharacters(in: .whitespacesAndNewlines)
-            }
-        }
-        // extract JSON object if extra prose surrounds it
-        if !s.hasPrefix("{") {
-            if let start = s.firstIndex(of: "{"), let end = s.lastIndex(of: "}") {
-                s = String(s[start...end])
-            }
-        }
-        guard let data = s.data(using: .utf8),
-              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        guard let obj = Self.jsonObject(json) else { return nil }
         let title = (obj["title"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let summary = (obj["summary"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+
+        var sections = makeSectionsFromDicts(obj["sections"] as? [[String: Any]] ?? [], transcript: transcript)
+        let quotes = makeQuotesFromDicts(obj["quotes"] as? [[String: Any]] ?? [], transcript: transcript)
+
+        // legacy shape fallback: topics → one-point sections
         var topics: [AITopic] = []
         if let arr = obj["topics"] as? [[String: Any]] {
             let turnStarts = transcript.turns.map(\.startSeconds).sorted()
@@ -297,13 +403,22 @@ final class MeetingAIService: ObservableObject {
                 let snapped = snapToNearest(secs, candidates: turnStarts) ?? secs
                 topics.append(AITopic(title: tTitle, startSeconds: snapped, summary: tSum))
             }
+            topics.sort { $0.startSeconds < $1.startSeconds }
+            topics = dedupTopics(topics)
+            if sections.isEmpty {
+                sections = topics.map { t in
+                    AISection(title: t.title, startSeconds: t.startSeconds,
+                              points: t.summary.isEmpty ? [] : [AIPoint(text: t.summary, startSeconds: t.startSeconds)])
+                }
+            }
         }
-        topics.sort { $0.startSeconds < $1.startSeconds }
-        topics = dedupTopics(topics)
-        guard !title.isEmpty || !summary.isEmpty else { return nil }
+
+        guard !title.isEmpty || !summary.isEmpty || !sections.isEmpty else { return nil }
         return AIResult(title: title.isEmpty ? heuristicTitle(transcript) : title,
                         summary: summary.isEmpty ? heuristicSummary(transcript) : summary,
-                        topics: topics)
+                        topics: topics,
+                        sections: sections,
+                        quotes: quotes)
     }
 
     private func dedupTopics(_ topics: [AITopic]) -> [AITopic] {
@@ -361,7 +476,39 @@ final class MeetingAIService: ObservableObject {
     // MARK: heuristics
 
     func heuristicResult(transcript: StoredTranscript) -> AIResult {
-        return AIResult(title: heuristicTitle(transcript), summary: heuristicSummary(transcript), topics: heuristicTopics(transcript))
+        let (sections, quotes) = heuristicBreakdown(transcript)
+        return AIResult(title: heuristicTitle(transcript), summary: heuristicSummary(transcript), topics: heuristicTopics(transcript), sections: sections, quotes: quotes)
+    }
+
+    /// Offline fallback: split the timeline into ~4 even stretches, one section
+    /// each with the first sentence of a few turns as points, plus the longest
+    /// sentences as pseudo-quotes. Honest about being dumb — it's labeled.
+    private func heuristicBreakdown(_ t: StoredTranscript) -> (sections: [AISection], quotes: [AIQuote]) {
+        guard !t.turns.isEmpty else { return ([], []) }
+        let sectionCount = min(4, max(2, t.turns.count / 6))
+        let per = max(1, t.turns.count / sectionCount)
+        var sections: [AISection] = []
+        for k in 0..<sectionCount {
+            let slice = t.turns.dropFirst(k * per).prefix(per)
+            guard let first = slice.first else { continue }
+            let points = slice.prefix(3).map { turn in
+                AIPoint(text: String(turn.text.prefix(110)), startSeconds: turn.startSeconds)
+            }
+            let label = first.text.split(separator: " ").prefix(4).joined(separator: " ")
+            sections.append(AISection(title: label.isEmpty ? "Part \(k + 1)" : String(label).capitalized,
+                                      startSeconds: first.startSeconds,
+                                      points: points))
+        }
+        let quotes = t.turns
+            .filter { $0.text.count > 60 }
+            .sorted { $0.text.count > $1.text.count }
+            .prefix(3)
+            .map { turn in
+                AIQuote(text: String(turn.text.prefix(140)),
+                        speaker: t.speakerNames[turn.speakerIndex] ?? "Speaker \(turn.speakerIndex + 1)",
+                        startSeconds: turn.startSeconds)
+            }
+        return (sections, Array(quotes))
     }
 
     private func heuristicTitle(_ t: StoredTranscript) -> String {

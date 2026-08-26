@@ -1,7 +1,7 @@
 <script>
   import { ui, send, transcriptCache, local, dismissAiNudge } from '../bridge.svelte.js'
   import InlineEdit from '../InlineEdit.svelte'
-  import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check, Sparkles, Clock, Loader2, Wand2, X } from 'lucide-svelte'
+  import { ArrowLeft, Search, Download, Play, Pause, Pencil, Check, Sparkles, Clock, Loader2, Wand2, X, PanelRightClose } from 'lucide-svelte'
   import { infinite } from '../infinite.js'
 
   let { id, onBack } = $props()
@@ -147,6 +147,11 @@
 
   // ── AI helpers ───────────────────────────────────────────────
   const aiTopics = $derived(t?.aiTopics ?? [])
+  const aiSections = $derived(t?.aiSections ?? [])
+  const aiQuotes = $derived(t?.aiQuotes ?? [])
+  // rail visibility — remembered across sessions, reopenable from the edge tab
+  let railOpen = $state((() => { try { return localStorage.getItem('typie:aiRailOpen') !== '0' } catch { return true } })())
+  function setRailOpen(v){ railOpen = v; try { localStorage.setItem('typie:aiRailOpen', v ? '1' : '0') } catch {} }
   const aiSummary = $derived(t?.aiSummary ?? '')
   const aiTitle = $derived(t?.aiTitle ?? '')
   const aiStatus = $derived(t?.aiStatus ?? '')
@@ -281,7 +286,8 @@
    </div><!-- /.content-col -->
 
    {#if aiAvailable}
-   <!-- Apple Intelligence rail: summary + topics live beside the conversation -->
+   <!-- Apple Intelligence rail — collapsible; skeleton while generating -->
+   {#if railOpen}
    <aside class="ai-rail">
     <div class="ai card">
       <div class="ai-head">
@@ -290,25 +296,81 @@
         {:else}
           <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
         {/if}
-        {#if aiStatus === 'pending'}
-          <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
-        {:else if aiSummary}
-          <button class="btn btn-ghost small ai-regen" onclick={generateAI} title="regenerate"><Wand2 size={12} /></button>
-        {:else if aiStatus === 'failed'}
-          <span class="mono-kicker" style="color:var(--red-ink)">failed — try again</span>
-        {/if}
+        <span class="rail-actions">
+          {#if aiStatus === 'pending'}
+            <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
+          {:else if aiSummary}
+            <button class="btn btn-ghost small ai-regen" onclick={generateAI} title="regenerate"><Wand2 size={12} /></button>
+          {:else if aiStatus === 'failed'}
+            <span class="mono-kicker" style="color:var(--red-ink)">failed</span>
+          {/if}
+          <button class="rail-close" onclick={() => setRailOpen(false)} title="hide AI panel" aria-label="hide AI panel"><PanelRightClose size={14} /></button>
+        </span>
       </div>
+
       {#if aiStatus === 'pending'}
-        <p class="ai-pending-text hand">writing your meeting notes… entirely on this Mac, no network</p>
-        <div class="progress" style="margin-top:10px"><div style="width:30%" class="indet"></div></div>
-      {:else if aiSummary}
+        <!-- skeleton — the shape of what's coming, shimmering -->
+        <div class="skel" aria-hidden="true">
+          <div class="skel-line w60 title"></div>
+          <div class="skel-line"></div>
+          <div class="skel-line w80"></div>
+          <div class="skel-line w70"></div>
+          {#each [0, 1, 2] as i}
+            <div class="skel-sec">
+              <div class="skel-line w50"></div>
+              <div class="skel-point"><i></i><div class="skel-line w90"></div></div>
+              <div class="skel-point"><i></i><div class="skel-line w75"></div></div>
+              <div class="skel-point"><i></i><div class="skel-line w85"></div></div>
+            </div>
+          {/each}
+          <div class="skel-line w40"></div>
+          <div class="skel-quote"></div>
+        </div>
+      {:else if aiSummary || aiSections.length > 0}
         {#if aiTitle}<h3 class="ai-title">{aiTitle}</h3>{/if}
-        <p class="ai-summary">{aiSummary}</p>
-        {#if aiTopics.length > 0}
+        {#if aiSummary}<p class="ai-summary">{aiSummary}</p>{/if}
+
+        {#if aiSections.length > 0}
+          <div class="ai-breakdown">
+            <h4 class="rail-kicker">breakdown</h4>
+            {#each aiSections as section (section.title + section.start)}
+              <div class="ai-section">
+                <button class="sec-head" onclick={() => seekTo(section.start, true)} title="play from {section.timestampLabel}">
+                  <Clock size={11} /> <span class="sec-ts mono-kicker">{section.timestampLabel}</span>
+                  <span class="sec-title">{section.title}</span>
+                </button>
+                {#if section.points?.length > 0}
+                  <ul class="sec-points">
+                    {#each section.points as point (point.text + point.start)}
+                      <li>
+                        <button onclick={() => seekTo(point.start, true)} title="play from here">
+                          <span class="pt-ts mono-kicker">{fmtDur(point.start)}</span>
+                          <span class="pt-text">{point.text}</span>
+                        </button>
+                      </li>
+                    {/each}
+                  </ul>
+                {/if}
+              </div>
+            {/each}
+          </div>
+        {:else if aiTopics.length > 0}
           <div class="ai-topics">
             {#each aiTopics as topic (topic.title + topic.start)}
               <button class="topic pill" onclick={() => seekTo(topic.start, true)} title={topic.summary}>
                 <Clock size={11} /> {fmtDur(topic.start)} · {topic.title}
+              </button>
+            {/each}
+          </div>
+        {/if}
+
+        {#if aiQuotes.length > 0}
+          <div class="ai-quotes">
+            <h4 class="rail-kicker">key quotes</h4>
+            {#each aiQuotes as quote (quote.text + quote.start)}
+              <button class="quote" onclick={() => seekTo(quote.start, true)} title="play from {quote.ts}">
+                <span class="q-text">“{quote.text}”</span>
+                <span class="q-meta mono-kicker">{quote.speaker || '—'} · {quote.ts}</span>
               </button>
             {/each}
           </div>
@@ -319,6 +381,12 @@
       {/if}
     </div>
    </aside>
+   {:else}
+   <button class="ai-rail-tab" onclick={() => setRailOpen(true)} title="show AI summary & topics" aria-label="show AI panel">
+     <Sparkles size={13} />
+     <span class="tab-label">AI</span>
+   </button>
+   {/if}
    {/if}
   </div><!-- /.cols -->
 
@@ -401,9 +469,103 @@
   .ai-rail{
     position:sticky; top:70px;
     width:292px; flex-shrink:0;
+    max-height:calc(100vh - 90px); overflow-y:auto;
     animation:nudge-in .45s var(--ease-out) both;
   }
   .ai-rail .card{ padding:18px }
+  .rail-actions{ margin-left:auto; display:flex; align-items:center; gap:6px }
+  .rail-close{
+    display:inline-grid; place-items:center;
+    width:24px; height:24px; border-radius:8px;
+    color:var(--text-3);
+    transition:background .15s var(--ease-out), color .15s var(--ease-out);
+  }
+  .rail-close:hover{ background:rgba(19,23,34,.07); color:var(--ink) }
+
+  /* collapsed rail — slim tab hugging the right edge */
+  .ai-rail-tab{
+    position:fixed; right:0; top:84px; z-index:40;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:12px 7px;
+    background:var(--paper); border:1px solid var(--line); border-right:none;
+    border-radius:12px 0 0 12px;
+    color:var(--hotpink);
+    box-shadow:-3px 3px 12px rgba(19,23,34,.07);
+    animation:nudge-in .45s var(--ease-out) both;
+    transition:transform .18s var(--spring,ease), box-shadow .18s var(--ease-out);
+  }
+  .ai-rail-tab:hover{ transform:translateX(-2px); box-shadow:-5px 5px 16px rgba(19,23,34,.12) }
+  .ai-rail-tab .tab-label{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase }
+
+  /* ── skeleton — shimmering placeholder while the model thinks ── */
+  .skel{ display:flex; flex-direction:column; gap:9px; margin-top:4px }
+  .skel-line{
+    height:11px; border-radius:6px;
+    background:linear-gradient(90deg, rgba(19,23,34,.07) 25%, rgba(19,23,34,.13) 45%, rgba(19,23,34,.07) 65%);
+    background-size:220% 100%;
+    animation:shimmer 1.5s linear infinite;
+  }
+  .skel-line.title{ height:16px }
+  .skel-line.w40{ width:40% } .skel-line.w50{ width:50% } .skel-line.w60{ width:60% }
+  .skel-line.w70{ width:70% } .skel-line.w75{ width:75% } .skel-line.w80{ width:80% }
+  .skel-line.w85{ width:85% } .skel-line.w90{ width:90% }
+  .skel-sec{
+    margin-top:8px; padding:10px 12px;
+    border:1px dashed var(--line);
+    border-radius:12px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .skel-point{ display:flex; align-items:center; gap:7px }
+  .skel-point i{ width:5px; height:5px; border-radius:99px; background:var(--line-strong); flex-shrink:0 }
+  .skel-point .skel-line{ flex:1; max-width:none; width:auto }
+  .skel-quote{
+    margin-top:4px; padding:11px 12px;
+    border-left:3px solid var(--pink);
+    border-radius:0 10px 10px 0;
+    background:rgba(252,86,129,.05);
+    height:44px;
+  }
+  @keyframes shimmer{ from{ background-position:120% 0 } to{ background-position:-100% 0 } }
+
+  /* ── breakdown tree ── */
+  .rail-kicker{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--text-3); margin:14px 0 8px;
+  }
+  .ai-breakdown{ display:flex; flex-direction:column }
+  .ai-section{ margin-bottom:10px }
+  .sec-head{
+    display:flex; align-items:center; gap:7px; width:100%; text-align:left;
+    padding:6px 9px; border-radius:9px;
+    color:var(--hotpink);
+    transition:background .15s var(--ease-out);
+  }
+  .sec-head:hover{ background:rgba(252,86,129,.08) }
+  .sec-ts{ color:var(--text-3) }
+  .sec-title{ font-size:13px; font-weight:800; color:var(--ink) }
+  .sec-points{ list-style:none; margin:2px 0 0; padding:0 0 0 10px; border-left:2px solid var(--line); display:flex; flex-direction:column; gap:2px }
+  .sec-points button{
+    display:flex; gap:7px; width:100%; text-align:left;
+    padding:4px 8px; border-radius:8px;
+    transition:background .15s var(--ease-out);
+  }
+  .sec-points button:hover{ background:rgba(19,23,34,.05) }
+  .pt-ts{ color:var(--text-3); flex-shrink:0; padding-top:2px }
+  .pt-text{ font-size:12px; line-height:1.5; color:var(--text-2) }
+
+  /* ── key quotes ── */
+  .ai-quotes{ display:flex; flex-direction:column; gap:8px }
+  .quote{
+    display:flex; flex-direction:column; gap:5px; text-align:left;
+    padding:10px 12px;
+    border-left:3px solid var(--pink);
+    border-radius:0 10px 10px 0;
+    background:rgba(252,86,129,.05);
+    transition:background .15s var(--ease-out), transform .15s var(--spring,ease);
+  }
+  .quote:hover{ background:rgba(252,86,129,.1); transform:translateX(2px) }
+  .q-text{ font-size:12px; line-height:1.5; color:var(--ink); font-weight:500 }
+  .q-meta{ color:var(--text-3) }
   /* ── sticky header — pinned to top of viewport ── */
   header{
     position:sticky; top:0; z-index:30;

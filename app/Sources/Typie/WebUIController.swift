@@ -425,6 +425,8 @@ final class WebUIController: NSObject, NSWindowDelegate {
                     "aiStatus": transcript.aiStatus ?? "",
                     "aiEngine": transcript.aiEngine ?? "",
                     "aiTopics": (transcript.aiTopics ?? []).map { t in ["title": t.title, "start": t.startSeconds, "summary": t.summary] as [String: Any] },
+                    "aiSections": (transcript.aiSections ?? []).map { s in ["title": s.title, "start": s.startSeconds, "ts": s.timestampLabel, "points": s.points.map { p in ["text": p.text, "start": p.startSeconds] as [String: Any] }] as [String: Any] },
+                    "aiQuotes": (transcript.aiQuotes ?? []).map { q in ["text": q.text, "speaker": q.speaker, "start": q.startSeconds, "ts": q.timestampLabel] as [String: Any] },
                 ] as [String: Any]
             },
             "aiAvailable": MeetingAIService.shared.isSupported,
@@ -861,6 +863,8 @@ extension WebUIController: WKNavigationDelegate {
                     "aiEngine": t.aiEngine ?? "",
                     "aiGeneratedAt": t.aiGeneratedAt.map { Self.iso8601.string(from: $0) } ?? "",
                     "aiTopics": (t.aiTopics ?? []).map { topic in ["title": topic.title, "start": topic.startSeconds, "summary": topic.summary] as [String: Any] },
+                    "aiSections": (t.aiSections ?? []).map { s in ["title": s.title, "start": s.startSeconds, "ts": s.timestampLabel, "points": s.points.map { p in ["text": p.text, "start": p.startSeconds] as [String: Any] }] as [String: Any] },
+                    "aiQuotes": (t.aiQuotes ?? []).map { q in ["text": q.text, "speaker": q.speaker, "start": q.startSeconds, "ts": q.timestampLabel] as [String: Any] },
                     "turns": t.turns.map { turn in
                         [
                             "speaker": turn.speakerIndex,

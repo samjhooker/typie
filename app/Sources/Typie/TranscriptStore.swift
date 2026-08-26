@@ -39,6 +39,10 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     var aiSummary: String?
     /// Interesting timestamps / topic pills with jump-to-time
     var aiTopics: [AITopic]?
+    /// hierarchical breakdown: high-level sections with nested points
+    var aiSections: [AISection]?
+    /// memorable verbatim quotes
+    var aiQuotes: [AIQuote]?
     /// Lifecycle of the AI pass: nil | "pending" | "done" | "failed"
     var aiStatus: String?
     /// Which engine produced the content: "foundationmodels" | "heuristic".
@@ -240,6 +244,8 @@ final class TranscriptStore: ObservableObject {
             t.aiTitle = result.title
             t.aiSummary = result.summary
             t.aiTopics = result.topics
+            t.aiSections = result.sections
+            t.aiQuotes = result.quotes
             t.aiStatus = "done"
             t.aiEngine = engine
             t.aiGeneratedAt = Date()
@@ -256,7 +262,7 @@ final class TranscriptStore: ObservableObject {
         aiTasks[id]?.cancel()
         aiTasks[id] = nil
         mutate(id) { t in
-            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
+            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiSections = nil; t.aiQuotes = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
         }
     }
 
@@ -426,6 +432,18 @@ final class TranscriptStore: ObservableObject {
             out += "\n### Topics\n"
             for topic in topics { out += "- [\(formatClock(topic.startSeconds))] \(topic.title): \(topic.summary)\n" }
             out += "\n"
+        }
+        if let sections = t.aiSections, !sections.isEmpty {
+            out += "\n### Breakdown\n"
+            for section in sections {
+                out += "\n#### [\(section.timestampLabel)] \(section.title)\n"
+                for p in section.points { out += "- [\(formatClock(p.startSeconds))] \(p.text)\n" }
+            }
+            out += "\n"
+        }
+        if let quotes = t.aiQuotes, !quotes.isEmpty {
+            out += "\n### Key quotes\n"
+            for q in quotes { out += "> \"\(q.text)\" — \(q.speaker) [\(q.timestampLabel)]\n\n" }
         }
         for turn in t.turns {
             let who = store?.displayName(for: t, speakerIndex: turn.speakerIndex)
