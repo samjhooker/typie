@@ -222,18 +222,74 @@ final class MeetingAIService: ObservableObject {
         let combinedSummaryText = chunkSummaries.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
         let allSections = chunkSummaries.flatMap { $0.sections }
         let allQuotes = chunkSummaries.flatMap { $0.quotes }
-        if let final = await reduceSummaries(combinedSummaryText: combinedSummaryText, sections: allSections, quotes: allQuotes, transcript: transcript) {
-            return final
+
+        // Merge in BATCHES — every chunk's output must reach a reduce pass.
+        // A single reduce over all chunks would blow the 4096-token window
+        // and get prefix-truncated to the first few minutes of audio.
+        let meaningful = chunkSummaries.filter { !$0.summary.isEmpty || !$0.sections.isEmpty || !$0.quotes.isEmpty }
+        guard !meaningful.isEmpty else { return nil }
+        let batchSize = 3
+        var partials: [AIResult] = []
+        for start in stride(from: 0, to: meaningful.count, by: batchSize) {
+            let batch = Array(meaningful[start..<min(start + batchSize, meaningful.count)])
+            let batchSummary = batch.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
+            let batchSections = batch.flatMap { $0.sections }
+            let batchQuotes = batch.flatMap { $0.quotes }
+            if let r = await reduceSummaries(combinedSummaryText: batchSummary, sections: batchSections, quotes: batchQuotes, transcript: transcript) {
+                partials.append(r)
+            } else {
+                // keep the batch's raw output so its minutes still count
+                partials.append(AIResult(
+                    title: "",
+                    summary: String(batchSummary.prefix(600)),
+                    topics: [],
+                    sections: makeSectionsFromDicts(batchSections, transcript: transcript),
+                    quotes: makeQuotesFromDicts(batchQuotes, transcript: transcript)))
+            }
         }
-        // Fallback synthesis — merge chunk output directly
-        let fallbackSections = makeSectionsFromDicts(allSections, transcript: transcript)
-        let fallbackQuotes = makeQuotesFromDicts(allQuotes, transcript: transcript)
-        let fallbackTopics = makeTopicsFromDicts(allSections.map { d in
-            ["title": (d["title"] as? String) ?? "", "timestamp": (d["timestamp"] as? String) ?? "", "summary": ""]
-        }, transcript: transcript)
-        let fallbackTitle = await titleFromSummaries(combinedSummaryText) ?? heuristicTitle(transcript)
-        let fallbackSummary = combinedSummaryText.isEmpty ? heuristicSummary(transcript) : String(combinedSummaryText.prefix(600))
-        return AIResult(title: fallbackTitle, summary: fallbackSummary, topics: Array(fallbackTopics.prefix(7)), sections: fallbackSections, quotes: fallbackQuotes)
+
+        // one batch → that reduce WAS the final answer
+        if partials.count == 1, !partials[0].title.isEmpty {
+            return dedupeResult(partials[0])
+        }
+
+        // final pass: merge the partial results with each other
+        let mergedSummary = partials.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
+        let mergedSections = partials.flatMap { $0.sections }
+        let mergedQuotes = partials.flatMap { $0.quotes }
+        let secDicts: [[String: Any]] = mergedSections.map { s in
+            var d: [String: Any] = ["title": s.title, "timestamp": s.timestampLabel]
+            d["points"] = s.points.map { p in ["text": p.text, "timestamp": formatClock(p.startSeconds)] }
+            return d
+        }
+        let quoteDicts: [[String: Any]] = mergedQuotes.map { q in
+            ["text": q.text, "speaker": q.speaker, "timestamp": q.timestampLabel]
+        }
+        if partials.count > 1, let final = await reduceSummaries(combinedSummaryText: String(mergedSummary.prefix(2500)), sections: secDicts, quotes: quoteDicts, transcript: transcript),
+           !final.sections.isEmpty || !final.quotes.isEmpty {
+            return dedupeResult(final)
+        }
+
+        // last-resort synthesis straight from the structured partials
+        let fallbackTitle = await titleFromSummaries(mergedSummary) ?? heuristicTitle(transcript)
+        let fallbackSummary = mergedSummary.isEmpty ? heuristicSummary(transcript) : String(mergedSummary.prefix(600))
+        return dedupeResult(AIResult(title: fallbackTitle, summary: fallbackSummary, topics: [],
+                                     sections: mergedSections, quotes: mergedQuotes))
+    }
+
+    /// post-merge hygiene: drop sections sharing a title within a minute,
+    /// identical quotes — batch boundaries can produce both
+    private func dedupeResult(_ r: AIResult) -> AIResult {
+        var sections: [AISection] = []
+        for s in r.sections {
+            if let last = sections.last, last.title.lowercased() == s.title.lowercased(),
+               abs(last.startSeconds - s.startSeconds) < 90 { continue }
+            if sections.contains(where: { $0.title.lowercased() == s.title.lowercased() }) { continue }
+            sections.append(s)
+        }
+        var seen = Set<String>()
+        let quotes = r.quotes.filter { seen.insert($0.text.lowercased()).inserted }
+        return AIResult(title: r.title, summary: r.summary, topics: r.topics, sections: sections, quotes: quotes)
     }
 
     @available(macOS 26, *)
@@ -282,7 +338,7 @@ final class MeetingAIService: ObservableObject {
         Return JSON with keys:
         - title (3-7 words)
         - summary (2-3 sentence executive summary)
-        - sections: array of {title, timestamp (MM:SS), points: [{text, timestamp}]} — 3-6 sections covering the WHOLE timeline chronologically, deduplicated
+        - sections: array of {title, timestamp (MM:SS), points: [{text, timestamp}]} — 3-6 sections covering ALL the provided material chronologically, deduplicated
         - quotes: array of {text, speaker, timestamp} — 3-6 best verbatim quotes
         JSON only.
         """

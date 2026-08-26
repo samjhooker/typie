@@ -183,7 +183,7 @@
     <button class="btn btn-ghost small" onclick={onBack}>← back</button>
   </div>
 {:else}
-<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable} class:rail-open={aiAvailable && railOpen}>
+<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable}>
   <div class="cols">
    <div class="content-col">
   <!-- sticky header: arrow + title + exports on one line -->
@@ -195,6 +195,9 @@
         <p class="meta mono-kicker">{fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length} speaker{speakers.length === 1 ? '' : 's'}{t.isMeeting ? ' · call' : ''}</p>
       </div>
       <div class="exports">
+        {#if aiAvailable && !railOpen}
+          <button class="btn btn-ghost small" onclick={() => setRailOpen(true)} title="AI summary, breakdown & quotes"><Sparkles size={13} /> details</button>
+        {/if}
         <button class="btn btn-ghost small" onclick={() => send({ type:'transcriptExport', id:t.id, format:'md' })}><Download size={13} /> .md</button>
         <button class="btn btn-ghost small" onclick={() => send({ type:'transcriptExport', id:t.id, format:'txt' })}><Download size={13} /> .txt</button>
       </div>
@@ -291,9 +294,7 @@
   {/if}
    </div><!-- /.content-col -->
 
-   {#if aiAvailable}
-   <!-- Apple Intelligence rail — a fixed panel that slides like the menu -->
-   {#if railOpen}
+   {#if aiAvailable && railOpen}
    <aside class="ai-rail" transition:fly={{ x: 380, duration: 420, easing: cubicOut }}>
     <div class="ai card">
       <div class="ai-head">
@@ -387,12 +388,6 @@
       {/if}
     </div>
    </aside>
-   {:else}
-   <button class="ai-rail-tab" onclick={() => setRailOpen(true)} title="show AI summary & topics" aria-label="show AI panel">
-     <Sparkles size={13} />
-     <span class="tab-label">AI</span>
-   </button>
-   {/if}
    {/if}
   </div><!-- /.cols -->
 
@@ -444,9 +439,7 @@
 
 <style>
   .wrap{ padding:24px 32px 80px; max-width:880px; margin:0 auto; flex:1; min-height:100%; display:flex; flex-direction:column }
-  /* with the rail open the conversation makes room; it glides with the panel */
-  .wrap.split{ max-width:none; padding-right:364px; transition:padding-right .42s cubic-bezier(.32,.9,.28,1) }
-  .wrap.split:not(.rail-open){ padding-right:32px }
+  .wrap.split{ max-width:1280px }
   .wrap.docked{ padding-bottom:80px }
 
   /* ── availability hint — reuses the shared .card component ── */
@@ -474,17 +467,20 @@
   .wrap.split .cols{ flex-direction:row; gap:24px; align-items:flex-start }
   .content-col{ min-width:0; flex:1 }
   .ai-rail{
-    position:fixed; top:0; right:0; bottom:0; z-index:60;
-    width:min(340px, 88vw);
+    /* sticky, not fixed — lives on the page, scrolls independently,
+       never hijacked by the pane's entry animation */
+    position:sticky; top:76px;
+    width:340px; flex-shrink:0;
+    height:calc(100vh - 170px);
+    overflow-y:auto; overscroll-behavior:contain;
     background:#fff;
-    border-left:1px solid var(--line);
-    box-shadow:-14px 0 36px rgba(19,23,34,.08);
-    padding:84px 20px 28px;
-    overflow-y:auto;
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:0 6px 24px rgba(19,23,34,.06);
+    padding:18px;
   }
-  /* ride above the playback dock instead of covering it */
-  .wrap.docked .ai-rail{ bottom:76px }
-  .wrap:not(.docked) .ai-rail{ bottom:0 }
+  /* leave room for the playback dock */
+  .wrap.docked .ai-rail{ height:calc(100vh - 250px) }
   /* the panel is the surface — the card inside goes completely flat.
      no cream, no mint gradient: clean white, calm. */
   .ai-rail .card,
@@ -499,21 +495,6 @@
     transition:background .15s var(--ease-out), color .15s var(--ease-out);
   }
   .rail-close:hover{ background:rgba(19,23,34,.07); color:var(--ink) }
-
-  /* collapsed rail — slim tab hugging the right edge */
-  .ai-rail-tab{
-    position:fixed; right:0; top:84px; z-index:40;
-    display:flex; flex-direction:column; align-items:center; gap:3px;
-    padding:12px 7px;
-    background:var(--paper); border:1px solid var(--line); border-right:none;
-    border-radius:12px 0 0 12px;
-    color:var(--hotpink);
-    box-shadow:-3px 3px 12px rgba(19,23,34,.07);
-    animation:nudge-in .45s var(--ease-out) both;
-    transition:transform .18s var(--spring,ease), box-shadow .18s var(--ease-out);
-  }
-  .ai-rail-tab:hover{ transform:translateX(-2px); box-shadow:-5px 5px 16px rgba(19,23,34,.12) }
-  .ai-rail-tab .tab-label{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase }
 
   /* ── skeleton — shimmering placeholder while the model thinks ── */
   .skel{ display:flex; flex-direction:column; gap:9px; margin-top:4px }
