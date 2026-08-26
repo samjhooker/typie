@@ -1,6 +1,5 @@
 <script>
-  import MacChrome from './lib/MacChrome.svelte';
-  import Dock from './lib/Dock.svelte';
+  import Nav from './lib/Nav.svelte';
   import Hero from './lib/Hero.svelte';
   import Ticker from './lib/Ticker.svelte';
   import ShelfShowcase from './lib/ShelfShowcase.svelte';
@@ -126,8 +125,7 @@
 {:else if path === '/education'}
   <Education />
 {:else}
-  <MacChrome holding={holding} />
-  <Dock />
+  <Nav />
 
   <main>
     <Hero />
@@ -155,6 +153,7 @@
   <ChatBot />
   <HoldCursor />
 {/if}
+
 <style>
   /* the wave's transparent half shows this instead of page cream,
      so the pink section flows straight into the footer */
