@@ -1,6 +1,8 @@
 <script>
   import { ui, send, local } from './bridge.svelte.js'
   import { Search, UploadCloud, Trash2, Download, Loader2, ShieldCheck, MonitorUp } from 'lucide-svelte'
+  import { fly, fade } from 'svelte/transition'
+  import { cubicOut } from 'svelte/easing'
   import InlineEdit from './InlineEdit.svelte'
   import SortSeg from './SortSeg.svelte'
   import Glyph from './Glyph.svelte'
@@ -120,10 +122,15 @@
 </script>
 
 <div class="wrap">
-  <!-- detail view replaces the library while a transcript is open -->
+  <!-- detail slides in from the right; the library glides back when it leaves.
+       both views share one grid cell so the crossfade never reflows. -->
+  <div class="pane-host">
   {#if local.selectedTranscriptId}
-    <TranscriptDetail id={local.selectedTranscriptId} onBack={() => { local.selectedTranscriptId = null }} />
+    <div class="pane-view" in:fly={{ x: 48, duration: 340, easing: cubicOut }} out:fade={{ duration: 130 }}>
+      <TranscriptDetail id={local.selectedTranscriptId} onBack={() => { local.selectedTranscriptId = null }} />
+    </div>
   {:else}
+  <div class="pane-view" in:fly={{ x: -36, duration: 340, easing: cubicOut }} out:fade={{ duration: 130 }}>
   <header class="head">
     <div>
       <h2>Library</h2>
@@ -295,11 +302,17 @@
       </button>
     {/if}
   {/if}
+  </div><!-- /.pane-view -->
   {/if} <!-- end detail-view branch -->
+  </div><!-- /.pane-host -->
 </div>
 
 <style>
   .wrap{ padding:28px 32px 40px; max-width:1200px; margin:0 auto }
+
+  /* stacked panes: outgoing fades in place while the incoming one flies */
+  .pane-host{ display:grid }
+  .pane-view{ grid-area:1/1; min-width:0 }
 
   .head{ margin-bottom:20px }
   .head h2{ font-size:26px }

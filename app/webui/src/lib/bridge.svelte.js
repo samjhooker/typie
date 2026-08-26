@@ -61,6 +61,10 @@ export const local = $state({
   askedScreenPermission: (() => {
     try { return localStorage.getItem('typie:askedScreen') === '1' } catch { return false }
   })(),
+  // user dismissed the "enable Apple Intelligence" nudge
+  aiNudgeDismissed: (() => {
+    try { return localStorage.getItem('typie:aiNudgeDismissed') === '1' } catch { return false }
+  })(),
 })
 
 let seenTranscript = ''
@@ -87,6 +91,12 @@ export function send(msg) {
     try { localStorage.setItem('typie:askedScreen', '1') } catch {}
   }
   window.webkit?.messageHandlers.typie.postMessage(msg)
+}
+
+/** retire the Apple Intelligence nudge for good */
+export function dismissAiNudge() {
+  local.aiNudgeDismissed = true
+  try { localStorage.setItem('typie:aiNudgeDismissed', '1') } catch {}
 }
 
 /** called by Swift with a fresh state snapshot */
