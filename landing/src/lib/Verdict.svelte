@@ -2,16 +2,10 @@
   import { reveal } from './reveal.js';
   import Robot from './Robot.svelte';
 
-  /* competitor columns stay deliberately terse - the point of the table
-     is the pattern in Typie's column, not a feature-by-feature takedown */
+  /* stripped to the three differentiators that actually move people */
   const rows = [
     { label: 'Works fully offline', typie: 'yes', them: ['no', 'yes', 'no'] },
-    { label: 'Price', typie: '$0', them: ['$12/mo', 'from free*', '$$$'] },
-    { label: 'Call & meeting capture', typie: 'yes', them: ['—', '—', 'bot joins'] },
-    { label: 'Speaker-separated transcripts', typie: 'yes', them: ['—', '—', 'yes'] },
-    { label: 'AI meeting summaries, on-device', typie: 'yes', them: ['—', '—', 'cloud'] },
-    { label: 'Voice notes library', typie: 'yes', them: ['—', '—', 'yes'] },
-    { label: 'Your voice uploaded to a server', typie: 'never', them: ['yes', 'no', 'yes'] },
+    { label: 'Price', typie: '$0 forever', them: ['$12/mo', 'from free*', '$$$'] },
     { label: 'Account required', typie: 'no', them: ['yes', 'no', 'yes'] }
   ];
 </script>

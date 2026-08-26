@@ -4,7 +4,7 @@
   import { nsSvg } from './svgid.js';
   import { APP_ROWS } from './apps.js';
 
-  const loops = APP_ROWS.map((row) => [...row, ...row]);
+  const loops = APP_ROWS.map((row) => [...row, ...row, ...row, ...row]);
 </script>
 
 <section class="apps field" id="use-cases">
@@ -28,7 +28,7 @@
       <div class="viewport">
         <ul class="track" class:reverse={i === 1} aria-hidden={false}>
           {#each loop as app, j}
-            <li class="card" aria-hidden={j >= loop.length / 2}>
+            <li class="card" aria-hidden={j >= loop.length / 4}>
               <i class="ic">{@html nsSvg(app.s, `app-${i}-${j}-${app.n}`)}</i>
               <span>{app.n}</span>
             </li>
@@ -110,7 +110,7 @@
   }
 
   @keyframes marquee {
-    to { transform: translateX(-50%); }
+    to { transform: translateX(-25%); }
   }
 
   .card {

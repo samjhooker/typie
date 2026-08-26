@@ -4,22 +4,22 @@
   import Robot from './Robot.svelte';
 
   const featured = {
-    q: '“I answered a full page of Slack messages on the train without touching my keyboard. Meeting notes, an awkward half-apology to my manager, the works. Checked it all afterwards out of pure paranoia and found exactly one typo. My keyboard has never felt so redundant.”',
-    who: 'Product designer',
+    q: '“Dictated a gnarly investor update on the Northern line with no signal and it didn’t miss a comma. WisprFlow would’ve just stared at me. My keyboard is officially unemployed.”',
+    who: '★★★★★  Maya · founder, London',
     tone: '#c5daff',
     bg: '#eff4ff'
   };
 
   const quotes = [
     {
-      q: '“I stopped opening a notes window first. I just hold option and think out loud.”',
-      who: 'Engineer',
+      q: '“The first time it split me and my cofounder into two speakers without me asking, I actually laughed. Otter charges for that.”',
+      who: '★★★★★  Sam · engineer, Berlin',
       tone: '#ffd0e6',
       bg: '#fff0f6'
     },
     {
-      q: '“It types faster than the words arrive in my head. Genuinely disorienting for a week.”',
-      who: 'Founder',
+      q: '“I hold option and ramble. It gives me the sentence I meant, not the one I said. Spooky good.”',
+      who: '★★★★★  Priya · product designer, NYC',
       tone: '#ffe0a8',
       bg: '#fff8e9'
     }

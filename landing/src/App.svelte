@@ -4,11 +4,7 @@
   import Ticker from './lib/Ticker.svelte';
   import ShelfShowcase from './lib/ShelfShowcase.svelte';
   import Superpowers from './lib/Superpowers.svelte';
-  import AirplaneTest from './lib/AirplaneTest.svelte';
   import Verdict from './lib/Verdict.svelte';
-  import PriceMoment from './lib/PriceMoment.svelte';
-  import Manifesto from './lib/Manifesto.svelte';
-  import PrivacyPipe from './lib/PrivacyPipe.svelte';
   import AppsRow from './lib/AppsRow.svelte';
   import Languages from './lib/Languages.svelte';
   import MetricBar from './lib/MetricBar.svelte';
@@ -64,7 +60,6 @@
       top: '#fffdf7',
       notch: '#f3effc',
       features: '#fffcf0',
-      offline: '#edf3fd',
       versus: '#fdf8ee'
     };
     const els = Object.keys(moods)
@@ -132,11 +127,7 @@
     <Ticker />
     <ShelfShowcase />
     <Superpowers />
-    <AirplaneTest />
     <Verdict />
-    <PriceMoment />
-    <Manifesto />
-    <PrivacyPipe />
     <MetricBar />
     <AppsRow />
     <Languages />
