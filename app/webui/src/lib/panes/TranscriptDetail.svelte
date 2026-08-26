@@ -151,6 +151,12 @@
   const aiTopics = $derived(t?.aiTopics ?? [])
   const aiSections = $derived(t?.aiSections ?? [])
   const aiQuotes = $derived(t?.aiQuotes ?? [])
+  const aiActions = $derived(t?.aiActions ?? [])
+  // resolve an action's speaker string to a legend color when possible
+  function speakerColor(name){
+    const i = speakers.findIndex(s => spName(s) === name)
+    return i >= 0 ? spColor(speakers[i]) : 'var(--text-3)'
+  }
   // rail visibility — remembered across sessions, reopenable from the edge tab
   let railOpen = $state((() => { try { return localStorage.getItem('typie:aiRailOpen') !== '0' } catch { return true } })())
   function setRailOpen(v){ railOpen = v; try { localStorage.setItem('typie:aiRailOpen', v ? '1' : '0') } catch {} }
@@ -331,11 +337,28 @@
             </div>
           {/each}
           <div class="skel-line w40"></div>
+          <div class="skel-action"><i></i><div class="skel-line w80"></div></div>
+          <div class="skel-action"><i></i><div class="skel-line w65"></div></div>
           <div class="skel-quote"></div>
         </div>
       {:else if aiSummary || aiSections.length > 0}
         {#if aiTitle}<h3 class="ai-title">{aiTitle}</h3>{/if}
         {#if aiSummary}<p class="ai-summary">{aiSummary}</p>{/if}
+
+        {#if aiActions.length > 0}
+          <div class="ai-actions">
+            <h4 class="rail-kicker">action items</h4>
+            {#each aiActions as action (action.speaker + action.text + action.start)}
+              <button class="action" onclick={() => seekTo(action.start, true)} title="play from {action.ts}">
+                <span class="a-dot" style="background:{speakerColor(action.speaker)}"></span>
+                <span class="a-body">
+                  <span class="a-text"><b>{action.speaker}</b> will {action.text}</span>
+                  <span class="q-meta mono-kicker">{action.ts}</span>
+                </span>
+              </button>
+            {/each}
+          </div>
+        {/if}
 
         {#if aiSections.length > 0}
           <div class="ai-breakdown">
@@ -521,7 +544,24 @@
     background:rgba(252,86,129,.05);
     height:44px;
   }
+  .skel-action{ display:flex; align-items:center; gap:8px; padding:4px 2px }
+  .skel-action i{ width:8px; height:8px; border-radius:99px; background:var(--line-strong); flex-shrink:0 }
+  .skel-action .skel-line{ flex:1; width:auto; max-width:none }
   @keyframes shimmer{ from{ background-position:120% 0 } to{ background-position:-100% 0 } }
+
+  /* ── action items ── */
+  .ai-actions{ display:flex; flex-direction:column; gap:7px; margin-bottom:4px }
+  .action{
+    display:flex; align-items:flex-start; gap:8px; text-align:left;
+    padding:8px 10px; border-radius:10px;
+    background:rgba(19,23,34,.035);
+    transition:background .15s var(--ease-out), transform .15s var(--spring,ease);
+  }
+  .action:hover{ background:rgba(252,86,129,.07); transform:translateX(2px) }
+  .a-dot{ width:8px; height:8px; border-radius:99px; flex-shrink:0; margin-top:5px }
+  .a-body{ display:flex; flex-direction:column; gap:2px; min-width:0 }
+  .a-text{ font-size:12px; line-height:1.5; color:var(--text-2) }
+  .a-text b{ color:var(--ink); font-weight:700 }
 
   /* ── breakdown tree ── */
   .rail-kicker{

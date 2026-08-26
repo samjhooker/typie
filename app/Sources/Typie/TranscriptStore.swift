@@ -43,6 +43,8 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     var aiSections: [AISection]?
     /// memorable verbatim quotes
     var aiQuotes: [AIQuote]?
+    /// per-speaker commitments ("X will do Y")
+    var aiActions: [AIAction]?
     /// Lifecycle of the AI pass: nil | "pending" | "done" | "failed"
     var aiStatus: String?
     /// Which engine produced the content: "foundationmodels" | "heuristic".
@@ -246,6 +248,7 @@ final class TranscriptStore: ObservableObject {
             t.aiTopics = result.topics
             t.aiSections = result.sections
             t.aiQuotes = result.quotes
+            t.aiActions = result.actions
             t.aiStatus = "done"
             t.aiEngine = engine
             t.aiGeneratedAt = Date()
@@ -262,7 +265,7 @@ final class TranscriptStore: ObservableObject {
         aiTasks[id]?.cancel()
         aiTasks[id] = nil
         mutate(id) { t in
-            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiSections = nil; t.aiQuotes = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
+            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiSections = nil; t.aiQuotes = nil; t.aiActions = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
         }
     }
 
@@ -444,6 +447,11 @@ final class TranscriptStore: ObservableObject {
         if let quotes = t.aiQuotes, !quotes.isEmpty {
             out += "\n### Key quotes\n"
             for q in quotes { out += "> \"\(q.text)\" — \(q.speaker) [\(q.timestampLabel)]\n\n" }
+        }
+        if let actions = t.aiActions, !actions.isEmpty {
+            out += "\n### Action items\n"
+            for a in actions { out += "- [\(a.timestampLabel)] **\(a.speaker)** will \(a.text)\n" }
+            out += "\n"
         }
         for turn in t.turns {
             let who = store?.displayName(for: t, speakerIndex: turn.speakerIndex)

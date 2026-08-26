@@ -24,6 +24,8 @@ struct AIResult: Equatable {
     // hierarchical breakdown + verbatim highlights (empty for legacy results)
     var sections: [AISection]
     var quotes: [AIQuote]
+    // per-speaker commitments ("X will do Y by when")
+    var actions: [AIAction]
 }
 
 // One point inside a breakdown section — a lower-level observation with its
@@ -40,6 +42,23 @@ struct AISection: Codable, Equatable, Identifiable {
     var title: String
     var startSeconds: Double
     var points: [AIPoint]
+    // human timestamp like "04:12"
+    var timestampLabel: String {
+        let s = max(0, Int(startSeconds.rounded()))
+        if s >= 3600 {
+            return String(format: "%d:%02d:%02d", s/3600, (s%3600)/60, s%60)
+        }
+        return String(format: "%d:%02d", s/60, s%60)
+    }
+}
+
+// A commitment made by a speaker — "I'll send the doc by Friday" —
+// extracted per speaker so the rail can list clear action items.
+struct AIAction: Codable, Equatable, Identifiable {
+    var id: String { speaker + text + String(startSeconds) }
+    var speaker: String
+    var text: String
+    var startSeconds: Double
     // human timestamp like "04:12"
     var timestampLabel: String {
         let s = max(0, Int(startSeconds.rounded()))
@@ -190,6 +209,7 @@ final class MeetingAIService: ObservableObject {
         - summary (2-3 sentence executive summary)
         - sections: array of {title (2-5 words), timestamp (MM:SS matching a marker), points: array of {text (one sentence observation), timestamp (MM:SS)}}. 3-6 sections covering the WHOLE timeline chronologically, each with 2-5 points.
         - quotes: array of {text (short verbatim quote), speaker, timestamp (MM:SS)}. 3-6 memorable quotes.
+        - actions: array of {speaker, text (what that speaker said they WILL do, one sentence), timestamp (MM:SS)}. Every commitment made, attributed to the speaker who made it — at least one per speaker who commits to something. If none, empty array.
         Use only timestamps shown like [MM:SS] or [HH:MM:SS]. Never invent timestamps. JSON only, no markdown, no code fences.
         """
         do {
@@ -211,17 +231,18 @@ final class MeetingAIService: ObservableObject {
         let chunks = makeChunks(transcript: transcript)
         guard !chunks.isEmpty else { return nil }
         AppLog.event("ai chunked: \(chunks.count) chunks for \(transcript.turns.count) turns")
-        var chunkSummaries: [(summary: String, sections: [[String: Any]], quotes: [[String: Any]], range: ClosedRange<Double>)] = []
+        var chunkSummaries: [(summary: String, sections: [[String: Any]], quotes: [[String: Any]], actions: [[String: Any]], range: ClosedRange<Double>)] = []
         for chunk in chunks {
             if let parsed = await analyzeChunk(chunk.text, range: chunk.timeRange) {
                 chunkSummaries.append(parsed)
             } else {
-                chunkSummaries.append(("", [], [], chunk.timeRange))
+                chunkSummaries.append(("", [], [], [], chunk.timeRange))
             }
         }
         let combinedSummaryText = chunkSummaries.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
         let allSections = chunkSummaries.flatMap { $0.sections }
         let allQuotes = chunkSummaries.flatMap { $0.quotes }
+        let allActions = chunkSummaries.flatMap { $0.actions }
 
         // Merge in BATCHES — every chunk's output must reach a reduce pass.
         // A single reduce over all chunks would blow the 4096-token window
@@ -235,7 +256,8 @@ final class MeetingAIService: ObservableObject {
             let batchSummary = batch.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
             let batchSections = batch.flatMap { $0.sections }
             let batchQuotes = batch.flatMap { $0.quotes }
-            if let r = await reduceSummaries(combinedSummaryText: batchSummary, sections: batchSections, quotes: batchQuotes, transcript: transcript) {
+            let batchActions = batch.flatMap { $0.actions }
+            if let r = await reduceSummaries(combinedSummaryText: batchSummary, sections: batchSections, quotes: batchQuotes, actions: batchActions, transcript: transcript) {
                 partials.append(r)
             } else {
                 // keep the batch's raw output so its minutes still count
@@ -244,7 +266,8 @@ final class MeetingAIService: ObservableObject {
                     summary: String(batchSummary.prefix(600)),
                     topics: [],
                     sections: makeSectionsFromDicts(batchSections, transcript: transcript),
-                    quotes: makeQuotesFromDicts(batchQuotes, transcript: transcript)))
+                    quotes: makeQuotesFromDicts(batchQuotes, transcript: transcript),
+                    actions: makeActionsFromDicts(batchActions, transcript: transcript)))
             }
         }
 
@@ -257,6 +280,7 @@ final class MeetingAIService: ObservableObject {
         let mergedSummary = partials.map { $0.summary }.filter { !$0.isEmpty }.joined(separator: " ")
         let mergedSections = partials.flatMap { $0.sections }
         let mergedQuotes = partials.flatMap { $0.quotes }
+        let mergedActions = partials.flatMap { $0.actions }
         let secDicts: [[String: Any]] = mergedSections.map { s in
             var d: [String: Any] = ["title": s.title, "timestamp": s.timestampLabel]
             d["points"] = s.points.map { p in ["text": p.text, "timestamp": formatClock(p.startSeconds)] }
@@ -265,7 +289,10 @@ final class MeetingAIService: ObservableObject {
         let quoteDicts: [[String: Any]] = mergedQuotes.map { q in
             ["text": q.text, "speaker": q.speaker, "timestamp": q.timestampLabel]
         }
-        if partials.count > 1, let final = await reduceSummaries(combinedSummaryText: String(mergedSummary.prefix(2500)), sections: secDicts, quotes: quoteDicts, transcript: transcript),
+        let actionDicts: [[String: Any]] = mergedActions.map { a in
+            ["speaker": a.speaker, "text": a.text, "timestamp": a.timestampLabel]
+        }
+        if partials.count > 1, let final = await reduceSummaries(combinedSummaryText: String(mergedSummary.prefix(2500)), sections: secDicts, quotes: quoteDicts, actions: actionDicts, transcript: transcript),
            !final.sections.isEmpty || !final.quotes.isEmpty {
             return dedupeResult(final)
         }
@@ -274,7 +301,7 @@ final class MeetingAIService: ObservableObject {
         let fallbackTitle = await titleFromSummaries(mergedSummary) ?? heuristicTitle(transcript)
         let fallbackSummary = mergedSummary.isEmpty ? heuristicSummary(transcript) : String(mergedSummary.prefix(600))
         return dedupeResult(AIResult(title: fallbackTitle, summary: fallbackSummary, topics: [],
-                                     sections: mergedSections, quotes: mergedQuotes))
+                                     sections: mergedSections, quotes: mergedQuotes, actions: mergedActions))
     }
 
     /// post-merge hygiene: drop sections sharing a title within a minute,
@@ -289,17 +316,19 @@ final class MeetingAIService: ObservableObject {
         }
         var seen = Set<String>()
         let quotes = r.quotes.filter { seen.insert($0.text.lowercased()).inserted }
-        return AIResult(title: r.title, summary: r.summary, topics: r.topics, sections: sections, quotes: quotes)
+        var seenA = Set<String>()
+        let actions = r.actions.filter { seenA.insert($0.speaker + "|" + $0.text.lowercased()).inserted }
+        return AIResult(title: r.title, summary: r.summary, topics: r.topics, sections: sections, quotes: quotes, actions: actions)
     }
 
     @available(macOS 26, *)
-    private func analyzeChunk(_ text: String, range: ClosedRange<Double>) async -> (summary: String, sections: [[String: Any]], quotes: [[String: Any]], range: ClosedRange<Double>)? {
+    private func analyzeChunk(_ text: String, range: ClosedRange<Double>) async -> (summary: String, sections: [[String: Any]], quotes: [[String: Any]], actions: [[String: Any]], range: ClosedRange<Double>)? {
         let session = LanguageModelSession(instructions: "You are a meeting assistant. Return valid JSON only.")
         let prompt = """
         Excerpt (\(formatClock(range.lowerBound))–\(formatClock(range.upperBound))):
         \(text)
 
-        Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS matching a marker", "points": [{"text": "one sentence", "timestamp": "MM:SS"}] } ], "quotes": [ {"text": "short verbatim quote", "speaker": "Speaker N", "timestamp": "MM:SS"} ] } — 1-3 sections with 2-4 points each covering this whole excerpt, 1-3 quotes. JSON only.
+        Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS matching a marker", "points": [{"text": "one sentence", "timestamp": "MM:SS"}] } ], "quotes": [ {"text": "short verbatim quote", "speaker": "Speaker N", "timestamp": "MM:SS"} ], "actions": [ {"speaker": "Speaker N", "text": "what they said they will do", "timestamp": "MM:SS"} ] } — 1-3 sections with 2-4 points each covering this whole excerpt, 1-3 quotes, every commitment in this excerpt as an action. JSON only.
         """
         do {
             let resp = try await session.respond(to: prompt)
@@ -307,7 +336,8 @@ final class MeetingAIService: ObservableObject {
                 let summary = obj["summary"] as? String ?? ""
                 let sections = obj["sections"] as? [[String: Any]] ?? []
                 let quotes = obj["quotes"] as? [[String: Any]] ?? []
-                return (summary, sections, quotes, range)
+                let actions = obj["actions"] as? [[String: Any]] ?? []
+                return (summary, sections, quotes, actions, range)
             }
             return nil
         } catch {
@@ -317,12 +347,13 @@ final class MeetingAIService: ObservableObject {
     }
 
     @available(macOS 26, *)
-    private func reduceSummaries(combinedSummaryText: String, sections: [[String: Any]], quotes: [[String: Any]], transcript: StoredTranscript) async -> AIResult? {
+    private func reduceSummaries(combinedSummaryText: String, sections: [[String: Any]], quotes: [[String: Any]], actions: [[String: Any]], transcript: StoredTranscript) async -> AIResult? {
         let sectionsText = sections.map { d in
             let pts = (d["points"] as? [[String: Any]])?.compactMap { $0["text"] as? String }.joined(separator: " | ") ?? ""
             return "- \(d["title"] ?? "") [\(d["timestamp"] ?? "")]: \(pts)"
         }.joined(separator: "\n")
         let quotesText = quotes.map { d in "- \"\(d["text"] ?? "")\" — \(d["speaker"] ?? "") [\(d["timestamp"] ?? "")]" }.joined(separator: "\n")
+        let actionsText = actions.map { d in "- \(d["speaker"] ?? "") [\(d["timestamp"] ?? "")]: \(d["text"] ?? "")" }.joined(separator: "\n")
         let session = LanguageModelSession(instructions: "You are a meeting assistant. Given per-chunk breakdowns, produce the final title, executive summary, merged hierarchical sections and the best quotes. Return valid JSON only.")
         let prompt = """
         // Combined inputs capped well under the 4096-token context window.
@@ -335,11 +366,15 @@ final class MeetingAIService: ObservableObject {
         Extracted quotes:
         \(quotesText.prefix(1200))
 
+        Extracted actions:
+        \(actionsText.prefix(1000))
+
         Return JSON with keys:
         - title (3-7 words)
         - summary (2-3 sentence executive summary)
         - sections: array of {title, timestamp (MM:SS), points: [{text, timestamp}]} — 3-6 sections covering ALL the provided material chronologically, deduplicated
         - quotes: array of {text, speaker, timestamp} — 3-6 best verbatim quotes
+        - actions: array of {speaker, text (what that speaker committed to do), timestamp} — every commitment, attributed; at least one per committing speaker
         JSON only.
         """
         do {
@@ -439,6 +474,23 @@ final class MeetingAIService: ObservableObject {
         return out.filter { seen.insert($0.text.lowercased()).inserted }.prefix(6).map { $0 }
     }
 
+    private func makeActionsFromDicts(_ dicts: [[String: Any]], transcript: StoredTranscript) -> [AIAction] {
+        let turnStarts = transcript.turns.map(\.startSeconds).sorted()
+        var out: [AIAction] = []
+        for d in dicts {
+            guard let text = d["text"] as? String, !text.isEmpty,
+                  let ts = d["timestamp"] as? String,
+                  let secs = parseTimestamp(ts) else { continue }
+            let snapped = snapToNearest(secs, candidates: turnStarts) ?? secs
+            let speaker = (d["speaker"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            out.append(AIAction(speaker: speaker,
+                                text: text.trimmingCharacters(in: .whitespacesAndNewlines),
+                                startSeconds: snapped))
+        }
+        var seen = Set<String>()
+        return out.filter { seen.insert($0.speaker + "|" + $0.text.lowercased()).inserted }.prefix(8).map { $0 }
+    }
+
     private func parseJSONResponse(_ json: String, transcript: StoredTranscript) -> AIResult? {
         guard let obj = Self.jsonObject(json) else { return nil }
         let title = (obj["title"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -446,6 +498,7 @@ final class MeetingAIService: ObservableObject {
 
         var sections = makeSectionsFromDicts(obj["sections"] as? [[String: Any]] ?? [], transcript: transcript)
         let quotes = makeQuotesFromDicts(obj["quotes"] as? [[String: Any]] ?? [], transcript: transcript)
+        let actions = makeActionsFromDicts(obj["actions"] as? [[String: Any]] ?? [], transcript: transcript)
 
         // legacy shape fallback: topics → one-point sections
         var topics: [AITopic] = []
@@ -474,7 +527,8 @@ final class MeetingAIService: ObservableObject {
                         summary: summary.isEmpty ? heuristicSummary(transcript) : summary,
                         topics: topics,
                         sections: sections,
-                        quotes: quotes)
+                        quotes: quotes,
+                        actions: actions)
     }
 
     private func dedupTopics(_ topics: [AITopic]) -> [AITopic] {
@@ -533,7 +587,25 @@ final class MeetingAIService: ObservableObject {
 
     func heuristicResult(transcript: StoredTranscript) -> AIResult {
         let (sections, quotes) = heuristicBreakdown(transcript)
-        return AIResult(title: heuristicTitle(transcript), summary: heuristicSummary(transcript), topics: heuristicTopics(transcript), sections: sections, quotes: quotes)
+        return AIResult(title: heuristicTitle(transcript), summary: heuristicSummary(transcript), topics: heuristicTopics(transcript), sections: sections, quotes: quotes, actions: heuristicActions(transcript))
+    }
+
+    /// offline fallback: sentences with commitment verbs become pseudo-actions
+    private func heuristicActions(_ t: StoredTranscript) -> [AIAction] {
+        let cues = ["i'll ", "i will ", "we'll ", "we will ", "i'm going to ", "let me ", "i can "]
+        var out: [AIAction] = []
+        for turn in t.turns {
+            for sentence in turn.text.split(separator: ".") {
+                let s = sentence.lowercased()
+                if cues.contains(where: { s.hasPrefix(" " + $0) || s.hasPrefix($0) }) {
+                    out.append(AIAction(speaker: t.speakerNames[turn.speakerIndex] ?? "Speaker \(turn.speakerIndex + 1)",
+                                        text: String(sentence.trimmingCharacters(in: .whitespacesAndNewlines)).capitalized,
+                                        startSeconds: turn.startSeconds))
+                    if out.count >= 6 { return out }
+                }
+            }
+        }
+        return out
     }
 
     /// Offline fallback: split the timeline into ~4 even stretches, one section
