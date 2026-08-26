@@ -173,15 +173,6 @@
   </div>
 {:else}
 <div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable}>
-  <!-- subtle one-liner: only here, only while Apple Intelligence is off -->
-  {#if showAiBanner}
-    <div class="ai-banner">
-      <Sparkles size={13} />
-      <span><b>want summaries & topics?</b> enable Apple Intelligence in System Settings.</span>
-      <button class="banner-x" onclick={dismissAiNudge} aria-label="dismiss"><X size={12} /></button>
-    </div>
-  {/if}
-
   <div class="cols">
    <div class="content-col">
   <!-- sticky header: arrow + title + exports on one line -->
@@ -204,6 +195,16 @@
       <Search size={14} />
       <input bind:value={query} placeholder="search this transcript…" spellcheck="false" />
     </label>
+
+    <!-- Apple Intelligence hint — sits between search and speakers, only
+         while the model is unavailable; ✕ hides it for this session only -->
+    {#if showAiBanner}
+      <div class="ai-banner card">
+        <Sparkles size={13} />
+        <span><b>want summaries & topics?</b> enable Apple Intelligence in System Settings.</span>
+        <button class="banner-x" onclick={dismissAiNudge} aria-label="dismiss"><X size={12} /></button>
+      </div>
+    {/if}
 
     <!-- speaker legend -->
     {#if speakers.length > 0}
@@ -373,11 +374,10 @@
   .wrap.split{ max-width:1220px }
   .wrap.docked{ padding-bottom:80px }
 
-  /* ── subtle availability banner ── */
+  /* ── availability hint — reuses the shared .card component ── */
   .ai-banner{
     display:flex; align-items:center; gap:9px;
-    margin:-6px 0 16px; padding:8px 12px;
-    border-radius:12px;
+    padding:10px 14px;
     background:rgba(252,86,129,.06);
     border:1px dashed rgba(252,86,129,.3);
     font-size:12px; color:var(--text-2);

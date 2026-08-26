@@ -61,10 +61,9 @@ export const local = $state({
   askedScreenPermission: (() => {
     try { return localStorage.getItem('typie:askedScreen') === '1' } catch { return false }
   })(),
-  // user dismissed the "enable Apple Intelligence" nudge
-  aiNudgeDismissed: (() => {
-    try { return localStorage.getItem('typie:aiNudgeDismissed') === '1' } catch { return false }
-  })(),
+  // Apple Intelligence banner dismissed — SESSION-ONLY. Never persisted:
+  // a one-time ✕ click must not hide the hint forever.
+  aiNudgeDismissed: false,
 })
 
 let seenTranscript = ''
@@ -93,10 +92,9 @@ export function send(msg) {
   window.webkit?.messageHandlers.typie.postMessage(msg)
 }
 
-/** retire the Apple Intelligence nudge for good */
+/** hide the Apple Intelligence banner until the app relaunches */
 export function dismissAiNudge() {
   local.aiNudgeDismissed = true
-  try { localStorage.setItem('typie:aiNudgeDismissed', '1') } catch {}
 }
 
 /** called by Swift with a fresh state snapshot */
