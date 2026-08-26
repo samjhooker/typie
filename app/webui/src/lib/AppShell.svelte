@@ -195,13 +195,14 @@
 
   .content{ flex:1; overflow-y:auto; background:#fff; display:flex; flex-direction:column }
 
-  /* pane switches slide in from the right with the site's deblur landing.
-     NB: the end state MUST be filter:none — a persistent filter value
-     turns the pane into the containing block for position:fixed children
-     (the AI side menu), making it scroll away with the page. */
+  /* pane switches slide in from the right.
+     NB: NO filter here — WebKit keeps the animated filter value alive after
+     the animation ends, and any non-none filter on an ancestor turns the pane
+     into the containing block for position:fixed children (the AI side menu),
+     making it scroll away with the page. Slide + fade only. */
   @keyframes pane-slide{
-    from{ opacity:0; transform:translateX(26px) translateY(8px); filter:blur(4px) }
-    to{ opacity:1; transform:none; filter:none }
+    from{ opacity:0; transform:translateX(26px) translateY(8px) }
+    to{ opacity:1; transform:none }
   }
   .content > :global(*){ animation:pane-slide .48s cubic-bezier(.22,.9,.28,1) both }
 
