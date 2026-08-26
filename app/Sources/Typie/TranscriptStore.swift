@@ -41,6 +41,9 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     var aiTopics: [AITopic]?
     /// Lifecycle of the AI pass: nil | "pending" | "done" | "failed"
     var aiStatus: String?
+    /// Which engine produced the content: "foundationmodels" | "heuristic".
+    /// nil for legacy records — heuristics never announced themselves before.
+    var aiEngine: String?
     var aiGeneratedAt: Date?
 
     init(from result: DiarizeStore.JobResult) {
@@ -190,21 +193,46 @@ final class TranscriptStore: ObservableObject {
 
     // MARK: Apple FoundationModels — generation
 
-    /// Whether another AI pass is already running for this id
+    /// In-flight AI pass per transcript id — cancelled on delete so a deleted
+    /// transcript's results never land anywhere.
     private var aiTasks: [UUID: Task<Void, Never>] = [:]
 
-    /// Trigger (or re-trigger) AI for a transcript. Updates aiStatus to pending → done/failed.
-    func generateAI(for id: UUID) async {
+    /// Trigger (or re-trigger) AI. With `allowHeuristic: false` (the automatic
+    /// path after filing) the model must actually be available — heuristic
+    /// output is NEVER stored as if it were AI. The explicit "generate with
+    /// heuristic" button passes true, because the user asked for it.
+    func generateAI(for id: UUID, allowHeuristic: Bool = false) async {
+        // one pass per transcript — a second request while running is a no-op
+        guard aiTasks[id] == nil else { return }
+        let task = Task {
+            await runGeneration(for: id, allowHeuristic: allowHeuristic)
+        }
+        aiTasks[id] = task
+        await task.value
+        aiTasks[id] = nil
+    }
+
+    private func runGeneration(for id: UUID, allowHeuristic: Bool) async {
         guard let transcript = transcripts.first(where: { $0.id == id }) else { return }
         guard !transcript.turns.isEmpty else { return }
         // coalesce: if already pending, don't stack
         if transcript.aiStatus == "pending" { return }
+        let service = MeetingAIService.shared
+        if !service.isSupported && !allowHeuristic {
+            AppLog.event("ai: skipped for \(transcript.fileName) — model unavailable (\(service.unavailableReason ?? "unknown")); leaving summary empty rather than storing heuristic output")
+            return
+        }
         mutate(id) { $0.aiStatus = "pending" }
         objectWillChange.send()
-        AppLog.event("ai: starting generation for \(id.uuidString) — \(transcript.turns.count) turns")
-        let ai = await MeetingAIService.shared.generate(for: transcript)
-        guard let result = ai else {
+        AppLog.event("ai: starting generation for \(transcript.fileName) — \(transcript.turns.count) turns")
+        let ai = await service.generate(for: transcript)
+        guard transcriptStillExists(id) else {
+            AppLog.event("ai: transcript \(id.uuidString) deleted mid-generation — discarding")
+            return
+        }
+        guard let (result, engine) = ai else {
             mutate(id) { $0.aiStatus = "failed"; $0.aiGeneratedAt = Date() }
+            objectWillChange.send()
             AppLog.event("ai: generation failed for \(id.uuidString)")
             return
         }
@@ -213,6 +241,7 @@ final class TranscriptStore: ObservableObject {
             t.aiSummary = result.summary
             t.aiTopics = result.topics
             t.aiStatus = "done"
+            t.aiEngine = engine
             t.aiGeneratedAt = Date()
             // auto-name: if the placeholder name is still "Meeting · ..." use the AI title
             if t.fileName.hasPrefix("Meeting ·") {
@@ -224,9 +253,17 @@ final class TranscriptStore: ObservableObject {
     }
 
     func clearAI(for id: UUID) {
+        aiTasks[id]?.cancel()
+        aiTasks[id] = nil
         mutate(id) { t in
-            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiStatus = nil; t.aiGeneratedAt = nil
+            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
         }
+    }
+
+    /// Post-generation liveness check: the transcript may have been deleted
+    /// while the (long) generation ran.
+    private func transcriptStillExists(_ id: UUID) -> Bool {
+        transcripts.contains(where: { $0.id == id })
     }
 
     static var uploadsDir: URL {
@@ -307,6 +344,8 @@ final class TranscriptStore: ObservableObject {
     }
 
     func delete(_ id: UUID) {
+        aiTasks[id]?.cancel()
+        aiTasks[id] = nil
         if let t = transcripts.first(where:{ $0.id==id }), let af = t.audioFile {
             try? FileManager.default.removeItem(at: transcriptsDir.appendingPathComponent("audio/\(af)"))
         }

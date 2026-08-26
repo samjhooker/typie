@@ -423,6 +423,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                     "aiTitle": transcript.aiTitle ?? "",
                     "aiSummary": transcript.aiSummary ?? "",
                     "aiStatus": transcript.aiStatus ?? "",
+                    "aiEngine": transcript.aiEngine ?? "",
                     "aiTopics": (transcript.aiTopics ?? []).map { t in ["title": t.title, "start": t.startSeconds, "summary": t.summary] as [String: Any] },
                 ] as [String: Any]
             },
@@ -857,6 +858,7 @@ extension WebUIController: WKNavigationDelegate {
                     "aiTitle": t.aiTitle ?? "",
                     "aiSummary": t.aiSummary ?? "",
                     "aiStatus": t.aiStatus ?? "",
+                    "aiEngine": t.aiEngine ?? "",
                     "aiGeneratedAt": t.aiGeneratedAt.map { Self.iso8601.string(from: $0) } ?? "",
                     "aiTopics": (t.aiTopics ?? []).map { topic in ["title": topic.title, "start": topic.startSeconds, "summary": topic.summary] as [String: Any] },
                     "turns": t.turns.map { turn in
@@ -880,8 +882,10 @@ extension WebUIController: WKNavigationDelegate {
             }
 
         case "transcriptGenerateAI":
+            // explicit user action — heuristics allowed when the real model
+            // is unavailable, because they asked for it
             if let id = Self.uuid(from: body) {
-                Task { await TranscriptStore.shared.generateAI(for: id) }
+                Task { await TranscriptStore.shared.generateAI(for: id, allowHeuristic: true) }
             }
 
         case "transcriptClearAI":

@@ -39,6 +39,7 @@
         aiTitle: (cached?.aiTitle && cached.aiTitle !== '' ? cached.aiTitle : (meta.aiTitle ?? '')),
         aiSummary: (cached?.aiSummary && cached.aiSummary !== '' ? cached.aiSummary : (meta.aiSummary ?? '')),
         aiStatus: (cached?.aiStatus && cached.aiStatus !== '' ? cached.aiStatus : (meta.aiStatus ?? '')),
+        aiEngine: (cached?.aiEngine ?? meta.aiEngine ?? ''),
         aiTopics: (cached?.aiTopics && cached.aiTopics.length ? cached.aiTopics : (meta.aiTopics ?? [])) }
     : null)
   // turns arrive via the on-demand fetch; metadata alone has none yet
@@ -149,6 +150,7 @@
   const aiSummary = $derived(t?.aiSummary ?? '')
   const aiTitle = $derived(t?.aiTitle ?? '')
   const aiStatus = $derived(t?.aiStatus ?? '')
+  const aiEngine = $derived(t?.aiEngine ?? '')
   const aiAvailable = $derived(ui.aiAvailable ?? false)
   function generateAI(){ if (t) send({ type:'transcriptGenerateAI', id:t.id }) }
   function clearAI(){ if (t) send({ type:'transcriptClearAI', id:t.id }) }
@@ -187,7 +189,11 @@
   {#if aiSummary || aiStatus === 'pending' || aiStatus === 'failed' || (t.turns?.length > 0 && !aiSummary)}
     <div class="ai card">
       <div class="ai-head">
-        <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
+        {#if aiEngine === 'heuristic'}
+          <span class="ai-badge" title="generated locally without the language model — enable Apple Intelligence for real summaries"><Sparkles size={13} /> local heuristic</span>
+        {:else}
+          <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
+        {/if}
         {#if aiStatus === 'pending'}
           <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
         {:else if aiSummary}

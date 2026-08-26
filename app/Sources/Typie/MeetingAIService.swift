@@ -35,14 +35,23 @@ final class MeetingAIService: ObservableObject {
 
     // MARK: availability
 
+    /// Last availability reason we logged — isSupported is polled on every UI
+    /// state push, so log only when the reason actually changes.
+    private static var lastLoggedUnavailableReason: String?
+
     var isSupported: Bool {
         if #available(macOS 26, *) {
 #if canImport(FoundationModels)
-            let model = SystemLanguageModel.default
-            switch model.availability {
-            case .available: return true
+            switch SystemLanguageModel.default.availability {
+            case .available:
+                Self.lastLoggedUnavailableReason = nil
+                return true
             case .unavailable(let reason):
-                AppLog.event("ai: model unavailable \(reason)")
+                let label = String(describing: reason)
+                if Self.lastLoggedUnavailableReason != label {
+                    AppLog.event("ai: model unavailable — \(label)")
+                    Self.lastLoggedUnavailableReason = label
+                }
                 return false
             }
 #else
@@ -50,6 +59,21 @@ final class MeetingAIService: ObservableObject {
 #endif
         }
         return false
+    }
+
+    /// Human-readable reason the model is unusable, or nil when ready.
+    var unavailableReason: String? {
+        if #available(macOS 26, *) {
+#if canImport(FoundationModels)
+            switch SystemLanguageModel.default.availability {
+            case .available: return nil
+            case .unavailable(let reason): return String(describing: reason)
+            }
+#else
+            return "FoundationModels not linked"
+#endif
+        }
+        return "requires macOS 26"
     }
 
     var availabilityLabel: String {
@@ -71,7 +95,10 @@ final class MeetingAIService: ObservableObject {
 
     // MARK: public entry
 
-    func generate(for transcript: StoredTranscript) async -> AIResult? {
+    /// Generates title/summary/topics. Returns the result plus which engine
+    /// produced it ("foundationmodels" | "heuristic") so callers can label
+    /// output honestly instead of passing heuristics off as AI.
+    func generate(for transcript: StoredTranscript) async -> (result: AIResult, engine: String)? {
         let text = formattedTranscript(transcript)
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             AppLog.event("ai: empty transcript, skipping")
@@ -82,15 +109,15 @@ final class MeetingAIService: ObservableObject {
 #if canImport(FoundationModels)
                 if let result = await generateWithFoundationModels(transcript: transcript, formatted: text) {
                     AppLog.event("ai: generated via FoundationModels — \(result.title)")
-                    return result
+                    return (result, "foundationmodels")
                 }
                 AppLog.event("ai: FoundationModels failed, falling back to heuristic")
 #endif
             }
         } else {
-            AppLog.event("ai: model not available (\(availabilityLabel)), using heuristic")
+            AppLog.event("ai: model not available (\(unavailableReason ?? "unknown")), using heuristic")
         }
-        return heuristicResult(transcript: transcript)
+        return (heuristicResult(transcript: transcript), "heuristic")
     }
 
     // MARK: FoundationModels path — plain String JSON, no @Generable needed
@@ -98,7 +125,11 @@ final class MeetingAIService: ObservableObject {
 #if canImport(FoundationModels)
     @available(macOS 26, *)
     private func generateWithFoundationModels(transcript: StoredTranscript, formatted text: String) async -> AIResult? {
-        if text.count < 12_000 {
+        // The on-device model has a 4096-token context (input AND output).
+        // 8k chars of transcript ≈ ~2k tokens, leaving room for instructions,
+        // prompt boilerplate and the JSON response. Above that, go straight
+        // to chunking — a doomed oversized single-pass just wastes a call.
+        if text.count < 8_000 {
             if let r = await singlePass(text: text, transcript: transcript) { return r }
         }
         return await chunkedGenerate(text: text, transcript: transcript)
@@ -192,11 +223,12 @@ final class MeetingAIService: ObservableObject {
         let topicsText = topics.map { d in "- \(d["title"] ?? "") [\(d["timestamp"] ?? "")]: \(d["summary"] ?? "")" }.joined(separator: "\n")
         let session = LanguageModelSession(instructions: "You are a meeting assistant. Given chunk summaries and topics, produce final title, summary and deduplicated topics. Return valid JSON only.")
         let prompt = """
+        // Combined inputs capped well under the 4096-token context window.
         Chunk summaries combined:
-        \(combinedSummaryText.prefix(6000))
+        \(combinedSummaryText.prefix(3500))
 
         Extracted topics:
-        \(topicsText.prefix(4000))
+        \(topicsText.prefix(2500))
 
         Return JSON with keys: title (3-7 words), summary (2-3 sentences), topics: array of {title, timestamp as MM:SS, summary}. 3-7 topics, chronological, deduplicate. JSON only.
         """
@@ -265,8 +297,6 @@ final class MeetingAIService: ObservableObject {
                 let snapped = snapToNearest(secs, candidates: turnStarts) ?? secs
                 topics.append(AITopic(title: tTitle, startSeconds: snapped, summary: tSum))
             }
-        } else if let arr = obj["topics"] as? [[String: String]] {
-            topics = makeTopicsFromDicts(arr, transcript: transcript)
         }
         topics.sort { $0.startSeconds < $1.startSeconds }
         topics = dedupTopics(topics)
@@ -336,7 +366,10 @@ final class MeetingAIService: ObservableObject {
 
     private func heuristicTitle(_ t: StoredTranscript) -> String {
         let words = t.turns.first?.text.split(separator: " ").prefix(7).joined(separator: " ") ?? ""
-        if words.isEmpty { return t.fileName.replacingOccurrences(of: ".m4a", with: "").replacingOccurrences(of: ".mp3", with: "") }
+        if words.isEmpty {
+            let base = (t.fileName as NSString).deletingPathExtension
+            return base.isEmpty ? "Meeting Notes" : base
+        }
         var title = words.trimmingCharacters(in: .punctuationCharacters)
         if title.count > 50 { title = String(title.prefix(50)) }
         title = title.capitalized
