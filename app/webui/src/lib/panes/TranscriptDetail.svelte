@@ -164,6 +164,34 @@
   $effect(() => {
     if (aiAvailable && aiStatus === 'pending') setRailOpen(true)
   })
+
+  // DIAGNOSTIC: when the rail mounts, walk its ancestors and log anything
+  // that hijacks position:fixed (transform/filter/backdrop/contain/…).
+  // Surfaces in typie.log as "rail diag: …"
+  $effect(() => {
+    if (!aiAvailable || !railOpen) return
+    const t = setTimeout(() => {
+      const el = document.querySelector('.ai-rail')
+      if (!el) { send({type:'log', message:'rail diag: no .ai-rail element found'}); return }
+      const cs = getComputedStyle(el)
+      const issues = []
+      let p = el.parentElement
+      while (p && p !== document.documentElement) {
+        const s = getComputedStyle(p)
+        const cls = (p.className || '').toString().split(/\s+/).filter(Boolean).slice(0, 2).join('.')
+        if (s.transform !== 'none') issues.push(cls + ' transform=' + s.transform.slice(0, 48))
+        if (s.filter !== 'none') issues.push(cls + ' filter=' + s.filter)
+        if (s.backdropFilter && s.backdropFilter !== 'none') issues.push(cls + ' backdrop=' + s.backdropFilter)
+        if (s.perspective !== 'none') issues.push(cls + ' perspective=' + s.perspective)
+        if (s.contain && s.contain !== 'none') issues.push(cls + ' contain=' + s.contain)
+        if (s.willChange && s.willChange !== 'auto') issues.push(cls + ' willChange=' + s.willChange)
+        if (s.containerType && s.containerType !== 'normal') issues.push(cls + ' containerType=' + s.containerType)
+        p = p.parentElement
+      }
+      send({type:'log', message:'rail diag: position=' + cs.position + '; ancestors=' + (issues.length ? issues.join(' | ') : 'CLEAN — true viewport fixed')})
+    }, 700)
+    return () => clearTimeout(t)
+  })
   const aiSummary = $derived(t?.aiSummary ?? '')
   const aiTitle = $derived(t?.aiTitle ?? '')
   const aiStatus = $derived(t?.aiStatus ?? '')

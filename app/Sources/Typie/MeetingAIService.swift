@@ -153,7 +153,7 @@ final class MeetingAIService: ObservableObject {
     }
 
     /// Approximate token budget per chunk — ~1000 tokens ≈ 4000 chars.
-    private let chunkChars = 3_500
+    private let chunkChars = 3_000
 
     // MARK: public entry
 
@@ -231,10 +231,61 @@ final class MeetingAIService: ObservableObject {
         let chunks = makeChunks(transcript: transcript)
         guard !chunks.isEmpty else { return nil }
         AppLog.event("ai chunked: \(chunks.count) chunks for \(transcript.turns.count) turns")
+
+        // Analyze chunks CONCURRENTLY (bounded) — a 27-min call is ~8 model
+        // calls; sequential takes minutes, 3 at a time cuts wall time ~3×.
+        struct Analyzed {
+            let summary: String
+            let sections: [[String: Any]]
+            let quotes: [[String: Any]]
+            let actions: [[String: Any]]
+        }
+        let concurrency = 3
+        var analyzed = [Analyzed?](repeating: nil, count: chunks.count)
+        let analyzeStarted = Date()
+        await withTaskGroup(of: (Int, Analyzed?).self) { group in
+            var iterator = chunks.enumerated().makeIterator()
+            var inFlight = 0
+            func addNext() {
+                guard let (index, chunk) = iterator.next() else { return }
+                inFlight += 1
+                group.addTask {
+                    let session = LanguageModelSession(instructions: "You are a meeting assistant. Return valid JSON only.")
+                    let prompt = """
+                    Excerpt (\(Self.fmtClock(chunk.timeRange.lowerBound))–\(Self.fmtClock(chunk.timeRange.upperBound))):
+                    \(chunk.text)
+
+                    Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS matching a marker", "points": [{"text": "one sentence", "timestamp": "MM:SS"}] } ], "quotes": [ {"text": "short verbatim quote", "speaker": "Speaker N", "timestamp": "MM:SS"} ], "actions": [ {"speaker": "Speaker N", "text": "what they said they will do", "timestamp": "MM:SS"} ] } — 1-3 sections with 2-4 points each covering this whole excerpt, 1-3 quotes, every commitment in this excerpt as an action. JSON only.
+                    """
+                    do {
+                        let resp = try await session.respond(to: prompt)
+                        if let obj = Self.jsonObject(resp.content) {
+                            return (index, Analyzed(
+                                summary: obj["summary"] as? String ?? "",
+                                sections: obj["sections"] as? [[String: Any]] ?? [],
+                                quotes: obj["quotes"] as? [[String: Any]] ?? [],
+                                actions: obj["actions"] as? [[String: Any]] ?? []))
+                        }
+                        return (index, nil)
+                    } catch {
+                        AppLog.event("ai analyzeChunk error: \(error.localizedDescription)")
+                        return (index, nil)
+                    }
+                }
+            }
+            for _ in 0..<concurrency { addNext() }
+            while let (index, result) = await group.next() {
+                analyzed[index] = result
+                inFlight -= 1
+                if inFlight < concurrency { addNext() }
+            }
+        }
+        AppLog.event("ai: \(chunks.count) chunks analyzed in \(Int(Date().timeIntervalSince(analyzeStarted)))s")
+
         var chunkSummaries: [(summary: String, sections: [[String: Any]], quotes: [[String: Any]], actions: [[String: Any]], range: ClosedRange<Double>)] = []
-        for chunk in chunks {
-            if let parsed = await analyzeChunk(chunk.text, range: chunk.timeRange) {
-                chunkSummaries.append(parsed)
+        for (i, chunk) in chunks.enumerated() {
+            if let a = analyzed[i] {
+                chunkSummaries.append((a.summary, a.sections, a.quotes, a.actions, chunk.timeRange))
             } else {
                 chunkSummaries.append(("", [], [], [], chunk.timeRange))
             }
@@ -321,30 +372,6 @@ final class MeetingAIService: ObservableObject {
         return AIResult(title: r.title, summary: r.summary, topics: r.topics, sections: sections, quotes: quotes, actions: actions)
     }
 
-    @available(macOS 26, *)
-    private func analyzeChunk(_ text: String, range: ClosedRange<Double>) async -> (summary: String, sections: [[String: Any]], quotes: [[String: Any]], actions: [[String: Any]], range: ClosedRange<Double>)? {
-        let session = LanguageModelSession(instructions: "You are a meeting assistant. Return valid JSON only.")
-        let prompt = """
-        Excerpt (\(formatClock(range.lowerBound))–\(formatClock(range.upperBound))):
-        \(text)
-
-        Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS matching a marker", "points": [{"text": "one sentence", "timestamp": "MM:SS"}] } ], "quotes": [ {"text": "short verbatim quote", "speaker": "Speaker N", "timestamp": "MM:SS"} ], "actions": [ {"speaker": "Speaker N", "text": "what they said they will do", "timestamp": "MM:SS"} ] } — 1-3 sections with 2-4 points each covering this whole excerpt, 1-3 quotes, every commitment in this excerpt as an action. JSON only.
-        """
-        do {
-            let resp = try await session.respond(to: prompt)
-            if let obj = Self.jsonObject(resp.content) {
-                let summary = obj["summary"] as? String ?? ""
-                let sections = obj["sections"] as? [[String: Any]] ?? []
-                let quotes = obj["quotes"] as? [[String: Any]] ?? []
-                let actions = obj["actions"] as? [[String: Any]] ?? []
-                return (summary, sections, quotes, actions, range)
-            }
-            return nil
-        } catch {
-            AppLog.event("ai analyzeChunk error: \(error.localizedDescription)")
-            return nil
-        }
-    }
 
     @available(macOS 26, *)
     private func reduceSummaries(combinedSummaryText: String, sections: [[String: Any]], quotes: [[String: Any]], actions: [[String: Any]], transcript: StoredTranscript) async -> AIResult? {
@@ -411,8 +438,15 @@ final class MeetingAIService: ObservableObject {
         return dedupTopics(out)
     }
 
+    nonisolated static func fmtClock(_ secs: Double) -> String {
+        let n = max(0, Int(secs.rounded()))
+        let h = n/3600, m = (n%3600)/60, sec = n%60
+        if h > 0 { return String(format: "%d:%02d:%02d", h, m, sec) }
+        return String(format: "%02d:%02d", m, sec)
+    }
+
     /// Tolerant JSON extraction: strips code fences and surrounding prose.
-    static func jsonObject(_ s: String) -> [String: Any]? {
+    nonisolated static func jsonObject(_ s: String) -> [String: Any]? {
         var t = s.trimmingCharacters(in: .whitespacesAndNewlines)
         if !t.hasPrefix("{") {
             if let start = t.firstIndex(of: "{"), let end = t.lastIndex(of: "}") {
