@@ -138,19 +138,23 @@
     </div>
   </header>
 
-  {#if ui.transcribe.model.state !== 'ready'}
+  {#if ui.transcribe.model.state === 'notDownloaded' || ui.transcribe.model.state === 'failed'}
     <div class="gate card">
-      {#if ui.transcribe.model.state === 'notDownloaded'}
-        <p><b>one-time setup:</b> speaker models (~22 mb) are needed for diarization.</p>
-        <button class="btn btn-pink small" onclick={() => send({ type:'startDiarizerDownload' })}>download models</button>
-      {:else if ui.transcribe.model.state === 'downloading'}
-        <div class="progress"><div style="width:{Math.max(3, ui.transcribe.model.fraction * 100)}%"></div></div>
-        <p class="mono-kicker">{Math.round(ui.transcribe.model.fraction * 100)}% downloading…</p>
-      {:else}
-        <p class="mono-kicker">preparing models…</p>
-      {/if}
+      <p><b>one-time setup:</b> speaker models (~22 mb) are needed for diarization.</p>
+      <button class="btn btn-pink small" onclick={() => send({ type:'startDiarizerDownload' })}>download models</button>
+      {#if ui.transcribe.model.state === 'failed'}<p class="mono-kicker" style="color:var(--red-ink)">{ui.transcribe.model.error ?? 'download failed — try again'}</p>{/if}
     </div>
-  {:else}
+  {:else if ui.transcribe.model.state === 'downloading'}
+    <div class="gate card">
+      <div class="progress"><div style="width:{Math.max(3, ui.transcribe.model.fraction * 100)}%"></div></div>
+      <p class="mono-kicker">{Math.round(ui.transcribe.model.fraction * 100)}% downloading…</p>
+    </div>
+  {:else if ui.transcribe.model.state === 'compiling' || ui.transcribe.model.state === 'unknown'}
+    <div class="gate card" style="padding:12px 16px">
+      <p class="mono-kicker">preparing models…</p>
+    </div>
+  {/if}
+  {#if ui.transcribe.model.state === 'ready' || ui.transcribe.model.state === 'unknown' || ui.transcribe.model.state === 'compiling' || ui.transcribe.model.state === 'downloading'}
 
     <!-- ── twin actions: drop a file · capture a call ── -->
     <div class="actions">

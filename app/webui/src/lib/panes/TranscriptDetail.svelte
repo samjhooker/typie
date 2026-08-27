@@ -16,6 +16,7 @@
   let renaming = $state(null)
   let renameVal = $state('')
   let audioEl
+  let contentColEl
 
   // progressive rendering — long meetings are thousands of word spans;
   // mount them a page at a time as the reader (or playback) advances
@@ -145,53 +146,89 @@
   $effect(() => {
     id
     playing = false; currentTime = 0; duration = 0; rate = 1; shown = TURN_PAGE
+    if (contentColEl) contentColEl.scrollTop = 0
+    const rail = document.querySelector('.ai-rail')
+    if (rail) rail.scrollTop = 0
   })
 
   // ── AI helpers ───────────────────────────────────────────────
   const aiTopics = $derived(t?.aiTopics ?? [])
-  const aiSections = $derived(t?.aiSections ?? [])
-  const aiQuotes = $derived(t?.aiQuotes ?? [])
-  const aiActions = $derived(t?.aiActions ?? [])
-  // resolve an action's speaker string to a legend color when possible
-  function speakerColor(name){
-    const i = speakers.findIndex(s => spName(s) === name)
-    return i >= 0 ? spColor(speakers[i]) : 'var(--text-3)'
-  }
+  const _aiSections = $derived(t?.aiSections ?? [])
+  const _aiQuotes = $derived(t?.aiQuotes ?? [])
+  // normalize existing transcripts that were saved with hallucinated timestamps (e.g. all 00:00 or 07h+)
+  // — new generations already clamp & redistribute via MeetingAIService, but this fixes display for old rows
+  const aiSections = $derived.by(() => {
+    const secs = _aiSections
+    if (secs.length <= 1) return secs
+    const dur = t?.durationSeconds || Math.max(...turns.map(x => x.end), 0) || 0
+    const outOfBounds = secs.filter(s => s.start > dur + 30).length
+    const dup = secs.filter((s,i) => i>0 && Math.abs(s.start - secs[i-1].start) < 15).length
+    if (outOfBounds === 0 && dup < secs.length/2) return secs
+    // redistribute clustered / OOB entries proportionally
+    const sorted = [...secs].sort((a,b) => a.start - b.start)
+    return sorted.map((s,i) => {
+      const needFix = s.start > dur + 30 || (i>0 && Math.abs(s.start - sorted[i-1].start) < 15)
+      if (!needFix) return s
+      const frac = i / Math.max(1, sorted.length-1)
+      const target = Math.round(frac * dur)
+      const newPoints = (s.points ?? []).map(p => Math.abs(p.start - s.start) < 15 ? { ...p, start: target } : p)
+      return { ...s, start: target, ts: `${String(Math.floor(target/60)).padStart(2,'0')}:${String(target%60).padStart(2,'0')}`, timestampLabel: `${String(Math.floor(target/60)).padStart(2,'0')}:${String(target%60).padStart(2,'0')}`, points: newPoints }
+    }).sort((a,b) => a.start - b.start)
+  })
+  const aiQuotes = $derived.by(() => {
+    const dur = t?.durationSeconds || Math.max(...turns.map(x => x.end), 0) || 0
+    return _aiQuotes.map(q => {
+      if (q.start <= dur + 30) return q
+      // clamp hallucinated 7h timestamps to end of meeting minus spread
+      const idx = _aiQuotes.indexOf(q)
+      const frac = idx / Math.max(1, _aiQuotes.length-1)
+      const target = Math.round(frac * dur * 0.9 + dur*0.05)
+      return { ...q, start: target, ts: `${String(Math.floor(target/60)).padStart(2,'0')}:${String(target%60).padStart(2,'0')}` }
+    })
+  })
   // rail visibility — remembered across sessions, reopenable from the edge tab
   let railOpen = $state((() => { try { return localStorage.getItem('typie:aiRailOpen') !== '0' } catch { return true } })())
   function setRailOpen(v){ railOpen = v; try { localStorage.setItem('typie:aiRailOpen', v ? '1' : '0') } catch {} }
+
+  // ── resizable rail — grab the divider to widen/narrow the AI panel ──
+  let railWidth = $state((() => {
+    try {
+      const v = parseInt(localStorage.getItem('typie:aiRailWidth') || '', 10)
+      if (Number.isFinite(v)) return Math.min(720, Math.max(300, v))
+    } catch {}
+    return 340
+  })())
+  let resizing = $state(false)
+  const RAIL_MIN = 300, RAIL_MAX = 720
+  function clampRail(w){ return Math.min(RAIL_MAX, Math.max(RAIL_MIN, w)) }
+  function onResizeStart(e){
+    resizing = true
+    e.preventDefault()
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+  }
+  function onResizeMove(e){
+    if (!resizing) return
+    // rail hugs the right edge → width = distance from cursor to right side
+    railWidth = clampRail(window.innerWidth - e.clientX)
+  }
+  function onResizeEnd(){
+    if (!resizing) return
+    resizing = false
+    try { localStorage.setItem('typie:aiRailWidth', String(railWidth)) } catch {}
+  }
+  function onResizeKey(e){
+    if (e.key === 'ArrowLeft') { railWidth = clampRail(railWidth + 24); onResizeEnd() }
+    else if (e.key === 'ArrowRight') { railWidth = clampRail(railWidth - 24); onResizeEnd() }
+    else if (e.key === 'Home') { railWidth = 340; onResizeEnd() }
+    else return
+    e.preventDefault()
+  }
+
   // the skeleton deserves an audience — present the rail when generation kicks off
   $effect(() => {
     if (aiAvailable && aiStatus === 'pending') setRailOpen(true)
   })
 
-  // DIAGNOSTIC: when the rail mounts, walk its ancestors and log anything
-  // that hijacks position:fixed (transform/filter/backdrop/contain/…).
-  // Surfaces in typie.log as "rail diag: …"
-  $effect(() => {
-    if (!aiAvailable || !railOpen) return
-    const t = setTimeout(() => {
-      const el = document.querySelector('.ai-rail')
-      if (!el) { send({type:'log', message:'rail diag: no .ai-rail element found'}); return }
-      const cs = getComputedStyle(el)
-      const issues = []
-      let p = el.parentElement
-      while (p && p !== document.documentElement) {
-        const s = getComputedStyle(p)
-        const cls = (p.className || '').toString().split(/\s+/).filter(Boolean).slice(0, 2).join('.')
-        if (s.transform !== 'none') issues.push(cls + ' transform=' + s.transform.slice(0, 48))
-        if (s.filter !== 'none') issues.push(cls + ' filter=' + s.filter)
-        if (s.backdropFilter && s.backdropFilter !== 'none') issues.push(cls + ' backdrop=' + s.backdropFilter)
-        if (s.perspective !== 'none') issues.push(cls + ' perspective=' + s.perspective)
-        if (s.contain && s.contain !== 'none') issues.push(cls + ' contain=' + s.contain)
-        if (s.willChange && s.willChange !== 'auto') issues.push(cls + ' willChange=' + s.willChange)
-        if (s.containerType && s.containerType !== 'normal') issues.push(cls + ' containerType=' + s.containerType)
-        p = p.parentElement
-      }
-      send({type:'log', message:'rail diag: position=' + cs.position + '; ancestors=' + (issues.length ? issues.join(' | ') : 'CLEAN — true viewport fixed')})
-    }, 700)
-    return () => clearTimeout(t)
-  })
   const aiSummary = $derived(t?.aiSummary ?? '')
   const aiTitle = $derived(t?.aiTitle ?? '')
   const aiStatus = $derived(t?.aiStatus ?? '')
@@ -217,9 +254,9 @@
     <button class="btn btn-ghost small" onclick={onBack}>← back</button>
   </div>
 {:else}
-<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable} class:rail-open={aiAvailable && railOpen}>
+<div class="wrap" class:docked={t.audioUrl} class:split={aiAvailable} class:rail-open={aiAvailable && railOpen} class:resizing>
   <div class="cols">
-   <div class="content-col">
+   <div class="content-col" bind:this={contentColEl}>
   <!-- sticky header: arrow + title + exports on one line -->
   <header>
     <div class="titlerow">
@@ -329,7 +366,21 @@
    </div><!-- /.content-col -->
 
    {#if aiAvailable && railOpen}
-   <aside class="ai-rail" transition:fly={{ x: 380, duration: 420, easing: cubicOut }}>
+   <!-- drag divider — grab to resize the AI panel -->
+   <div
+     class="rail-resize"
+     class:active={resizing}
+     role="separator" aria-orientation="vertical" aria-label="resize AI panel"
+     tabindex="0"
+     title="drag to resize · double-click to reset"
+     onpointerdown={onResizeStart}
+     onpointermove={onResizeMove}
+     onpointerup={onResizeEnd}
+     onpointercancel={onResizeEnd}
+     onkeydown={onResizeKey}
+     ondblclick={() => { railWidth = 340; onResizeEnd() }}
+   ></div>
+   <aside class="ai-rail" style="width:{railWidth}px" transition:fly={{ x: 380, duration: 420, easing: cubicOut }}>
     <div class="ai card">
       <div class="ai-head">
         {#if aiEngine === 'heuristic'}
@@ -365,28 +416,11 @@
             </div>
           {/each}
           <div class="skel-line w40"></div>
-          <div class="skel-action"><i></i><div class="skel-line w80"></div></div>
-          <div class="skel-action"><i></i><div class="skel-line w65"></div></div>
-          <div class="skel-quote"></div>
+          <div class="skel-quote"></div><div class="skel-quote"></div>
         </div>
       {:else if aiSummary || aiSections.length > 0}
         {#if aiTitle}<h3 class="ai-title">{aiTitle}</h3>{/if}
         {#if aiSummary}<p class="ai-summary">{aiSummary}</p>{/if}
-
-        {#if aiActions.length > 0}
-          <div class="ai-actions">
-            <h4 class="rail-kicker">action items</h4>
-            {#each aiActions as action (action.speaker + action.text + action.start)}
-              <button class="action" onclick={() => seekTo(action.start, true)} title="play from {action.ts}">
-                <span class="a-dot" style="background:{speakerColor(action.speaker)}"></span>
-                <span class="a-body">
-                  <span class="a-text"><b>{action.speaker}</b> will {action.text}</span>
-                  <span class="q-meta mono-kicker">{action.ts}</span>
-                </span>
-              </button>
-            {/each}
-          </div>
-        {/if}
 
         {#if aiSections.length > 0}
           <div class="ai-breakdown">
@@ -490,9 +524,10 @@
 
 <style>
   .wrap{ padding:24px 32px 80px; max-width:880px; margin:0 auto; flex:1; min-height:100%; display:flex; flex-direction:column }
-  /* with the rail open the conversation makes room — same glide as the left menu */
-  .wrap.split{ max-width:none; padding-right:372px; transition:padding-right .42s cubic-bezier(.32,.9,.28,1) }
-  .wrap.split:not(.rail-open){ padding-right:32px }
+  /* with the rail open the conversation splits into two independent scroll panes */
+  .wrap.split{ max-width:none; padding:0; height:100vh; max-height:100vh; overflow:hidden; display:flex; flex-direction:column; transition:none }
+  .wrap.split:not(.rail-open){ padding:24px 32px 80px; height:auto; max-height:none; overflow:visible; display:flex; max-width:880px; margin:0 auto; }
+  .wrap.split:not(.rail-open) .dock{ position:sticky; bottom:0; z-index:5; margin-top:auto; margin-left:-32px; margin-right:-32px; margin-bottom:-80px; }
   .wrap.docked{ padding-bottom:80px }
 
   /* ── availability hint — reuses the shared .card component ── */
@@ -517,18 +552,35 @@
 
   /* ── two-column layout: conversation + AI rail ── */
   .cols{ display:flex; flex-direction:column; flex:1; min-height:0 }
-  .wrap.split .cols{ flex-direction:row; gap:24px; align-items:flex-start }
-  .content-col{ min-width:0; flex:1 }
+  .wrap.split .cols{ flex-direction:row; gap:0; align-items:stretch; flex:1; min-height:0; overflow:hidden; }
+  .content-col{ min-width:0; flex:1; overflow-y:auto; overscroll-behavior:contain; padding:24px 32px 80px; }
   .ai-rail{
-    /* a true side menu — mirror of the left sidebar: full height, flat,
-       fixed to the edge; the conversation column glides to make room */
-    position:fixed; top:0; right:0; bottom:0; z-index:35;
-    width:340px;
+    position:relative; top:auto; right:auto; bottom:auto; z-index:5;
+    flex-shrink:0; align-self:stretch; max-height:100%;
     background:var(--paper);
     border-left:1px solid var(--line);
     padding:24px 20px 100px;
     overflow-y:auto; overscroll-behavior:contain;
   }
+  /* ── drag divider between transcript and AI rail ── */
+  .rail-resize{
+    position:relative; z-index:6;
+    width:9px; margin-left:-4px; flex-shrink:0;
+    cursor:col-resize;
+    touch-action:none;
+  }
+  .rail-resize::after{
+    content:''; position:absolute; top:0; bottom:0; left:3px; width:3px;
+    border-radius:99px;
+    background:var(--line);
+    transition:background .18s var(--ease-out), opacity .18s var(--ease-out);
+    opacity:.6;
+  }
+  .rail-resize:hover::after{ background:var(--hotpink); opacity:.55 }
+  .rail-resize.active::after{ background:var(--hotpink); opacity:.85 }
+  .wrap.resizing{ cursor:col-resize; user-select:none }
+  .wrap.resizing .content-col,
+  .wrap.resizing .ai-rail{ pointer-events:none }
   /* the panel is the surface — the card inside goes completely flat.
      no cream, no mint gradient, no card chrome. */
   .ai-rail .card,
@@ -572,24 +624,7 @@
     background:rgba(252,86,129,.05);
     height:44px;
   }
-  .skel-action{ display:flex; align-items:center; gap:8px; padding:4px 2px }
-  .skel-action i{ width:8px; height:8px; border-radius:99px; background:var(--line-strong); flex-shrink:0 }
-  .skel-action .skel-line{ flex:1; width:auto; max-width:none }
   @keyframes shimmer{ from{ background-position:120% 0 } to{ background-position:-100% 0 } }
-
-  /* ── action items ── */
-  .ai-actions{ display:flex; flex-direction:column; gap:7px; margin-bottom:4px }
-  .action{
-    display:flex; align-items:flex-start; gap:8px; text-align:left;
-    padding:8px 10px; border-radius:10px;
-    background:rgba(19,23,34,.035);
-    transition:background .15s var(--ease-out), transform .15s var(--spring,ease);
-  }
-  .action:hover{ background:rgba(252,86,129,.07); transform:translateX(2px) }
-  .a-dot{ width:8px; height:8px; border-radius:99px; flex-shrink:0; margin-top:5px }
-  .a-body{ display:flex; flex-direction:column; gap:2px; min-width:0 }
-  .a-text{ font-size:12px; line-height:1.5; color:var(--text-2) }
-  .a-text b{ color:var(--ink); font-weight:700 }
 
   /* ── breakdown tree ── */
   .rail-kicker{
@@ -752,6 +787,11 @@
     padding:11px 32px;
     display:flex; align-items:center; gap:13px;
     background:#fff;
+    border-top:1px solid var(--line);
+  }
+  .wrap.split .dock{
+    position:relative; bottom:auto;
+    margin:0; flex-shrink:0;
     border-top:1px solid var(--line);
   }
   .play{

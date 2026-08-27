@@ -52,10 +52,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ = TranscriptStore.shared
 
         if settings.onboardingDone && ModelManager.modelsExist() {
-            AppLog.event("launch path: setup complete — going straight to live mode")
-            // model files are on disk but not in memory yet — load them
-            Task { await ModelManager.shared.downloadAndLoad() }
-            finishSetup(closeOnboarding: false)
+            // Quick permissions gate on every launch — if any of the three
+            // required grants was revoked (e.g. Screen Recording after an
+            // OS update), re-show just the permissions step before going live.
+            if !Self.allPermissionsGranted() {
+                AppLog.event("launch path: permissions missing after setup — re-showing permissions step")
+                showOnboardingAtStep(1)
+            } else {
+                AppLog.event("launch path: setup complete — going straight to live mode")
+                // model files are on disk but not in memory yet — load them
+                Task { await ModelManager.shared.downloadAndLoad() }
+                finishSetup(closeOnboarding: false)
+            }
         } else {
             AppLog.event("launch path: onboarding (done=\(settings.onboardingDone), model=\(ModelManager.modelsExist()))")
             showOnboarding()
@@ -79,9 +87,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
     }
 
+    private static func allPermissionsGranted() -> Bool {
+        AudioCapture.micPermissionGranted()
+            && HotkeyMonitor.accessibilityGranted(prompt: false)
+            && SystemAudioRecorder.permissionGranted()
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        // Quick re-check on every foreground — if the user revoked a grant
+        // in System Settings while typie was backgrounded, surface the
+        // permissions step immediately instead of failing silently.
+        guard SettingsStore.shared.onboardingDone, ModelManager.modelsExist() else { return }
+        guard onboardingController == nil else { return } // already showing
+        guard !Self.allPermissionsGranted() else { return }
+        AppLog.event("permissions lost while backgrounded — re-showing permissions step")
+        showOnboardingAtStep(1)
+    }
+
     // MARK: onboarding window (web)
 
     @objc func showOnboarding() {
+        showOnboardingAtStep(nil)
+    }
+
+    func showOnboardingAtStep(_ initialStep: Int?) {
         if onboardingController == nil {
             // unified size: same chrome as main app so onboarding feels in-flow (overlay handles steps)
             let controller = WebUIController(
@@ -112,6 +141,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onboardingController = controller
         }
         onboardingController!.present()
+        if let step = initialStep {
+            let isRecheck = SettingsStore.shared.onboardingDone && step == 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+                self?.onboardingController?.setOnboardingStep(step)
+                if isRecheck {
+                    self?.onboardingController?.setOnboardingRecheck(true)
+                }
+            }
+        }
     }
 
     // MARK: the one settings/stats/history window (web)

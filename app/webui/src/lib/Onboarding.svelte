@@ -65,6 +65,12 @@
   /** single path for every step change so side effects stay consistent */
   function goTo(step) {
     if (step <= local.step || step >= STEP_COUNT) return
+    // re-check mode: permissions step is the only one needed
+    if (local.recheck && local.step === 1 && step === 2) {
+      local.recheck = false
+      send({ type: 'completeOnboarding' })
+      return
+    }
     if (step >= 1) startDownloads()
     // hotkey must go live entering the practice step
     if (step === 3) send({ type: 'onboardingReadyStep' })
@@ -78,8 +84,14 @@
     if (local.step === 1 && allPermissionsDone) {
       const t = setTimeout(() => {
         if (local.step === 1) {
-          autoAdvancing = true
-          goTo(2)
+          if (local.recheck) {
+            // re-check mode: just permissions, skip downloads/practice
+            local.recheck = false
+            send({ type: 'completeOnboarding' })
+          } else {
+            autoAdvancing = true
+            goTo(2)
+          }
         }
       }, 1100)
       return () => clearTimeout(t)

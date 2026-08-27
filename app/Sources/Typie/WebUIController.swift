@@ -255,6 +255,15 @@ final class WebUIController: NSObject, NSWindowDelegate {
         webView.evaluateJavaScript("window.__typie.setPane && window.__typie.setPane('\(pane)')")
     }
 
+    func setOnboardingStep(_ step: Int) {
+        let clamped = max(0, min(step, 3))
+        webView.evaluateJavaScript("window.__typie?.setStep && window.__typie.setStep(\(clamped))")
+    }
+
+    func setOnboardingRecheck(_ active: Bool) {
+        webView.evaluateJavaScript("window.__typie?.setRecheck && window.__typie.setRecheck(\(active ? "true" : "false"))")
+    }
+
     func close() {
         window.close()
     }
@@ -428,6 +437,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                     "aiSections": (transcript.aiSections ?? []).map { s in ["title": s.title, "start": s.startSeconds, "ts": s.timestampLabel, "points": s.points.map { p in ["text": p.text, "start": p.startSeconds] as [String: Any] }] as [String: Any] },
                     "aiQuotes": (transcript.aiQuotes ?? []).map { q in ["text": q.text, "speaker": q.speaker, "start": q.startSeconds, "ts": q.timestampLabel] as [String: Any] },
                     "aiActions": (transcript.aiActions ?? []).map { a in ["speaker": a.speaker, "text": a.text, "start": a.startSeconds, "ts": a.timestampLabel] as [String: Any] },
+                    "aiProgress": transcript.aiProgress ?? -1,
                 ] as [String: Any]
             },
             "aiAvailable": MeetingAIService.shared.isSupported,
@@ -867,6 +877,7 @@ extension WebUIController: WKNavigationDelegate {
                     "aiSections": (t.aiSections ?? []).map { s in ["title": s.title, "start": s.startSeconds, "ts": s.timestampLabel, "points": s.points.map { p in ["text": p.text, "start": p.startSeconds] as [String: Any] }] as [String: Any] },
                     "aiQuotes": (t.aiQuotes ?? []).map { q in ["text": q.text, "speaker": q.speaker, "start": q.startSeconds, "ts": q.timestampLabel] as [String: Any] },
                     "aiActions": (t.aiActions ?? []).map { a in ["speaker": a.speaker, "text": a.text, "start": a.startSeconds, "ts": a.timestampLabel] as [String: Any] },
+                    "aiProgress": t.aiProgress ?? -1,
                     "turns": t.turns.map { turn in
                         [
                             "speaker": turn.speakerIndex,

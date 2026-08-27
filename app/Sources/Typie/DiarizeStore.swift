@@ -99,20 +99,41 @@ final class DiarizeStore: ObservableObject {
     ]
 
     /// Side-effect-free cache check: same layout ModelCache verifies after
-    /// download (<models dir>/<repo>/<asset>). A false negative is harmless —
-    /// the user taps download and load() finds a valid cache instantly.
+    /// download (<models dir>/<repo>/<asset>). Tolerate legacy plda layout —
+    /// `OfflineDiarizerModels.load` also probes a few fallback locations.
     static func modelsPresent() -> Bool {
         let repoDir = MLModelConfigurationUtils.defaultModelsDirectory(for: .diarizer)
             .appendingPathComponent(Repo.diarizer.folderName, isDirectory: true)
-        return requiredModels.allSatisfy {
+        // 4 CoreML bundles must be exactly where ModelCache puts them
+        let coreFiles = requiredModels.filter { $0 != ModelNames.OfflineDiarizer.pldaParameters }
+        guard coreFiles.allSatisfy({
             FileManager.default.fileExists(atPath: repoDir.appendingPathComponent($0).path)
-        }
+        }) else { return false }
+        // plda-parameters.json has historically landed in several places; mimic
+        // OfflineDiarizerModels.loadPLDAPsi fallback probing so we don't
+        // report "notDownloaded" when the models would actually load.
+        let pldaName = ModelNames.OfflineDiarizer.pldaParameters
+        if FileManager.default.fileExists(atPath: repoDir.appendingPathComponent(pldaName).path) { return true }
+        let fallbackDirs = [
+            MLModelConfigurationUtils.defaultModelsDirectory(for: .diarizer),
+            FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.appendingPathComponent("FluidAudio/Models", isDirectory: true)
+        ].compactMap { $0 }
+        return fallbackDirs.contains { FileManager.default.fileExists(atPath: $0.appendingPathComponent(pldaName).path) }
+            || fallbackDirs.contains { FileManager.default.fileExists(atPath: $0.appendingPathComponent("plda-parameters.json").path) }
     }
 
-    /// Resolve `.unknown` from disk. Called before the pane renders its gate.
+    /// Resolve `.unknown` (and heal a stale `.notDownloaded`) from disk.
+    /// Called on every UI push — the file check is cheap and fixes the
+    /// "download again" flash when models were added after the first probe.
     func refreshModelState() {
-        guard modelState == .unknown else { return }
-        modelState = Self.modelsPresent() ? .ready : .notDownloaded
+        switch modelState {
+        case .unknown:
+            modelState = Self.modelsPresent() ? .ready : .notDownloaded
+        case .notDownloaded where Self.modelsPresent():
+            modelState = .ready
+        default:
+            break
+        }
     }
 
     /// One-time download + CoreML compile of the offline diarizer bundle.

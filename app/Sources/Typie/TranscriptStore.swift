@@ -45,6 +45,8 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     var aiQuotes: [AIQuote]?
     /// per-speaker commitments ("X will do Y")
     var aiActions: [AIAction]?
+    /// transient chunk progress while generating ("analyzing 4/9")
+    var aiProgress: Int?
     /// Lifecycle of the AI pass: nil | "pending" | "done" | "failed"
     var aiStatus: String?
     /// Which engine produced the content: "foundationmodels" | "heuristic".
@@ -209,7 +211,10 @@ final class TranscriptStore: ObservableObject {
     /// heuristic" button passes true, because the user asked for it.
     func generateAI(for id: UUID, allowHeuristic: Bool = false) async {
         // one pass per transcript — a second request while running is a no-op
-        guard aiTasks[id] == nil else { return }
+        guard aiTasks[id] == nil else {
+            AppLog.event("ai: generation already in flight for \(id.uuidString) — re-trigger ignored")
+            return
+        }
         let task = Task {
             await runGeneration(for: id, allowHeuristic: allowHeuristic)
         }
@@ -221,8 +226,8 @@ final class TranscriptStore: ObservableObject {
     private func runGeneration(for id: UUID, allowHeuristic: Bool) async {
         guard let transcript = transcripts.first(where: { $0.id == id }) else { return }
         guard !transcript.turns.isEmpty else { return }
-        // coalesce: if already pending, don't stack
-        if transcript.aiStatus == "pending" { return }
+        // NB: no "pending" coalesce here — generateAI already serializes via
+        // aiTasks, and a persisted stale pending must never block a fresh run
         let service = MeetingAIService.shared
         if !service.isSupported && !allowHeuristic {
             AppLog.event("ai: skipped for \(transcript.fileName) — model unavailable (\(service.unavailableReason ?? "unknown")); leaving summary empty rather than storing heuristic output")
@@ -231,7 +236,11 @@ final class TranscriptStore: ObservableObject {
         mutate(id) { $0.aiStatus = "pending" }
         objectWillChange.send()
         AppLog.event("ai: starting generation for \(transcript.fileName) — \(transcript.turns.count) turns")
-        let ai = await service.generate(for: transcript)
+        let ai = await service.generate(for: transcript, progress: { done, total in
+            self.mutate(id) { $0.aiProgress = done }
+            self.objectWillChange.send()
+            AppLog.event("ai: chunk \(done)/\(total) analyzed")
+        })
         guard transcriptStillExists(id) else {
             AppLog.event("ai: transcript \(id.uuidString) deleted mid-generation — discarding")
             return
@@ -251,6 +260,7 @@ final class TranscriptStore: ObservableObject {
             t.aiActions = result.actions
             t.aiStatus = "done"
             t.aiEngine = engine
+            t.aiProgress = nil
             t.aiGeneratedAt = Date()
             // auto-name: if the placeholder name is still "Meeting · ..." use the AI title
             if t.fileName.hasPrefix("Meeting ·") {
@@ -265,7 +275,7 @@ final class TranscriptStore: ObservableObject {
         aiTasks[id]?.cancel()
         aiTasks[id] = nil
         mutate(id) { t in
-            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiSections = nil; t.aiQuotes = nil; t.aiActions = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
+            t.aiTitle = nil; t.aiSummary = nil; t.aiTopics = nil; t.aiSections = nil; t.aiQuotes = nil; t.aiActions = nil; t.aiProgress = nil; t.aiStatus = nil; t.aiEngine = nil; t.aiGeneratedAt = nil
         }
     }
 
@@ -513,6 +523,18 @@ final class TranscriptStore: ObservableObject {
             try? decoder.decode(StoredTranscript.self, from: Data(contentsOf: $0))
         }
         transcripts = loaded.sorted { $0.date > $1.date }
+
+        // stale "pending" sweep: nothing survives a relaunch, so any pending
+        // status here is from a killed run — it would block regeneration
+        // forever (the coalescing guard sees "pending" and bails). Restore
+        // honest state: content present → done, otherwise clear it.
+        for idx in transcripts.indices where transcripts[idx].aiStatus == "pending" {
+            let hasContent = transcripts[idx].aiSummary?.isEmpty == false
+                || transcripts[idx].aiSections?.isEmpty == false
+            AppLog.event("ai: clearing stale pending status for \"\(transcripts[idx].fileName)\"")
+            transcripts[idx].aiStatus = hasContent ? "done" : nil
+            persist(transcripts[idx])
+        }
 
         // orphaned placeholders: a capture was filed but its transcription
         // never finished (app quit mid-job). the queue is always empty at

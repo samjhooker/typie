@@ -55,6 +55,7 @@ export const local = $state({
   practice: '',
   flash: false,
   copiedId: null,
+  recheck: false, // true when we re-show only the permissions step after setup
   // remember that screen permission was granted (or requested) so we don't
   // re-ask on every navigation — macOS needs a restart for CGPreflight to
   // flip, so we optimistically cache the grant
@@ -139,7 +140,14 @@ export function applyPush(s) {
   }
 }
 
-window.__typie = { push: applyPush, setTranscript }
+export function setStep(n) {
+  const v = Math.max(0, Math.min(3, Number(n) | 0))
+  local.step = v
+}
+export function setRecheck(v) {
+  local.recheck = !!v
+}
+window.__typie = { push: applyPush, setTranscript, setStep, setRecheck }
 
 // tell the Swift host the page is live so it starts pushing state
 if (typeof window !== 'undefined') {
