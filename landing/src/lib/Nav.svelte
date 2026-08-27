@@ -1,48 +1,27 @@
 <script>
   import Logo from './Logo.svelte';
-  import DownloadCta from './DownloadCta.svelte';
-  import VariantSwitcher from './VariantSwitcher.svelte';
-  import { sound, blip } from './sound.svelte.js';
-
   let scrolled = $state(false);
 </script>
 
-<svelte:window onscroll={() => (scrolled = window.scrollY > 24)} />
+<svelte:window onscroll={() => (scrolled = window.scrollY > 8)} />
 
 <header class:scrolled>
   <div class="container bar">
-    <div
-      class="word"
-      style="--vn-fg: var(--ink); --vn-accent: var(--hotpink); --vn-menu-bg: var(--paper-raise, #fff); --vn-menu-border: rgba(19, 23, 34, 0.1); --vn-menu-shadow: 0 18px 44px rgba(19, 23, 34, 0.18); --vn-item-fg: var(--ink); --vn-item-muted: rgba(19, 23, 34, 0.55); --vn-item-hover: rgba(19, 23, 34, 0.05);"
-    >
-      <VariantSwitcher variant="personal" logoSize={26} />
-    </div>
+    <a href="/" class="brand" aria-label="Typie home">
+      <Logo size={26} color="#0a0a0a" />
+    </a>
 
     <nav class="links" aria-label="primary">
-      <a href="#notch">The notch</a>
-      <a href="#features">Features</a>
-      <a href="#versus">vs. the rest</a>
-      <a href="#languages">Languages</a>
-      <a href="#pricing" class="price-link">
-        <span class="struck">Pricing</span>
-        <span class="freehand hand">it's free</span>
-      </a>
+      <a href="#use-cases">Everywhere</a>
+      <a href="#privacy">Privacy</a>
       <a href="#faq">FAQ</a>
     </nav>
 
     <div class="right">
-      <button
-        class="soundbtn mono"
-        aria-pressed={sound.on}
-        title={sound.on ? 'mute the little sounds' : 'tiny synth sounds, made by this page'}
-        onclick={() => {
-          sound.on = !sound.on;
-          if (sound.on) blip(720, 0.12, 'sine', 0.06);
-        }}
-      >
-        {sound.on ? '🔊 on' : '🔇 off'}
-      </button>
-      <DownloadCta kind="green" />
+      <a href="https://github.com/samjhooker/typie" class="ghostlink">GitHub</a>
+      <a href="https://github.com/samjhooker/typie/releases/latest" class="btn btn-black navcta">
+        Download for Mac
+      </a>
     </div>
   </div>
 </header>
@@ -50,121 +29,42 @@
 <style>
   header {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 110;
-    padding-block: 18px;
-    background: transparent;
-    transition:
-      background 0.35s var(--ease-out),
-      box-shadow 0.35s var(--ease-out),
-      padding 0.35s var(--ease-out);
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, background 0.2s ease;
   }
-
   header.scrolled {
-    padding-block: 10px;
-    background: color-mix(in srgb, var(--page) 88%, transparent);
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
-    box-shadow: 0 1px 0 rgba(19, 23, 34, 0.08);
+    border-color: var(--line);
+    background: rgba(255,255,255,0.94);
   }
-
   .bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     gap: 16px;
+    height: 56px;
   }
+  .brand { display: inline-flex; align-items: center; line-height: 0; }
 
   .links {
-    display: flex;
-    align-items: center;
-    gap: clamp(20px, 3vw, 40px);
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ink);
+    display: flex; align-items: center; gap: 28px;
+    font-size: 13.5px; font-weight: 500; color: #18181b;
   }
+  .links a { opacity: 0.78; transition: opacity 0.15s ease; }
+  .links a:hover { opacity: 1; }
 
-  .links a {
-    position: relative;
-    opacity: 0.82;
-    transition:
-      opacity 0.3s var(--ease-out),
-      color 0.3s var(--ease-out);
+  .right { display: flex; align-items: center; gap: 16px; }
+  .ghostlink {
+    font-size: 13.5px; font-weight: 500; color: #52525b;
+    display: inline-flex; align-items: center;
   }
-
-  /* sliding underline: sweeps in from the left, exits right */
-  .links a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -5px;
-    width: 100%;
-    height: 2px;
-    border-radius: 2px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.35s var(--snap);
-  }
-
-  .links a:hover {
-    opacity: 1;
-    color: var(--hotpink);
-  }
-
-  .links a:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-
-  .price-link {
-    position: relative;
-  }
-
-  .struck {
-    text-decoration: line-through;
-    text-decoration-color: var(--hotpink);
-    text-decoration-thickness: 2px;
-    text-underline-offset: -2px;
-  }
-
-  .freehand {
-    position: absolute;
-    top: calc(100% - 2px);
-    left: 50%;
-    font-size: 13px;
-    color: var(--hotpink);
-    transform: translateX(-50%) rotate(-9deg);
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  .right {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .soundbtn {
-    padding: 8px 13px;
-    border-radius: 999px;
-    border: 1.5px solid rgba(19, 23, 34, 0.25);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--ink);
-    transition: border-color 0.25s var(--ease-out), background 0.25s var(--ease-out);
-  }
-
-  .soundbtn[aria-pressed='true'] {
-    border-color: var(--hotpink);
-    background: rgba(252, 86, 129, 0.08);
-  }
+  .ghostlink:hover { color: #0a0a0a; }
+  .navcta { padding: 9px 16px; font-size: 13.5px; }
 
   @media (max-width: 860px) {
-    .links {
-      display: none;
-    }
+    .links { display: none; }
+    .ghostlink { display: none; }
   }
 </style>

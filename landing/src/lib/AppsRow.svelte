@@ -9,16 +9,12 @@
 
 <section class="apps field" id="use-cases">
   <div class="container">
-    <p class="hand kicker" use:reveal>your words. any textbox.</p>
+    <p class="hand kicker" use:reveal>works wherever you type</p>
     <h2 class="subhead" use:reveal>
-      Works <span class="squiggle">wherever
-        <svg viewBox="0 0 120 14" aria-hidden="true">
-          <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--periwinkle)" />
-        </svg>
-      </span>
-      you type</h2>
+      If your cursor blinks there, Typie types there
+    </h2>
     <p class="lede" use:reveal={{ delay: 40 }}>
-      If your cursor can blink there, Typie can type there. No window, no pasting.
+      No window to switch to. No pasting. Just real keystrokes — in any app, any field.
     </p>
   </div>
 
@@ -52,6 +48,18 @@
     color: var(--hotpink);
     transform: rotate(-2deg);
     margin-bottom: 10px;
+  }
+
+  .subhead {
+    text-align: center;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #0a0a0a;
+    font-family: var(--display);
+    max-width: 700px;
+    margin: 0 auto;
   }
 
   .lede {

@@ -2,21 +2,29 @@ export function reveal(node, { delay = 0 } = {}) {
   node.classList.add('reveal');
   if (delay) node.style.transitionDelay = `${delay}ms`;
 
+  let done = false;
+  const show = () => {
+    if (done) return;
+    done = true;
+    node.classList.add('visible');
+    try { io.disconnect(); } catch {}
+  };
+
   const io = new IntersectionObserver(
     ([entry]) => {
-      if (entry.isIntersecting) {
-        node.classList.add('visible');
-        io.disconnect();
-      }
+      if (entry.isIntersecting) show();
     },
-    { threshold: 0.22 }
+    { threshold: 0.14, rootMargin: '0px 0px -8% 0px' }
   );
 
   io.observe(node);
+  // fallback: if observer never fires (screenshot, no scroll, offscreen), show after short delay
+  const t = setTimeout(show, 900 + delay);
 
   return {
     destroy() {
-      io.disconnect();
+      clearTimeout(t);
+      try { io.disconnect(); } catch {}
     }
   };
 }
