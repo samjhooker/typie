@@ -2,7 +2,7 @@
   import { reveal } from './reveal.js'
   import { nsSvg } from './svgid.js'
   import Robot from './Robot.svelte'
-  import { Mic, PhoneCall, FileAudio, StickyNote, Wifi, WifiOff } from 'lucide-svelte'
+  import { Mic, PhoneCall, FileAudio, StickyNote, Wifi, WifiOff, FileText, ArrowRight } from 'lucide-svelte'
   import DemoShell from './real/DemoShell.svelte'
   import DemoTranscriptDetail from './real/DemoTranscriptDetail.svelte'
   import AppSlack from './real/AppSlack.svelte'
@@ -53,38 +53,140 @@
     },
   ]
 
-  /* ── timing engine per tab ── */
-  const STEPS = {
-    dictate:   [300, 1000, 2400, 400, 1000, 2800],
-    capture:   [400, 1200, 1800, 1800, 1400, 2600],
-    notes:     [300, 600, 1200, 1800, 2600],
-    summarize: [300, 600, 2200, 2800],
-  }
+  /* ── dictate apps & text rotation ── */
+  const DICTATE_APPS = [
+    { id: 'slack', label: 'Slack',       brand: svgOf(slackIco),  title: 'Slack — #product', text: "pricing page is sam's, video is mine — shipping friday 🚀" },
+    { id: 'docs',  label: 'Google Docs', brand: svgOf(gdocs),    title: 'Q3 Roadmap — Google Docs', text: "Launch checklist: 1. Deploy binary 2. Test offline mode" },
+    { id: 'mail',  label: 'Mail',        brand: MAIL_SVG,        title: 'Mail — Inbox', text: "Hi Sarah, thanks for the intro — 3pm PST works perfectly for me." },
+    { id: 'imsg',  label: 'Messages',    brand: svgOf(imessage), title: 'Messages — Team Sync', text: "omw right now, grabbing coffee — want an oat latte?" },
+  ]
+  
+  let dictateAppIdx = $state(0)
+  const currentDictateApp = $derived(DICTATE_APPS[dictateAppIdx % DICTATE_APPS.length])
+  
+  let typedStream = $state('')
+  let isKeyHolding = $state(false)
+  let isDictateDone = $state(false)
 
-  let step = $state(0)
-
+  /* ── continuous dictate loop (cycles between apps, animates keypress + typed stream) ── */
   $effect(() => {
-    const times = STEPS[active]
-    step = 0
+    if (active !== 'dictate') {
+      typedStream = ''
+      isKeyHolding = false
+      isDictateDone = false
+      return
+    }
+
+    let cancelled = false
+    let timer
+
+    async function runDictateLoop() {
+      while (!cancelled && active === 'dictate') {
+        const target = DICTATE_APPS[dictateAppIdx % DICTATE_APPS.length]
+        typedStream = ''
+        isKeyHolding = false
+        isDictateDone = false
+
+        // 1. Pause briefly at empty app
+        await new Promise(r => { timer = setTimeout(r, 600) })
+        if (cancelled) return
+
+        // 2. Press Option key down & start listening
+        isKeyHolding = true
+        await new Promise(r => { timer = setTimeout(r, 700) })
+        if (cancelled) return
+
+        // 3. Stream text character-by-character while holding key
+        const fullText = target.text
+        for (let i = 1; i <= fullText.length; i++) {
+          if (cancelled) return
+          typedStream = fullText.slice(0, i)
+          await new Promise(r => { timer = setTimeout(r, 32) })
+        }
+
+        // 4. Release Option key & show 80ms speed checkmark
+        isKeyHolding = false
+        isDictateDone = true
+
+        // 5. Hold finished state so user can read
+        await new Promise(r => { timer = setTimeout(r, 2600) })
+        if (cancelled) return
+
+        // 6. Advance to next app in the dock
+        dictateAppIdx = (dictateAppIdx + 1) % DICTATE_APPS.length
+      }
+    }
+
+    runDictateLoop()
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  })
+
+  /* ── File Transcription State (Drag & Drop -> Transcribing -> Navigate) ── */
+  let fileStep = $state(0) // 0: idle dropzone, 1: file dragging in, 2: progress transcribing, 3: navigate to detail
+  $effect(() => {
+    if (active !== 'summarize') {
+      fileStep = 0
+      return
+    }
+
+    let cancelled = false
+    let t1, t2, t3
+
+    fileStep = 0
+    t1 = setTimeout(() => {
+      if (!cancelled) fileStep = 1 // file animates in
+    }, 400)
+
+    t2 = setTimeout(() => {
+      if (!cancelled) fileStep = 2 // transcribing progress bar
+    }, 1800)
+
+    t3 = setTimeout(() => {
+      if (!cancelled) fileStep = 3 // navigate to transcript detail
+    }, 3800)
+
+    return () => {
+      cancelled = true
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+    }
+  })
+
+  /* ── Meeting & Voice Notes Steps ── */
+  let otherStep = $state(0)
+  $effect(() => {
+    if (active === 'dictate' || active === 'summarize') return
+    otherStep = 0
+    let timer
+    const times = active === 'capture' ? [400, 1200, 1800, 1800, 1400, 2600] : [300, 600, 1200, 1800, 2600]
     let idx = 0
-    let t1
     const advance = () => {
       idx += 1
       if (idx >= times.length) {
-        step = times.length - 1
+        otherStep = times.length - 1
         return
       }
-      step = idx
-      t1 = setTimeout(advance, times[idx])
+      otherStep = idx
+      timer = setTimeout(advance, times[idx])
     }
-    t1 = setTimeout(advance, times[0])
-    return () => clearTimeout(t1)
+    timer = setTimeout(advance, times[0])
+    return () => clearTimeout(timer)
   })
 
   function selectFeature(id) {
     active = id
     notchMenuOpen = false
-    if (id === 'dictate') dapp = 'slack'
+    if (id === 'dictate') dictateAppIdx = 0
+  }
+
+  function pickDictateApp(idx) {
+    active = 'dictate'
+    dictateAppIdx = idx
   }
 
   /* ── notch state — mirrors the real app 1:1 ── */
@@ -92,48 +194,32 @@
     if (notchMenuOpen) return 'menu'
     if (notchHover) return 'hover'
     if (active === 'dictate') {
-      if (step === 1 || step === 4) return 'transcribing'
-      if (step >= 2) return 'donems'
+      if (isKeyHolding) return 'transcribing'
+      if (isDictateDone) return 'donems'
       return 'idle'
     }
     if (active === 'notes') {
-      if (step === 2 || step === 3) return 'noterec'
+      if (otherStep === 2 || otherStep === 3) return 'noterec'
       return 'idle'
     }
     if (active === 'capture') {
-      if (step >= 2 && step <= 4) return 'callrec'
+      if (otherStep >= 2 && otherStep <= 4) return 'callrec'
       return 'idle'
     }
     if (active === 'summarize') {
-      if (step === 1 || step === 2) return 'transcribing'
-      if (step >= 3) return 'donems'
+      if (fileStep === 1 || fileStep === 2) return 'transcribing'
+      if (fileStep >= 3) return 'donems'
       return 'idle'
     }
     return 'idle'
   })
-
-  /* ── dictate: target apps & text stream ── */
-  const DICTATED = "pricing page is sam's, video is mine — shipping friday"
-  const typedNow = $derived(
-    active === 'dictate' && step >= 2 ? DICTATED : ''
-  )
-  const listeningNow = $derived(active === 'dictate' && (step === 1 || step === 4))
-
-  const APPS = [
-    { id: 'slack', label: 'Slack',       brand: svgOf(slackIco),  title: 'Slack — #product' },
-    { id: 'mail',  label: 'Mail',        brand: MAIL_SVG,        title: 'Mail — Inbox' },
-    { id: 'docs',  label: 'Google Docs', brand: svgOf(gdocs),    title: 'Q3 Roadmap — Google Docs' },
-    { id: 'imsg',  label: 'Messages',    brand: svgOf(imessage), title: 'Messages — Team Sync' },
-  ]
-  let dapp = $state('slack')
-  const appMeta = $derived(APPS.find(a => a.id === dapp) || APPS[0])
 
   /* ── notes extra ── */
   const NOTES_EXTRA = {
     id: 'x7', text: "Launch day idea — record the demo call with Typie instead of typing notes manually.",
     pinned: true, date: 'just now', dur: '6s',
   }
-  const notesExtra = $derived(active === 'notes' && step >= 4 ? NOTES_EXTRA : null)
+  const notesExtra = $derived(active === 'notes' && otherStep >= 4 ? NOTES_EXTRA : null)
 
   /* ── call capture data ── */
   const CAP_TURNS = [
@@ -148,12 +234,12 @@
     { n: 'Sam',  c: '#f97316' },
     { n: 'Alex', c: '#06b6d4' },
   ]
-  const speaker = $derived(step >= 2 && step <= 4 ? ((step - 2) % 2 === 0 ? 0 : 2) : -1)
-  const callTurns = $derived(active === 'capture' && step >= 2 ? CAP_TURNS.slice(0, Math.min(step, 4)) : [])
+  const speaker = $derived(otherStep >= 2 && otherStep <= 4 ? ((otherStep - 2) % 2 === 0 ? 0 : 2) : -1)
+  const callTurns = $derived(active === 'capture' && otherStep >= 2 ? CAP_TURNS.slice(0, Math.min(otherStep, 4)) : [])
 
   const menubarApp = $derived.by(() => {
-    if (active === 'dictate') return appMeta.label
-    if (active === 'capture' && step < 5) return 'Zoom'
+    if (active === 'dictate') return currentDictateApp.label
+    if (active === 'capture' && otherStep < 5) return 'Zoom'
     return 'Typie'
   })
 </script>
@@ -335,47 +421,56 @@
           <!-- The Screen Content -->
           <div class="screen-viewport">
             
-            <!-- SCENE 1: DICTATE INTO ANY APP -->
+            <!-- SCENE 1: DICTATE INTO ANY APP (ANIMATED ROTATION & KEYPRESS STREAM) -->
             {#if active === 'dictate'}
               <div class="screen-view">
-                {#key dapp}
+                {#key currentDictateApp.id}
                   <div class="win appwin">
                     <header class="wintitle">
                       <span class="dots"><i></i><i></i><i></i></span>
-                      <span class="wintxt">{appMeta.title}</span>
-                      <span class="winmeta mono">{typedNow ? 'transcribed · 80ms' : 'offline'}</span>
+                      <span class="wintxt">{currentDictateApp.title}</span>
+                      <span class="winmeta mono">{isDictateDone ? 'transcribed · 80ms' : isKeyHolding ? 'listening…' : 'offline'}</span>
                     </header>
                     <div class="appbody">
-                      {#if dapp === 'slack'}
-                        <AppSlack typed={typedNow} listening={listeningNow} />
-                      {:else if dapp === 'mail'}
-                        <AppMail typed={typedNow} listening={listeningNow} />
-                      {:else if dapp === 'docs'}
-                        <AppDocs typed={typedNow} listening={listeningNow} />
+                      {#if currentDictateApp.id === 'slack'}
+                        <AppSlack typed={typedStream} listening={isKeyHolding} />
+                      {:else if currentDictateApp.id === 'mail'}
+                        <AppMail typed={typedStream} listening={isKeyHolding} />
+                      {:else if currentDictateApp.id === 'docs'}
+                        <AppDocs typed={typedStream} listening={isKeyHolding} />
                       {:else}
-                        <AppMessages typed={typedNow} listening={listeningNow} />
+                        <AppMessages typed={typedStream} listening={isKeyHolding} />
                       {/if}
                     </div>
                   </div>
                 {/key}
 
-                <div class="keyovl" class:holding={listeningNow} aria-hidden="true">
-                  <span class="kicon">⌥</span>
-                  <span class="klabel">{listeningNow ? 'holding option…' : 'hold option'}</span>
+                <!-- Animated Tactile Option Key Press Overlay -->
+                <div class="keyovl" class:holding={isKeyHolding} class:done={isDictateDone} aria-hidden="true">
+                  <span class="kcap" class:pressed={isKeyHolding}>⌥</span>
+                  <div class="ktext">
+                    {#if isKeyHolding}
+                      <span class="kstatus live">Holding Option · Listening</span>
+                    {:else if isDictateDone}
+                      <span class="kstatus done">Released · Inserted in 80ms ✓</span>
+                    {:else}
+                      <span class="kstatus">Hold Option to Dictate</span>
+                    {/if}
+                  </div>
                 </div>
               </div>
 
             <!-- SCENE 2: MEETING CAPTURE (NO BOTS) -->
             {:else if active === 'capture'}
               <div class="screen-view">
-                {#if step < 5}
+                {#if otherStep < 5}
                   <div class="win callwin">
                     <header class="callbar">
                       <span class="dots"><i></i><i></i><i></i></span>
                       <span class="calltitle">Launch Sync — Live Call</span>
                       <span class="cspace"></span>
-                      <span class="reccall mono" class:on={step >= 2}>
-                        <i></i> {step >= 2 ? 'REC 0:12' : 'ready'}
+                      <span class="reccall mono" class:on={otherStep >= 2}>
+                        <i></i> {otherStep >= 2 ? 'REC 0:12' : 'ready'}
                       </span>
                     </header>
 
@@ -389,7 +484,7 @@
                         {/each}
                       </div>
 
-                      {#if step >= 2}
+                      {#if otherStep >= 2}
                         <aside class="callrail">
                           <p class="railhead mono">live transcript (no bots)</p>
                           {#each callTurns as t, i}
@@ -430,18 +525,60 @@
                 </div>
               </div>
 
-            <!-- SCENE 4: AUDIO FILE STUDIO -->
+            <!-- SCENE 4: AUDIO FILE STUDIO (DRAG & DROP -> PROGRESS -> TRANSCRIPT PAGE) -->
             {:else}
               <div class="screen-view">
                 <div class="win typwin">
                   <header class="wintitle">
                     <span class="dots"><i></i><i></i><i></i></span>
                     <span class="wintxt">Typie — File Transcription</span>
-                    <span class="winmeta mono">parakeet on-device</span>
+                    <span class="winmeta mono">{fileStep >= 3 ? 'transcribed · on-device' : 'drop zone'}</span>
                   </header>
-                  <div class="realslot">
-                    <DemoTranscriptDetail />
-                  </div>
+                  
+                  {#if fileStep < 3}
+                    <!-- Dropzone + Animated Drag & Drop File Simulation -->
+                    <div class="file-drop-arena">
+                      
+                      <!-- Animated Flying File Chip -->
+                      <div class="floating-audio-file" class:in-flight={fileStep === 1} class:landed={fileStep >= 2}>
+                        <span class="fa-icon"><FileText size={20} /></span>
+                        <div class="fa-info">
+                          <strong>interview-04.m4a</strong>
+                          <span class="mono">38.2 MB · 12:04</span>
+                        </div>
+                      </div>
+
+                      <div class="dz-target" class:active={fileStep >= 1}>
+                        <div class="dz-glow"></div>
+                        <p class="dz-title">
+                          {#if fileStep === 2}
+                            Transcribing on Apple Silicon…
+                          {:else}
+                            Drop any audio file here
+                          {/if}
+                        </p>
+                        <p class="dz-sub mono">
+                          {#if fileStep === 2}
+                            0 bytes sent · local Nvidia Parakeet model
+                          {:else}
+                            mp3 · m4a · wav · mp4
+                          {/if}
+                        </p>
+
+                        {#if fileStep === 2}
+                          <div class="dz-progress-bar">
+                            <i class="dz-bar-fill"></i>
+                          </div>
+                        {/if}
+                      </div>
+
+                    </div>
+                  {:else}
+                    <!-- Navigated to the real transcript detail view -->
+                    <div class="realslot fade-in">
+                      <DemoTranscriptDetail />
+                    </div>
+                  {/if}
                 </div>
               </div>
             {/if}
@@ -450,11 +587,11 @@
 
           <!-- Bottom App Dock for Switching Apps -->
           <nav class="dock" aria-label="Target applications">
-            {#each APPS as a}
+            {#each DICTATE_APPS as a, i}
               <button
                 class="ditem"
-                class:on={active === 'dictate' && dapp === a.id}
-                onclick={() => { active = 'dictate'; dapp = a.id }}
+                class:on={active === 'dictate' && dictateAppIdx % DICTATE_APPS.length === i}
+                onclick={() => pickDictateApp(i)}
                 aria-label={a.label}
                 title={a.label}
               >
@@ -819,29 +956,147 @@
 
   .appbody, .realslot, .shellslot { flex: 1; overflow: auto; }
 
-  /* Dictation Option Key Overlay */
+  /* ══ ANIMATED TACTILE OPTION KEYPRESS OVERLAY ══ */
   .keyovl {
     position: absolute;
     bottom: 24px; left: 50%;
     transform: translateX(-50%);
-    background: rgba(15, 17, 24, 0.88);
-    backdrop-filter: blur(10px);
+    background: rgba(18, 20, 28, 0.90);
+    backdrop-filter: blur(14px);
     color: #fff;
     border-radius: 999px;
-    padding: 8px 18px;
-    display: inline-flex; align-items: center; gap: 10px;
+    padding: 7px 18px 7px 10px;
+    display: inline-flex; align-items: center; gap: 12px;
     font-size: 13px; font-weight: 600;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transition: transform 0.2s var(--spring);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.14);
+    transition: all 0.22s var(--spring);
+    z-index: 10;
   }
   .keyovl.holding {
     border-color: var(--hotpink);
-    transform: translateX(-50%) scale(1.04);
-    box-shadow: 0 8px 28px var(--hotpink-glow);
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 12px 34px var(--hotpink-glow);
+    background: rgba(28, 16, 24, 0.94);
   }
-  .kicon {
-    font-size: 16px; font-weight: 800; color: var(--hotpink);
+  .keyovl.done {
+    border-color: #10b981;
+    box-shadow: 0 10px 28px rgba(16, 185, 129, 0.25);
+  }
+
+  .kcap {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: #252834;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-bottom: 3px solid rgba(0, 0, 0, 0.5);
+    display: grid; place-items: center;
+    font-size: 15px; font-weight: 800; color: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s var(--spring), background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .kcap.pressed {
+    transform: translateY(2px) scale(0.96);
+    background: var(--hotpink);
+    color: #fff;
+    border-color: var(--hotpink);
+    border-bottom-width: 1px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .ktext { display: flex; flex-direction: column; }
+  .kstatus { font-size: 12.5px; font-weight: 600; color: #d1d5db; }
+  .kstatus.live { color: var(--hotpink); font-weight: 700; }
+  .kstatus.done { color: #4ade80; font-weight: 700; }
+
+  /* ══ FILE TRANSCRIPTION DRAG & DROP ARENA ══ */
+  .file-drop-arena {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    background: var(--surface-2);
+  }
+
+  .floating-audio-file {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-60px) scale(0.8);
+    opacity: 0;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface);
+    border: 1.5px solid var(--hotpink);
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 14px 34px rgba(252, 86, 129, 0.25);
+    color: var(--ink);
+    z-index: 10;
+    transition: all 0.6s var(--spring);
+  }
+  .floating-audio-file.in-flight {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  .floating-audio-file.landed {
+    opacity: 0;
+    transform: translateX(-50%) translateY(40px) scale(0.6);
+  }
+  .fa-icon { color: var(--hotpink); display: grid; place-items: center; }
+  .fa-info { display: flex; flex-direction: column; }
+  .fa-info strong { font-size: 13px; color: var(--ink); }
+  .fa-info span { font-size: 10.5px; color: var(--text-3); }
+
+  .dz-target {
+    width: min(85%, 440px);
+    border: 2px dashed var(--line-strong);
+    border-radius: 18px;
+    padding: 34px 20px;
+    text-align: center;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .dz-target.active {
+    border-color: var(--purple);
+    background: var(--card-lavender);
+    box-shadow: 0 10px 30px rgba(200, 140, 253, 0.15);
+  }
+  .dz-title { font-family: var(--display); font-size: 16px; font-weight: 800; color: var(--ink); }
+  .dz-sub { font-size: 12px; color: var(--text-3); }
+
+  .dz-progress-bar {
+    width: 80%; height: 6px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    margin-top: 14px;
+    overflow: hidden;
+  }
+  .dz-bar-fill {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--hotpink));
+    border-radius: 999px;
+    animation: dzFill 1.8s ease-in-out infinite;
+  }
+  @keyframes dzFill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.35s var(--ease-out);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
   }
 
   /* Meeting Call UI */
