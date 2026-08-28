@@ -2,81 +2,64 @@
   import { reveal } from './reveal.js';
   import Robot from './Robot.svelte';
   import { nsSvg } from './svgid.js';
-  import { APP_ROWS } from './apps.js';
+  import { APPS } from './apps.js';
 
-  const loops = APP_ROWS.map((row) => [...row, ...row, ...row, ...row]);
+  // one marquee row — it earns its place, it doesn't get three
+  const loop = [...APPS, ...APPS, ...APPS, ...APPS];
 </script>
 
-<section class="apps field" id="use-cases">
+<section class="apps" id="use-cases">
   <div class="container">
-    <p class="hand kicker" use:reveal>works wherever you type</p>
     <h2 class="subhead" use:reveal>
-      If your cursor blinks there, Typie types there
+      If your cursor <em>blinks</em> there,<br />Typie types there
     </h2>
-    <p class="lede" use:reveal={{ delay: 40 }}>
-      No window to switch to. No pasting. Just real keystrokes — in any app, any field.
-    </p>
   </div>
 
   <div class="container marquee" use:reveal={{ delay: 80 }}>
     <span class="peekbot" aria-hidden="true"><Robot size={48} mood="idle" /></span>
-    {#each loops as loop, i}
-      <div class="viewport">
-        <ul class="track" class:reverse={i === 1} aria-hidden={false}>
-          {#each loop as app, j}
-            <li class="card" aria-hidden={j >= loop.length / 4}>
-              <i class="ic">{@html nsSvg(app.s, `app-${i}-${j}-${app.n}`)}</i>
-              <span>{app.n}</span>
-            </li>
-          {/each}
-        </ul>
-      </div>
-    {/each}
+    <div class="viewport">
+      <ul class="track">
+        {#each loop as app, j}
+          <li class="card" aria-hidden={j >= loop.length / 4}>
+            <i class="ic">{@html nsSvg(app.s, `app-${j}-${app.n}`)}</i>
+            <span>{app.n}</span>
+          </li>
+        {/each}
+      </ul>
+    </div>
   </div>
 </section>
 
 <style>
+  /* fast section — the rhythm lives between the slow beats */
   .apps {
-    padding-bottom: clamp(52px, 7vh, 84px);
+    padding: clamp(80px, 12vh, 132px) 0;
     overflow: visible;
     background: transparent;
   }
 
-  .kicker {
-    text-align: center;
-    font-size: clamp(20px, 2vw, 24px);
-    color: var(--hotpink);
-    transform: rotate(-2deg);
-    margin-bottom: 10px;
-  }
-
   .subhead {
     text-align: center;
-    font-size: clamp(28px, 4vw, 44px);
+    font-size: clamp(30px, 4.2vw, 52px);
     font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
     color: #0a0a0a;
     font-family: var(--display);
-    max-width: 700px;
+    max-width: 760px;
     margin: 0 auto;
   }
-
-  .lede {
-    margin: 16px auto 0;
-    max-width: 44rem;
-    text-align: center;
-    color: rgba(19, 23, 34, 0.68);
-    line-height: 1.6;
-    font-size: clamp(16px, 1.5vw, 18px);
+  .subhead em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--hotpink);
   }
 
   .marquee {
     position: relative;
     margin-top: clamp(44px, 6vh, 68px);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
   }
 
   .peekbot {
@@ -112,11 +95,6 @@
     animation: marquee 56s linear infinite;
   }
 
-  .track.reverse {
-    animation-duration: 72s;
-    animation-direction: reverse;
-  }
-
   @keyframes marquee {
     to { transform: translateX(-25%); }
   }
@@ -127,8 +105,9 @@
     flex: 0 0 auto;
     width: 118px;
     background: #fff;
+    border: 1px solid var(--line);
     border-radius: var(--radius-card);
-    box-shadow: 0 2px 10px rgba(19, 23, 34, 0.06);
+    box-shadow: 0 2px 10px rgba(19, 23, 34, 0.05);
     padding: 18px 10px 14px;
     display: flex;
     flex-direction: column;
@@ -172,8 +151,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .track,
-    .track.reverse {
+    .track {
       animation: none;
     }
 

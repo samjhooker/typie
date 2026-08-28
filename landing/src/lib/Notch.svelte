@@ -163,6 +163,7 @@
       linear-gradient(118deg, #bcd6ff 0%, #ddd8ff 42%, #82eda6 100%);
   }
 
+  /* islands — shared spec with Hero: UnevenRoundedRectangle continuous, bottom 10 idle → 18 expanded, shadow radius 12 y6 */
   .island {
     position: absolute;
     top: 0;
@@ -170,8 +171,9 @@
     transform: translateX(-50%);
     background: #000;
     color: #fffdf7;
-    border-radius: 0 0 14px 14px;
+    border-radius: 0 0 10px 10px;
     overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,.28);
   }
 
   .idle {
@@ -180,6 +182,7 @@
     display: grid;
     place-items: center;
     padding-bottom: 4px;
+    border-radius: 0 0 10px 10px;
   }
 
   .live {
@@ -189,7 +192,8 @@
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 0 16px 4px;
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.32);
   }
 
   .cam {
@@ -232,7 +236,7 @@
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.01em;
-    color: var(--mint);
+    color: var(--mint-live);
     white-space: nowrap;
     justify-self: end;
   }

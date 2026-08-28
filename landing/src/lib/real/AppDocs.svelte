@@ -51,16 +51,17 @@
   .toolbar{ display:flex; align-items:center; gap:14px; padding:6px 16px; background:#fff; border-bottom:1px solid rgba(0,0,0,.12); font-size:12px; color:#444746 }
   .file{ font-weight:600 }
 
-  .canvas-scroll{ flex:1; overflow:hidden; padding:16px 0 0 }
+  .canvas-scroll{ flex:1; overflow:hidden; padding:12px 0 0 }
   .page{
-    width:min(520px, 88%); margin:0 auto; background:#fff;
-    min-height:100%; padding:32px 48px;
-    box-shadow:0 1px 3px rgba(0,0,0,.2);
-    display:flex; flex-direction:column; gap:14px;
+    width:min(420px, 84%); margin:0 auto; background:#fff;
+    min-height:auto; padding:20px 28px;
+    box-shadow:0 1px 3px rgba(0,0,0,.18);
+    display:flex; flex-direction:column; gap:10px;
+    border-radius: 6px;
   }
-  .title{ font-size:24px; font-weight:600; font-family:'Bricolage Grotesque',sans-serif; color:#1f1f1f; margin-bottom:2px }
-  .sub{ font-size:12px; color:#5f6368 }
-  .body{ font-size:13.5px; line-height:1.65; color:#202124 }
+  .title{ font-size:20px; font-weight:600; font-family:'Bricolage Grotesque',sans-serif; color:#1f1f1f; margin-bottom:1px }
+  .sub{ font-size:11px; color:#5f6368 }
+  .body{ font-size:12.5px; line-height:1.6; color:#202124 }
   .listening{ color:#9aa0a6; font-style:italic }
   .fresh{ animation:fadeup .45s var(--spring, ease) both }
   @keyframes fadeup{

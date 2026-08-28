@@ -98,18 +98,18 @@
   .mprev{ font-size:11px; color:#8e8e93; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
   .mtime{ position:absolute; top:8px; right:12px; font-size:10px; color:#8e8e93 }
 
-  .reading{ padding:14px 18px 12px; overflow:hidden; background:rgba(255,255,255,.6); display:flex; flex-direction:column; min-width:0 }
+  .reading{ padding:10px 14px 8px; overflow:hidden; background:rgba(255,255,255,.6); display:flex; flex-direction:column; min-width:0 }
   .rhead{ display:flex; gap:6px; margin-bottom:12px }
   .tool{ font-size:12px; color:#0a84ff; background:#fff; border:1px solid rgba(0,0,0,.12); border-radius:7px; padding:4px 10px }
   .reading h4{ font-size:16px; font-weight:700; margin-bottom:2px }
   .rfrom{ font-size:12px; color:#3c3c43 }
   .rto{ font-size:11px; color:#8e8e93; margin:2px 0 10px }
-  .rbody{ flex:1; overflow:hidden; font-size:12.5px; line-height:1.6; color:#1c1c1e; display:flex; flex-direction:column; gap:8px }
+  .rbody{ flex:1; overflow:hidden; font-size:12px; line-height:1.5; color:#1c1c1e; display:flex; flex-direction:column; gap:6px }
 
   .reply{
-    flex:none; margin-top:10px;
-    border:1px solid rgba(0,0,0,.15); border-radius:9px;
-    background:#fff; padding:8px 12px; min-height:38px;
+    flex:none; margin-top:8px;
+    border:1px solid rgba(0,0,0,.13); border-radius:8px;
+    background:#fff; padding:6px 10px; min-height:28px;
     transition:border-color .25s ease, box-shadow .25s ease;
   }
   .reply.armed{
@@ -121,8 +121,8 @@
     60%{ box-shadow:0 0 0 4px rgba(10,132,255,.24) }
     100%{ box-shadow:0 0 0 3px rgba(10,132,255,.14) }
   }
-  .rtext{ font-size:12.5px; line-height:1.5; color:#1c1c1e }
-  .rph{ font-size:12.5px; color:#8e8e93; font-style:italic }
+  .rtext{ font-size:11.5px; line-height:1.4; color:#1c1c1e }
+  .rph{ font-size:11.5px; color:#8e8e93; font-style:italic }
   .caret{ display:inline-block; width:2px; height:1em; margin-left:2px; vertical-align:-0.15em; background:#0a84ff; animation:blink .9s steps(1) infinite }
   @keyframes blink{ 50%{opacity:0} }
 

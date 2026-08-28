@@ -1,0 +1,24 @@
+{
+  "name": "typie",
+  "version": "1.0.0",
+  "description": "> hold a key. say the thing. it's typed. > a native macos dictation engine that answers in under 100 ms and never touches the internet.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samjhooker/typie.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/samjhooker/typie/issues"
+  },
+  "homepage": "https://github.com/samjhooker/typie#readme"
+}

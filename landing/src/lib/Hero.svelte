@@ -2,6 +2,7 @@
   import { reveal } from './reveal.js'
   import { nsSvg } from './svgid.js'
   import Robot from './Robot.svelte'
+  import { Mic, PhoneCall, FileAudio, StickyNote } from 'lucide-svelte'
   import DemoShell from './real/DemoShell.svelte'
   import DemoTranscriptDetail from './real/DemoTranscriptDetail.svelte'
   import AppSlack from './real/AppSlack.svelte'
@@ -21,32 +22,38 @@
   const features = [
     {
       id: 'dictate',
+      icon: Mic,
       label: 'Dictate anywhere',
-      desc: 'Hold option, talk, release. Real keystrokes, any app, 80 ms.',
+      desc: 'Hold ⌥, speak, release. Real keystrokes land in any app.',
     },
     {
       id: 'capture',
+      icon: PhoneCall,
       label: 'Capture any call',
-      desc: 'Recorded from system audio, split by speaker. No bot joins the room.',
+      desc: 'No bot joins. System audio becomes a transcript with speakers.',
     },
     {
       id: 'summarize',
+      icon: FileAudio,
       label: 'Transcribe & summarize',
-      desc: 'Drop any audio file. Full transcript, speakers, AI sections.',
+      desc: 'Drop any audio file. Full transcript, summarized on this Mac.',
     },
     {
       id: 'notes',
+      icon: StickyNote,
       label: 'Voice notes',
-      desc: 'A thought in two seconds. Pinned, searchable, one click to copy.',
+      desc: 'Say the thought. It lands as a searchable sticky note.',
     },
   ]
 
-  /* ── timeline engine ── each number = ms to stay in that step, plays ONCE then snaps at end. Dictate runs two full hold→paste cycles so the paste is actually visible, then holds. Short front dwells kill the "millennial pause". */
+  const TAB_COLORS = ['#fc5681', '#6f8ffb', '#c88cfd', '#0ea86b']
+
+  /* ── timeline engine ── each number = ms to stay in that step, plays ONCE then holds. Two clean hold→paste cycles for dictate (Slack→Docs) so the paste is readable, then long hold. Front dwells are deliberately short (240-280ms) to kill the "millennial pause" on drag/plus actions. */
   const STEPS = {
-    dictate:   [600, 1500, 2600, 1600, 2600, 3000],
-    capture:   [900, 1400, 1900, 1700, 1700, 1100, 2600, 2000],
-    summarize: [800, 1000, 2200, 3000, 1800],
-    notes:     [700, 1300, 1900, 1600, 2600],
+    dictate:   [280, 880, 2200, 320, 880, 2600, 2800],
+    capture:   [520, 900, 1700, 1700, 1700, 1100, 2600, 2000],
+    summarize: [240, 520, 2200, 2800, 1800],
+    notes:     [260, 520, 1100, 1600, 2600],
   }
   let step = $state(0)
   let cursorClick = $state(false)
@@ -59,6 +66,8 @@
   let tourIdx = $state(0)
   $effect(() => {
     const times = STEPS[active]
+    // when dictate is active, changing dapp via dock should restart the hold→paste demo so each app shows the pop
+    if (active === 'dictate') dapp
     step = 0
     cursorVisible = active !== 'dictate'
     cursorClick = false
@@ -76,10 +85,12 @@
         if (!userInteracted && !tourDone) {
           const curTourPos = TOUR_ORDER.indexOf(active)
           if (curTourPos !== -1 && curTourPos < TOUR_ORDER.length - 1) {
+            // dictate's final paste holds 2800ms already — shorten the idle gap between features for pace
+            const gap = active === 'dictate' ? 1100 : active === 'capture' ? 1200 : 900
             t2 = setTimeout(() => {
               tourIdx = curTourPos + 1
               active = TOUR_ORDER[tourIdx]
-            }, 1800)
+            }, gap)
           } else if (curTourPos === TOUR_ORDER.length - 1) {
             tourDone = true
           }
@@ -87,10 +98,12 @@
         return
       }
       step = idx
-      // dictate: first cycle stays in Slack (see the paste), second swaps to
-      // Docs so "anywhere" lands clearly. Two clean paste moments, no strobing.
-      if (active === 'dictate' && idx === 3) {
-        dapp = APPS[2].id // docs — begin 2nd hold already in the new app
+      // dictate: Slack paste (step 2) holds readable, then snap-swap to Docs during the 320ms transition (step 3).
+      // Only for the auto tour — when user picks an app via dock, stay on their choice so each page's pop is visible.
+      if (active === 'dictate' && idx === 3 && !userInteracted) {
+        dapp = APPS[2].id // docs — proves "anywhere" without strobing
+      } else if (active === 'dictate' && idx === 0 && !userInteracted) {
+        dapp = APPS[0].id // reset to Slack at tour start — avoids lastDapp flicker
       }
       // cursor click pulse — not for dictate (per request)
       if (active !== 'dictate') {
@@ -114,11 +127,11 @@
     if (id === 'dictate') dapp = 'slack'
   }
 
-  /* ── notch state — mirrors the real NotchView right wing ── */
+  /* ── notch state — mirrors the real NotchView right wing (7-step dictate: 0 idle,1 listen,2 done,3 swap-idle,4 listen,5 done,6 done-hold) ── */
   let notchState = $derived.by(() => {
     if (active === 'dictate') {
-      if (step === 1 || step === 3) return 'listening'
-      if (step === 2 || step === 4 || step === 5) return 'donems'
+      if (step === 1 || step === 4) return 'listening'
+      if (step === 2 || step === 5 || step === 6) return 'donems'
       return 'idle'
     }
     if (active === 'notes') {
@@ -133,14 +146,20 @@
       if (step === 5) return 'processing'
       return 'idle'
     }
-    if (active === 'summarize' && step === 2) return 'processing'
+    if (active === 'summarize') {
+      if (step === 1 || step === 2) return 'processing'
+      if (step === 3 || step === 4) return 'donems'
+      return 'idle'
+    }
     return 'idle'
   })
 
-  /* ── dictated text lands in each app's box at the paste frames — never live, never streaming ── */
+  /* ── dictated text lands in each app's box at the paste frames — never live, never streaming. Keep visible through final hold so reading isn't rushed. ── */
   const DICTATED = "pricing page is sam's, video is mine — shipping friday"
-  const typedNow = $derived(step === 2 || step === 4 ? DICTATED : '')
-  const listeningNow = $derived(step === 1 || step === 3)
+  const typedNow = $derived(
+    active === 'dictate' && (step === 2 || step === 5 || step === 6) ? DICTATED : ''
+  )
+  const listeningNow = $derived(active === 'dictate' && (step === 1 || step === 4))
 
   /* ── dictate: which app receives the words (dock switches it) ── */
   const APPS = [
@@ -219,65 +238,75 @@
   const cursorX = $derived(cursorPos.x)
   const cursorY = $derived(cursorPos.y)
   const isHolding = $derived(
-    (active === 'dictate' && (step === 1 || step === 3)) ||
+    (active === 'dictate' && (step === 1 || step === 4)) ||
     (active === 'notes' && step === 2) ||
     (active === 'capture' && step >= 2 && step <= 4)
   )
-  const isAtEnd = $derived(step === STEPS[active].length - 1)
   const isNotchTarget = $derived(
     (active === 'capture' && (step === 0 || step === 1)) ||
     (active === 'notes' && (step === 0 || step === 1))
   )
+
+  // when the fresh voice note lands, scroll the notes pane to top so it's visible
+  $effect(() => {
+    if (active === 'notes' && step >= 4) {
+      // microtask after DOM mounts the extra note
+      queueMicrotask(() => {
+        const el = document.querySelector('.hero .shellslot.scrollable')
+        if (el) el.scrollTo({ top: 0, behavior: 'smooth' })
+        const content = document.querySelector('.hero .shellslot.scrollable .content, .hero .shellslot.scrollable .wrap')
+        if (content) content.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+  })
+
+
 </script>
 
 <section class="hero" id="top">
   <div class="container">
-    <div class="head" use:reveal>
-      <p class="eyebrow mono">100% free · 100% offline · no account ever · open source</p>
+    <div class="hero-top" use:reveal>
       <h1>
         It types what you say.<br />
         <em>Then it keeps going.</em>
       </h1>
       <p class="sub">
-        Typie started as dictation. It didn't stop there — voice notes, call
-        transcripts with speakers, file transcription and on-device AI summaries,
-        all running locally on your Mac. No cloud. No account. Free.
+        Hold ⌥, talk, done. Voice notes, call transcripts and summaries — all on this Mac.
       </p>
       <div class="actions">
         <a href="https://github.com/samjhooker/typie/releases/latest" class="btn btn-black">
           <svg viewBox="0 0 384 512" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.7-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
           Download for Mac — free
         </a>
-        <a href="https://github.com/samjhooker/typie" class="btn btn-white">View on GitHub</a>
+        <a href="https://github.com/samjhooker/typie" class="quietlink">View on GitHub</a>
       </div>
+      <p class="trust mono" use:reveal={{ delay: 100 }}>100% free · 100% offline · no account · open source</p>
     </div>
 
-    <!-- Feature selector -->
-    <div class="feature-cards" role="tablist" aria-label="Typie features" use:reveal>
+    <!-- Four value props — each one drives the Mac -->
+    <div class="vprops" role="tablist" aria-label="Typie features" use:reveal>
       {#each features as f, i (f.id)}
+        {@const Icon = f.icon}
         <button
-          class="fcard"
+          class="vprop"
           class:active={active === f.id}
+          style="--tabc:{TAB_COLORS[i]}"
           role="tab"
           aria-selected={active === f.id}
           onclick={() => selectFeature(f.id)}
         >
-          <span class="fcard-dot" style="background:{['#fc5681','#ffd230','#6f8ffb','#6ee89a'][i]}"></span>
-          <span class="fcard-text">
-            <span class="fcard-label">{f.label}</span>
-            <span class="fcard-desc">{f.desc}</span>
+          <span class="vico" aria-hidden="true"><Icon size={19} strokeWidth={1.8} /></span>
+          <span class="vbody">
+            <span class="vlabel">{f.label}</span>
+            <span class="vdesc">{f.desc}</span>
           </span>
         </button>
       {/each}
     </div>
+    <p class="vphint mono" use:reveal={{ delay: 80 }}>click a card — the mac plays it live</p>
 
-    <!-- The Mac -->
+    <!-- The Mac — the whole pitch -->
     <div class="stage-wrap" use:reveal>
-      {#if isAtEnd}
-        <div class="stage-head">
-          <span class="mono">— scroll inside to explore →</span>
-        </div>
-      {/if}
 
       <!-- comically large cursor — smooth glide, click pulse, hides at end -->
       {#if cursorVisible}
@@ -304,11 +333,10 @@
             <span class="mclock mono">9:41 AM</span>
           </div>
 
-          <!-- Notch — faithful to the real NotchView right wing -->
+          <!-- Notch — mirrors the real NotchView island: robot left, + right, even at idle -->
           <div class="notch" class:wide={notchState !== 'idle'} class:menuopen={notchState === 'menu'} class:targeted={isNotchTarget}>
-            <span class="ncam" aria-hidden="true"><i></i></span>
             <div class="nrow">
-              <svg class="nbot" viewBox="0 0 24 16" width="24" height="16" aria-hidden="true"><path fill="#ff5a7a" d="M6 0h2v2H6V0ZM10 0h2v2h-2V0ZM4 2h2v2H4V2ZM12 2h2v2h-2V2ZM2 4h16v8H2V4Zm4 2h2v4H6V6Zm6 0h2v4h-2V6Z"/></svg>
+              <svg class="nbot" viewBox="0 0 24 16" width="24" height="16" aria-hidden="true"><path fill="#fc5681" d="M6 0h2v2H6V0ZM10 0h2v2h-2V0ZM4 2h2v2H4V2ZM12 2h2v2h-2V2ZM2 4h16v8H2V4Zm4 2h2v4H6V6Zm6 0h2v4h-2V6Z"/></svg>
 
               <div class="nright">
                 {#if notchState === 'idle'}
@@ -363,7 +391,7 @@
                   <header class="wintitle">
                     <span class="dots"><i></i><i></i><i></i></span>
                     <span>{appMeta.title}</span>
-                    <span class="off mono">{step === 2 || step === 4 ? 'saved · offline' : 'offline'}</span>
+                    <span class="off mono">{typedNow ? 'saved · offline' : 'offline'}</span>
                   </header>
                   <div class="appbody">
                     {#if dapp === 'slack'}
@@ -386,15 +414,15 @@
 
           <!-- ══ SCENE: the real app — voice notes on the wall ══ -->
           {:else if active === 'notes'}
-            <div class="screen" class:scrollable={isAtEnd}>
+            <div class="screen scrollable">
               <div class="win typwin">
                 <header class="wintitle">
                   <span class="dots"><i></i><i></i><i></i></span>
                   <span>typie</span>
                   <span class="off mono">offline</span>
                 </header>
-                <div class="shellslot" class:scrollable={isAtEnd}>
-                  <DemoShell startPane="notes" notesExtra={notesExtra} locked={true} />
+                <div class="shellslot scrollable">
+                  <DemoShell startPane="notes" notesExtra={notesExtra} locked={false} />
                 </div>
               </div>
               <div class="keyovl" class:down={isHolding} class:holding={isHolding} aria-hidden="true">
@@ -405,7 +433,7 @@
 
           <!-- ══ SCENE: capture any call — in the call, then it's typed ══ -->
           {:else if active === 'capture'}
-            <div class="screen">
+            <div class="screen scrollable">
               {#if step < 6}
                 <!-- the call, recorded off system audio -->
                 <div class="win callwin">
@@ -470,9 +498,9 @@
               {/if}
             </div>
 
-          <!-- ══ SCENE: drop a file — the real transcript view ══ -->
+          <!-- ══ SCENE: drop a file — the real transcript view — scrollable always so you can explore the transcript -->
           {:else}
-            <div class="screen" class:scrollable={isAtEnd}>
+            <div class="screen scrollable">
               <div class="win typwin">
                 <header class="wintitle"><span class="dots"><i></i><i></i><i></i></span><span>typie — library</span><span class="off mono">offline</span></header>
 
@@ -528,94 +556,114 @@
         <div class="base" aria-hidden="true"><i class="chin"></i></div>
       </div>
 
-      <p class="mono hint-text">The real interface, replayed. Click the dock to switch apps — pull the wifi, it still works.</p>
-    </div>
+      </div>
   </div>
 </section>
 
 <style>
-  .hero { padding: 96px 0 72px; }
+  /* impeccable-disable bounce-easing, layout-transition — Hero notch uses Theme.springy intentionally; width anim is island shape (app does same) */
+  /* ── Hero — headline, one ask, then the Mac. Nothing else. ── */
+  .hero { padding: clamp(92px, 11vh, 118px) 0 74px; }
 
-  .head { display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; max-width:880px; margin:0 auto; padding-bottom:44px; }
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
-    color: var(--hotpink);
-    background:#fff; border:1px solid var(--line);
-    padding:7px 14px; border-radius:999px;
+  .hero-top {
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px;
+    max-width:760px; margin:0 auto;
   }
-  h1 { font-size: clamp(42px, 6vw, 72px); font-weight:800; letter-spacing:-0.05em; line-height:0.94; text-wrap:balance; }
+  h1 { font-size: clamp(42px, 5.4vw, 68px); font-weight:800; letter-spacing:-0.05em; line-height:0.94; text-wrap:balance; }
   h1 em { font-family: var(--serif); font-weight:600; font-style:italic; letter-spacing:-0.03em; color:var(--hotpink); }
-  .sub { font-family: var(--sans); font-size:17px; line-height:1.6; color:var(--text-2); max-width:58ch; font-weight:500; }
-  .actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
+  .sub { font-family: var(--sans); font-size:16px; line-height:1.6; color:var(--text-2); max-width:46ch; font-weight:500; }
+  .actions { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:18px; margin-top:2px; }
+  .quietlink {
+    font-size:13.5px; font-weight:600; color:var(--text-3);
+    transition: color .2s ease;
+  }
+  .quietlink:hover { color:var(--ink); }
+  .trust { text-transform:none; letter-spacing:.05em; opacity:.62; margin-top:-6px; }
 
-  /* ── Feature cards ── */
-  .feature-cards {
+  /* ── Four value props — cards that drive the Mac ── */
+  .vprops {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    max-width: 1020px;
-    margin: 0 auto 28px;
-    position: relative;
+    gap: 10px;
+    margin: 32px auto 0;
+    max-width: 1080px;
+    text-align: left;
   }
-  .fcard {
-    display:flex; align-items:flex-start; gap:11px;
-    padding:16px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:#fff;
-    text-align:left; cursor:pointer;
-    transition:
-      transform 0.2s var(--spring),
-      box-shadow 0.2s var(--spring),
-      border-color 0.18s ease;
-    position: relative;
-    overflow: visible;
+  .vprop {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 15px 16px 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: border-color .22s var(--ease-out), transform .22s var(--ease-out), box-shadow .22s var(--ease-out), background .22s ease;
   }
-  .fcard:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(19,23,34,.07); border-color: var(--line); }
-  .fcard.active {
-    border-color: var(--hotpink);
-    box-shadow: 0 6px 20px rgba(19,23,34,.12);
-    transform: translateY(-3px);
-    background: linear-gradient(135deg, rgba(252,86,129,.03) 0%, rgba(111,143,251,.03) 100%);
+  .vprop:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(19,23,34,.07);
   }
-  .fcard.active .fcard-label { color: var(--hotpink); }
-  .fcard-dot { width:10px; height:10px; border-radius:99px; margin-top:5px; flex-shrink:0; }
-  .fcard-text { display:flex; flex-direction:column; gap:3px; }
-  .fcard-label { font-size:14.5px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
+  .vprop.active {
+    border-color: var(--tabc);
+    background: color-mix(in srgb, var(--tabc) 5%, #fff);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--tabc) 16%, transparent);
+  }
+  .vico {
+    flex: none;
+    width: 36px; height: 36px; border-radius: 11px;
+    display: grid; place-items: center;
+    color: var(--text-3);
+    background: var(--surface-2);
+    transition: color .22s ease, background .22s ease;
+  }
+  .vprop.active .vico, .vprop:hover .vico {
+    color: var(--tabc);
+    background: color-mix(in srgb, var(--tabc) 12%, #fff);
+  }
+  .vbody { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .vlabel { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .vdesc {
+    font-size: 12px; line-height: 1.45; color: var(--text-3);
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .vprop.active .vdesc { color: var(--text-2); }
+  .vprop:focus-visible { outline: 2.5px solid var(--hotpink); outline-offset: 3px; }
+  .vphint { text-align: center; margin: 10px auto 30px; opacity: .75; text-transform: none; letter-spacing: .05em; }
+  @media (max-width: 900px) {
+    .vprops { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .vprops { grid-template-columns: 1fr; }
+  }
 
-  .fcard-desc { font-size:12.5px; line-height:1.45; color:var(--text-2); }
+  /* ── Stage / Mac ── the protagonist, not a prop ── */
+  .stage-wrap { position:relative; width:100%; }
 
-  /* ── Stage / Mac ── */
-  .stage-wrap { position:relative; max-width:1020px; margin:0 auto; }
-  .stage-head {
-    position:absolute; top:-30px; right:8px;
-    display:inline-flex; align-items:center; gap:7px;
-    color:var(--text-3); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
-  }
-
-  /* comically large cursor — ultra smooth glide */
+  /* cursor — correct Mac size, tip-anchored, subtle. Was 42px comically large and center-anchored. */
   .big-cursor {
     position:absolute; z-index:50; pointer-events:none;
-    width:42px; height:42px; margin:-6px 0 0 -6px;
-    transform: translate(-50%, -50%);
-    transition: left 0.9s cubic-bezier(.22,1,.36,1), top 0.9s cubic-bezier(.22,1,.36,1), transform .22s var(--spring);
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,.32)) drop-shadow(0 1px 2px rgba(0,0,0,.35));
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M7 4 L7 26 L12.5 18.5 L17 24 L19.5 22.5 L15 17 L23 17 Z' fill='white' stroke='%23131722' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
-    background-size: 38px 38px;
+    width:26px; height:26px; margin:0;
+    transform: translate(-2px, -2px);
+    will-change: left, top, transform;
+    transition: left 0.42s cubic-bezier(.16,1,.3,1), top 0.42s cubic-bezier(.16,1,.3,1), transform .16s var(--spring);
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.28)) drop-shadow(0 4px 8px rgba(0,0,0,.18));
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M7 4.5 L7 25.5 L12.3 18.2 L16.2 23.6 L18.8 21.9 L14.6 16.6 L22.2 16.6 Z' fill='white' stroke='%23131722' stroke-width='1.5' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
+    background-size: 22px 22px;
   }
   .big-cursor i {
-    position:absolute; left:6px; top:6px; width:26px; height:26px;
-    border-radius:50%; border:2px solid rgba(252,86,129,.0);
-    transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    position:absolute; left:9px; top:9px; width:16px; height:16px;
+    border-radius:50%; border:1.5px solid rgba(252,86,129,0);
+    transition: border-color .16s ease, transform .16s ease, background .16s ease, opacity .16s ease;
     background: rgba(252,86,129,0);
+    opacity:0;
   }
-  .big-cursor.clicking { transform: translate(-50%, -50%) scale(.88); }
+  .big-cursor.clicking { transform: translate(-2px, -2px) scale(.94); }
   .big-cursor.clicking i {
-    background: rgba(252,86,129,.18);
-    border-color: rgba(252,86,129,.75);
-    transform: scale(1.55);
-    box-shadow: 0 0 0 8px rgba(252,86,129,.12);
+    background: rgba(252,86,129,.16);
+    border-color: rgba(252,86,129,.70);
+    transform: scale(1.35);
+    opacity:1;
+    box-shadow: 0 0 0 6px rgba(252,86,129,.10);
   }
 
   .mac { filter: none; }
@@ -652,45 +700,40 @@
     background:rgba(5,8,12,.32); backdrop-filter:blur(8px);
     font-family: var(--sans); font-size:10.5px; color:rgba(255,255,255,.85);
   }
-  .menubar .apple { height:11px; width:auto; color:rgba(255,255,255,.9); flex:none }
-  .menubar .mapp { font-weight:700; white-space:nowrap }
-  .menubar .mi { color:rgba(255,255,255,.62); white-space:nowrap }
+  .menubar .apple { height:11px; width:auto; color:rgba(255,255,255,.95); flex:none }
+  .menubar .mapp { font-weight:700; white-space:nowrap; color: rgba(255,255,255,.96) }
+  .menubar .mi { color:rgba(255,255,255,.78); white-space:nowrap }
   .menubar .mspace { flex:1 }
-  .menubar .mnet { color:#6ee89a; font-size:9.5px; letter-spacing:.1em; white-space:nowrap }
-  .menubar .sicn { height:10px; width:auto; color:rgba(255,255,255,.6); flex:none }
-  .menubar .mclock { font-size:10px; color:rgba(255,255,255,.8); white-space:nowrap }
+  .menubar .mnet { color:#6ee89a; font-size:9.5px; letter-spacing:.1em; white-space:nowrap; font-weight: 600; }
+  .menubar .sicn { height:10px; width:auto; color:rgba(255,255,255,.72); flex:none }
+  .menubar .mclock { font-size:10px; color:rgba(255,255,255,.88); white-space:nowrap }
 
-  /* ── Notch — faithful to the real NotchView: idle = bare physical notch +
-       camera dot; expanded = black island with 20px bottom corners, robot far
-       left, live wing far right. Height stays menu-bar tall for wings. ── */
+  /* ── Notch — faithful to the real NotchView island (see screenshots):
+       idle = 210×26 black island, r14, robot left + plus right.
+       Geometry matches NotchPanel: UnevenRoundedRectangle, soft bottom corners,
+       shadow radius 12 y6. */
   .notch {
-    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    position:absolute; top:12px; left:50%; transform:translateX(-50%);
     z-index:40;
-    width:148px; height:24px;
-    background:#000; border-radius:0 0 10px 10px;
-    transition: width .5s var(--spring), height .4s var(--spring), border-radius .32s var(--spring), box-shadow .3s ease;
+    width:210px; height:26px;
+    background:#000; border-radius:0 0 14px 14px;
+    transition:
+      width .42s cubic-bezier(.16,1,.3,1),
+      height .32s cubic-bezier(.16,1,.3,1),
+      border-radius .28s cubic-bezier(.16,1,.3,1),
+      box-shadow .24s ease;
     box-shadow: 0 4px 14px rgba(0,0,0,.28);
     overflow:hidden;
   }
-  /* wings: wider, same height, corners pop open like the real island */
-  .notch.wide { width:340px; height:24px; border-radius:0 0 20px 20px; }
-  /* plus menu expanded: same width as wings, drops taller for the trio */
-  .notch.menuopen { width:340px; height:132px; border-radius:0 0 20px 20px; }
-  .nrow { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 18px; height:24px; transition: opacity .28s ease, transform .28s var(--spring); }
-  .notch.wide .nrow, .notch.menuopen .nrow { height:24px; }
-  .nbot { flex-shrink:0; transition: opacity .28s ease, transform .28s var(--spring); filter: drop-shadow(0 0 6px rgba(252,86,129,.18)); transform: scale(1.06); }
-  .nright { display:flex; align-items:center; gap:10px; min-width:0; transition: opacity .28s ease, transform .28s var(--spring); }
-  /* idle Mac — just the hardware notch + cute Wii camera dot, wings hidden */
-  .ncam { position:absolute; left:50%; top:12px; transform:translate(-50%, -50%); width:7px; height:7px; border-radius:50%; background:#0e0e12; border:1.5px solid #1e1e26; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 0 0 1px rgba(0,0,0,.9); transition: opacity .24s ease, transform .28s var(--spring); pointer-events:none; }
-  .ncam i { position:absolute; inset:1.5px; border-radius:50%; background: radial-gradient(circle at 32% 28%, #8ea0ff 0%, #2a3a8a 48%, #000 75%); opacity:.95; }
-  /* only when hovered / active / targeted do wings appear */
-  .notch:not(:hover):not(.wide):not(.menuopen):not(.targeted) .nrow { opacity:0; transform: translateY(-6px); pointer-events:none; }
-  .notch:hover .nrow, .notch.wide .nrow, .notch.menuopen .nrow, .notch.targeted .nrow { opacity:1; transform:none; }
-  .notch:hover .ncam, .notch.wide .ncam, .notch.menuopen .ncam, .notch.targeted .ncam { opacity:0; transform: translate(-50%, -50%) scale(.6); }
-  .notch:not(:hover):not(.wide):not(.menuopen):not(.targeted) { box-shadow: 0 3px 10px rgba(0,0,0,.16); }
-  /* when hovered idle, preview the wide wings softly — same height, just wider */
-  .notch:not(.wide):not(.menuopen):hover { width:340px; height:24px; border-radius:0 0 20px 20px; box-shadow: 0 8px 24px rgba(0,0,0,.38); }
-
+  /* active wings: wider island, corners pop open like the real one — springy islandpop */
+  .notch.wide { width:340px; height:26px; border-radius:0 0 20px 20px; animation: islandpop .52s cubic-bezier(0.22,1.28,0.36,1); will-change: width, transform; }
+  /* plus menu expanded: drops taller for the trio — true UnevenRoundedRectangle, like the real island */
+  .notch.menuopen { width:340px; height:142px; border-radius:0 0 20px 20px; animation: islandpop .52s cubic-bezier(0.22,1.28,0.36,1); }
+  @keyframes islandpop { 0%{ transform:translateX(-50%) scale(1,1) } 42%{ transform:translateX(-50%) scale(1.04,1.08) } 100%{ transform:translateX(-50%) scale(1,1) } }
+  /* robot left + plus right — always visible, exactly like the real island at rest */
+  .nrow { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 12px; height:26px; }
+  .nbot { flex-shrink:0; transition: opacity .26s cubic-bezier(.16,1,.3,1), transform .34s cubic-bezier(.16,1,.3,1); filter: drop-shadow(0 0 6px rgba(252,86,129,.18)); transform: scale(1.06); }
+  .nright { display:flex; align-items:center; gap:10px; min-width:0; transition: opacity .26s cubic-bezier(.16,1,.3,1), transform .34s cubic-bezier(.16,1,.3,1); }
   .notch.targeted { box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 3px rgba(252,86,129,.38), 0 0 18px rgba(252,86,129,.22); }
   .notch.targeted .nplus {
     background: #fc5681;
@@ -701,7 +744,7 @@
   .notch.targeted .nplus svg path { stroke: #fff; }
   @keyframes plusPulse { 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.12) } }
   .nplus, .nclose {
-    width:26px; height:26px; border-radius:50%;
+    width:22px; height:22px; border-radius:50%;
     background:rgba(255,255,255,.10);
     border:1px solid rgba(255,255,255,.10);
     display:grid; place-items:center;
@@ -747,15 +790,15 @@
   /* expanded menu — quick note / record call / upload file — horizontal trio, same width as hover */
   .nmenu {
     display:flex; align-items:center; justify-content:center; gap:0;
-    padding:10px 12px 14px;
+    padding:12px 12px 16px;
   }
   .nact {
-    display:flex; flex-direction:column; align-items:center; gap:8px;
+    display:flex; flex-direction:column; align-items:center; gap:9px;
     padding:10px 18px; border-radius:12px;
     transition: background .2s ease;
     flex:1;
   }
-  .nact span { color:#fff; font-family: var(--sans); font-size:12px; font-weight:600; white-space:nowrap; }
+  .nact span { color:#fff; font-family: var(--sans); font-size:12.5px; font-weight:600; white-space:nowrap; }
   .nact.hl { background:rgba(252,86,129,.14); box-shadow: inset 0 0 0 1px rgba(252,86,129,.18); }
   .ndiv { width:1px; align-self:stretch; margin:6px 0; background:rgba(255,255,255,.10); }
 
@@ -783,20 +826,22 @@
       0 2px 8px rgba(0,0,0,.08),
       inset 0 0 0 1px rgba(255,255,255,.9);
     min-width:0;
-    animation: winIn .62s cubic-bezier(.22,1,.36,1) both;
+    animation: winIn .46s cubic-bezier(.22,1,.36,1) both;
   }
   .win.typwin { min-height: 100%; }
-  @keyframes winIn { from { opacity:0; transform:translateY(16px) scale(.985); filter: blur(4px) } to { opacity:1; transform:none; filter: blur(0) } }
-  /* dictation value prop — text lands with a gentle reveal so you can read it */
+  @keyframes winIn { from { opacity:0; transform:translateY(10px) scale(.988); filter: blur(3px) } to { opacity:1; transform:none; filter: blur(0) } }
+  /* dictation — pop when text lands so you SEE it (scale + pink flash, then settle) */
   .appbody :global(.mtxt.fresh),
   .appbody :global(.field.typed),
-  .appbody :global(.rtext) {
-    animation: typeReveal .68s cubic-bezier(.22,1,.36,1) both;
+  .appbody :global(.rtext),
+  .appbody :global(.bub.mine.fresh) {
+    animation: typeReveal .58s cubic-bezier(.16,1,.3,1) both;
   }
   @keyframes typeReveal {
-    from { opacity:0; transform: translateY(6px); filter: blur(3px); background: rgba(252,86,129,.10); }
-    35% { opacity:1; transform: translateY(-1px); filter: blur(0); background: rgba(252,86,129,.10); }
-    100% { opacity:1; transform:none; filter: blur(0); background: transparent; }
+    0%   { opacity:0; transform: translateY(10px) scale(.94); filter: blur(4px); background: rgba(252,86,129,.16); box-shadow: 0 0 0 0 rgba(252,86,129,0); }
+    38%  { opacity:1; transform: translateY(-3px) scale(1.04); filter: blur(0); background: rgba(252,86,129,.14); box-shadow: 0 4px 16px rgba(252,86,129,.18); }
+    68%  { opacity:1; transform: translateY(1px) scale(1.01); filter: blur(0); background: rgba(252,86,129,.08); box-shadow: 0 2px 10px rgba(252,86,129,.12); }
+    100% { opacity:1; transform: none; filter: blur(0); background: transparent; box-shadow: none; }
   }
   .wintitle {
     display:flex; align-items:center; gap:10px;
@@ -940,12 +985,13 @@
     padding:11px 16px; border:1px solid var(--line); border-radius:13px; background:#fff;
     box-shadow:0 10px 24px rgba(19,23,34,.14);
     animation: bob 3.2s ease-in-out infinite;
-    transition: transform .5s var(--spring), opacity .42s ease;
+    transition: transform .54s cubic-bezier(.16,1,.3,1), opacity .40s ease, filter .40s ease, box-shadow .3s ease;
     margin-bottom:-20px; z-index:2;
+    will-change: transform, opacity;
   }
   @keyframes bob { 0%,100%{ transform:translateY(0) rotate(-.5deg) } 50%{ transform:translateY(-5px) rotate(-.5deg) } }
-  /* drop: lift slightly (grab), then arc down into the zone — reads as a real drag, not a teleport */
-  .filechip.dropped { animation:none; transform:translateY(40px) translateX(4px) scale(1.3); opacity:0; }
+  /* drop: physical arc down into the zone — no scale(1.3) pop, just slide + settle + fade */
+  .filechip.dropped { animation:none; transform:translate3d(6px, 52px, 0) scale(0.94) rotate(0.6deg); opacity:0; filter: blur(0.5px); box-shadow:0 4px 12px rgba(19,23,34,.10); }
   .filechip strong { display:block; font-size:13px; color:var(--ink); }
   .filechip .mono { font-size:10px; color:var(--text-3); }
   .fico {
@@ -959,14 +1005,14 @@
     border:2px dashed var(--line-strong); border-radius:18px;
     text-align:center;
     display:flex; flex-direction:column; align-items:center; gap:6px;
-    transition: border-color .3s ease, background .3s ease;
+    transition: border-color .28s cubic-bezier(.16,1,.3,1), background .28s ease, transform .28s var(--spring), box-shadow .28s ease;
   }
-  .dzbox.hover { border-color:var(--hotpink); background:rgba(252,86,129,.05); }
+  .dzbox.hover { border-color:var(--hotpink); background:rgba(252,86,129,.06); transform: scale(1.015); box-shadow: 0 6px 18px rgba(252,86,129,.08); }
   .dz-h { font-size:17px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
   .dz-s { font-size:10.5px; color:var(--text-3); letter-spacing:.06em; }
-  .prog { width:78%; height:6px; border-radius:99px; background:var(--surface-2); overflow:hidden; margin-top:12px; }
-  .prog i { display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#6ee89a,#03594d); animation: fillbar 2.2s linear forwards; }
-  @keyframes fillbar { to { width:100% } }
+  .prog { width:78%; height:6px; border-radius:99px; background:var(--surface-2); overflow:hidden; margin-top:12px; box-shadow: inset 0 1px 2px rgba(0,0,0,.06); }
+  .prog i { display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#6ee89a,#03594d); animation: fillbar 2.0s cubic-bezier(.22,1,.36,1) forwards; }
+  @keyframes fillbar { from { width:0 } to { width:100% } }
   .translabel { margin-top:9px; color:var(--mint-live, #4db87a); }
 
   /* summarize + capture — the real transcript view */
@@ -1021,15 +1067,17 @@
   .dico.dtyp { background:#fffdf7; color:#fc5681 }
   .ddot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.25); transition:background .2s }
   .ditem.on .ddot { background:#fff }
+  .ditem:focus-visible { outline: 2.5px solid var(--hotpink); outline-offset: 3px; border-radius: 8px; }
+  @media (pointer: coarse) {
+    .dico { width:44px; height:44px; border-radius:11px; }
+    .dock { gap:6px; padding:6px 8px 7px; }
+  }
 
   /* ── Mac base ── */
   .base { height:20px; margin:-1px -4.6% 0; background: linear-gradient(90deg,#9aa0ac 0%, #f0f2f6 50%, #9aa0ac 100%); border-radius:0 0 12px 12px; position:relative; box-shadow: inset 0 1px 0 rgba(255,255,255,.9); }
   .base .chin { position:absolute; left:50%; transform:translateX(-50%); top:1px; width:17%; min-width:104px; height:9px; background:linear-gradient(180deg,#7e8490,#5a5f6a); border-radius:0 0 9px 9px; }
 
-  .hint-text { text-align:center; margin-top:16px; color:var(--text-3); font-size:11px; }
-
   @media (max-width:900px) {
-    .feature-cards { grid-template-columns:1fr 1fr; }
     .lid { aspect-ratio:auto; height:540px; }
     .callrail { width:170px }
   }
@@ -1043,8 +1091,7 @@
     .dico :global(svg) { width:20px; height:20px }
   }
   @media (max-width:560px) {
-    .feature-cards { grid-template-columns:1fr; }
-    .stage-head { display:none; }
+    .tabs { gap: 4px 18px; margin: 32px auto 16px; }
     .nact { padding:8px 10px; }
     .nact span { font-size:10px; }
     .keyovl { bottom:78px; right:10px; padding:10px 12px; }
@@ -1052,6 +1099,7 @@
     .big-cursor { width:36px; height:36px; background-size:32px 32px; }
   }
   @media (prefers-reduced-motion: reduce) {
+    .tabdesc { animation: none !important; }
     .nwave i, .ndots i, .filechip, .npulse, .recring i, .reccall.on i, .savespin, .win { animation:none !important; }
   }
 </style>

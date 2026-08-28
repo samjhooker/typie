@@ -111,11 +111,17 @@
     cursor:pointer;
   }
   .sticky:hover{ transform:translateY(-3px) rotate(0deg)!important; box-shadow:0 10px 22px rgba(19,23,34,.13) }
-  .sticky.fresh{ animation:landIn .55s var(--spring, ease) both }
+  /* fresh note that just landed — always at top-left, physically springs in so you SEE it arrive */
+  .sticky.fresh{
+    order: -1;
+    animation: landIn .62s cubic-bezier(.16,1,.3,1) both;
+    box-shadow: 0 10px 28px rgba(252,86,129,.14), 0 3px 12px rgba(19,23,34,.10);
+    border: 1.5px solid rgba(252,86,129,.22);
+  }
   @keyframes landIn{
-    0%{ opacity:0; transform:translateY(24px) scale(.85) rotate(-6deg) }
-    60%{ opacity:1; transform:translateY(-3px) scale(1.03) rotate(2deg) }
-    100%{ opacity:1; transform:none }
+    0%{ opacity:0; transform:translateY(28px) scale(.82) rotate(-5deg); filter: blur(2px); }
+    50%{ opacity:1; transform:translateY(-4px) scale(1.02) rotate(1.5deg); filter: blur(0); }
+    100%{ opacity:1; transform:none; filter: blur(0); }
   }
   .sticky.pinned{ outline:2px solid rgba(19,23,34,.08) }
 

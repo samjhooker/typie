@@ -1,7 +1,9 @@
-/* Typie — Interfere bones + Bricolage soul */
+/* Typie — story pass: warm paper canvas, ink page-turns, one pink for the verb */
 :root {
-  --bg: #ffffff;
-  --page: #ffffff;
+  --bg: #fbf9f6;
+  --page: #fbf9f6;
+  --paper: #fbf9f6;
+  --ink-deep: #101318;
   --surface: #fbfbfa;
   --surface-2: #f6f6f5;
   --line: #e7e5e4;
@@ -28,8 +30,9 @@
   --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
   --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
 
-  /* legacy aliases for older pages */
-  --hotpink: #ff3b6b;
+  /* canonical — synced with app/Sources/Typie/Theme.swift hotpink #fc5681 */
+  --hotpink: #fc5681;
+  --hotpink-legacy: #ff3b6b;
   --pink: #fef2f4;
   --cream: #ffffff;
   --paper: #fbfbfa;
@@ -48,6 +51,8 @@
   --card-blue: #dde9fa;
   --card-mint: #dff0e4;
   --pink-band: #fff0f6;
+  --butter: #fff6d6;
+  --butter-band: #fff3cf;
   --footer-green: #0a0a0a;
 }
 
@@ -70,13 +75,28 @@ body::before {
   content: '';
   position: fixed; inset: 0; pointer-events: none; z-index: -1;
   background:
-    radial-gradient(ellipse 42% 28% at 18% 0%, rgba(255,214,120,0.14) 0%, transparent 60%),
-    radial-gradient(ellipse 36% 30% at 88% 2%, rgba(255,59,107,0.06) 0%, transparent 55%);
+    radial-gradient(ellipse 50% 30% at 12% 0%, rgba(255,196,96,0.17) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 28% at 85% 4%, rgba(252,86,129,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 36% 26% at 50% -10%, rgba(111,143,251,0.07) 0%, transparent 60%);
 }
 
-::selection { background: #0a0a0a; color: #fff; }
-h1, h2, h3 { font-family: var(--display); letter-spacing: -0.04em; line-height: 1.02; color: var(--ink); }
-a { color: inherit; text-decoration: none; }
+/* fine grain — the whole page feels printed, not rendered */
+body::after {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: var(--hotpink); color: #fff; }
+* { caret-color: var(--hotpink); }
+html { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+:focus-visible { outline: 2.5px solid var(--hotpink); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.04em; line-height: 1.02; color: var(--ink); text-wrap: balance; }
+a { color: inherit; text-decoration: none; text-decoration-thickness: 1.2px; text-underline-offset: 3px; }
 button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 
 .container { width: min(1120px, calc(100% - 32px)); margin-inline: auto; }
@@ -95,9 +115,15 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .btn-ghost { background:transparent; color:#0a0a0a; border-color:var(--line); }
 .btn-ghost:hover { background:var(--surface); }
 
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
 .reveal.visible { opacity: 1; transform: none; }
 
+/* — motion: one authored moment, not every section. Keep feedback when reduced — */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+  body::after { display: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .talkwave i, .nwave i, .spark, .big-cursor, .notch, .nplus, .filechip, .prog i, .typeReveal { animation: none !important; transition-duration: 0.01ms !important; }
+  /* keep state color changes, drop spatial movement */
+  /* transformed interactive cards live inside the demo components; page chrome stays flat */
 }

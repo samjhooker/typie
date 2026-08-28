@@ -88,7 +88,7 @@
     font-size:15px; font-weight:800; font-family:'Space Grotesk',sans-serif;
   }
   .chips{ font-size:11px; font-weight:500; color:#616061 }
-  .msgs{ flex:1; overflow:hidden; padding:12px 16px; display:flex; flex-direction:column; gap:12px }
+  .msgs{ flex:1; overflow:hidden; padding:10px 14px; display:flex; flex-direction:column; gap:8px }
   .m{ display:flex; gap:10px }
   .av{ width:26px; height:26px; border-radius:6px; color:#fff; display:grid; place-items:center; font-size:11px; font-weight:800; flex:none }
   .mhead{ display:flex; align-items:baseline; gap:7px }
@@ -103,8 +103,8 @@
   }
 
   .msginput{
-    display:flex; align-items:center; gap:8px; margin:10px 16px 12px;
-    border:1px solid rgba(29,28,29,.4); border-radius:8px; padding:5px 12px;
+    display:flex; align-items:center; gap:7px; margin:8px 12px 8px;
+    border:1px solid rgba(29,28,29,.28); border-radius:7px; padding:3px 10px; min-height:30px;
     transition:border-color .25s ease, box-shadow .25s ease;
   }
   .msginput.armed{
@@ -116,9 +116,9 @@
     60%{ box-shadow:0 0 0 4px rgba(0,122,90,.24) }
     100%{ box-shadow:0 0 0 3px rgba(0,122,90,.14) }
   }
-  .plus{ color:#9d9d9f; font-size:15px }
-  .field{ flex:1; min-width:0; font-size:12.5px; color:#9d9d9f; white-space:nowrap; overflow:hidden; position:relative }
-  .field.typed{ color:#1d1c1d }
+  .plus{ color:#9d9d9f; font-size:13px }
+  .field{ flex:1; min-width:0; font-size:11.5px; color:#9d9d9f; white-space:nowrap; overflow:hidden; position:relative; line-height:1.3 }
+  .field.typed{ color:#1d1c1d; font-size:11.5px }
   .field.typed::after{
     content:'';
     position:absolute; inset:0;

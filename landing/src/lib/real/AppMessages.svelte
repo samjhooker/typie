@@ -113,9 +113,9 @@
   }
 
   .composer{
-    display:flex; align-items:center; gap:8px; margin:0 12px 10px;
-    background:rgba(255,255,255,.95); border-radius:18px; padding:4px 12px;
-    border:1px solid rgba(0,0,0,.12);
+    display:flex; align-items:center; gap:7px; margin:0 10px 8px;
+    background:rgba(255,255,255,.95); border-radius:16px; padding:3px 10px; min-height:28px;
+    border:1px solid rgba(0,0,0,.10);
     transition:border-color .25s ease, box-shadow .25s ease;
   }
   .composer.armed{
@@ -127,9 +127,9 @@
     60%{ box-shadow:0 0 0 4px rgba(11,132,254,.24) }
     100%{ box-shadow:0 0 0 3px rgba(11,132,254,.14) }
   }
-  .plus{ color:#007aff; font-size:15px; font-weight:700 }
-  .field{ flex:1; min-width:0; font-size:12px; color:#8e8e93; white-space:nowrap; overflow:hidden; position:relative }
-  .field.typed{ color:#1c1c1e }
+  .plus{ color:#007aff; font-size:13px; font-weight:700 }
+  .field{ flex:1; min-width:0; font-size:11px; color:#8e8e93; white-space:nowrap; overflow:hidden; position:relative; line-height:1.3 }
+  .field.typed{ color:#1c1c1e; font-size:11px }
   .field.typed::after{
     content:'';
     position:absolute; inset:0;
