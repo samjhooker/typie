@@ -728,6 +728,12 @@
     border-radius: 24px 24px 0 0;
     padding: 10px 10px 0;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s ease;
+  }
+  :root[data-theme="dark"] .mac {
+    background: linear-gradient(180deg, #262a3c 0%, #161822 100%);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 36px 100px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.10), 0 0 60px rgba(252, 86, 129, 0.12);
   }
 
   .lid {
@@ -741,9 +747,15 @@
     flex-direction: column;
     border: 1px solid rgba(0, 0, 0, 0.25);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: background 0.3s ease;
+  }
+  :root[data-theme="dark"] .lid {
+    background: linear-gradient(165deg, #a83232 0%, #831843 20%, #4c1d95 50%, #1e1b4b 80%, #090d16 100%);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
-  /* Mac Menu Bar — same wallpaper gradient underneath, a few % darker */
+  /* Mac Menu Bar — frosted glass layer */
   .menubar {
     height: 32px;
     background: rgba(0, 0, 0, 0.12);
@@ -756,6 +768,10 @@
     color: rgba(255, 255, 255, 0.95);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
     z-index: 20;
+  }
+  :root[data-theme="dark"] .menubar {
+    background: rgba(0, 0, 0, 0.28);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
   }
   .apple { width: 12px; height: 12px; fill: #ffffff; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2)); }
   .mapp { color: #ffffff; font-weight: 700; }
@@ -1170,9 +1186,15 @@
     background: #2b2e38;
     border-radius: 0 0 20px 20px;
     display: flex; justify-content: center;
+    border: 1.5px solid var(--line-strong);
+    border-top: none;
+  }
+  :root[data-theme="dark"] .mac-base {
+    background: linear-gradient(180deg, #1e212f 0%, #151722 100%);
+    border-color: rgba(255, 255, 255, 0.22);
   }
   .chin {
-    width: 140px; height: 6px; background: #1e2028; border-radius: 0 0 8px 8px;
+    width: 140px; height: 6px; background: #161822; border-radius: 0 0 8px 8px;
   }
 
   @media (max-width: 900px) {
