@@ -782,49 +782,49 @@
   }
   .mclock { font-size: 12px; }
 
-  /* ══ REAL MAC HARDWARE NOTCH (1:1 with Screenshots) ══ */
+  /* ══ REAL MAC HARDWARE NOTCH (M-Series MacBook Air Proportions) ══ */
   .notch {
     position: absolute;
     top: 0; left: 50%;
     transform: translateX(-50%);
     background: #000000;
     color: #ffffff;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 9px 9px;
     z-index: 30;
-    width: 172px;
-    height: 30px;
-    transition: width 0.35s var(--spring), height 0.35s var(--spring), border-radius 0.35s ease, box-shadow 0.35s ease;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    width: 144px;
+    height: 28px;
+    transition: width 0.32s var(--spring), height 0.32s var(--spring), border-radius 0.32s ease, box-shadow 0.32s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
     overflow: hidden;
   }
   
   .notch.expanded {
-    width: 380px;
-    border-radius: 0 0 12px 12px;
+    width: 252px;
+    border-radius: 0 0 11px 11px;
   }
 
   .notch.menuopen {
-    width: 440px;
-    height: 82px;
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+    width: 310px;
+    height: 70px;
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
   }
 
   .notch-top-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 30px;
-    padding: 0 16px;
+    height: 28px;
+    padding: 0 10px;
   }
 
   .cam-housing {
     display: grid;
     place-items: center;
-    width: 28px;
+    width: 22px;
   }
   .cam-lens {
-    width: 9px; height: 9px;
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: #0b0c11;
     border: 1px solid #1c1e28;
@@ -834,7 +834,7 @@
   .wing {
     display: flex;
     align-items: center;
-    min-width: 40px;
+    min-width: 30px;
   }
   .left-wing { justify-content: flex-start; }
   .right-wing { justify-content: flex-end; }
@@ -886,8 +886,8 @@
     display: grid;
     grid-template-columns: 1fr 1px 1fr 1px 1fr;
     align-items: center;
-    height: 52px;
-    padding: 0 10px 4px;
+    height: 42px;
+    padding: 0 6px 4px;
     animation: menuFadeIn 0.25s var(--ease-out);
   }
   @keyframes menuFadeIn {
@@ -899,23 +899,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    padding: 4px 6px;
+    gap: 2px;
+    padding: 2px 4px;
     cursor: pointer;
     transition: transform 0.15s var(--spring);
   }
   .nmenu-item:hover { transform: translateY(-2px); }
   .nmenu-icn { display: grid; place-items: center; }
   .nmenu-label {
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: 600;
     color: #f3f4f6;
     white-space: nowrap;
   }
   .nmenu-divider {
-    height: 24px;
+    height: 20px;
     width: 1px;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.14);
   }
 
   /* Screen Viewport */
