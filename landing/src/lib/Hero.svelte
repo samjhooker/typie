@@ -483,7 +483,7 @@
 </section>
 
 <style>
-  .hero { padding: clamp(100px, 12vh, 128px) 0 clamp(60px, 8vh, 84px); }
+  .hero { padding: clamp(68px, 8vh, 96px) 0 clamp(50px, 6vh, 72px); }
 
   .hero-top {
     display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px;
