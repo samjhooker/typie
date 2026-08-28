@@ -1,64 +1,138 @@
-/* Typie — story pass: warm paper canvas, ink page-turns, one pink for the verb */
+/* Typie Design System — Canva-inspired delight + Apple precision */
 :root {
+  /* Light Theme (Default: warm editorial canvas, crisp ink, radiant pink) */
   --bg: #fbf9f6;
   --page: #fbf9f6;
   --paper: #fbf9f6;
-  --ink-deep: #101318;
-  --surface: #fbfbfa;
-  --surface-2: #f6f6f5;
-  --line: #e7e5e4;
-  --line-strong: #d6d3d1;
-  --ink: #0f1115;
-  --text-1: #0a0a0a;
-  --text-2: #52525b;
-  --text-3: #71717a;
-  --muted: #a1a1aa;
-  --accent: #0a0a0a;
-  --accent-soft: #f4f4f5;
+  --surface: #ffffff;
+  --surface-2: #f5f3ef;
+  --surface-elevated: #ffffff;
+  
+  --line: rgba(19, 23, 34, 0.08);
+  --line-strong: rgba(19, 23, 34, 0.16);
+  --line-subtle: rgba(19, 23, 34, 0.04);
+  
+  --ink: #111318;
+  --text-1: #111318;
+  --text-2: #4a4d57;
+  --text-3: #757987;
+  --muted: #9fa3b0;
 
-  --radius-card: 16px;
+  /* Typie Brand Colors */
+  --hotpink: #fc5681;
+  --hotpink-hover: #fa3c6f;
+  --hotpink-glow: rgba(252, 86, 129, 0.24);
+  --hotpink-soft: rgba(252, 86, 129, 0.10);
+  --pink: #fef1f4;
+  --pink-band: #fdf0f4;
+
+  /* Accent Tints & Card Surfaces */
+  --mint: #82eda6;
+  --mint-live: #4ade80;
+  --mint-soft: rgba(74, 222, 128, 0.12);
+  --card-mint: #eef8f2;
+  
+  --periwinkle: #6f8ffb;
+  --card-blue: #edf3fd;
+  
+  --purple: #c88cfd;
+  --card-lavender: #f5effe;
+  
+  --butter: #ffe79a;
+  --sun: #fdc068;
+  --card-cream: #fdf7eb;
+  
+  /* Mac Window Simulation Tokens */
+  --mac-lid-bg: #1e2029;
+  --mac-bezel: #0e0f14;
+  --mac-screen-bg: #f7f5f2;
+  --mac-titlebar: #e9e6e0;
+  --mac-title-text: #484642;
+  --mac-win-bg: #ffffff;
+  --mac-win-border: rgba(0, 0, 0, 0.12);
+
+  /* Radius Tokens */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-card: 20px;
+  --radius-surface: 24px;
   --radius-pill: 999px;
-  --radius-surface: 20px;
 
-  /* novel: Space Grotesk for UI, Bricolage for display, Fraunces italic for wink, JetBrains Mono for code */
-  --sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  /* Typography */
+  --sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
   --display: 'Bricolage Grotesque', 'Space Grotesk', system-ui, sans-serif;
   --serif: 'Fraunces', Georgia, serif;
-  --mono: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
+  /* Springs & Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
-  --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --spring: cubic-bezier(0.22, 1.25, 0.36, 1);
+  --snap: cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-  /* canonical — synced with app/Sources/Typie/Theme.swift hotpink #fc5681 */
+/* Dark Theme */
+:root[data-theme="dark"] {
+  --bg: #0c0d11;
+  --page: #0c0d11;
+  --paper: #0c0d11;
+  --surface: #14161f;
+  --surface-2: #1b1e2a;
+  --surface-elevated: #1e2130;
+  
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --line-subtle: rgba(255, 255, 255, 0.04);
+  
+  --ink: #f7f6f4;
+  --text-1: #f7f6f4;
+  --text-2: #a2a6b5;
+  --text-3: #757989;
+  --muted: #545766;
+
   --hotpink: #fc5681;
-  --hotpink-legacy: #ff3b6b;
-  --pink: #fef2f4;
-  --cream: #ffffff;
-  --paper: #fbfbfa;
-  --butter: #fff6d6;
-  --sun: #ffd230;
-  --lavender: #ddd8ff;
-  --sky: #c7d7ff;
-  --mint: #82eda6;
-  --mint-live: #6ee89a;
-  --periwinkle: #6f8ffb;
-  --purple: #c88cfd;
-  --gold-ink: #b45309;
-  --lime: #d8e268;
-  --card-cream: #fdf3dc;
-  --card-lavender: #efecfb;
-  --card-blue: #dde9fa;
-  --card-mint: #dff0e4;
-  --pink-band: #fff0f6;
-  --butter: #fff6d6;
-  --butter-band: #fff3cf;
-  --footer-green: #0a0a0a;
+  --hotpink-hover: #ff6f95;
+  --hotpink-glow: rgba(252, 86, 129, 0.35);
+  --hotpink-soft: rgba(252, 86, 129, 0.15);
+  --pink: #24141c;
+  --pink-band: #191218;
+
+  --mint: #6ee89a;
+  --mint-live: #4ade80;
+  --mint-soft: rgba(74, 222, 128, 0.18);
+  --card-mint: #11231c;
+  
+  --periwinkle: #7a98fc;
+  --card-blue: #141c30;
+  
+  --purple: #d19eff;
+  --card-lavender: #201733;
+  
+  --butter: #ffd875;
+  --sun: #fdc068;
+  --card-cream: #292014;
+  
+  --mac-lid-bg: #07080b;
+  --mac-bezel: #000000;
+  --mac-screen-bg: #10121a;
+  --mac-titlebar: #161823;
+  --mac-title-text: #a0a4b8;
+  --mac-win-bg: #141620;
+  --mac-win-border: rgba(255, 255, 255, 0.1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; background: var(--bg); }
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] html,
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
 
 body {
   font-family: var(--sans);
@@ -67,63 +141,141 @@ body {
   font-size: 15.5px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* subtle warm glow, felt not seen */
+/* Subtle glow behind hero */
 body::before {
   content: '';
   position: fixed; inset: 0; pointer-events: none; z-index: -1;
   background:
-    radial-gradient(ellipse 50% 30% at 12% 0%, rgba(255,196,96,0.17) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 28% at 85% 4%, rgba(252,86,129,0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 36% 26% at 50% -10%, rgba(111,143,251,0.07) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 35% at 15% 0%, rgba(255, 196, 96, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 85% 6%, rgba(252, 86, 129, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 50% -12%, rgba(111, 143, 251, 0.08) 0%, transparent 60%);
 }
 
-/* fine grain — the whole page feels printed, not rendered */
-body::after {
-  content: '';
-  position: fixed; inset: 0; pointer-events: none; z-index: 999;
-  opacity: 0.032;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+:root[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse 60% 35% at 15% 0%, rgba(252, 86, 129, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 85% 6%, rgba(111, 143, 251, 0.09) 0%, transparent 55%);
 }
 
-::selection { background: var(--hotpink); color: #fff; }
+::selection { background: var(--hotpink); color: #ffffff; }
 * { caret-color: var(--hotpink); }
+
 html { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
 :focus-visible { outline: 2.5px solid var(--hotpink); outline-offset: 2px; border-radius: 6px; }
-h1, h2, h3 { font-family: var(--display); letter-spacing: -0.04em; line-height: 1.02; color: var(--ink); text-wrap: balance; }
-a { color: inherit; text-decoration: none; text-decoration-thickness: 1.2px; text-underline-offset: 3px; }
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 
-.container { width: min(1120px, calc(100% - 32px)); margin-inline: auto; }
-@media (min-width: 1280px) { .container { width: min(1160px, calc(100% - 48px)); } }
-.field { padding: clamp(56px, 8vh, 88px) 0; }
-.mono { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
-.hand { font-family: var(--serif); font-style: italic; letter-spacing: -0.02em; }
+.container {
+  width: min(1140px, calc(100% - 36px));
+  margin-inline: auto;
+}
 
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 18px; border-radius:var(--radius-pill); font-size:14px; font-weight:600; letter-spacing:-0.01em; line-height:1; border:1px solid transparent; transition: all 0.18s var(--ease-out); white-space: nowrap; }
-.btn:hover { transform: translateY(-1px); }
+@media (min-width: 1280px) {
+  .container { width: min(1180px, calc(100% - 48px)); }
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+
+.hand {
+  font-family: var(--serif);
+  font-style: italic;
+  letter-spacing: -0.02em;
+}
+
+/* Primary Button Styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  border: 1px solid transparent;
+  transition: transform 0.18s var(--spring), background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn:hover { transform: translateY(-2px); }
 .btn:active { transform: translateY(0) scale(0.98); }
-.btn-black { background:#0a0a0a; color:#fff; border-color:#0a0a0a; box-shadow: 0 4px 14px rgba(0,0,0,0.16); }
-.btn-black:hover { background:#1a1a1a; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-.btn-white { background:#fff; color:#0a0a0a; border-color:var(--line); }
-.btn-white:hover { border-color:var(--line-strong); background:#fafafa; }
-.btn-ghost { background:transparent; color:#0a0a0a; border-color:var(--line); }
-.btn-ghost:hover { background:var(--surface); }
 
-.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
-.reveal.visible { opacity: 1; transform: none; }
+.btn-primary {
+  background: var(--hotpink);
+  color: #ffffff;
+  box-shadow: 0 4px 18px var(--hotpink-glow);
+}
 
-/* — motion: one authored moment, not every section. Keep feedback when reduced — */
+.btn-primary:hover {
+  background: var(--hotpink-hover);
+  box-shadow: 0 8px 24px var(--hotpink-glow);
+}
+
+.btn-black {
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+:root[data-theme="dark"] .btn-black {
+  background: #f7f6f4;
+  color: #0c0d11;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
+}
+
+.btn-black:hover {
+  opacity: 0.94;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
+.btn-ghost {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--ink);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  body::after { display: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
-  .talkwave i, .nwave i, .spark, .big-cursor, .notch, .nplus, .filechip, .prog i, .typeReveal { animation: none !important; transition-duration: 0.01ms !important; }
-  /* keep state color changes, drop spatial movement */
-  /* transformed interactive cards live inside the demo components; page chrome stays flat */
 }

@@ -3,90 +3,118 @@
   import { Mic, MoveRight, CornerDownLeft } from 'lucide-svelte';
 </script>
 
-<!-- how it works — one slim strip, three steps, no theater -->
-<section class="steps" aria-label="how typie works">
+<section class="steps-section" aria-label="How typie works">
   <div class="container row">
     <div class="step" use:reveal>
-      <span class="n mono">01</span>
+      <span class="step-num mono">01</span>
       <span class="key" aria-hidden="true">⌥</span>
       <div class="txt">
         <h3>Hold the key</h3>
-        <p>Press and hold option — anywhere on your Mac.</p>
+        <p>Press Option in any app — from Slack to your IDE.</p>
       </div>
     </div>
 
-    <span class="arrow" aria-hidden="true"><MoveRight size={18} strokeWidth={1.6} /></span>
+    <span class="arrow" aria-hidden="true"><MoveRight size={18} strokeWidth={1.8} /></span>
 
     <div class="step" use:reveal={{ delay: 80 }}>
-      <span class="n mono">02</span>
-      <span class="ic" aria-hidden="true"><Mic size={20} strokeWidth={1.8} /></span>
+      <span class="step-num mono">02</span>
+      <span class="ic" aria-hidden="true"><Mic size={20} strokeWidth={2} /></span>
       <div class="txt">
-        <h3>Say the thing</h3>
-        <p>Talk at your pace. The island listens, offline.</p>
+        <h3>Speak naturally</h3>
+        <p>Talk at your pace. Nvidia Parakeet transcribes in RAM.</p>
       </div>
     </div>
 
-    <span class="arrow" aria-hidden="true"><MoveRight size={18} strokeWidth={1.6} /></span>
+    <span class="arrow" aria-hidden="true"><MoveRight size={18} strokeWidth={1.8} /></span>
 
     <div class="step" use:reveal={{ delay: 160 }}>
-      <span class="n mono">03</span>
-      <span class="ic" aria-hidden="true"><CornerDownLeft size={20} strokeWidth={1.8} /></span>
+      <span class="step-num mono">03</span>
+      <span class="ic done" aria-hidden="true"><CornerDownLeft size={20} strokeWidth={2} /></span>
       <div class="txt">
         <h3>It's typed</h3>
-        <p>Let go. Real keystrokes land in your app — 80&nbsp;ms later.</p>
+        <p>Release. Keystrokes land at your cursor in 80 milliseconds.</p>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .steps { padding: 6px 0 4px; }
+  .steps-section {
+    padding: 24px 0 32px;
+  }
   .row {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    padding: 20px 28px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   }
 
   .step {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     min-width: 0;
   }
-  .n { opacity: 0.45; }
+  .step-num {
+    color: var(--hotpink);
+    font-weight: 700;
+    font-size: 12px;
+  }
 
   .key {
     flex: none;
-    width: 46px; height: 46px;
+    width: 44px; height: 44px;
     display: grid; place-items: center;
-    background: #fff;
+    background: var(--surface-2);
     border: 1px solid var(--line-strong);
     border-bottom-width: 3px;
     border-radius: 12px;
     font-family: var(--sans);
-    font-size: 21px;
+    font-size: 20px;
     font-weight: 800;
     color: var(--ink);
-    box-shadow: 0 2px 6px rgba(19,23,34,.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   }
+  
   .ic {
     flex: none;
-    width: 46px; height: 46px;
+    width: 44px; height: 44px;
     display: grid; place-items: center;
     background: var(--pink);
     color: var(--hotpink);
     border-radius: 12px;
   }
+  .ic.done {
+    background: var(--card-mint);
+    color: #059669;
+  }
 
-  .txt h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-  .txt p { font-size: 13px; line-height: 1.5; color: var(--text-3); }
+  .txt h3 {
+    font-size: 15.5px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    color: var(--ink);
+  }
+  .txt p {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-3);
+  }
 
-  .arrow { flex: none; color: var(--line-strong); }
+  .arrow {
+    flex: none;
+    color: var(--line-strong);
+    opacity: 0.6;
+  }
 
-  @media (max-width: 860px) {
-    .row { flex-direction: column; align-items: stretch; gap: 14px; }
+  @media (max-width: 890px) {
+    .row { flex-direction: column; align-items: stretch; gap: 16px; padding: 20px; }
     .arrow { transform: rotate(90deg); justify-content: center; display: flex; }
-    .steps { padding: 10px 0 14px; }
+    .steps-section { padding: 12px 0 20px; }
   }
 </style>

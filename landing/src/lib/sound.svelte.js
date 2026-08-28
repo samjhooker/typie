@@ -5,6 +5,32 @@ export const sound = $state({ on: false });
 
 let ctx;
 
+/* real key-clack samples (public/sounds/), loaded lazily on first
+   use after the visitor opts in — never on page load */
+let buffers = {};
+
+async function sample(name) {
+  try {
+    ctx ??= new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    buffers[name] ??= await ctx.decodeAudioData(
+      await (await fetch(`sounds/${name}.wav`)).arrayBuffer()
+    );
+    const src = ctx.createBufferSource();
+    src.buffer = buffers[name];
+    const g = ctx.createGain();
+    g.gain.value = 0.35;
+    src.connect(g);
+    g.connect(ctx.destination);
+    src.start();
+  } catch {
+    blip(); /* sample failed → synth fallback, still charming */
+  }
+}
+
+export const keyDown = () => sound.on && sample('keypress');
+export const keyUp = () => sound.on && sample('keyrelease');
+
 export function blip(freq = 520, dur = 0.08, type = 'triangle', gain = 0.05) {
   if (!sound.on) return;
   try {

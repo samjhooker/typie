@@ -7,34 +7,33 @@
 <footer>
   <div class="container top">
     <div class="brand">
-      <a href="/" aria-label="Typie home"><Logo size={22} color="#0a0a0a" /></a>
+      <a href="/" aria-label="Typie home"><Logo size={24} /></a>
       <p class="tag">just talk. <em>it's typed.</em></p>
     </div>
     <nav class="cols" aria-label="footer">
       <div class="col">
-        <div class="mono" style="color:#0a0a0a; margin-bottom:10px">Product</div>
-        <a href="#use-cases">Everywhere</a>
+        <div class="col-title mono">Product</div>
+        <a href="#demo">The Mac Experience</a>
+        <a href="#apps">Everywhere</a>
+        <a href="#compare">Comparison</a>
         <a href="#engine">Engine</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#faq">FAQ</a>
       </div>
       <div class="col">
-        <div class="mono" style="color:#0a0a0a; margin-bottom:10px">Legal</div>
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-        <a href="https://github.com/samjhooker/typie">GitHub</a>
+        <div class="col-title mono">Privacy</div>
+        <a href="#privacy">Zero Cloud Architecture</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Use</a>
       </div>
       <div class="col">
-        <div class="mono" style="color:#0a0a0a; margin-bottom:10px">Links</div>
-        <a href="https://github.com/samjhooker/typie/releases/latest">Releases</a>
-        <a href="/education">Education</a>
-        <a href="/enterprise">Enterprise</a>
-        <a href="mailto:hello@typie.cc">hello@typie.cc</a>
+        <div class="col-title mono">Resources</div>
+        <a href="https://github.com/samjhooker/typie/releases/latest" target="_blank" rel="noopener">Releases</a>
+        <a href="https://github.com/samjhooker/typie" target="_blank" rel="noopener">GitHub (MIT)</a>
+        <a href="mailto:hello@typie.cc">Contact</a>
       </div>
     </nav>
   </div>
   <div class="container bottom">
-    <div class="mono">© {year} typie · built for macOS · apple silicon</div>
+    <div class="mono">© {year} Typie · Built for macOS · Apple Silicon native</div>
     <div class="mono">typie.cc</div>
   </div>
   <div class="ghost" aria-hidden="true">typie</div>
@@ -42,36 +41,39 @@
 
 <style>
   footer {
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--line);
-    color: #52525b;
+    color: var(--text-2);
     overflow: hidden;
     position: relative;
   }
   .top {
     display: grid; grid-template-columns: 1.4fr auto auto auto;
-    gap: 32px; padding: 44px 0 32px;
+    gap: 32px; padding: 48px 0 32px;
   }
   .tag {
-    margin-top: 12px;
+    margin-top: 14px;
     font-family: var(--serif); font-style: italic; font-weight: 500;
     font-size: 17px; color: var(--ink);
   }
   .tag em { color: var(--hotpink); }
   .cols { display: contents; }
-  .col { display: flex; flex-direction: column; gap: 8px; min-width: 140px; }
-  .col a { font-size: 14px; color: #52525b; transition: color .15s ease; }
-  .col a:hover { color: #0a0a0a; }
+  .col { display: flex; flex-direction: column; gap: 10px; min-width: 140px; }
+  .col-title { color: var(--ink); font-weight: 700; margin-bottom: 6px; }
+  .col a { font-size: 14px; color: var(--text-2); transition: color .15s ease; }
+  .col a:hover { color: var(--hotpink); }
   .bottom {
     display: flex; justify-content: space-between; gap: 12px;
     border-top: 1px solid var(--line);
-    padding: 16px 0 30px;
+    padding: 18px 0 32px;
     flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-3);
   }
   .ghost {
     font-family: var(--display); font-weight: 800; letter-spacing: -0.04em;
     font-size: clamp(96px, 18vw, 260px); line-height: 0.78;
-    color: var(--hotpink); opacity: 0.05;
+    color: var(--hotpink); opacity: 0.04;
     text-align: center; user-select: none; pointer-events: none;
     margin-bottom: -0.06em;
   }

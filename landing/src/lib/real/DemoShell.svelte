@@ -8,11 +8,13 @@
   import DemoStatsPane from './DemoStatsPane.svelte'
 
   let { startPane = 'home', startTranscript = null, notesExtra = null, locked = false } = $props()
-  let pane = $state(startPane)
-  let selectedTranscript = $state(startTranscript)
+  let pane = $state('home')
+  let selectedTranscript = $state(null)
 
-  // when locked, force pane to stay on startPane
-  $effect(() => { if (locked) { pane = startPane; selectedTranscript = startTranscript } })
+  $effect(() => {
+    pane = startPane
+    selectedTranscript = startTranscript
+  })
 
   const nav = [
     { id:'home',     label:'Home',     glyph:'home' },
