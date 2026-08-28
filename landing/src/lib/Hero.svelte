@@ -91,28 +91,21 @@
         await new Promise(r => { timer = setTimeout(r, 600) })
         if (cancelled) return
 
-        // 2. Press Option key down & start listening
+        // 2. Press Option key down & start listening (speech buffering)
         isKeyHolding = true
-        await new Promise(r => { timer = setTimeout(r, 700) })
+        await new Promise(r => { timer = setTimeout(r, 1400) })
         if (cancelled) return
 
-        // 3. Stream text character-by-character while holding key
-        const fullText = target.text
-        for (let i = 1; i <= fullText.length; i++) {
-          if (cancelled) return
-          typedStream = fullText.slice(0, i)
-          await new Promise(r => { timer = setTimeout(r, 32) })
-        }
-
-        // 4. Release Option key & show 80ms speed checkmark
+        // 3. Release Option key -> on-device inference runs -> entire text pops in all at once in 80ms!
         isKeyHolding = false
         isDictateDone = true
+        typedStream = target.text
 
-        // 5. Hold finished state so user can read
+        // 4. Hold finished state so user can read what was typed
         await new Promise(r => { timer = setTimeout(r, 2600) })
         if (cancelled) return
 
-        // 6. Advance to next app in the dock
+        // 5. Advance to next app in the dock
         dictateAppIdx = (dictateAppIdx + 1) % DICTATE_APPS.length
       }
     }
