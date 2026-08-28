@@ -19,6 +19,8 @@
 
   let active = $state('dictate')
   let wifiOff = $state(false)
+  let notchMenuOpen = $state(false)
+  let notchHover = $state(false)
 
   const features = [
     {
@@ -81,30 +83,29 @@
 
   function selectFeature(id) {
     active = id
+    notchMenuOpen = false
     if (id === 'dictate') dapp = 'slack'
   }
 
-  /* ── notch island state ── */
-  let notchState = $derived.by(() => {
+  /* ── notch state — mirrors the real app 1:1 ── */
+  let notchMode = $derived.by(() => {
+    if (notchMenuOpen) return 'menu'
+    if (notchHover) return 'hover'
     if (active === 'dictate') {
-      if (step === 1 || step === 4) return 'listening'
+      if (step === 1 || step === 4) return 'transcribing'
       if (step >= 2) return 'donems'
       return 'idle'
     }
     if (active === 'notes') {
-      if (step === 1) return 'menu'
-      if (step === 2) return 'noterec'
-      if (step === 3) return 'processing'
+      if (step === 2 || step === 3) return 'noterec'
       return 'idle'
     }
     if (active === 'capture') {
-      if (step === 1) return 'menu'
-      if (step >= 2 && step <= 3) return 'recdot'
-      if (step === 4) return 'processing'
+      if (step >= 2 && step <= 4) return 'callrec'
       return 'idle'
     }
     if (active === 'summarize') {
-      if (step === 1 || step === 2) return 'processing'
+      if (step === 1 || step === 2) return 'transcribing'
       if (step >= 3) return 'donems'
       return 'idle'
     }
@@ -238,46 +239,97 @@
             <span class="mclock mono">9:41 AM</span>
           </div>
 
-          <!-- Hardware Notch & Expanding Typie Island -->
+          <!-- Real Apple Hardware Notch with Expandable Wings & Menu (1:1 with Screenshots) -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
           <div
             class="notch"
-            class:wide={notchState !== 'idle'}
-            class:menuopen={notchState === 'menu'}
+            class:expanded={notchMode !== 'idle'}
+            class:menuopen={notchMode === 'menu'}
+            onmouseenter={() => (notchHover = true)}
+            onmouseleave={() => (notchHover = false)}
           >
-            <div class="nrow">
-              <!-- Animated Robot Mascot -->
-              <span class="nbot">
-                <Robot size={22} mood={notchState === 'listening' ? 'listening' : notchState === 'donems' ? 'done' : 'idle'} />
-              </span>
+            <!-- Top Wing Bar -->
+            <div class="notch-top-bar">
+              <!-- Left Wing: Dancing Robot -->
+              <div class="wing left-wing">
+                {#if notchMode !== 'idle'}
+                  <button class="robot-btn" onclick={() => selectFeature('notes')} title="Open Typie">
+                    <Robot size={21} mood={notchMode === 'transcribing' ? 'listening' : notchMode === 'donems' ? 'done' : 'idle'} />
+                  </button>
+                {/if}
+              </div>
 
-              <div class="nright">
-                {#if notchState === 'idle'}
-                  <span class="nplus" aria-hidden="true">
-                    <svg viewBox="0 0 12 12" width="11" height="11"><path d="M6 1.5v9M1.5 6h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                  </span>
-                {:else if notchState === 'listening'}
+              <!-- Physical Center: Real Mac Camera Lens -->
+              <div class="cam-housing">
+                <span class="cam-lens"></span>
+              </div>
+
+              <!-- Right Wing: Waveform / Plus / Note / Call / Close -->
+              <div class="wing right-wing">
+                {#if notchMode === 'menu'}
+                  <button class="menu-toggle-btn" onclick={() => (notchMenuOpen = false)} title="Close menu">
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="var(--hotpink)" stroke-width="2" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg>
+                  </button>
+                {:else if notchMode === 'hover' || notchMode === 'idle' && notchHover}
+                  <button class="menu-toggle-btn" onclick={() => (notchMenuOpen = true)} title="Quick actions">
+                    <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="var(--hotpink)" stroke-width="2.2" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
+                  </button>
+                {:else if notchMode === 'transcribing'}
+                  <!-- Pink Waveform (Screenshot 2) -->
                   <div class="nwave" aria-hidden="true">
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                   </div>
-                {:else if notchState === 'donems'}
-                  <svg viewBox="0 0 14 14" width="13" height="13" class="chk" aria-hidden="true">
-                    <path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <span class="nms mono">80ms</span>
-                {:else if notchState === 'noterec'}
-                  <span class="npulse" aria-hidden="true">
-                    <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 2h7l3 3v9H3z" fill="none" stroke="var(--hotpink)" stroke-width="1.8"/><path d="M10 2v3h3" fill="none" stroke="var(--hotpink)" stroke-width="1.8"/></svg>
+                {:else if notchMode === 'donems'}
+                  <!-- 80ms Done Checkmark -->
+                  <div class="done-pill">
+                    <svg viewBox="0 0 14 14" width="12" height="12" class="chk" aria-hidden="true">
+                      <path d="M2.5 7.5l3 3 6-7" fill="none" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="nms mono">80ms</span>
+                  </div>
+                {:else if notchMode === 'noterec'}
+                  <!-- Note Recording Icon -->
+                  <span class="note-icn" title="Recording note">
+                    <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 2h7l3 3v9H3z" fill="none" stroke="var(--hotpink)" stroke-width="1.8"/><path d="M10 2v3h3" fill="none" stroke="var(--hotpink)" stroke-width="1.8"/></svg>
                   </span>
-                  <span class="nlab mono">recording…</span>
-                {:else if notchState === 'recdot'}
-                  <span class="recring" aria-hidden="true"><i></i></span>
-                  <span class="nlab mono">REC 0:12</span>
-                {:else if notchState === 'processing'}
-                  <span class="ndots" aria-hidden="true"><i></i><i></i><i></i></span>
-                  <span class="nproc mono">writing it down…</span>
+                {:else if notchMode === 'callrec'}
+                  <!-- Call Recording Icon -->
+                  <span class="call-icn" title="Recording call">
+                    <svg viewBox="0 0 16 16" width="16" height="16"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#4ade80" stroke-width="1.8"/><rect x="6" y="6" width="4" height="4" fill="#4ade80"/></svg>
+                  </span>
                 {/if}
               </div>
             </div>
+
+            <!-- Expanded 3-Action Dropdown (Screenshot 4) -->
+            {#if notchMode === 'menu'}
+              <div class="notch-menu-grid">
+                <button class="nmenu-item" onclick={() => selectFeature('notes')}>
+                  <span class="nmenu-icn">
+                    <svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 2h7l3 3v9H3z" fill="none" stroke="var(--hotpink)" stroke-width="1.6"/><path d="M10 2v3h3" fill="none" stroke="var(--hotpink)" stroke-width="1.6"/></svg>
+                  </span>
+                  <span class="nmenu-label">quick note</span>
+                </button>
+                
+                <span class="nmenu-divider"></span>
+
+                <button class="nmenu-item" onclick={() => selectFeature('capture')}>
+                  <span class="nmenu-icn">
+                    <svg viewBox="0 0 16 16" width="18" height="18"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#4ade80" stroke-width="1.6"/><rect x="6" y="6" width="4" height="4" fill="#4ade80"/></svg>
+                  </span>
+                  <span class="nmenu-label">record call</span>
+                </button>
+
+                <span class="nmenu-divider"></span>
+
+                <button class="nmenu-item" onclick={() => selectFeature('summarize')}>
+                  <span class="nmenu-icn">
+                    <svg viewBox="0 0 16 16" width="18" height="18"><path d="M4 1.5h5.5L13 5v9.5H4z" fill="none" stroke="#c88cfd" stroke-width="1.6"/><path d="M6 7.5h4M6 10h4M6 12.5h2.5" stroke="#c88cfd" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  </span>
+                  <span class="nmenu-label">upload file</span>
+                </button>
+              </div>
+            {/if}
           </div>
 
           <!-- The Screen Content -->
@@ -593,48 +645,141 @@
   }
   .mclock { font-size: 12px; }
 
-  /* Hardware Notch & Island */
+  /* ══ REAL MAC HARDWARE NOTCH (1:1 with Screenshots) ══ */
   .notch {
     position: absolute;
     top: 0; left: 50%;
     transform: translateX(-50%);
     background: #000000;
     color: #ffffff;
-    border-radius: 0 0 16px 16px;
-    padding: 4px 14px 6px;
+    border-radius: 0 0 10px 10px;
     z-index: 30;
-    transition: width 0.35s var(--spring), padding 0.35s var(--spring), box-shadow 0.35s ease;
-    width: 140px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    width: 172px;
+    height: 30px;
+    transition: width 0.35s var(--spring), height 0.35s var(--spring), border-radius 0.35s ease, box-shadow 0.35s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
   }
-  .notch.wide { width: 260px; padding-inline: 18px; }
-  .nrow { display: flex; align-items: center; justify-content: space-between; height: 26px; }
-  .nbot { display: grid; place-items: center; }
-  .nright { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-  .nplus { opacity: 0.6; }
-  .chk { color: #4ade80; }
-  .nms { color: #4ade80; font-weight: 700; font-size: 11px; }
-  .nlab { font-size: 10.5px; color: var(--hotpink); letter-spacing: 0.04em; }
-  .nwave { display: flex; align-items: center; gap: 2px; height: 14px; }
-  .nwave i { width: 2.5px; border-radius: 2px; background: var(--hotpink); height: 35%; animation: nw 0.6s ease-in-out infinite alternate; }
-  .nwave i:nth-child(2) { animation-delay: 0.1s; height: 75%; }
+  
+  .notch.expanded {
+    width: 380px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .notch.menuopen {
+    width: 440px;
+    height: 82px;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  }
+
+  .notch-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    padding: 0 16px;
+  }
+
+  .cam-housing {
+    display: grid;
+    place-items: center;
+    width: 28px;
+  }
+  .cam-lens {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #0b0c11;
+    border: 1px solid #1c1e28;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+  }
+
+  .wing {
+    display: flex;
+    align-items: center;
+    min-width: 40px;
+  }
+  .left-wing { justify-content: flex-start; }
+  .right-wing { justify-content: flex-end; }
+
+  .robot-btn {
+    display: grid;
+    place-items: center;
+    color: var(--hotpink);
+    cursor: pointer;
+    line-height: 0;
+    transition: transform 0.15s var(--spring);
+  }
+  .robot-btn:hover { transform: scale(1.1); }
+
+  .menu-toggle-btn {
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: transform 0.15s var(--spring);
+  }
+  .menu-toggle-btn:hover { transform: scale(1.15); }
+
+  .nwave {
+    display: flex; align-items: center; gap: 2px; height: 16px;
+  }
+  .nwave i {
+    width: 2.2px; border-radius: 2px; background: var(--hotpink); height: 40%;
+    animation: nw 0.6s ease-in-out infinite alternate;
+  }
+  .nwave i:nth-child(2) { animation-delay: 0.1s; height: 80%; }
   .nwave i:nth-child(3) { animation-delay: 0.2s; height: 100%; }
   .nwave i:nth-child(4) { animation-delay: 0.3s; height: 60%; }
   .nwave i:nth-child(5) { animation-delay: 0.4s; height: 90%; }
   .nwave i:nth-child(6) { animation-delay: 0.5s; height: 45%; }
-  .nwave i:nth-child(7) { animation-delay: 0.6s; height: 80%; }
-  @keyframes nw { to { height: 15%; } }
+  .nwave i:nth-child(7) { animation-delay: 0.6s; height: 75%; }
+  @keyframes nw { to { height: 20%; } }
 
-  .ndots { display: flex; gap: 4px; }
-  .ndots i { width: 4px; height: 4px; border-radius: 50%; background: var(--hotpink); animation: ndot 0.8s infinite alternate; }
-  .ndots i:nth-child(2) { animation-delay: 0.2s; }
-  .ndots i:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes ndot { to { opacity: 0.2; transform: scale(0.7); } }
-  .nproc { font-size: 10.5px; color: #a1a1aa; }
+  .done-pill {
+    display: flex; align-items: center; gap: 5px;
+  }
+  .nms { color: #4ade80; font-weight: 700; font-size: 11px; }
 
-  .recring { display: inline-grid; place-items: center; width: 10px; height: 10px; }
-  .recring i { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; animation: recpulse 1.2s infinite; }
-  @keyframes recpulse { 50% { opacity: 0.3; transform: scale(0.85); } }
+  .note-icn, .call-icn {
+    display: grid; place-items: center;
+  }
+
+  /* Dropdown Menu (Screenshot 4) */
+  .notch-menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    align-items: center;
+    height: 52px;
+    padding: 0 10px 4px;
+    animation: menuFadeIn 0.25s var(--ease-out);
+  }
+  @keyframes menuFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .nmenu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 6px;
+    cursor: pointer;
+    transition: transform 0.15s var(--spring);
+  }
+  .nmenu-item:hover { transform: translateY(-2px); }
+  .nmenu-icn { display: grid; place-items: center; }
+  .nmenu-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #f3f4f6;
+    white-space: nowrap;
+  }
+  .nmenu-divider {
+    height: 24px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
 
   /* Screen Viewport */
   .screen-viewport {
@@ -716,6 +861,7 @@
   }
   .reccall.on { color: #ef4444; }
   .reccall.on i { width: 7px; height: 7px; border-radius: 50%; background: #ef4444; animation: recpulse 1.2s infinite; }
+  @keyframes recpulse { 50% { opacity: 0.3; transform: scale(0.85); } }
   
   .callbody { flex: 1; display: flex; background: #0f1117; color: #fff; }
   .callgrid {
