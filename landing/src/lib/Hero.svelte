@@ -731,49 +731,52 @@
   }
 
   .lid {
-    background: var(--mac-screen-bg);
+    background: linear-gradient(165deg, #f59e0b 0%, #fb923c 18%, #f472b6 48%, #c084fc 78%, #818cf8 100%);
     border-radius: 16px 16px 0 0;
     overflow: hidden;
     position: relative;
     aspect-ratio: 16 / 9.8;
-    min-height: 520px;
+    min-height: 530px;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
 
-  /* Mac Menu Bar */
+  /* Mac Menu Bar — same wallpaper gradient underneath, a few % darker */
   .menubar {
     height: 32px;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     display: flex; align-items: center; gap: 14px;
     padding: 0 16px;
     font-size: 12.5px; font-weight: 600;
-    color: var(--text-2);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
     z-index: 20;
   }
-  :root[data-theme="dark"] .menubar {
-    background: rgba(20, 22, 32, 0.75);
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-  }
-  .apple { width: 12px; height: 12px; }
-  .mapp { color: var(--ink); font-weight: 700; }
-  .mi { opacity: 0.7; }
+  .apple { width: 12px; height: 12px; fill: #ffffff; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2)); }
+  .mapp { color: #ffffff; font-weight: 700; }
+  .mi { opacity: 0.85; color: #ffffff; }
   .mspace { flex: 1; }
   .wifi-test-btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 3px 10px; border-radius: 999px;
-    background: var(--surface); border: 1px solid var(--line);
-    font-size: 11px; font-weight: 600; color: var(--text-2);
+    background: rgba(255, 255, 255, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 11px; font-weight: 600;
+    color: #ffffff;
+    backdrop-filter: blur(8px);
     cursor: pointer; transition: all 0.15s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   }
-  .wifi-test-btn:hover { border-color: var(--hotpink); color: var(--hotpink); }
+  .wifi-test-btn:hover { background: rgba(255, 255, 255, 0.32); border-color: #ffffff; }
   .wifi-test-btn.off {
-    background: var(--card-mint); color: #059669; border-color: #10b981;
+    background: rgba(16, 185, 129, 0.45); color: #ffffff; border-color: #34d399;
   }
-  .mclock { font-size: 12px; }
+  .mclock { font-size: 12px; color: #ffffff; }
 
   /* ══ REAL MAC HARDWARE NOTCH (M-Series MacBook Air Proportions) ══ */
   .notch {
