@@ -2,7 +2,7 @@
 // Run: swift scripts/gen_dmg_background.swift <output.png>
 // IMPORTANT: afterwards run
 //   sips -s dpiHeight 288 -s dpiWidth 288 <output.png>
-// Modern Finder does NOT scale DMG backgrounds — without 288 dpi metadata
+// Modern Finder does NOT scale DMG backgrounds, without 288 dpi metadata
 // it draws the raw pixels (2640x1680 pt) and crops most of the image off.
 import AppKit
 
@@ -15,7 +15,7 @@ img.lockFocusFlipped(true)
 
 let ctx = NSGraphicsContext.current!.cgContext
 
-// cream backdrop with a soft warm halo (ellipse fills — radial gradients
+// cream backdrop with a soft warm halo (ellipse fills, radial gradients
 // render a bright disc artifact in flipped contexts)
 NSColor(calibratedRed: 0.992, green: 0.984, blue: 0.937, alpha: 1).setFill() // #FDFBEF-ish
 ctx.fill(CGRect(x: 0, y: 0, width: W, height: H))
@@ -46,7 +46,7 @@ draw("→", size: 150, color: pink.withAlphaComponent(0.9), centerX: W/2, top: 2
 
 // instructions under the icons
 draw("Drag typie into Applications", size: 54, color: ink, centerX: W/2, top: 480)
-draw("then open it from there — first launch only:", size: 30, color: ink.withAlphaComponent(0.75),
+draw("then open it from there, first launch only:", size: 30, color: ink.withAlphaComponent(0.75),
      centerX: W/2, top: 570, weight: .regular)
 draw("System Settings → Privacy & Security → “Open Anyway”", size: 32, color: deepPink,
      centerX: W/2, top: 620, weight: .semibold)

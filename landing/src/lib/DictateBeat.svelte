@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
 
-  // one beat, three lines — the page dictates itself
+  // one beat, three lines, the page dictates itself
   const L1 = 'hold a key. ';
   const L2 = 'say the thing. ';
   const L3 = "it's typed.";
@@ -25,7 +25,7 @@
     if (!a) return;
     try {
       a.currentTime = 0;
-      // browsers without prior user activation simply stay silent — fine
+      // browsers without prior user activation simply stay silent, fine
       const p = a.play();
       if (p?.catch) p.catch(() => {});
     } catch {
@@ -115,7 +115,7 @@
 </section>
 
 <style>
-  /* impeccable-disable bounce-easing — the caret blink is a hardware-cursor stand-in, intentional */
+  /* impeccable-disable bounce-easing, the caret blink is a hardware-cursor stand-in, intentional */
   .beat {
     min-height: 100svh;
     display: grid;

@@ -5,8 +5,7 @@
 // tint at draw time.
 //
 // macOS's public SDK has no SVG renderer (NSSVGImageRep is not exposed,
-// ImageIO ignores SVG), so a raster at 4x is the crisp-at-13px tradeoff —
-// the SVGs stay bundled alongside for reference/future use.
+// ImageIO ignores SVG), so a raster at 4x is the crisp-at-13px tradeoff, // the SVGs stay bundled alongside for reference/future use.
 import { readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

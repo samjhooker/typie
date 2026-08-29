@@ -13,14 +13,14 @@
       meta: 'sales headcount · 1 (a robot)',
       greeting: 'hi. i handle enterprise sales. well. me and a download link.',
       pitch:
-        "so you'd like to book a briefing. before our legal team (also me) gets involved: typie is free and open source. every seat, every feature, $0. it's all on GitHub — go take it. meeting adjourned.",
+        "so you'd like to book a briefing. before our legal team (also me) gets involved: typie is free and open source. every seat, every feature, $0. it's all on GitHub, go take it. meeting adjourned.",
       quick: ['price?', 'security review?', 'pilot?'],
       replies: [
         '$0.00. that is my entire pricing strategy.',
         'error 402: payment required. nobody has ever triggered this error.',
         'our enterprise tier and our free tier are the same zip file.',
         'escalating to the sales department. it is a hallway. it is empty.',
-        'briefing agenda: item one — it\u2019s free. q&a — see item one.',
+        'briefing agenda: item one, it\u2019s free. q&a, see item one.',
         'i am a very small robot. my whole enterprise offering lives at github.com/samjhooker/typie.',
         'PO approved. total: nothing. procurement will barely notice.',
       ],
@@ -32,7 +32,7 @@
       greeting:
         "hi! i handle campus licensing. by which i mean: there isn't any.",
       pitch:
-        "booking a pilot? great news — it's already free. teachers, students, ten-thousand-seat districts: same download, $0 forever. grab it on GitHub. no forms, no quotes, no me.",
+        "booking a pilot? great news, it's already free. teachers, students, ten-thousand-seat districts: same download, $0 forever. grab it on GitHub. no forms, no quotes, no me.",
       quick: ['price?', 'FERPA?', 'quote?'],
       replies: [
         '$0 per seat. also per district. also per planet.',

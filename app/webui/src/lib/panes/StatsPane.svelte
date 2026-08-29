@@ -12,7 +12,7 @@
   const dictations = $derived(stats.totalDictations);
   const words = $derived(stats.totalWords);
 
-  // real activity from history — last 14 days of dictation counts
+  // real activity from history, last 14 days of dictation counts
   const days = $derived.by(() => {
     const out = [];
     const now = new Date();
@@ -59,7 +59,7 @@
 
   {#if dictations === 0}
     <div class="empty">
-      <span class="hand big">no stats yet — start dictating!</span>
+      <span class="hand big">no stats yet, start dictating!</span>
       <p>this page fills itself in as you talk.</p>
     </div>
   {:else}

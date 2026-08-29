@@ -1,13 +1,13 @@
 #!/bin/zsh
 # Creates a stable self-signed code-signing certificate ("typie-dev") in the
 # login keychain. With a stable identity, macOS TCC permissions (Accessibility,
-# Input Monitoring, Microphone) survive rebuilds — no ad-hoc hash churn.
+# Input Monitoring, Microphone) survive rebuilds, no ad-hoc hash churn.
 set -e
 
 CERT_NAME="typie-dev"
 
 if security find-identity -v -p codesigning | grep -q "$CERT_NAME"; then
-    echo "✓ '$CERT_NAME' already exists — nothing to do"
+    echo "✓ '$CERT_NAME' already exists, nothing to do"
     exit 0
 fi
 
@@ -31,7 +31,7 @@ security import "$WORKDIR/cert.p12" \
     -P typie-local-cert \
     -T /usr/bin/codesign
 
-# trust the cert for code signing (user domain — may show a password prompt)
+# trust the cert for code signing (user domain, may show a password prompt)
 security add-trusted-cert -r trustRoot -p codeSign \
     -k "$HOME/Library/Keychains/login.keychain-db" "$WORKDIR/cert.pem"
 

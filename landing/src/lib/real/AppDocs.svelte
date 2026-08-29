@@ -1,5 +1,5 @@
 <script>
-  /* full Google Docs UI — used inside the hero Mac; the doc receives the dictation */
+  /* full Google Docs UI, used inside the hero Mac; the doc receives the dictation */
   let { typed = '', listening = false, pasted = false } = $props();
 
   const paras = [

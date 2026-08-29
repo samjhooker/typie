@@ -37,7 +37,7 @@ final class DictationController: ObservableObject {
 
         monitor.onKeyDown = { [weak self] key in
             guard let self, let settings = self.settings else { return }
-            AppLog.event("key DOWN \(key.rawValue) — bound key: \(settings.hotkey.rawValue), mode: \(settings.triggerMode.rawValue), phase: \(self.phase)")
+            AppLog.event("key DOWN \(key.rawValue), bound key: \(settings.hotkey.rawValue), mode: \(settings.triggerMode.rawValue), phase: \(self.phase)")
             guard settings.hotkey == key else { return }
             switch settings.triggerMode {
             case .hold:
@@ -71,7 +71,7 @@ final class DictationController: ObservableObject {
         }
         monitor.onKeyUp = { [weak self] key in
             guard let self, let settings = self.settings, settings.hotkey == key else { return }
-            AppLog.event("key UP \(key.rawValue) — phase: \(self.phase)")
+            AppLog.event("key UP \(key.rawValue), phase: \(self.phase)")
             guard phase == .listening else { return }
             switch settings.triggerMode {
             case .hold:
@@ -89,17 +89,17 @@ final class DictationController: ObservableObject {
     func startMonitoring() {
         let mic = AudioCapture.micPermissionGranted()
         let ax = HotkeyMonitor.accessibilityGranted(prompt: false)
-        AppLog.event("startMonitoring — mic: \(mic), accessibility: \(ax), model: \(ModelManager.modelsExist())")
+        AppLog.event("startMonitoring, mic: \(mic), accessibility: \(ax), model: \(ModelManager.modelsExist())")
         monitor.start()
     }
 
     func startRecording() {
         if !ModelManager.modelsExist() {
-            AppLog.event("REFUSED to record — model not downloaded yet")
+            AppLog.event("REFUSED to record, model not downloaded yet")
             return
         }
         if !AudioCapture.micPermissionGranted() {
-            AppLog.event("REFUSED to record — microphone permission missing")
+            AppLog.event("REFUSED to record, microphone permission missing")
             return
         }
         do {
@@ -122,7 +122,7 @@ final class DictationController: ObservableObject {
         let samples = capture.stop()
         phase = .transcribing
         SoundPlayer.playRelease()
-        AppLog.event("recording stopped — \(samples.count) samples, \(String(format: "%.1f", Double(samples.count) / 16_000))s")
+        AppLog.event("recording stopped, \(samples.count) samples, \(String(format: "%.1f", Double(samples.count) / 16_000))s")
         Task { [weak self] in
             await self?.transcribe(samples: samples)
         }
@@ -136,7 +136,7 @@ final class DictationController: ObservableObject {
         // the model chokes on ultra-short clips (invalidAudioData)
         let seconds = Double(samples.count) / 16_000
         guard seconds >= 0.5 else {
-            AppLog.event(String(format: "clip too short (%.1fs) — skipping model", seconds))
+            AppLog.event(String(format: "clip too short (%.1fs), skipping model", seconds))
             finishWithFailure()
             return
         }

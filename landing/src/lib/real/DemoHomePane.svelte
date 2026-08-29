@@ -18,7 +18,7 @@
     <h2>what are we typing today?</h2>
     <p>
       <span class="hand hint-hand"
-        >the key is the app — everything below is just the filing cabinet</span
+        >the key is the app, everything below is just the filing cabinet</span
       >
     </p>
   </header>
@@ -29,7 +29,7 @@
       <span class="trig mono">hold to talk</span>
     </div>
     <h3>hold. talk. done.</h3>
-    <p>says it wherever your cursor is — every app, zero cloud.</p>
+    <p>says it wherever your cursor is, every app, zero cloud.</p>
   </section>
 
   <div class="grid">
@@ -42,7 +42,7 @@
         <h4>quick note</h4>
       </div>
       <p class="peek">
-        "podcast idea — the voice is the interface, not the keyboard"
+        "podcast idea, the voice is the interface, not the keyboard"
       </p>
       <div class="acts">
         <button class="btn btn-pink small">new note</button>
@@ -104,7 +104,7 @@
     </div>
   </div>
 
-  <p class="privacy mono">● everything stays here — no cloud, ever.</p>
+  <p class="privacy mono">● everything stays here, no cloud, ever.</p>
 </div>
 
 <style>

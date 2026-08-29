@@ -18,7 +18,7 @@ enum WebRoute: String {
 /// Standalone message-handler object: must be registered on the
 /// WKWebViewConfiguration *before* the WKWebView is created (WebKit
 /// ignores configuration changes afterwards), so it can't be the
-/// controller itself — that would need self before super.init.
+/// controller itself, that would need self before super.init.
 private final class ScriptBridge: NSObject, WKScriptMessageHandler {
     var onMessage: (([String: Any]) -> Void)?
 
@@ -58,12 +58,12 @@ private final class SchemeHandler: NSObject, WKURLSchemeHandler {
         components.query = nil
         components.fragment = nil
         var relPath = percentDecode(components.url?.path ?? "/index.html")
-        // URL paths always carry a leading "/" — strip it or prefix checks below
+        // URL paths always carry a leading "/", strip it or prefix checks below
         // silently never match (this exact bug muted all transcript audio once)
         while relPath.hasPrefix("/") { relPath.removeFirst() }
         if relPath.isEmpty { relPath = "index.html" }
 
-        // transcript audio lives OUTSIDE the bundle, in the data dir —
+        // transcript audio lives OUTSIDE the bundle, in the data dir,
         // served so the web UI can scrub recordings word-by-word
         if relPath.hasPrefix("transcript-audio/") {
             return serveTranscriptAudio(task, url: url, name: String(relPath.dropFirst("transcript-audio/".count)))
@@ -113,7 +113,7 @@ private final class SchemeHandler: NSObject, WKURLSchemeHandler {
             return
         }
 
-        // NB: no-store is load-bearing — without cache headers WebKit
+        // NB: no-store is load-bearing, without cache headers WebKit
         // heuristically caches typie:// responses, and a stale index.html
         // keeps serving an old UI bundle across app updates.
         let response = HTTPURLResponse(
@@ -189,7 +189,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
     init(route: WebRoute, title: String, size: NSSize) {
         self.route = route
 
-        // register the bridge BEFORE the web view exists — mandatory,
+        // register the bridge BEFORE the web view exists, mandatory,
         // later additions to the config are ignored by WebKit
         let config = WKWebViewConfiguration()
         config.userContentController.add(bridge, name: "typie")
@@ -215,7 +215,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
         win.contentView = view
         win.center()
 
-        // onboarding: seamless chrome — the web header IS the top bar, with
+        // onboarding: seamless chrome, the web header IS the top bar, with
         // the traffic lights floating over the page (web side pads its header)
         if route == .onboarding {
             win.styleMask.insert(.fullSizeContentView)
@@ -275,7 +275,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
     // MARK: page load
 
     /// Root of the bundled web UI (WebResources/webui/, copied verbatim
-    /// by SPM's .copy rule). Served to the WebView over a custom scheme —
+    /// by SPM's .copy rule). Served to the WebView over a custom scheme,
     /// file:// URLs can't fetch ES modules (CORS), so we speak "typie://".
     static let webUIRoot: URL? = {
         let bundle = Bundle.typieResources
@@ -287,7 +287,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
 
     private func loadPage() {
         guard Self.webUIRoot != nil else {
-            AppLog.event("webui: index.html NOT FOUND in resource bundle — window will be blank")
+            AppLog.event("webui: index.html NOT FOUND in resource bundle, window will be blank")
             return
         }
         webView.load(URLRequest(url: URL(string: "typie://webui/index.html")!))
@@ -328,9 +328,9 @@ final class WebUIController: NSObject, NSWindowDelegate {
             .store(in: &cancellables)
     }
 
-    /// Permissions don't publish — poll while the window exists so the
+    /// Permissions don't publish, poll while the window exists so the
     /// onboarding badges flip the moment the user approves in System Settings.
-    /// Poll every 2s (was 0.7s — caused jank) and only pushes if permissions changed.
+    /// Poll every 2s (was 0.7s, caused jank) and only pushes if permissions changed.
     private var lastPermissionSnapshot: String = ""
     private func startPermissionPolling() {
         permissionPoller = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
@@ -347,7 +347,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
 
     private func schedulePush() {
         // coalesce bursts (diarize progress ticks fire many times a second,
-        // and each push serializes the whole library) — at most ~8 pushes/sec
+        // and each push serializes the whole library), at most ~8 pushes/sec
         guard !pushPending else { return }
         pushPending = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
@@ -418,7 +418,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                 ] as [String: Any]
             },
             "transcripts": TranscriptStore.shared.transcripts.map { transcript in
-                // METADATA ONLY — turns/words made every push O(library) on
+                // METADATA ONLY, turns/words made every push O(library) on
                 // the main thread and froze the whole UI during processing.
                 // The detail pane fetches one full transcript via "transcriptGet".
                 [
@@ -575,7 +575,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
     }
 
     private func presentAudioOpenPanel() {
-        // no busy guard — extra picks just line up in the queue
+        // no busy guard, extra picks just line up in the queue
         let panel = NSOpenPanel()
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = true
@@ -593,7 +593,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
     /// Drag-and-drop arrives as a chunked base64 upload (WKWebView gives JS
     /// File objects without paths), which we reassemble into a temp file.
     /// Stage a completed chunk-upload into typie's own data dir (a persistent
-    /// staging copy — NOT tmp), then enqueue it. The store adopts the staged
+    /// staging copy, NOT tmp), then enqueue it. The store adopts the staged
     /// file by move, so every transcript keeps its own unique audio copy.
     private func finishDrop(_ upload: DropUpload) {
         let ext = (upload.name as NSString).pathExtension
@@ -601,12 +601,12 @@ final class WebUIController: NSObject, NSWindowDelegate {
         let displayName = upload.name
         let stagedURL = TranscriptStore.uploadsDir
             .appendingPathComponent("\(UUID().uuidString).\(safeExt)")
-        // uploads can be hundreds of MB — stage the file off the main thread
+        // uploads can be hundreds of MB, stage the file off the main thread
         Task.detached(priority: .userInitiated) { [weak self] in
             do {
                 try upload.data.write(to: stagedURL)
             } catch {
-                AppLog.event("transcribe: failed to stage dropped file — \(error.localizedDescription)")
+                AppLog.event("transcribe: failed to stage dropped file, \(error.localizedDescription)")
                 return
             }
             await MainActor.run { [weak self] in
@@ -753,7 +753,7 @@ extension WebUIController: WKNavigationDelegate {
             pushState()
 
         case "windowTheme":
-            // the web theme changed — window chrome + under-page follow
+            // the web theme changed, window chrome + under-page follow
             let dark = body["dark"] as? Bool ?? false
             syncWindowChrome(dark: dark)
 
@@ -904,7 +904,7 @@ extension WebUIController: WKNavigationDelegate {
                 // quietly regenerate so opening an old transcript upgrades it
                 if t.aiEngine == "heuristic", t.aiStatus == "done",
                    MeetingAIService.shared.isSupported {
-                    AppLog.event("ai: upgrading heuristic summary to FoundationModels — \(t.fileName)")
+                    AppLog.event("ai: upgrading heuristic summary to FoundationModels, \(t.fileName)")
                     Task { await TranscriptStore.shared.generateAI(for: id) }
                 }
                 if let data = try? JSONSerialization.data(withJSONObject: payload),
@@ -916,7 +916,7 @@ extension WebUIController: WKNavigationDelegate {
             }
 
         case "transcriptGenerateAI":
-            // explicit user action — heuristics allowed when the real model
+            // explicit user action, heuristics allowed when the real model
             // is unavailable, because they asked for it
             if let id = Self.uuid(from: body) {
                 Task { await TranscriptStore.shared.generateAI(for: id, allowHeuristic: true) }

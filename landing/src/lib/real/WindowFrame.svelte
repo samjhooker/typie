@@ -1,6 +1,6 @@
 <script>
   /**
-   * WindowFrame — macOS-style window chrome for bento UI mocks.
+   * WindowFrame, macOS-style window chrome for bento UI mocks.
    * Traffic lights + title bar make the preview read as a real app
    * window; themed via landing tokens (works light + dark).
    */
@@ -22,7 +22,7 @@
     flex-direction: column;
     height: 100%;
     background: var(--surface);
-    /* dotted border — blueprint/mockup feel, clearly not the card edge */
+    /* dotted border, blueprint/mockup feel, clearly not the card edge */
     border: 1.5px dotted var(--line-strong);
     border-radius: 14px;
     overflow: hidden;

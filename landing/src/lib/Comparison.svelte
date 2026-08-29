@@ -27,19 +27,19 @@
     {
       cap: 'Voice notes & sticky wall',
       typie: '✓',
-      mac: '—',
-      other: '—',
+      mac: '–',
+      other: '–',
     },
     {
       cap: 'Meeting capture without a bot joining',
       typie: '✓',
-      mac: '—',
-      other: '—',
+      mac: '–',
+      other: '–',
     },
     {
       cap: 'File transcription, diarization & AI summary',
       typie: '✓',
-      mac: '—',
+      mac: '–',
       other: '✓',
     },
     {
@@ -51,8 +51,8 @@
     {
       cap: 'Open source (MIT)',
       typie: '✓',
-      mac: '—',
-      other: '—',
+      mac: '–',
+      other: '–',
     },
     {
       cap: 'Price',
@@ -133,8 +133,8 @@
                   </span>
                 {:else if r.typie === '✓'}
                   <span class="chk-us">✓</span>
-                {:else if r.typie === '—' || r.typie === '✗'}
-                  <span class="dash">—</span>
+                {:else if r.typie === '–' || r.typie === '✗'}
+                  <span class="dash">–</span>
                 {:else}
                   <strong class="price-us">{r.typie}</strong>
                 {/if}
@@ -152,8 +152,8 @@
                   </span>
                 {:else if r.mac === '✓'}
                   <span class="chk">✓</span>
-                {:else if r.mac === '—'}
-                  <span class="dash">—</span>
+                {:else if r.mac === '–'}
+                  <span class="dash">–</span>
                 {:else if r.mac === '✗'}
                   <span class="cross">✗</span>
                 {:else}
@@ -173,8 +173,8 @@
                   </span>
                 {:else if r.other === '✓'}
                   <span class="chk">✓</span>
-                {:else if r.other === '—'}
-                  <span class="dash">—</span>
+                {:else if r.other === '–'}
+                  <span class="dash">–</span>
                 {:else if r.other === '✗'}
                   <span class="cross">✗</span>
                 {:else}

@@ -56,14 +56,14 @@ export const ui = $state({
 export const local = $state({
   pane: 'home',
   selectedTranscriptId: null,
-  openedIds: {}, // transcripts opened at least once — the "new" chip retires
+  openedIds: {}, // transcripts opened at least once, the "new" chip retires
   step: 0,
   practice: '',
   flash: false,
   copiedId: null,
   recheck: false, // true when we re-show only the permissions step after setup
   // remember that screen permission was granted (or requested) so we don't
-  // re-ask on every navigation — macOS needs a restart for CGPreflight to
+  // re-ask on every navigation, macOS needs a restart for CGPreflight to
   // flip, so we optimistically cache the grant
   askedScreenPermission: (() => {
     try {
@@ -72,7 +72,7 @@ export const local = $state({
       return false;
     }
   })(),
-  // Apple Intelligence banner dismissed — SESSION-ONLY. Never persisted:
+  // Apple Intelligence banner dismissed, SESSION-ONLY. Never persisted:
   // a one-time ✕ click must not hide the hint forever.
   aiNudgeDismissed: false,
 });

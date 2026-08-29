@@ -1,5 +1,5 @@
 <script>
-  /** segmented sort picker — same visual language as TriggerPicker's segment */
+  /** segmented sort picker, same visual language as TriggerPicker's segment */
   let { options = [], value = $bindable() } = $props();
 </script>
 

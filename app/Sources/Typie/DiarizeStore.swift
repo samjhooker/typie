@@ -8,7 +8,7 @@ import Foundation
 /// the offline VBx diarization pipeline (pyannote-style segmentation +
 /// WeSpeaker embeddings + VBx clustering, ~22 MB of CoreML models) answers
 /// who-spoke-when, and we merge the two at the token level into turns.
-/// One timed word inside a transcript turn — an ASR token cluster starting
+/// One timed word inside a transcript turn, an ASR token cluster starting
 /// at each sentencepiece word boundary. Codable so it persists verbatim in
 /// StoredTurn and powers click-a-word-to-jump playback in the web UI.
 struct TimedWord: Equatable, Codable {
@@ -50,7 +50,7 @@ final class DiarizeStore: ObservableObject {
         /// timings (then only `plainTranscript` is shown)
         var turns: [Turn]
         var plainTranscript: String
-        /// where the audio came from — TranscriptStore copies it into the
+        /// where the audio came from, TranscriptStore copies it into the
         /// library while it still exists (temp files die right after)
         var sourceAudio: URL?
 
@@ -73,7 +73,7 @@ final class DiarizeStore: ObservableObject {
     @Published private(set) var result: JobResult?
     @Published private(set) var errorText: String?
 
-    /// fired once per successful job — TranscriptStore files results here.
+    /// fired once per successful job, TranscriptStore files results here.
     /// Async: filing may await background work (audio stash) that MUST
     /// complete before the caller deletes source files.
     var onJobCompleted: ((JobResult) async -> Void)?
@@ -99,7 +99,7 @@ final class DiarizeStore: ObservableObject {
     ]
 
     /// Side-effect-free cache check: same layout ModelCache verifies after
-    /// download (<models dir>/<repo>/<asset>). Tolerate legacy plda layout —
+    /// download (<models dir>/<repo>/<asset>). Tolerate legacy plda layout.
     /// `OfflineDiarizerModels.load` also probes a few fallback locations.
     static func modelsPresent() -> Bool {
         let repoDir = MLModelConfigurationUtils.defaultModelsDirectory(for: .diarizer)
@@ -123,7 +123,7 @@ final class DiarizeStore: ObservableObject {
     }
 
     /// Resolve `.unknown` (and heal a stale `.notDownloaded`) from disk.
-    /// Called on every UI push — the file check is cheap and fixes the
+    /// Called on every UI push, the file check is cheap and fixes the
     /// "download again" flash when models were added after the first probe.
     func refreshModelState() {
         switch modelState {
@@ -212,7 +212,7 @@ final class DiarizeStore: ObservableObject {
                 "diarizer: ready (compile \(String(format: "%.2f", models.compilationDuration))s)")
         } catch {
             modelState = .failed(error.localizedDescription)
-            AppLog.event("diarizer: model load failed — \(error.localizedDescription)")
+            AppLog.event("diarizer: model load failed, \(error.localizedDescription)")
         }
     }
 
@@ -225,7 +225,7 @@ final class DiarizeStore: ObservableObject {
 
     /// One queued transcription job. `owned` = the file is typie-staged (a
     /// temp meeting wav or a staged upload) and may be deleted after processing.
-    /// `existingId` = a placeholder transcript already filed — results are
+    /// `existingId` = a placeholder transcript already filed, results are
     /// attached to it instead of creating a new entry.
     struct PendingJob {
         let url: URL
@@ -241,7 +241,7 @@ final class DiarizeStore: ObservableObject {
     private var drainingQueue = false
     private var currentJob: PendingJob?
 
-    /// How many jobs are waiting/running — shown in the web UI as "n in queue".
+    /// How many jobs are waiting/running, shown in the web UI as "n in queue".
     var queuedCount: Int { pendingJobs.count + (drainingQueue ? 1 : 0) }
 
     /// Per-item queue snapshot for the web UI (running job first).
@@ -284,7 +284,7 @@ final class DiarizeStore: ObservableObject {
                 try? FileManager.default.removeItem(at: job.url)
             }
             if !filed {
-                AppLog.event("transcribe: job failed or skipped — \(job.url.lastPathComponent)")
+                AppLog.event("transcribe: job failed or skipped, \(job.url.lastPathComponent)")
             }
             objectWillChange.send()
         }
@@ -310,7 +310,7 @@ final class DiarizeStore: ObservableObject {
         let started = DispatchTime.now()
         do {
             // 1. normalize any container/format to 16 kHz mono Float32.
-            // decoding can take a while on long recordings — never on the
+            // decoding can take a while on long recordings, never on the
             // main actor, or the whole app beachballs
             stage = "reading audio"
             progress = nil
@@ -323,11 +323,11 @@ final class DiarizeStore: ObservableObject {
             stage = "transcribing"
             progress = nil
             AppLog.event(
-                "transcribe: \(url.lastPathComponent) — \(samples.count / 16_000)s of audio")
+                "transcribe: \(url.lastPathComponent), \(samples.count / 16_000)s of audio")
             let asr = try await ModelManager.shared.transcribeDetailed(samples)
 
             // 3. offline VBx diarization with per-chunk progress + live ETA
-            // (diarization dominates long jobs — chunk rate gives an honest estimate)
+            // (diarization dominates long jobs, chunk rate gives an honest estimate)
             stage = "identifying speakers"
             let diarizeStarted = DispatchTime.now()
             let mgr = try requireManager()
@@ -360,7 +360,7 @@ final class DiarizeStore: ObservableObject {
             )
             AppLog.event(
                 """
-                transcribe: done in \(Int(elapsedMs))ms — \
+                transcribe: done in \(Int(elapsedMs))ms, \
                 \(turns.count) turns, \(result?.speakerCount ?? 0) speakers
                 """)
             if let completed = result {
@@ -375,7 +375,7 @@ final class DiarizeStore: ObservableObject {
             return false
         } catch {
             errorText = error.localizedDescription
-            AppLog.event("transcribe: failed — \(error.localizedDescription)")
+            AppLog.event("transcribe: failed, \(error.localizedDescription)")
             return false
         }
     }
@@ -410,10 +410,10 @@ final class DiarizeStore: ObservableObject {
             return order.count - 1
         }
 
-        // pass 1 — tokens → words
+        // pass 1, tokens → words
         // NB: FluidAudio normalizes tokens BEFORE handing them to us
         // (AsrManager.normalizedTimingToken swaps sentencepiece "▁" for a
-        // leading space), so a word-start is a LEADING SPACE here — checking
+        // leading space), so a word-start is a LEADING SPACE here, checking
         // for "▁" alone would glue the whole file into one word.
         var words: [(text: String, start: Double, end: Double)] = []
         for timing in timings {
@@ -429,13 +429,13 @@ final class DiarizeStore: ObservableObject {
                      start: timing.startTime,
                      end: timing.endTime))
             } else {
-                // subword or punctuation glued to the front token — same word
+                // subword or punctuation glued to the front token, same word
                 words[words.count - 1].text += piece
                 words[words.count - 1].end = max(words[words.count - 1].end, timing.endTime)
             }
         }
 
-        // pass 2 — speaker per word: pick the segment with the greatest
+        // pass 2, speaker per word: pick the segment with the greatest
         // temporal OVERLAP (midpoints alone drift a couple of seconds near
         // boundaries), then smooth isolated mislabelled runs away.
         var labeled: [(text: String, start: Double, end: Double, speaker: Int)] = []
@@ -447,7 +447,7 @@ final class DiarizeStore: ObservableObject {
         }
         Self.smoothSpeakerRuns(&labeled)
 
-        // pass 3 — words → speaker-labeled turns
+        // pass 3, words → speaker-labeled turns
         var turns: [Turn] = []
         for w in labeled {
             let word = TimedWord(text: w.text, start: w.start, end: w.end)
@@ -473,7 +473,7 @@ final class DiarizeStore: ObservableObject {
         return turns
     }
 
-    /// The segment overlapping the word most — not just the nearest midpoint.
+    /// The segment overlapping the word most, not just the nearest midpoint.
     /// A word straddling a speaker change lands on whoever was talking longer
     /// during it, which visibly tightens up boundary accuracy.
     private static func bestSegment(
@@ -497,7 +497,7 @@ final class DiarizeStore: ObservableObject {
 
     /// Speaker-label smoothing: a short run (≤ 1.2s) of words labelled X,
     /// sandwiched between runs of the same other speaker Y, is almost always
-    /// a diarization boundary artifact — fold it into Y.
+    /// a diarization boundary artifact, fold it into Y.
     private static func smoothSpeakerRuns(
         _ labeled: inout [(text: String, start: Double, end: Double, speaker: Int)]
     ) {

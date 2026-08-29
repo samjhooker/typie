@@ -22,13 +22,13 @@ final class NotchPanel: NSPanel {
     /// pointer within this distance of the top edge expands the shelf
     /// (kept tight: the menu bar is ~24-33 pt, we add a little reach)
     static let hoverZoneHeight: CGFloat = 32
-    /// …and within this horizontal band of screen centre — tight to the
+    /// …and within this horizontal band of screen centre, tight to the
     /// compact pill so hover feels precise (wings just outside notch)
     static let hoverZoneHalfWidth: CGFloat = 180
 
     private var moveMonitors: [Any] = []
 
-    /// Compact bar that just pops outside the notch — robot left, + right
+    /// Compact bar that just pops outside the notch, robot left, + right
     /// sit outside the hardware cutout but don't span the whole screen.
     /// Recording wings are a single small button each, so the compact width
     /// keeps them clear of the hardware cutout at all times.
@@ -49,7 +49,7 @@ final class NotchPanel: NSPanel {
         )
         isOpaque = false
         backgroundColor = .clear
-        // above the menu bar and everything else — the notch region is
+        // above the menu bar and everything else, the notch region is
         // contested real estate
         level = NSWindow.Level(Int(CGWindowLevelForKey(.maximumWindow)))
         collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
@@ -59,7 +59,7 @@ final class NotchPanel: NSPanel {
         hasShadow = false
 
         let view = ShelfHostingView(rootView: NotchView())
-        // audio/video drop target — the Otter move (PRD §3)
+        // audio/video drop target, the Otter move (PRD §3)
         view.registerForDraggedTypes([.fileURL])
         contentView = view
         hostingView = view
@@ -83,7 +83,7 @@ final class NotchPanel: NSPanel {
         }
     }
 
-    // MARK: hover tracking (PRD §3 — the shelf)
+    // MARK: hover tracking (PRD §3, the shelf)
 
     /// Global monitor catches moves over OTHER apps (the common case);
     /// local monitor catches moves over our own windows. Both funnel into
@@ -98,7 +98,7 @@ final class NotchPanel: NSPanel {
             return event
         })
         // tools pinning/unpinning the open shelf also flip interactivity
-        // (@Published sends objectWillChange BEFORE the change — defer so
+        // (@Published sends objectWillChange BEFORE the change, defer so
         // refreshInteraction sees the new state)
         ShelfController.shared.objectWillChange
             .sink { [weak self] _ in
@@ -119,7 +119,7 @@ final class NotchPanel: NSPanel {
     private var lastHoverAt: TimeInterval = 0
 
     fileprivate func updateHover() {
-        // throttle to ~60hz — mouseMoved fires hundreds per second and each
+        // throttle to ~60hz, mouseMoved fires hundreds per second and each
         // call dispatches to @MainActor; without throttling the SwiftUI shelf
         // re-renders constantly and hover over dropdown rows feels laggy
         let now = CFAbsoluteTimeGetCurrent()
@@ -144,7 +144,7 @@ final class NotchPanel: NSPanel {
         refreshInteraction()
     }
 
-    /// accept clicks ONLY while you can see the shelf — otherwise the
+    /// accept clicks ONLY while you can see the shelf, otherwise the
     /// invisible strip above the menu bar would swallow clicks meant for
     /// menu bar extras
     private func refreshInteraction() {
@@ -200,7 +200,7 @@ final class NotchPanel: NSPanel {
     private func positionPlusMenu() {
         guard let screen = NSScreen.main else { return }
         let panelFrame = frame
-        // same width as the notch pill — now from y=0 (very top of screen) so
+        // same width as the notch pill, now from y=0 (very top of screen) so
         // the black is seamless from the menu bar down; no border
         let width = panelFrame.width
         let height: CGFloat = plusDropdownHeight + panelFrame.height
@@ -268,11 +268,11 @@ final class NotchPanel: NSPanel {
         let x = bounds.midX - width / 2
         setFrame(NSRect(x: x, y: y, width: width, height: height), display: true)
         hostingView?.sizingOptions = []
-        AppLog.event("notch panel — screen: \(screen.localizedName), \(Int(bounds.width))×\(Int(bounds.height)), menubar: \(Int(height))pt, notch: \(Int(Self.notchWidth))×\(Int(Self.notchHeight)), notched: \(hasNotch)")
+        AppLog.event("notch panel, screen: \(screen.localizedName), \(Int(bounds.width))×\(Int(bounds.height)), menubar: \(Int(height))pt, notch: \(Int(Self.notchWidth))×\(Int(Self.notchHeight)), notched: \(hasNotch)")
     }
 }
 
-/// Dropdown that grows directly from the notch — same width, pure black,
+/// Dropdown that grows directly from the notch, same width, pure black,
 /// from y=0 (very top of screen) so there's no seam; only bottom is rounded.
 final class PlusDropdownPanel: NSPanel {
     init() {
@@ -287,7 +287,7 @@ final class PlusDropdownPanel: NSPanel {
         level = NSWindow.Level(Int(CGWindowLevelForKey(.maximumWindow)) - 1)
         collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
         hasShadow = false
-        // host the SwiftUI menu — black, no border, only bottom rounded
+        // host the SwiftUI menu, black, no border, only bottom rounded
         let view = NSHostingView(rootView: PlusMenuView())
         view.wantsLayer = true
         contentView = view
@@ -299,10 +299,10 @@ final class PlusDropdownPanel: NSPanel {
 private struct PlusMenuView: View {
     var body: some View {
         VStack(spacing: 0) {
-            // seamless black from the very top of the screen down through the pill — trimmed from +8 to +4 to reduce top argin
+            // seamless black from the very top of the screen down through the pill, trimmed from +8 to +4 to reduce top argin
             Color.black.frame(height: NotchPanel.notchHeight + 4)
-            // horizontal 3-up — compact, minimal, no descriptions (per screenshot)
-            // uses the cute glyph SVGs (same as the main app — Glyph.svelte)
+            // horizontal 3-up, compact, minimal, no descriptions (per screenshot)
+            // uses the cute glyph SVGs (same as the main app, Glyph.svelte)
             HStack(spacing: 0) {
                 PlusItem(icon: "glyph-note", tint: Theme.hotpink, title: "quick note") {
                     ShelfController.shared.plusMenuVisible = false
@@ -389,7 +389,7 @@ private struct Triangle: Shape {
 
 /// Hosts the shelf UI and doubles as an audio/video drop target:
 /// dropping a media file anywhere on the expanded shelf launches a
-/// Transcribe job immediately (PRD §3 — "the Otter move").
+/// Transcribe job immediately (PRD §3, "the Otter move").
 final class ShelfHostingView: NSHostingView<NotchView> {
     /// true if the pasteboard carries a file that looks like audio/video
     private var mediaURLs: [URL] {

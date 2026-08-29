@@ -54,7 +54,7 @@
       <li>no way for us to hear you</li>
     </ul>
 
-    <p class="pledge hand">not a policy — it's the architecture.</p>
+    <p class="pledge hand">not a policy, it's the architecture.</p>
   </div>
 </section>
 

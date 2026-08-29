@@ -59,7 +59,7 @@ final class StatsStore: ObservableObject {
         text.split(whereSeparator: \.isWhitespace).count
     }
 
-    /// "2h 14m", "45m", "under a minute" — friendly durations for stat cards
+    /// "2h 14m", "45m", "under a minute", friendly durations for stat cards
     static func formatDuration(_ seconds: Double) -> String {
         let total = Int(seconds.rounded())
         let hours = total / 3600

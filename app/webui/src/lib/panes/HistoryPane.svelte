@@ -6,7 +6,7 @@
 
   let query = $state('');
 
-  // progressive paging — history grows forever, the DOM shouldn't
+  // progressive paging, history grows forever, the DOM shouldn't
   const PAGE = 80;
   let shown = $state(PAGE);
   $effect(() => {
@@ -139,7 +139,7 @@
     <div class="empty">
       <span class="hand big"
         >{ui.history.length === 0
-          ? 'nothing said yet — hold your hotkey and talk!'
+          ? 'nothing said yet, hold your hotkey and talk!'
           : `no matches for “${query}”`}</span
       >
     </div>

@@ -106,10 +106,10 @@
                       class="mark no"
                       aria-label="no">✗</span
                     >
-                  {:else if cell === '—'}
+                  {:else if cell === '–'}
                     <span
                       class="dash"
-                      aria-label="not available">—</span
+                      aria-label="not available">–</span
                     >
                   {:else}
                     <span class="small">{cell}</span>

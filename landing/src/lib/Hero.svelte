@@ -25,8 +25,8 @@
 
   const svgOf = (mod) =>
     typeof mod === 'string' ? mod : (mod.svg ?? String(mod));
-  // Zoom — use the wordmark (dark) with a custom Apple squircle background
-  // thesvg's wordmark is blue (#0b5cff) on transparent — invert to white for dark bg
+  // Zoom, use the wordmark (dark) with a custom Apple squircle background
+  // thesvg's wordmark is blue (#0b5cff) on transparent, invert to white for dark bg
   const _zoomWordmarkRaw =
     zoom2025Mod?.variants?.wordmark ?? zoom2025Mod?.svg ?? '';
   const zoomWordmarkDark = _zoomWordmarkRaw
@@ -57,7 +57,7 @@
       id: 'notes',
       icon: StickyNote,
       label: 'Voice Notes',
-      desc: 'Quick thoughts land on your sticky wall — pinned, searchable, local.',
+      desc: 'Quick thoughts land on your sticky wall, pinned, searchable, local.',
       color: '#0f9d6a',
     },
     {
@@ -76,15 +76,15 @@
       label: 'Slack',
       brand: svgOf(slackIco),
       shell: 'pad',
-      title: 'Slack — #launch',
-      text: "pricing page is sam's, video is mine — shipping friday 🚀",
+      title: 'Slack: #launch',
+      text: "pricing page is sam's, video is mine, shipping friday 🚀",
     },
     {
       id: 'safari',
       label: 'Safari',
       brand: svgOf(safariIco),
       shell: 'pad',
-      title: 'google.com — Safari',
+      title: 'google.com, Safari',
       text: 'launch checklist template',
     },
     {
@@ -92,16 +92,16 @@
       label: 'Outlook',
       brand: svgOf(outlookIco),
       shell: 'pad',
-      title: 'Inbox — Outlook',
-      text: 'hi sarah, thanks for the intro — 3pm PST works perfectly for me.',
+      title: 'Inbox, Outlook',
+      text: 'hi sarah, thanks for the intro, 3pm PST works perfectly for me.',
     },
     {
       id: 'whatsapp',
       label: 'WhatsApp',
       brand: svgOf(whatsappIco),
       shell: 'pad',
-      title: 'WhatsApp — Maya Chen',
-      text: 'omw right now, grabbing coffee — want an oat latte?',
+      title: 'WhatsApp: Maya Chen',
+      text: 'omw right now, grabbing coffee, want an oat latte?',
     },
   ];
 
@@ -302,7 +302,7 @@
     scrollToMac();
   }
 
-  /* ── notch state — mirrors the real app 1:1 ── */
+  /* ── notch state, mirrors the real app 1:1 ── */
   let notchMode = $derived.by(() => {
     if (notchMenuOpen) return 'menu';
     if (notchHover) return 'hover';
@@ -344,7 +344,7 @@
   /* ── notes extra ── */
   const NOTES_EXTRA = {
     id: 'x7',
-    text: 'Launch day idea — record the demo call with Typie instead of typing notes manually.',
+    text: 'Launch day idea, record the demo call with Typie instead of typing notes manually.',
     pinned: true,
     date: 'just now',
     dur: '6s',
@@ -387,8 +387,7 @@
       </h1>
       <p class="sub">
         Hold ⌥, speak naturally, and let go. Typie types into any app in 80
-        milliseconds, records meetings without bots, and organizes voice notes —
-        100% offline on Apple Silicon.
+        milliseconds, records meetings without bots, and organizes voice notes,         100% offline on Apple Silicon.
       </p>
 
       <div class="actions">
@@ -406,7 +405,7 @@
               d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.7-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
             /></svg
           >
-          Download for Mac — Free
+          Download for Mac, Free
         </a>
         <a
           href="https://github.com/samjhooker/typie"
@@ -494,7 +493,7 @@
               class:off={wifiOff}
               onclick={() => (wifiOff = !wifiOff)}
               title={wifiOff
-                ? 'Wi-Fi off — Typie is 100% functional offline'
+                ? 'Wi-Fi off, Typie is 100% functional offline'
                 : 'Click to test offline / airplane mode'}
             >
               {#if wifiOff}
@@ -834,7 +833,7 @@
                   <div class="win callwin">
                     <header class="callbar">
                       <span class="dots"><i></i><i></i><i></i></span>
-                      <span class="calltitle">Launch Sync — zoom.us</span>
+                      <span class="calltitle">Launch Sync, zoom.us</span>
                       <span class="cspace"></span>
                       <span class="zoom-rec">
                         <i class="rec-dot"></i>REC
@@ -984,7 +983,7 @@
                   <div class="win typwin">
                     <header class="wintitle">
                       <span class="dots"><i></i><i></i><i></i></span>
-                      <span class="wintxt">Typie — Call Summary & Actions</span>
+                      <span class="wintxt">Typie: Call Summary & Actions</span>
                       <span class="winmeta mono">12:04 · 2 speakers</span>
                     </header>
                     <div class="realslot fill">
@@ -1000,7 +999,7 @@
                 <div class="win typwin">
                   <header class="wintitle">
                     <span class="dots"><i></i><i></i><i></i></span>
-                    <span class="wintxt">Typie — Voice Notes</span>
+                    <span class="wintxt">Typie: Voice Notes</span>
                     <span class="winmeta mono">on-device storage</span>
                   </header>
                   <div class="shellslot">
@@ -1019,7 +1018,7 @@
                 <div class="win typwin">
                   <header class="wintitle">
                     <span class="dots"><i></i><i></i><i></i></span>
-                    <span class="wintxt">Typie — File Transcription</span>
+                    <span class="wintxt">Typie: File Transcription</span>
                     <span class="winmeta mono"
                       >{fileStep >= 3
                         ? 'transcribed · on-device'
@@ -1115,7 +1114,7 @@
               class:on={active === 'capture'}
               onclick={() => selectFeature('capture')}
               aria-label="Zoom"
-              title="Zoom — capture a meeting"
+              title="Zoom, capture a meeting"
             >
               <span
                 class="dico"
@@ -1150,7 +1149,7 @@
             </button>
           </nav>
         </div>
-        <!-- Mac keyboard deck — Option lives here so it never covers the screen -->
+        <!-- Mac keyboard deck, Option lives here so it never covers the screen -->
         <div
           class="mac-deck"
           class:dictate={active === 'dictate'}
@@ -1192,7 +1191,7 @@
 
 <style>
   .hero {
-    padding: clamp(72px, 7vh, 88px) 0 clamp(44px, 5vh, 64px);
+    padding: clamp(96px, 13vh, 136px) 0 clamp(48px, 6vh, 72px);
   }
 
   .hero-top {
@@ -1200,7 +1199,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 14px;
+    gap: 18px;
     max-width: 760px;
     margin: 0 auto;
   }
@@ -1253,7 +1252,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin: 32px auto 0;
+    margin: 64px auto 0;
     max-width: 860px;
     scroll-margin-top: 72px;
   }
@@ -1372,7 +1371,7 @@
     box-shadow: none;
   }
 
-  /* Mac Menu Bar — frosted glass layer */
+  /* Mac Menu Bar, frosted glass layer */
   .menubar {
     height: 32px;
     background: rgba(0, 0, 0, 0.12);
@@ -1581,7 +1580,7 @@
       0 0 0 1px rgba(252, 86, 129, 0.35);
   }
 
-  /* White glow — taller, waveform-like pulsing (not uniform), contained inside screen */
+  /* White glow, taller, waveform-like pulsing (not uniform), contained inside screen */
   .notch-aura {
     position: absolute;
     top: 0;
@@ -1844,7 +1843,7 @@
     flex-direction: column;
   }
 
-  /* ══ KEYBOARD DECK — Option key lives off the screen ══ */
+  /* ══ KEYBOARD DECK, Option key lives off the screen ══ */
   .mac-deck {
     position: relative;
     height: 16px;
@@ -2336,7 +2335,7 @@
     }
   }
 
-  /* Dock — macOS Tahoe liquid glass */
+  /* Dock, macOS Tahoe liquid glass */
   .dock {
     position: absolute;
     bottom: 10px;
@@ -2415,7 +2414,7 @@
     height: 22px;
     display: block;
   }
-  /* dock icons — real brand logos on solid Apple squircles (no transparency) */
+  /* dock icons, real brand logos on solid Apple squircles (no transparency) */
   .dico[data-shell='pad'] {
     background: var(--surface);
     box-shadow:
@@ -2431,7 +2430,7 @@
     width: 100%;
     height: 100%;
   }
-  /* solid Apple-style backgrounds per brand — never transparent */
+  /* solid Apple-style backgrounds per brand, never transparent */
   .dico[data-app='slack'] {
     background: var(--surface);
   }
@@ -2460,7 +2459,7 @@
     border-radius: 0;
   }
   .dico[data-app='zoom'] {
-    /* custom Apple squircle background for the wordmark-dark — Zoom blue, solid, no transparency */
+    /* custom Apple squircle background for the wordmark-dark, Zoom blue, solid, no transparency */
     background: linear-gradient(135deg, #0b5cff 0%, #0845bf 55%, #4f90ee 100%);
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.18),
@@ -2515,7 +2514,7 @@
   :root[data-theme='dark'] .ditem.on .ddot {
     background: rgba(255, 255, 255, 0.88);
   }
-  /* separator before Typie icon — like macOS */
+  /* separator before Typie icon, like macOS */
   .ditem:last-child {
     margin-left: 2px;
     padding-left: 9px;

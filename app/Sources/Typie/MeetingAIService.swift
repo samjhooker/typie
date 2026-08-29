@@ -1,6 +1,6 @@
 import Foundation
 
-// AITopic persisted in StoredTranscript JSON — displayed as clickable pills
+// AITopic persisted in StoredTranscript JSON, displayed as clickable pills
 struct AITopic: Codable, Equatable, Identifiable {
     var id: String { title + String(startSeconds) }
     var title: String
@@ -28,7 +28,7 @@ struct AIResult: Equatable {
     var actions: [AIAction]
 }
 
-// One point inside a breakdown section — a lower-level observation with its
+// One point inside a breakdown section, a lower-level observation with its
 // own timestamp, so the whole conversation is tokenized into a topic tree.
 struct AIPoint: Codable, Equatable {
     var text: String
@@ -52,8 +52,8 @@ struct AISection: Codable, Equatable, Identifiable {
     }
 }
 
-// A commitment made by a speaker — "I'll send the doc by Friday" —
-// extracted per speaker so the rail can list clear action items.
+// A commitment made by a speaker ("I'll send the doc by Friday").
+// Extracted per speaker so the rail can list clear action items.
 struct AIAction: Codable, Equatable, Identifiable {
     var id: String { speaker + text + String(startSeconds) }
     var speaker: String
@@ -97,7 +97,7 @@ final class MeetingAIService: ObservableObject {
 
     // MARK: availability
 
-    /// Last availability reason we logged — isSupported is polled on every UI
+    /// Last availability reason we logged, isSupported is polled on every UI
     /// state push, so log only when the reason actually changes.
     private static var lastLoggedUnavailableReason: String?
 
@@ -111,7 +111,7 @@ final class MeetingAIService: ObservableObject {
             case .unavailable(let reason):
                 let label = String(describing: reason)
                 if Self.lastLoggedUnavailableReason != label {
-                    AppLog.event("ai: model unavailable — \(label)")
+                    AppLog.event("ai: model unavailable, \(label)")
                     Self.lastLoggedUnavailableReason = label
                 }
                 return false
@@ -152,7 +152,7 @@ final class MeetingAIService: ObservableObject {
         return "requires macOS 26"
     }
 
-    /// Approximate token budget per chunk — ~1000 tokens ≈ 4000 chars.
+    /// Approximate token budget per chunk, ~1000 tokens ≈ 4000 chars.
     private let chunkChars = 3_000
 
     // MARK: public entry
@@ -170,7 +170,7 @@ final class MeetingAIService: ObservableObject {
             if #available(macOS 26, *) {
 #if canImport(FoundationModels)
                 if let result = await generateWithFoundationModels(transcript: transcript, formatted: text, progress: progress) {
-                    AppLog.event("ai: generated via FoundationModels — \(result.title)")
+                    AppLog.event("ai: generated via FoundationModels, \(result.title)")
                     return (result, "foundationmodels")
                 }
                 AppLog.event("ai: FoundationModels failed, falling back to heuristic")
@@ -182,7 +182,7 @@ final class MeetingAIService: ObservableObject {
         return (heuristicResult(transcript: transcript), "heuristic")
     }
 
-    // MARK: FoundationModels path — plain String JSON, no @Generable needed
+    // MARK: FoundationModels path, plain String JSON, no @Generable needed
 
 #if canImport(FoundationModels)
     @available(macOS 26, *)
@@ -191,7 +191,7 @@ final class MeetingAIService: ObservableObject {
         // The on-device model has a 4096-token context (input AND output).
         // 8k chars of transcript ≈ ~2k tokens, leaving room for instructions,
         // prompt boilerplate and the JSON response. Above that, go straight
-        // to chunking — a doomed oversized single-pass just wastes a call.
+        // to chunking, a doomed oversized single-pass just wastes a call.
         if text.count < 8_000 {
             if let r = await singlePass(text: text, transcript: transcript) { progress?(1, 1); return r }
         }
@@ -205,11 +205,11 @@ final class MeetingAIService: ObservableObject {
         Transcript:
         \(text)
 
-        Tokenize the ENTIRE conversation into a hierarchical breakdown. Be brave to break it down — create as many sections as naturally fit the conversation, not an arbitrary 3-6. Guideline: ~1 section per distinct topic or ~2-4 minutes of talk. For a 5-min chat this may be 2-4 sections, for a 30-min conversation perhaps 8-15, for a 60-min deep dive up to 20. Return JSON with keys:
+        Tokenize the ENTIRE conversation into a hierarchical breakdown. Be brave to break it down, create as many sections as naturally fit the conversation, not an arbitrary 3-6. Guideline: ~1 section per distinct topic or ~2-4 minutes of talk. For a 5-min chat this may be 2-4 sections, for a 30-min conversation perhaps 8-15, for a 60-min deep dive up to 20. Return JSON with keys:
         - title (3-7 words, Title Case)
         - summary (2-3 sentence executive summary)
-        - sections: array of {title (2-5 words), timestamp (MM:SS copied verbatim from a [MM:SS] marker in the transcript), points: array of {text (one sentence observation), timestamp (MM:SS copied verbatim)}}. Cover the WHOLE timeline chronologically, each with 2-5 points. CRITICAL: every timestamp must be copied exactly from the transcript — never invent, interpolate, or reuse the same timestamp for multiple sections. Timestamps must be in strictly increasing order and evenly spread.
-        - quotes: array of {text (verbatim quote, 12-30 words, complete thought), speaker, timestamp (MM:SS)}. 3-6 quotes that are genuinely memorable, insightful, surprising, decisive or emotionally resonant — each must be an exact word-for-word excerpt from the transcript (not paraphrased), attributable to a single speaker, spanning diverse speakers and moments. Avoid filler or generic agreeable lines. Prefer strong opinions, key decisions, vivid phrasing, or moments of humor/insight.
+        - sections: array of {title (2-5 words), timestamp (MM:SS copied verbatim from a [MM:SS] marker in the transcript), points: array of {text (one sentence observation), timestamp (MM:SS copied verbatim)}}. Cover the WHOLE timeline chronologically, each with 2-5 points. CRITICAL: every timestamp must be copied exactly from the transcript, never invent, interpolate, or reuse the same timestamp for multiple sections. Timestamps must be in strictly increasing order and evenly spread.
+        - quotes: array of {text (verbatim quote, 12-30 words, complete thought), speaker, timestamp (MM:SS)}. 3-6 quotes that are genuinely memorable, insightful, surprising, decisive or emotionally resonant, each must be an exact word-for-word excerpt from the transcript (not paraphrased), attributable to a single speaker, spanning diverse speakers and moments. Avoid filler or generic agreeable lines. Prefer strong opinions, key decisions, vivid phrasing, or moments of humor/insight.
         Use only timestamps shown like [MM:SS] or [HH:MM:SS]. Never invent timestamps. JSON only, no markdown, no code fences.
         """
         do {
@@ -230,9 +230,9 @@ final class MeetingAIService: ObservableObject {
     private func chunkedGenerate(text: String, transcript: StoredTranscript, progress: ((Int, Int) -> Void)?) async -> AIResult? {
         let chunks = makeChunks(transcript: transcript)
         guard !chunks.isEmpty else { return nil }
-        AppLog.event("ai chunked: \(chunks.count) chunks for \(transcript.turns.count) turns — \(text.count) chars total, sizes \(chunks.map { $0.text.count })")
+        AppLog.event("ai chunked: \(chunks.count) chunks for \(transcript.turns.count) turns, \(text.count) chars total, sizes \(chunks.map { $0.text.count })")
 
-        // Analyze chunks CONCURRENTLY (bounded) — a 27-min call is ~8 model
+        // Analyze chunks CONCURRENTLY (bounded), a 27-min call is ~8 model
         // calls; sequential takes minutes, 3 at a time cuts wall time ~3×.
         struct Analyzed {
             let summary: String
@@ -254,7 +254,7 @@ final class MeetingAIService: ObservableObject {
                     Excerpt (\(Self.fmtClock(chunk.timeRange.lowerBound))–\(Self.fmtClock(chunk.timeRange.upperBound))):
                     \(chunk.text)
 
-                    Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS copied verbatim from a [MM:SS] marker in this excerpt", "points": [{"text": "one sentence", "timestamp": "MM:SS copied verbatim"}] } ], "quotes": [ {"text": "verbatim quote, 12-30 words, complete thought", "speaker": "Speaker N", "timestamp": "MM:SS"} ] } — Be brave: create as many sections as this excerpt naturally contains (often 1 per topic shift, typically 1-4 for this size excerpt, more if the conversation is dense), each with 2-4 points. 1-3 verbatim quotes per excerpt — exact words only. CRITICAL: every timestamp must be an exact [MM:SS] marker from this excerpt, never invented or reused. JSON only.
+                    Return JSON: { "summary": "1-2 sentences", "sections": [ {"title": "2-5 words", "timestamp": "MM:SS copied verbatim from a [MM:SS] marker in this excerpt", "points": [{"text": "one sentence", "timestamp": "MM:SS copied verbatim"}] } ], "quotes": [ {"text": "verbatim quote, 12-30 words, complete thought", "speaker": "Speaker N", "timestamp": "MM:SS"} ] }, Be brave: create as many sections as this excerpt naturally contains (often 1 per topic shift, typically 1-4 for this size excerpt, more if the conversation is dense), each with 2-4 points. 1-3 verbatim quotes per excerpt, exact words only. CRITICAL: every timestamp must be an exact [MM:SS] marker from this excerpt, never invented or reused. JSON only.
                     """
                     let callStarted = Date()
                     AppLog.event("ai chunk \(index): model call start (\(chunk.text.count) chars)")
@@ -270,7 +270,7 @@ final class MeetingAIService: ObservableObject {
                         AppLog.event("ai chunk \(index): JSON parse failed after \(Self.elapsed(callStarted))s, raw=\(resp.content.prefix(200))")
                         return (index, nil)
                     } catch {
-                        AppLog.event("ai chunk \(index): model error after \(Self.elapsed(callStarted))s — \(error.localizedDescription)")
+                        AppLog.event("ai chunk \(index): model error after \(Self.elapsed(callStarted))s, \(error.localizedDescription)")
                         return (index, nil)
                     }
                 }
@@ -289,7 +289,7 @@ final class MeetingAIService: ObservableObject {
         AppLog.event("ai: \(chunks.count) chunks analyzed in \(Self.elapsed(analyzeStarted))s")
         let failedIndices = analyzed.enumerated().filter { $0.element == nil }.map(\.offset)
         if !failedIndices.isEmpty {
-            AppLog.event("ai: \(failedIndices.count) chunk(s) failed analysis — indices \(failedIndices)")
+            AppLog.event("ai: \(failedIndices.count) chunk(s) failed analysis, indices \(failedIndices)")
         }
 
         var chunkSummaries: [(summary: String, sections: [[String: Any]], quotes: [[String: Any]], range: ClosedRange<Double>)] = []
@@ -306,7 +306,7 @@ final class MeetingAIService: ObservableObject {
 
         // Structural anchor: every raw section knows which real chunk of the
         // call it came from. Reduce passes routinely re-stamp late topics as
-        // 00:00 — after merging we clamp each section back into its source
+        // 00:00, after merging we clamp each section back into its source
         // chunk's time range, which the model cannot hallucinate away.
         var sectionTags: [SectionTag] = []
         for cs in chunkSummaries {
@@ -324,7 +324,7 @@ final class MeetingAIService: ObservableObject {
             return r
         }
 
-        // Merge in BATCHES — every chunk's output must reach a reduce pass.
+        // Merge in BATCHES, every chunk's output must reach a reduce pass.
         // A single reduce over all chunks would blow the 4096-token window
         // and get prefix-truncated to the first few minutes of audio.
         let meaningful = chunkSummaries.filter { !$0.summary.isEmpty || !$0.sections.isEmpty || !$0.quotes.isEmpty }
@@ -374,7 +374,7 @@ final class MeetingAIService: ObservableObject {
         }
 
         // last-resort synthesis straight from the structured partials
-        AppLog.event("ai: final reduce unusable — falling back to heuristic synthesis")
+        AppLog.event("ai: final reduce unusable, falling back to heuristic synthesis")
         let fallbackTitle = await titleFromSummaries(mergedSummary) ?? heuristicTitle(transcript)
         let fallbackSummary = mergedSummary.isEmpty ? heuristicSummary(transcript) : String(mergedSummary.prefix(600))
         return dedupeResult(repaired(AIResult(title: fallbackTitle, summary: fallbackSummary, topics: [],
@@ -382,7 +382,7 @@ final class MeetingAIService: ObservableObject {
     }
 
     /// post-merge hygiene: drop sections sharing a title within a minute,
-    /// identical quotes — batch boundaries can produce both
+    /// identical quotes, batch boundaries can produce both
     private func dedupeResult(_ r: AIResult) -> AIResult {
         var sections: [AISection] = []
         for s in r.sections {
@@ -403,7 +403,7 @@ final class MeetingAIService: ObservableObject {
             let pts = (d["points"] as? [[String: Any]])?.compactMap { $0["text"] as? String }.joined(separator: " | ") ?? ""
             return "- \(d["title"] ?? "") [\(d["timestamp"] ?? "")]: \(pts)"
         }.joined(separator: "\n")
-        let quotesText = quotes.map { d in "- \"\(d["text"] ?? "")\" — \(d["speaker"] ?? "") [\(d["timestamp"] ?? "")]" }.joined(separator: "\n")
+        let quotesText = quotes.map { d in "- \"\(d["text"] ?? "")\", \(d["speaker"] ?? "") [\(d["timestamp"] ?? "")]" }.joined(separator: "\n")
         let session = LanguageModelSession(instructions: "You are a meeting assistant. Given per-chunk breakdowns, produce the final title, executive summary, merged hierarchical sections and the best quotes. Return valid JSON only.")
         let reduceStarted = Date()
         AppLog.event("ai reduce: model call start (\(combinedSummaryText.count) chars summaries, \(sections.count) sections, \(quotes.count) quotes)")
@@ -421,8 +421,8 @@ final class MeetingAIService: ObservableObject {
         Return JSON with keys:
         - title (3-7 words)
         - summary (2-3 sentence executive summary)
-        - sections: array of {title, timestamp (MM:SS copied verbatim from Extracted sections), points: [{text, timestamp}]} — Create as many sections as naturally fit ALL the provided material — be brave, don't cap at 6. Target ~1 per distinct topic or ~2-4 min (so 5-min ≈ 2-4 sections, 30-min ≈ 8-15, long ≈ up to 20), chronologically ordered, deduplicated, strictly increasing timestamps, evenly spread — copy timestamps exactly from the Extracted sections, never invent. STRICTLY CHRONOLOGICAL: a topic discussed late in the material MUST carry a late timestamp — never stamp late topics 00:00; the last section's timestamp must be near the end of the material.
-        - quotes: array of {text (verbatim, 12-30 words, complete thought), speaker, timestamp} — 3-6 best exact excerpts (up to ~1 per section if many sections): striking, decisive, insightful or resonant lines. Must be word-for-word from the material, not paraphrased. Diversify speakers/timestamps.
+        - sections: array of {title, timestamp (MM:SS copied verbatim from Extracted sections), points: [{text, timestamp}]}, Create as many sections as naturally fit ALL the provided material, be brave, don't cap at 6. Target ~1 per distinct topic or ~2-4 min (so 5-min ≈ 2-4 sections, 30-min ≈ 8-15, long ≈ up to 20), chronologically ordered, deduplicated, strictly increasing timestamps, evenly spread, copy timestamps exactly from the Extracted sections, never invent. STRICTLY CHRONOLOGICAL: a topic discussed late in the material MUST carry a late timestamp, never stamp late topics 00:00; the last section's timestamp must be near the end of the material.
+        - quotes: array of {text (verbatim, 12-30 words, complete thought), speaker, timestamp}, 3-6 best exact excerpts (up to ~1 per section if many sections): striking, decisive, insightful or resonant lines. Must be word-for-word from the material, not paraphrased. Diversify speakers/timestamps.
         JSON only.
         """
         do {
@@ -449,7 +449,7 @@ final class MeetingAIService: ObservableObject {
             var t = resp.content.trimmingCharacters(in: .whitespacesAndNewlines)
             t = t.replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: ".", with: "")
             if t.count > 60 { t = String(t.prefix(60)) }
-            AppLog.event("ai title: ok in \(Self.elapsed(started))s — \(t)")
+            AppLog.event("ai title: ok in \(Self.elapsed(started))s, \(t)")
             return t.isEmpty ? nil : t
         } catch {
             AppLog.event("ai title error after \(Self.elapsed(started))s: \(error.localizedDescription)")
@@ -524,9 +524,9 @@ final class MeetingAIService: ObservableObject {
                 }
             }
             // points located verbatim are the strongest evidence of where this
-            // section really lives — trust them over a hallucinated 00:00 stamp
+            // section really lives, trust them over a hallucinated 00:00 stamp
             if let earliest = pointAnchors.min(), abs(earliest - snapped) > 90 {
-                AppLog.event("ai align: section \"\(sTitle)\" stamped \(Self.fmtClock(snapped)) but its content lives at \(Self.fmtClock(earliest)) — re-anchoring")
+                AppLog.event("ai align: section \"\(sTitle)\" stamped \(Self.fmtClock(snapped)) but its content lives at \(Self.fmtClock(earliest)), re-anchoring")
                 snapped = earliest
             }
             out.append(AISection(title: sTitle.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -534,7 +534,7 @@ final class MeetingAIService: ObservableObject {
                                  points: points))
         }
         out.sort { $0.startSeconds < $1.startSeconds }
-        // fixup: model sometimes reuses 00:00 for every section — spread duplicates
+        // fixup: model sometimes reuses 00:00 for every section, spread duplicates
         // proportionally across the real timeline so each breakdown lands differently
         if out.count > 1 {
             var adjusted = out
@@ -727,7 +727,7 @@ final class MeetingAIService: ObservableObject {
 
     /// Offline fallback: split the timeline into ~4 even stretches, one section
     /// each with the first sentence of a few turns as points, plus the longest
-    /// sentences as pseudo-quotes. Honest about being dumb — it's labeled.
+    /// sentences as pseudo-quotes. Honest about being dumb, it's labeled.
     private func heuristicBreakdown(_ t: StoredTranscript) -> (sections: [AISection], quotes: [AIQuote]) {
         guard !t.turns.isEmpty else { return ([], []) }
         let sectionCount = min(4, max(2, t.turns.count / 6))
@@ -805,7 +805,7 @@ final class MeetingAIService: ObservableObject {
         return out
     }
 
-    // MARK: structural alignment — chunk-range anchoring
+    // MARK: structural alignment, chunk-range anchoring
 
     /// A raw section as the chunk analyzer produced it, with the real time
     /// range of the audio it was extracted from.
@@ -856,7 +856,7 @@ final class MeetingAIService: ObservableObject {
             let lo = max(0, tag.range.lowerBound - 20)
             let hi = tag.range.upperBound + 45
             if s.startSeconds < lo || s.startSeconds > hi {
-                AppLog.event("ai align: \"\(s.title)\" @\(Self.fmtClock(s.startSeconds)) outside source chunk \(Self.fmtClock(tag.range.lowerBound))–\(Self.fmtClock(tag.range.upperBound)) — clamping")
+                AppLog.event("ai align: \"\(s.title)\" @\(Self.fmtClock(s.startSeconds)) outside source chunk \(Self.fmtClock(tag.range.lowerBound))–\(Self.fmtClock(tag.range.upperBound)), clamping")
                 var fixed = s
                 fixed.startSeconds = min(max(s.startSeconds, lo), hi)
                 return fixed
@@ -894,7 +894,7 @@ final class MeetingAIService: ObservableObject {
             let d = abs(c - clamped)
             if d < bestDist { bestDist = d; best = c }
         }
-        // always snap to a real turn start — prevents invented timestamps
+        // always snap to a real turn start, prevents invented timestamps
         return best
     }
 

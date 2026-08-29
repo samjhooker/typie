@@ -2,21 +2,21 @@
   const notes = [
     {
       id: '1',
-      text: 'podcast idea — the voice is the interface, not the keyboard',
+      text: 'podcast idea, the voice is the interface, not the keyboard',
       pinned: true,
       date: 'today',
       dur: '12s',
     },
     {
       id: '2',
-      text: 'standup — we ship friday, two things left: pricing and video',
+      text: 'standup, we ship friday, two things left: pricing and video',
       pinned: false,
       date: 'yesterday',
       dur: '8s',
     },
     {
       id: '3',
-      text: "grandma's recipe — add miso, trust me, white pepper too",
+      text: "grandma's recipe, add miso, trust me, white pepper too",
       pinned: false,
       date: '2 days ago',
       dur: '21s',
@@ -30,14 +30,14 @@
     },
     {
       id: '5',
-      text: "don't forget: hold option, don't click the mic icon",
+      text: "start notes from the notch or new note, ⌥ is only for dictating",
       pinned: false,
       date: 'today',
       dur: '5s',
     },
     {
       id: '6',
-      text: 'idea — offline is a feature, not a fallback',
+      text: 'idea, offline is a feature, not a fallback',
       pinned: false,
       date: 'today',
       dur: '9s',
@@ -61,7 +61,7 @@
   }
 
   // optional note that flies in (used by landing demos)
-  // cols/limit — constrain to a fixed 2-col grid with N notes (bento previews)
+  // cols/limit, constrain to a fixed 2-col grid with N notes (bento previews)
   let { extra = null, cols = 0, limit = 0 } = $props();
   const shown = limit > 0 ? notes.slice(0, limit) : notes;
 </script>
@@ -112,7 +112,7 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 14px;
     align-items: start;
-    /* note paper — light pastels; dark swaps to the real app's dark tints */
+    /* note paper, light pastels; dark swaps to the real app's dark tints */
     --note-cream: #fdf3dc;
     --note-lavender: #efecfb;
     --note-mint: #dff0e4;

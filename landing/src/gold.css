@@ -1,4 +1,4 @@
-/* gold.css neutralized — the design system in app.css owns tokens.
+/* gold.css neutralized, the design system in app.css owns tokens.
    Kept for import compatibility; all playful overrides removed.
    Focus + selection route through tokens (DESIGN.md: never pure #000,
    ink is always tinted; selection is a "REC moment" → radiant pink). */

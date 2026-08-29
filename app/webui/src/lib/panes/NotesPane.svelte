@@ -71,7 +71,7 @@
     shown = PAGE;
   });
 
-  // tint + tilt belong to the NOTE (hashed off its id), not its position —
+  // tint + tilt belong to the NOTE (hashed off its id), not its position,
   // pinning or deleting must never reshuffle the wall's colors
   function look(note) {
     let h = 0;
@@ -97,7 +97,7 @@
     <div>
       <h2>Voice notes</h2>
       <p>
-        hold <b>{ui.settings.hotkeyShort}</b>, speak — it lands here.
+        hold <b>{ui.settings.hotkeyShort}</b>, speak, it lands here.
         <span class="hand hint-hand">your pocket for thoughts</span>
       </p>
     </div>

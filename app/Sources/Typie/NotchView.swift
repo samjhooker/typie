@@ -2,10 +2,10 @@ import AppKit
 import SwiftUI
 
 /// The typie island that lives in the Mac's notch.
-/// Idle (notched Macs): looks like the physical notch itself — black, quiet.
-/// While dictating: the black expands outward in BOTH directions —
+/// Idle (notched Macs): looks like the physical notch itself, black, quiet.
+/// While dictating: the black expands outward in BOTH directions,
 /// dancing robot out the left, live waveform out the right.
-/// Refined: compact — only as wide as needed, robot left / wave-or-tools right,
+/// Refined: compact, only as wide as needed, robot left / wave-or-tools right,
 /// 1s hover tooltips, robot click opens the app / dropdown.
 struct NotchView: View {
     @ObservedObject private var controller = DictationController.shared
@@ -21,7 +21,7 @@ struct NotchView: View {
             let expanded = isVisible
 
             ZStack(alignment: .top) {
-                // The black island — fills the panel when expanded so robot
+                // The black island, fills the panel when expanded so robot
                 // (left) and tools/wave (right) sit well outside the physical
                 // notch. 560pt pops just outside without the old 680pt slab.
                 islandShape(expanded: expanded)
@@ -87,13 +87,13 @@ struct NotchView: View {
         }
     }
 
-    // MARK: - robot (left wing) — click opens the app directly
+    // MARK: - robot (left wing), click opens the app directly
 
     private var robotButton: some View {
         Button {
             ShelfController.shared.onOpenApp?()
             ShelfController.shared.plusMenuVisible = false
-            AppLog.event("notch: robot clicked — open app")
+            AppLog.event("notch: robot clicked, open app")
         } label: {
             RobotIcon(mood: robotMood)
                 .frame(width: 24, height: 23)
@@ -102,7 +102,7 @@ struct NotchView: View {
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
-        .help("Typie — click to open")
+        .help("Typie, click to open")
         // right-click still offers the quick menu
         .contextMenu { robotMenuContent }
     }
@@ -222,7 +222,7 @@ struct NotchView: View {
                     )
             }
         } else {
-            // idle shelf: single + button at right end — matches mock (robot left, + right)
+            // idle shelf: single + button at right end, matches mock (robot left, + right)
             if shelf.activeTool == .transcribeFile || DiarizeStore.shared.busy {
                 HStack(spacing: 8) {
                     TranscribeStatus()
@@ -338,7 +338,7 @@ struct LoadingDots: View {
 // MARK: - live recording controls (notch right wing)
 
 /// Pulsating icon that morphs into an action glyph (e.g. stop square) on
-/// hover. Click always triggers the action — push-button start, push-button
+/// hover. Click always triggers the action, push-button start, push-button
 /// stop, no keyboard hints anywhere.
 private struct PulseActionButton: View {
     let idleIcon: String      // lucide name, rendered from bundled PNGs
@@ -391,7 +391,7 @@ private struct PulseActionButton: View {
 
 /// The whole meeting control in ONE button-sized footprint: a pulsating
 /// record dot (ring + dot) while capturing; on hover it MORPHS in place
-/// into a pause + stop pair — nothing slides out beside it.
+/// into a pause + stop pair, nothing slides out beside it.
 private struct MeetingRecordButton: View {
     let paused: Bool
     let onPauseToggle: () -> Void
@@ -402,7 +402,7 @@ private struct MeetingRecordButton: View {
 
     var body: some View {
         ZStack {
-            // idle face — pulsating record indicator (hollow play glyph when paused)
+            // idle face, pulsating record indicator (hollow play glyph when paused)
             ZStack {
                 Circle()
                     .strokeBorder(Theme.hotpink.opacity(paused ? 0.45 : 1), lineWidth: 2)
@@ -422,7 +422,7 @@ private struct MeetingRecordButton: View {
             .groupedHoverOpacity(hovering)
             .scaleEffect(hovering ? 0.4 : 1)
 
-            // hover face — pause | stop pair, same footprint
+            // hover face, pause | stop pair, same footprint
             HStack(spacing: 4) {
                 miniButton(paused ? "play.fill" : "pause.fill", tint: .white,
                            help: paused ? "resume" : "pause", action: onPauseToggle)
@@ -493,13 +493,13 @@ struct PlusButton: View {
         .buttonStyle(.plain)
         .pointingHandCursor()
         .onHover { hovering = $0 }
-        .help(active ? "Close menu" : "Create — quick note, record call, upload file")
+        .help(active ? "Close menu" : "Create, quick note, record call, upload file")
         .animation(.easeOut(duration: 0.18), value: hovering)
         .animation(Theme.springy, value: active)
     }
 }
 
-/// Legacy compact tool button — retained for potential future inline states,
+/// Legacy compact tool button, retained for potential future inline states,
 /// but idle shelf now uses PlusButton + dropdown (less clutter per user mock).
 struct ToolButton: View {
     let icon: String

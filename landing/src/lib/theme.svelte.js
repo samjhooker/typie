@@ -1,5 +1,5 @@
 /**
- * Landing theme controller — mirrors the Mac app's system exactly:
+ * Landing theme controller, mirrors the Mac app's system exactly:
  * 'system' (default, follows prefers-color-scheme live) | 'light' | 'dark'.
  * Persisted in localStorage under 'typie-appearance' (migrates the old
  * binary 'typie-theme' key). index.html applies data-theme pre-paint

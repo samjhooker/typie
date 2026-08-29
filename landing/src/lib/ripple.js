@@ -1,4 +1,4 @@
-/* Ripple click — signature micro-animation for the download CTAs.
+/* Ripple click, signature micro-animation for the download CTAs.
    Spawns a radial dot exactly at the pointer position and scales it
    out while fading. Pointerdown only; navigation is untouched. */
 export function ripple(node) {

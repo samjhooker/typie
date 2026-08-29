@@ -10,7 +10,7 @@
 
   const PHRASES = [
     '…and that wraps the retro. sending notes now.',
-    'gate B22, boarding in ten — typing with no bars.',
+    'gate B22, boarding in ten, typing with no bars.',
     'offline since JFK and it has not missed a word.',
   ];
   let phrase = $state(0);

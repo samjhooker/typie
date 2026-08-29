@@ -628,7 +628,7 @@
 </div>
 
 <style>
-  /* impeccable-disable bounce-easing, layout-transition, side-tab — legacy HoldStage uses Theme.springy intentionally */
+  /* impeccable-disable bounce-easing, layout-transition, side-tab, legacy HoldStage uses Theme.springy intentionally */
   .stage {
     width: 100%;
     height: 100%;

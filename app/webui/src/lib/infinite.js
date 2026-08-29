@@ -1,5 +1,5 @@
 /**
- * IntersectionObserver Svelte action — calls `cb` whenever the node scrolls
+ * IntersectionObserver Svelte action, calls `cb` whenever the node scrolls
  * near the viewport. Used as the sentinel for progressive lists, so the
  * library stays fast with hundreds of transcripts.
  *

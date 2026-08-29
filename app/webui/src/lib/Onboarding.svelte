@@ -28,7 +28,7 @@
     ui.model.status !== 'notDownloaded' || ui.modelsExist
   );
 
-  // speaker-label models (diarization) — downloaded alongside the main brain
+  // speaker-label models (diarization), downloaded alongside the main brain
   const diarizerState = $derived(ui.transcribe.model.state);
   const diarizerReady = $derived(diarizerState === 'ready');
   const diarizerBusy = $derived(
@@ -42,7 +42,7 @@
     ui.model.status === 'failed' || diarizerState === 'failed'
   );
 
-  // ── permissions — all three required ─────────────────────────
+  // ── permissions, all three required ─────────────────────────
   const allPermissionsDone = $derived(
     ui.permissions.mic && ui.permissions.ax && ui.permissions.screen
   );
@@ -61,7 +61,7 @@
         : 'idle'
   );
 
-  // kick BOTH downloads off as soon as the user engages — by the time they
+  // kick BOTH downloads off as soon as the user engages, by the time they
   // reach the downloads step the brain is usually already halfway home.
   // If files are already on disk we still need to send, so they load into
   // memory (modelsExist but model.status is still 'notDownloaded').
@@ -153,11 +153,11 @@
   const stepHint = $derived(
     [
       'no account, no cloud, ever',
-      'one-time things — we’ll never ask again',
+      'one-time things, we’ll never ask again',
       autoAdvancing
         ? 'moving on its own…'
         : 'the whole brain + ears, onto this Mac',
-      'try it — say something nice',
+      'try it, say something nice',
     ][local.step]
   );
 
@@ -209,7 +209,7 @@
           </div>
           <h1>hold a key. say the thing.</h1>
           <p class="sub">
-            Your words appear wherever your cursor is — entirely on this Mac.
+            Your words appear wherever your cursor is, entirely on this Mac.
           </p>
           <div class="trio">
             <div class="card trio-card">
@@ -242,7 +242,7 @@
         <section class="perms enter-up">
           <h1>three quick permissions</h1>
           <p class="sub">
-            one-time things, straight to macOS — typie never sees them twice
+            one-time things, straight to macOS, typie never sees them twice
           </p>
 
           <div class="perm-list">
@@ -351,7 +351,7 @@
 
           {#if modelReady && diarizerReady}
             <p class="note">
-              <WifiOff size={15} /> everything's installed — from here on, everything
+              <WifiOff size={15} /> everything's installed, from here on, everything
               happens offline.
             </p>
           {:else}
@@ -480,7 +480,7 @@
               <p class="words">{local.practice}</p>
             {:else}
               <p class="placeholder">
-                your words will land here — in big letters
+                your words will land here, in big letters
               </p>
             {/if}
           </div>
@@ -638,7 +638,7 @@
     z-index: 1;
   }
 
-  /* the top bar — left padding clears the traffic lights */
+  /* the top bar, left padding clears the traffic lights */
   .top {
     display: flex;
     align-items: center;

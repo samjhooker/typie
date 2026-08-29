@@ -38,7 +38,7 @@
   let audioEl;
   let contentColEl;
 
-  // progressive rendering — long meetings are thousands of word spans;
+  // progressive rendering, long meetings are thousands of word spans;
   // mount them a page at a time as the reader (or playback) advances
   const TURN_PAGE = 50;
   let shown = $state(TURN_PAGE);
@@ -49,7 +49,7 @@
     if (id) local.openedIds[id] = true;
   });
   const cached = $derived(transcriptCache[id]);
-  // metadata arrives via the global push; turns/words arrive on demand —
+  // metadata arrives via the global push; turns/words arrive on demand,
   // request (or refresh) whenever the stored turnCount moves ahead of cache
   $effect(() => {
     if (!id || !meta) return;
@@ -185,7 +185,7 @@
     if (andPlay && !playing) audioEl.play().catch(() => {});
   }
 
-  // smooth word highlighting — rAF while playing, timeupdate as fallback
+  // smooth word highlighting, rAF while playing, timeupdate as fallback
   let raf = 0;
   function tick() {
     currentTime = audioEl.currentTime;
@@ -267,7 +267,7 @@
   const _aiSections = $derived(t?.aiSections ?? []);
   const _aiQuotes = $derived(t?.aiQuotes ?? []);
   // normalize existing transcripts that were saved with hallucinated timestamps (e.g. all 00:00 or 07h+)
-  // — new generations already clamp & redistribute via MeetingAIService, but this fixes display for old rows
+  //, new generations already clamp & redistribute via MeetingAIService, but this fixes display for old rows
   const aiSections = $derived.by(() => {
     const secs = _aiSections;
     if (secs.length <= 1) return secs;
@@ -317,7 +317,7 @@
       };
     });
   });
-  // rail visibility — remembered across sessions, reopenable from the edge tab
+  // rail visibility, remembered across sessions, reopenable from the edge tab
   let railOpen = $state(
     (() => {
       try {
@@ -334,7 +334,7 @@
     } catch {}
   }
 
-  // ── resizable rail — grab the divider to widen/narrow the AI panel ──
+  // ── resizable rail, grab the divider to widen/narrow the AI panel ──
   let railWidth = $state(
     (() => {
       try {
@@ -381,7 +381,7 @@
     e.preventDefault();
   }
 
-  // the skeleton deserves an audience — present the rail when generation kicks off
+  // the skeleton deserves an audience, present the rail when generation kicks off
   $effect(() => {
     if (aiAvailable && aiStatus === 'pending') setRailOpen(true);
   });
@@ -491,7 +491,7 @@
             />
           </label>
 
-          <!-- Apple Intelligence hint — sits between search and speakers, only
+          <!-- Apple Intelligence hint, sits between search and speakers, only
          while the model is unavailable; ✕ hides it for this session only -->
           {#if showAiBanner}
             <div class="ai-banner card">
@@ -546,11 +546,11 @@
           {/if}
         </div>
 
-        <!-- transcript — otter-style blocks -->
+        <!-- transcript, otter-style blocks -->
         {#if turns.length === 0}
           <div class="pending">
             <span class="hand big"
-              >recording saved — the words are on their way…</span
+              >recording saved, the words are on their way…</span
             >
             <p class="mono-kicker">
               transcription + speaker labels land here automatically
@@ -614,7 +614,7 @@
       <!-- /.content-col -->
 
       {#if aiAvailable && railOpen}
-        <!-- drag divider — grab to resize the AI panel -->
+        <!-- drag divider, grab to resize the AI panel -->
         <div
           class="rail-resize"
           class:active={resizing}
@@ -643,7 +643,7 @@
               {#if aiEngine === 'heuristic'}
                 <span
                   class="ai-badge"
-                  title="generated locally without the language model — enable Apple Intelligence for real summaries"
+                  title="generated locally without the language model, enable Apple Intelligence for real summaries"
                   ><Sparkles size={13} /> local heuristic</span
                 >
               {:else}
@@ -678,7 +678,7 @@
             </div>
 
             {#if aiStatus === 'pending'}
-              <!-- skeleton — the shape of what's coming, shimmering -->
+              <!-- skeleton, the shape of what's coming, shimmering -->
               <div
                 class="skel"
                 aria-hidden="true"
@@ -774,7 +774,7 @@
                     >
                       <span class="q-text">“{quote.text}”</span>
                       <span class="q-meta mono-kicker"
-                        >{quote.speaker || '—'} · {quote.ts}</span
+                        >{quote.speaker || '–'} · {quote.ts}</span
                       >
                     </button>
                   {/each}
@@ -874,7 +874,7 @@
         ></audio>
       </div>
     {:else}
-      <p class="noaudio hand">this one was saved without audio — text only.</p>
+      <p class="noaudio hand">this one was saved without audio, text only.</p>
     {/if}
   </div>
 {/if}
@@ -922,7 +922,7 @@
     padding-bottom: 80px;
   }
 
-  /* ── availability hint — reuses the shared .card component ── */
+  /* ── availability hint, reuses the shared .card component ── */
   .ai-banner {
     display: flex;
     align-items: center;
@@ -1047,7 +1047,7 @@
   .wrap.resizing .ai-rail {
     pointer-events: none;
   }
-  /* the panel is the surface — the card inside goes completely flat.
+  /* the panel is the surface, the card inside goes completely flat.
      no cream, no mint gradient, no card chrome. */
   .ai-rail .card,
   .ai-rail .ai {
@@ -1079,7 +1079,7 @@
     color: var(--ink);
   }
 
-  /* ── skeleton — shimmering placeholder while the model thinks ── */
+  /* ── skeleton, shimmering placeholder while the model thinks ── */
   .skel {
     display: flex;
     flex-direction: column;
@@ -1270,7 +1270,7 @@
   .q-meta {
     color: var(--text-3);
   }
-  /* ── sticky header — pinned to top of viewport ── */
+  /* ── sticky header, pinned to top of viewport ── */
   header {
     position: sticky;
     top: 0;

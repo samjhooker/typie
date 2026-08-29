@@ -64,7 +64,7 @@ final class NoteStore: ObservableObject {
         }
     }
 
-    // MARK: record flow (PRD §F2 — <300 ms to red dot)
+    // MARK: record flow (PRD §F2, <300 ms to red dot)
 
     func toggleRecord() {
         if isRecording { stopAndTranscribe() } else { startRecording() }
@@ -78,13 +78,13 @@ final class NoteStore: ObservableObject {
             return
         }
         guard ModelManager.modelsExist() else {
-            AppLog.event("voice note REFUSED — model not downloaded yet")
+            AppLog.event("voice note REFUSED, model not downloaded yet")
             lastError = "model not downloaded yet"
             scheduleErrorClear()
             return
         }
         guard AudioCapture.micPermissionGranted() else {
-            AppLog.event("voice note REFUSED — microphone permission missing")
+            AppLog.event("voice note REFUSED, microphone permission missing")
             lastError = "microphone permission missing"
             scheduleErrorClear()
             return
@@ -98,7 +98,7 @@ final class NoteStore: ObservableObject {
             installEscToStop()
             AppLog.event("voice note: recording started")
         } catch {
-            AppLog.event("voice note: ERROR starting recording — \(error)")
+            AppLog.event("voice note: ERROR starting recording, \(error)")
             lastError = "couldn't start recording"
             scheduleErrorClear()
         }
@@ -114,9 +114,9 @@ final class NoteStore: ObservableObject {
 
         let seconds = Double(samples.count) / 16_000
         guard !samples.isEmpty, seconds >= 0.5 else {
-            AppLog.event("voice note: clip too short (\(String(format: "%.1f", seconds))s) — discarded")
+            AppLog.event("voice note: clip too short (\(String(format: "%.1f", seconds))s), discarded")
             ShelfController.shared.activeTool = nil
-            lastError = "too short — nothing recorded"
+            lastError = "too short, nothing recorded"
             scheduleErrorClear()
             return
         }
@@ -144,7 +144,7 @@ final class NoteStore: ObservableObject {
                 do {
                     try Self.writeWav(samples: samples, to: url)
                 } catch {
-                    AppLog.event("voice note: failed to write audio — \(error)")
+                    AppLog.event("voice note: failed to write audio, \(error)")
                     audioName = nil
                 }
             }
@@ -155,7 +155,7 @@ final class NoteStore: ObservableObject {
             StatsStore.shared.record(text: text, latencyMs: 0, audioSeconds: seconds)
             AppLog.event("voice note: filed \"\(text.prefix(40))…\" (\(String(format: "%.1f", seconds))s)")
         } catch {
-            AppLog.event("voice note: transcription failed — \(error)")
+            AppLog.event("voice note: transcription failed, \(error)")
             lastError = "transcription failed"
         }
         // unpin the shelf unless another tool took over meanwhile
@@ -174,7 +174,7 @@ final class NoteStore: ObservableObject {
     func delete(_ id: UUID) {
         guard let note = notes.first(where: { $0.id == id }) else { return }
         notes.removeAll { $0.id == id }
-        // privacy stance: delete means gone — text AND audio
+        // privacy stance: delete means gone, text AND audio
         try? FileManager.default.removeItem(at: noteFile(id))
         if let audio = note.audioFile {
             try? FileManager.default.removeItem(at: audioDir.appendingPathComponent(audio))
@@ -191,7 +191,7 @@ final class NoteStore: ObservableObject {
         formatter.dateStyle = .long
         formatter.timeStyle = .short
         return """
-        # voice note — \(formatter.string(from: note.date))
+        # voice note, \(formatter.string(from: note.date))
 
         \(note.text)
 

@@ -34,7 +34,7 @@
       name: 'Canva',
       brand: canva.svg,
       wave: '#00c4cc',
-      title: 'Cell Biology — Period 3',
+      title: 'Cell Biology: Period 3',
       meta: 'Presentation · 16:9',
       side: [['Design'], ['Elements'], ['Text'], ['Brand Kit'], ['Projects']],
       text: 'Mitochondria convert glucose into ATP during cellular respiration.',
@@ -44,7 +44,7 @@
       name: 'Classroom',
       brand: googleClassroom.svg,
       wave: '#188038',
-      title: 'Biology — Period 3',
+      title: 'Biology: Period 3',
       meta: 'Stream',
       side: [['Stream', '2'], ['Classwork'], ['People'], ['Grades']],
       text: 'Lab reports due Friday. Cite your sources this time.',
@@ -168,7 +168,7 @@
     const prevTheme = meta?.getAttribute('content') ?? null;
     const prevTitle = document.title;
     meta?.setAttribute('content', '#f9f4e8');
-    document.title = 'Typie for Education — On-Device Dictation for Schools';
+    document.title = 'Typie for Education, On-Device Dictation for Schools';
 
     onScroll();
     return () => {
@@ -834,7 +834,7 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
           <div class="viz tilt-l">
             <div class="card-note">
               <p class="note-q">
-                &ldquo;Strong thesis — tighten paragraph two and cite your
+                &ldquo;Strong thesis, tighten paragraph two and cite your
                 source.&rdquo;
               </p>
               <p class="note-m">

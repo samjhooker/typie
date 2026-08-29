@@ -3,7 +3,7 @@ import CoreText
 
 enum AppPaths {
     /// dev variant gets its own support dir (settings/history/stats),
-    /// except models — those always come from the production folder so
+    /// except models, those always come from the production folder so
     /// the download is shared between both installs
     static let supportDir: URL = {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -32,7 +32,7 @@ enum AppPaths {
 
 enum FontLoader {
     static func loadBundledFonts() {
-        // register everything bundled — no allow-list to forget to update
+        // register everything bundled, no allow-list to forget to update
         guard let urls = Bundle.typieResources?.urls(forResourcesWithExtension: "ttf", subdirectory: nil) else { return }
         for url in urls {
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)

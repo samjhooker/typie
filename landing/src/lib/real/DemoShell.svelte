@@ -119,7 +119,7 @@
       system-ui,
       sans-serif;
 
-    /* app design system — scoped to demo shell */
+    /* app design system, scoped to demo shell */
     --page: #fffdf7;
     --cream: #fffdf7;
     --paper: #fdf8ee;

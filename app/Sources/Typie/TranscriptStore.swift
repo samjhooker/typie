@@ -15,7 +15,7 @@ struct StoredTurn: Codable, Equatable {
 }
 
 /// A completed transcribe/meeting job, persisted as JSON-per-file.
-/// Speaker labels are editable and remembered per-transcript only —
+/// Speaker labels are editable and remembered per-transcript only;
 /// no automatic voice identification (PRD non-goal).
 struct StoredTranscript: Codable, Identifiable, Equatable {
     let id: UUID
@@ -32,7 +32,7 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     /// hand-set names, keyed by speaker index ("Speaker 1" → "Sam")
     var speakerNames: [Int: String] = [:]
     var turns: [StoredTurn]
-    // MARK: Apple FoundationModels — on-device meeting intelligence
+    // MARK: Apple FoundationModels, on-device meeting intelligence
     /// Auto-generated title (e.g. "Q3 Planning Session")
     var aiTitle: String?
     /// 2-3 sentence summary shown at the top of the transcript
@@ -50,7 +50,7 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     /// Lifecycle of the AI pass: nil | "pending" | "done" | "failed"
     var aiStatus: String?
     /// Which engine produced the content: "foundationmodels" | "heuristic".
-    /// nil for legacy records — heuristics never announced themselves before.
+    /// nil for legacy records, heuristics never announced themselves before.
     var aiEngine: String?
     var aiGeneratedAt: Date?
 
@@ -70,7 +70,7 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
         }
     }
 
-    /// Placeholder initializer — a recording filed the moment capture stops,
+    /// Placeholder initializer, a recording filed the moment capture stops,
     /// before its transcript exists. Turns land later via attach(_:to:).
     init(fileName: String, date: Date = Date(), durationSeconds: Double = 0) {
         self.id = UUID()
@@ -122,7 +122,7 @@ final class TranscriptStore: ObservableObject {
 
         // Keep the audio (while the setting says so) so the transcript is
         // scrubbable word-by-word. Staged uploads (typie's own copies) are
-        // MOVED into the library — one unique persistent file per transcript;
+        // MOVED into the library, one unique persistent file per transcript;
         // temp meeting wavs are copied off /tmp. Runs detached but AWAITED:
         // the queue deletes owned sources after process() returns.
         let keepAudio = SettingsStore.shared.transcriptsKeepAudio
@@ -146,9 +146,9 @@ final class TranscriptStore: ObservableObject {
         return true
     }
 
-    /// Where dropped/picked uploads are staged before processing — typie's
+    /// Where dropped/picked uploads are staged before processing, typie's
     /// own data dir, so every diarized file keeps a unique persistent copy.
-    /// File a recording IMMEDIATELY with no transcript yet — the player is
+    /// File a recording IMMEDIATELY with no transcript yet, the player is
     /// usable right away; attach(_:to:) fills turns in when processing lands.
     func addPlaceholder(fileName: String, audioSource: URL, isMeeting: Bool) async -> UUID? {
         var transcript = StoredTranscript(fileName: fileName)
@@ -176,7 +176,7 @@ final class TranscriptStore: ObservableObject {
     /// Fill in a placeholder's transcript once its job finishes.
     func attach(_ result: DiarizeStore.JobResult, to id: UUID) async -> Bool {
         guard transcripts.contains(where: { $0.id == id }) else {
-            AppLog.event("transcripts: attach skipped — placeholder \(id.uuidString) was deleted")
+            AppLog.event("transcripts: attach skipped, placeholder \(id.uuidString) was deleted")
             return false
         }
         mutate(id) { t in
@@ -199,20 +199,20 @@ final class TranscriptStore: ObservableObject {
         return true
     }
 
-    // MARK: Apple FoundationModels — generation
+    // MARK: Apple FoundationModels, generation
 
-    /// In-flight AI pass per transcript id — cancelled on delete so a deleted
+    /// In-flight AI pass per transcript id, cancelled on delete so a deleted
     /// transcript's results never land anywhere.
     private var aiTasks: [UUID: Task<Void, Never>] = [:]
 
     /// Trigger (or re-trigger) AI. With `allowHeuristic: false` (the automatic
-    /// path after filing) the model must actually be available — heuristic
+    /// path after filing) the model must actually be available, heuristic
     /// output is NEVER stored as if it were AI. The explicit "generate with
     /// heuristic" button passes true, because the user asked for it.
     func generateAI(for id: UUID, allowHeuristic: Bool = false) async {
-        // one pass per transcript — a second request while running is a no-op
+        // one pass per transcript, a second request while running is a no-op
         guard aiTasks[id] == nil else {
-            AppLog.event("ai: generation already in flight for \(id.uuidString) — re-trigger ignored")
+            AppLog.event("ai: generation already in flight for \(id.uuidString), re-trigger ignored")
             return
         }
         let task = Task {
@@ -226,23 +226,23 @@ final class TranscriptStore: ObservableObject {
     private func runGeneration(for id: UUID, allowHeuristic: Bool) async {
         guard let transcript = transcripts.first(where: { $0.id == id }) else { return }
         guard !transcript.turns.isEmpty else { return }
-        // NB: no "pending" coalesce here — generateAI already serializes via
+        // NB: no "pending" coalesce here, generateAI already serializes via
         // aiTasks, and a persisted stale pending must never block a fresh run
         let service = MeetingAIService.shared
         if !service.isSupported && !allowHeuristic {
-            AppLog.event("ai: skipped for \(transcript.fileName) — model unavailable (\(service.unavailableReason ?? "unknown")); leaving summary empty rather than storing heuristic output")
+            AppLog.event("ai: skipped for \(transcript.fileName), model unavailable (\(service.unavailableReason ?? "unknown")); leaving summary empty rather than storing heuristic output")
             return
         }
         mutate(id) { $0.aiStatus = "pending" }
         objectWillChange.send()
-        AppLog.event("ai: starting generation for \(transcript.fileName) — \(transcript.turns.count) turns")
+        AppLog.event("ai: starting generation for \(transcript.fileName), \(transcript.turns.count) turns")
         let ai = await service.generate(for: transcript, progress: { done, total in
             self.mutate(id) { $0.aiProgress = done }
             self.objectWillChange.send()
             AppLog.event("ai: chunk \(done)/\(total) analyzed")
         })
         guard transcriptStillExists(id) else {
-            AppLog.event("ai: transcript \(id.uuidString) deleted mid-generation — discarding")
+            AppLog.event("ai: transcript \(id.uuidString) deleted mid-generation, discarding")
             return
         }
         guard let (result, engine) = ai else {
@@ -267,8 +267,8 @@ final class TranscriptStore: ObservableObject {
                 t.fileName = result.title
             }
         }
-        AppLog.event("ai: done for \(id.uuidString) — \(result.title)")
-        // notify detail pane if open — pushState will fire via objectWillChange
+        AppLog.event("ai: done for \(id.uuidString), \(result.title)")
+        // notify detail pane if open, pushState will fire via objectWillChange
     }
 
     func clearAI(for id: UUID) {
@@ -293,7 +293,7 @@ final class TranscriptStore: ObservableObject {
 
     /// Containers WKWebView can seek frame-exactly: they carry explicit
     /// sample/chunk tables (or raw PCM), so time→byte mapping never relies on
-    /// header guesses. Everything else — VBR MP3 above all — gets transcoded
+    /// header guesses. Everything else, VBR MP3 above all, gets transcoded
     /// to M4A before stashing (see adoptAudio).
     private nonisolated static let seekSafeExtensions: Set<String> = ["wav", "caf", "m4a", "mp4", "mov"]
 
@@ -301,7 +301,7 @@ final class TranscriptStore: ObservableObject {
     /// Compressed sources without exact seek tables (mp3, adts aac, …) are
     /// first transcoded to M4A: players map seek time→byte offset through the
     /// container's sample table, and for VBR MP3 they fall back to the Xing
-    /// TOC — which YouTube rips and similar encoders routinely write as a
+    /// TOC, which YouTube rips and similar encoders routinely write as a
     /// linear approximation. On such files every click-a-word jump lands
     /// progressively further from the requested word (seconds deep into the
     /// file), which reads as "diarization drifts from the audio" even though
@@ -322,7 +322,7 @@ final class TranscriptStore: ObservableObject {
                 return m4aName
             }
             try? FileManager.default.removeItem(at: dest) // don't leave half-written output
-            AppLog.event("transcripts: m4a transcode failed for \"\(src.lastPathComponent)\" — stashing original")
+            AppLog.event("transcripts: m4a transcode failed for \"\(src.lastPathComponent)\", stashing original")
             // fall through to the plain move/copy below
         }
 
@@ -337,12 +337,12 @@ final class TranscriptStore: ObservableObject {
             }
             return name
         } catch {
-            AppLog.event("transcripts: audio stash failed — \(error.localizedDescription)")
+            AppLog.event("transcripts: audio stash failed, \(error.localizedDescription)")
             return nil
         }
     }
 
-    /// One-shot audio-only AAC export. False on any failure — callers fall
+    /// One-shot audio-only AAC export. False on any failure, callers fall
     /// back to stashing the original file untouched.
     private nonisolated static func transcodeToM4A(src: URL, dest: URL) async -> Bool {
         let asset = AVURLAsset(url: src)
@@ -356,7 +356,7 @@ final class TranscriptStore: ObservableObject {
             session.exportAsynchronously { continuation.resume() }
         }
         guard session.status == .completed else {
-            AppLog.event("transcripts: export error — \(session.error?.localizedDescription ?? "unknown")")
+            AppLog.event("transcripts: export error, \(session.error?.localizedDescription ?? "unknown")")
             return false
         }
         return true
@@ -433,7 +433,7 @@ final class TranscriptStore: ObservableObject {
         f.dateStyle = .long
         f.timeStyle = .short
         var out = """
-        # transcript — \(t.fileName)
+        # transcript, \(t.fileName)
 
         \(f.string(from: t.date)) · \
         \(formatClock(t.durationSeconds)) · \(t.speakerCount) speakers
@@ -456,7 +456,7 @@ final class TranscriptStore: ObservableObject {
         }
         if let quotes = t.aiQuotes, !quotes.isEmpty {
             out += "\n### Key quotes\n"
-            for q in quotes { out += "> \"\(q.text)\" — \(q.speaker) [\(q.timestampLabel)]\n\n" }
+            for q in quotes { out += "> \"\(q.text)\", \(q.speaker) [\(q.timestampLabel)]\n\n" }
         }
         if let actions = t.aiActions, !actions.isEmpty {
             out += "\n### Action items\n"
@@ -525,7 +525,7 @@ final class TranscriptStore: ObservableObject {
         transcripts = loaded.sorted { $0.date > $1.date }
 
         // stale "pending" sweep: nothing survives a relaunch, so any pending
-        // status here is from a killed run — it would block regeneration
+        // status here is from a killed run, it would block regeneration
         // forever (the coalescing guard sees "pending" and bails). Restore
         // honest state: content present → done, otherwise clear it.
         for idx in transcripts.indices where transcripts[idx].aiStatus == "pending" {
@@ -539,7 +539,7 @@ final class TranscriptStore: ObservableObject {
         // orphaned placeholders: a capture was filed but its transcription
         // never finished (app quit mid-job). the queue is always empty at
         // launch, so empty-turns records from BEFORE this launch can never
-        // complete — sweep them so they don't sit there saying "soon" forever.
+        // complete, sweep them so they don't sit there saying "soon" forever.
         let launchDate = Date()
         let orphans = transcripts.filter { $0.turns.isEmpty && $0.date < launchDate.addingTimeInterval(-60) }
         for orphan in orphans {

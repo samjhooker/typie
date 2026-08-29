@@ -1,4 +1,4 @@
-/* Magnetic pull — signature micro-animation for the hero option key.
+/* Magnetic pull, signature micro-animation for the hero option key.
    The key lerps toward the cursor inside a proximity zone and springs
    home when it leaves. Purely presentational: applied to the .keywrap
    wrapper so the .key press transform is untouched. */

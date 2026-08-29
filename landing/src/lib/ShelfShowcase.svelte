@@ -11,7 +11,7 @@
       id: 'dictate',
       label: 'Dictating',
       caption:
-        'Hold option anywhere. Words land in any app — Slack, Mail, whatever has a cursor.',
+        'Hold option anywhere. Words land in any app, Slack, Mail, whatever has a cursor.',
       chip: 'listening',
     },
     {
@@ -220,7 +220,7 @@
             </p>
           {:else}
             <div class="notecard">
-              <span class="ntitle">✦ Beta sync — Friday</span>
+              <span class="ntitle">✦ Beta sync, Friday</span>
               <ul>
                 <li
                   class:on={points >= 1}

@@ -1,7 +1,7 @@
 <script>
   import { Pencil, Check } from 'lucide-svelte';
 
-  /** click-to-rename field — pencil appears on hover, inline input on edit */
+  /** click-to-rename field, pencil appears on hover, inline input on edit */
   let { value, onSave, size = 'md' } = $props();
 
   let editing = $state(false);

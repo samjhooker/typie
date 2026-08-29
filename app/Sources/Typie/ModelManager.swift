@@ -65,7 +65,7 @@ final class ModelManager: ObservableObject {
         }
     }
 
-    /// Full ASR result incl. per-token timings — used by the transcribe pane
+    /// Full ASR result incl. per-token timings, used by the transcribe pane
     /// to align words with diarization speaker segments.
     func transcribeDetailed(_ samples: [Float]) async throws -> ASRResult {
         guard let manager = asrManager else {

@@ -2,7 +2,7 @@ import AVFoundation
 import CoreAudio
 import Foundation
 
-/// Captures SYSTEM audio via a Core Audio process tap (macOS 14.2+) —
+/// Captures SYSTEM audio via a Core Audio process tap (macOS 14.2+),
 /// the reliable replacement for ScreenCaptureKit audio-only streams, which
 /// have been observed delivering pure digital silence on newer macOS.
 ///
@@ -22,7 +22,7 @@ final class SystemTapRecorder {
     private var wavURL: URL?
     private var dataBytes: UInt64 = 0
     private var converter: AVAudioConverter?
-    // cached at converter creation — querying converter.input/outputFormat
+    // cached at converter creation, querying converter.input/outputFormat
     // from INSIDE the convert() block recurses into its own lock and kills us
     private var convIn: AVAudioFormat?
     private var convOut: AVAudioFormat?
@@ -62,7 +62,7 @@ final class SystemTapRecorder {
         let tapStatus = AudioHardwareCreateProcessTap(desc, &tap)
         guard tapStatus == 0 else {
             throw NSError(domain: "typie.tap", code: 3,
-                          userInfo: [NSLocalizedDescriptionKey: "couldn't create process tap — \(tapStatus)"])
+                          userInfo: [NSLocalizedDescriptionKey: "couldn't create process tap, \(tapStatus)"])
         }
         tapID = tap
 
@@ -82,7 +82,7 @@ final class SystemTapRecorder {
         var fmtSize = UInt32(MemoryLayout<AudioStreamBasicDescription>.stride)
         addr.mSelector = kAudioTapPropertyFormat
         _ = AudioObjectGetPropertyData(tapID, &addr, 0, nil, &fmtSize, &asbd)
-        AppLog.event("meeting: tap format — \(Int(asbd.mSampleRate))Hz ch\(asbd.mChannelsPerFrame) fmt '\(fourCC(asbd.mFormatID))'")
+        AppLog.event("meeting: tap format, \(Int(asbd.mSampleRate))Hz ch\(asbd.mChannelsPerFrame) fmt '\(fourCC(asbd.mFormatID))'")
 
         // 3. wrap the tap in a PRIVATE aggregate device we alone drive
         let subtap: CFDictionary = [
@@ -100,7 +100,7 @@ final class SystemTapRecorder {
         guard aggStatus == 0 else {
             Self.destroyTap(tapID)
             throw NSError(domain: "typie.tap", code: 5,
-                          userInfo: [NSLocalizedDescriptionKey: "couldn't create aggregate device — \(aggStatus)"])
+                          userInfo: [NSLocalizedDescriptionKey: "couldn't create aggregate device, \(aggStatus)"])
         }
         aggID = agg
 
@@ -118,7 +118,7 @@ final class SystemTapRecorder {
         hbSamples = 0
         hbSumSq = 0
 
-        // 5. IO proc — tapped audio shows up in one of the two buffer lists;
+        // 5. IO proc, tapped audio shows up in one of the two buffer lists;
         //    pick whichever actually carries bytes this callback
         var proc: AudioDeviceIOProcID?
         let procStatus = AudioDeviceCreateIOProcIDWithBlock(&proc, aggID, nil) { [weak self] _, inputData, _, outputData, _ in
@@ -127,7 +127,7 @@ final class SystemTapRecorder {
         guard procStatus == 0, proc != nil else {
             Self.destroyAgg(aggID); Self.destroyTap(tapID)
             throw NSError(domain: "typie.tap", code: 6,
-                          userInfo: [NSLocalizedDescriptionKey: "couldn't attach IO proc — \(procStatus)"])
+                          userInfo: [NSLocalizedDescriptionKey: "couldn't attach IO proc, \(procStatus)"])
         }
         procID = proc
 
@@ -136,7 +136,7 @@ final class SystemTapRecorder {
             Self.destroyAgg(aggID); Self.destroyTap(tapID)
             procID = nil
             throw NSError(domain: "typie.tap", code: 7,
-                          userInfo: [NSLocalizedDescriptionKey: "couldn't start aggregate device — \(startStatus)"])
+                          userInfo: [NSLocalizedDescriptionKey: "couldn't start aggregate device, \(startStatus)"])
         }
         AppLog.event("meeting: core-audio system tap started")
     }
@@ -171,7 +171,7 @@ final class SystemTapRecorder {
             try? fileHandle.close()
         }
         if dataBytes == 0 { url.map { try? FileManager.default.removeItem(at: $0) } }
-        AppLog.event("meeting: system tap sealed — \(dataBytes) bytes of pcm")
+        AppLog.event("meeting: system tap sealed, \(dataBytes) bytes of pcm")
         onFinish?(dataBytes > 0 ? url : nil)
     }
 
@@ -191,7 +191,7 @@ final class SystemTapRecorder {
 
     // MARK: IO callback
 
-    /// Runs on the device's realtime thread — no locks, no allocations beyond
+    /// Runs on the device's realtime thread, no locks, no allocations beyond
     /// what conversion needs, straight into the same disk-append path SCK used.
     fileprivate nonisolated func handleIO(input: UnsafePointer<AudioBufferList>?, output: UnsafePointer<AudioBufferList>?) {
         gate.lock(); let paused = pausedFlag; gate.unlock()
@@ -216,7 +216,7 @@ final class SystemTapRecorder {
     private nonisolated func appendRaw(channelBase: UnsafePointer<Float>, frames: Int, stride: Int) {
         if !formatLogged {
             formatLogged = true
-            AppLog.event("meeting: tap delivering audio — resampling to \(Int(Self.targetRate))Hz mono")
+            AppLog.event("meeting: tap delivering audio, resampling to \(Int(Self.targetRate))Hz mono")
         }
 
         // heartbeat: 5s-window RMS of the raw feed

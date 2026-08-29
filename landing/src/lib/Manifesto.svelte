@@ -9,7 +9,7 @@
       tone: 'ink',
     },
     {
-      html: 'Most voice apps take it <em>upstairs</em> — to someone else’s computer.',
+      html: 'Most voice apps take it <em>upstairs</em>, to someone else’s computer.',
       tone: 'pink',
     },
     {

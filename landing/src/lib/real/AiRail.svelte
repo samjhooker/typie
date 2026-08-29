@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   const summaryLines = [
-    'Aligned on launch plan — pricing page and demo video are the two remaining items.',
+    'Aligned on launch plan, pricing page and demo video are the two remaining items.',
     'Sam will handle the pricing page.',
     'Maya will take the demo video this afternoon.',
     'Team will sync at 4pm to align on deliverables.',

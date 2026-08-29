@@ -15,7 +15,7 @@
       <p class="mono">Inside the app</p>
       <h2>The workspace,<br /><em>on your Mac.</em></h2>
       <p class="sub">
-        Not a mockup. This is the actual app — sidebar, panes, transcription,
+        Not a mockup. This is the actual app, sidebar, panes, transcription,
         AI. Try it.
       </p>
       <div class="nav-pills">
@@ -52,7 +52,7 @@
       <div class="basemini"><i></i></div>
     </div>
     <p class="mono hint">
-      All of this runs on your Mac. Pull the wifi — it still works.
+      All of this runs on your Mac. Pull the wifi, it still works.
     </p>
   </div>
 </section>
@@ -229,7 +229,7 @@
 </style>
 
 <style>
-  /* dark — mock window chrome follows the theme */
+  /* dark, mock window chrome follows the theme */
   :global([data-theme='dark']) .dots {
     color: #9aa0a6;
   }

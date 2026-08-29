@@ -55,7 +55,7 @@
   }}
 />
 
-<!-- Quiet corner theme toggle when at the very top -->
+<!-- Quiet corner brand at the very top (theme toggle lives in the nav pill) -->
 <div
   class="top-corner-bar"
   class:fade-out={scrolled}
@@ -68,24 +68,6 @@
     >
       <Logo size={22} />
     </a>
-    <button
-      class="theme-toggle corner-pos"
-      onclick={toggleTheme}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
-      {#if isDark}
-        <Sun
-          size={16}
-          strokeWidth={2}
-        />
-      {:else}
-        <Moon
-          size={16}
-          strokeWidth={2}
-        />
-      {/if}
-    </button>
   </div>
 </div>
 
@@ -170,7 +152,7 @@
 </header>
 
 <style>
-  /* Static top bar at hero start — ultra light & airy */
+  /* Static top bar at hero start, ultra light & airy */
   .top-corner-bar {
     position: absolute;
     top: 0;
@@ -197,12 +179,8 @@
     line-height: 0;
     justify-self: center;
   }
-  .top-corner-inner .theme-toggle {
-    grid-column: 3;
-    justify-self: end;
-  }
 
-  /* Floating Glass Pill Navbar — appears on scroll */
+  /* Floating Glass Pill Navbar, appears on scroll */
   .floating-nav {
     position: fixed;
     top: 16px;
@@ -291,7 +269,7 @@
     align-items: center;
     gap: 10px;
   }
-  /* theme toggle — single sun/moon icon, tap to flip */
+  /* theme toggle, single sun/moon icon, tap to flip */
   .theme-toggle {
     display: grid;
     place-items: center;
@@ -312,12 +290,6 @@
     transform: rotate(15deg) scale(1.06);
     border-color: var(--hotpink);
     color: var(--hotpink);
-  }
-  .theme-toggle.corner-pos {
-    width: 44px;
-    height: 44px;
-    background: var(--surface);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }
 
   .navcta {

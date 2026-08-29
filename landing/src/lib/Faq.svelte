@@ -221,7 +221,7 @@
     color: var(--text-2);
     font-size: 15px;
     line-height: 1.6;
-    /* spring settle on expand — answers arrive, don't blink in */
+    /* spring settle on expand, answers arrive, don't blink in */
     animation: faq-in 0.5s var(--spring-snappy);
   }
 

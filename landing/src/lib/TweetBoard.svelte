@@ -1,6 +1,6 @@
 <script>
   import { reveal } from './reveal.js';
-  // Realistic X-style tweets — horizontal marquee, no boxed container
+  // Realistic X-style tweets, horizontal marquee, no boxed container
   // Using lucide + custom X styling to look legitimate (library-like fidelity without extra dep)
 
   const tweets = [
@@ -88,7 +88,7 @@
       avatar: 'S',
       color: '#ec4899',
       verified: false,
-      text: 'my wrists thank me every day. 200+ slack messages now just talk. typie types in slack exactly like i do — emoji and all 🚀',
+      text: 'my wrists thank me every day. 200+ slack messages now just talk. typie types in slack exactly like i do, emoji and all 🚀',
       time: '8h',
       views: '7.3K',
       likes: '945',
@@ -179,11 +179,11 @@
           <svg viewBox="0 0 120 14" aria-hidden="true"><path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" /></svg>
         </span>
       </h2>
-      <p class="sub">Not our words — theirs. Hover to pause.</p>
+      <p class="sub">Not our words, theirs. Hover to pause.</p>
     </div>
   </div>
 
-  <!-- Horizontal marquee — no boxed container, just edge-faded viewport -->
+  <!-- Horizontal marquee, no boxed container, just edge-faded viewport -->
   <div class="marqueeViewport" use:reveal={{ delay: 60 }} aria-label="Scrolling tweets">
     <div class="fadeLeft"></div>
     <div class="fadeRight"></div>
@@ -289,7 +289,7 @@
     color: var(--text-2);
   }
 
-  /* — horizontal marquee — no box, just edge fades */
+  /*, horizontal marquee, no box, just edge fades */
   .marqueeViewport {
     position: relative;
     margin-top: 28px;
@@ -325,7 +325,7 @@
     to { transform: translateX(0); }
   }
 
-  /* — realistic X tweet card — */
+  /* realistic X tweet card */
   .tweet {
     flex: 0 0 360px;
     background: var(--surface);

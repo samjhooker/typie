@@ -2,7 +2,7 @@
  * Pending-deletion buffer with undo grace period.
  *
  * Deleted items vanish from the UI instantly; the real native delete only
- * fires after the grace window expires without an undo. Purely web-side —
+ * fires after the grace window expires without an undo. Purely web-side,
  * no native changes needed, and quitting within the window simply means
  * nothing was deleted.
  */
@@ -55,7 +55,7 @@ export const trash = {
     entries = entries.filter((e) => e.uid !== uid);
   },
 
-  /** ids staged for deletion of a kind — panes filter their lists by this */
+  /** ids staged for deletion of a kind, panes filter their lists by this */
   pendingIds(kind) {
     return new Set(
       entries.filter((e) => e.kind === kind).flatMap((e) => e.ids)
@@ -63,7 +63,7 @@ export const trash = {
   },
 };
 
-/** shared date formatter — adds the year once it isn't the current one */
+/** shared date formatter, adds the year once it isn't the current one */
 export function fmtDateSmart(iso) {
   const d = new Date(iso);
   const sameYear = d.getFullYear() === new Date().getFullYear();

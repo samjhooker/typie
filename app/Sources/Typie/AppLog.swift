@@ -1,6 +1,6 @@
 import Foundation
 
-/// Lightweight file logger — everything lands in
+/// Lightweight file logger, everything lands in
 /// ~/Library/Application Support/typie/typie.log so problems can be
 /// diagnosed after the fact.
 enum AppLog {

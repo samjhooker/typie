@@ -75,7 +75,7 @@ if security find-identity -v -p codesigning | grep -q 'typie-dev'; then
     echo "→ signing with stable identity 'typie-dev' (permissions persist)"
     codesign --force --deep --sign "typie-dev" "$APP"
 else
-    echo "⚠ signing ad-hoc — permissions will reset on every rebuild!"
+    echo "⚠ signing ad-hoc, permissions will reset on every rebuild!"
     echo "  run scripts/create_signing_cert.sh once to fix this"
     codesign --force --deep --sign - "$APP"
 fi

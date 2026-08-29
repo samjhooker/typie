@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 /// Which tool the shelf is currently running (or has pinned open).
-/// Dictation isn't here — it stays driven by the hotkey/phase pipeline.
+/// Dictation isn't here, it stays driven by the hotkey/phase pipeline.
 enum ShelfTool: String {
     case voiceNote
     case transcribeFile
@@ -60,7 +60,7 @@ final class ShelfController: ObservableObject {
     /// Called by a file dropped onto the shelf: kick off the F3 pipeline
     /// right away and surface progress in the app window.
     func startTranscribeDrop(_ url: URL) {
-        AppLog.event("shelf: file dropped — \(url.lastPathComponent)")
+        AppLog.event("shelf: file dropped, \(url.lastPathComponent)")
         activeTool = .transcribeFile
         onTranscribeDropped?(url)
     }

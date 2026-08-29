@@ -1,5 +1,5 @@
 <script>
-  /* full Mail UI — used inside the hero Mac; the reply composer receives the dictation */
+  /* full Mail UI, used inside the hero Mac; the reply composer receives the dictation */
   let { typed = '', listening = false, pasted = false } = $props();
 
   const mailboxes = [
@@ -14,7 +14,7 @@
   const messages = [
     {
       from: 'Maya Chen',
-      subj: 'Launch checklist — 2 items left',
+      subj: 'Launch checklist, 2 items left',
       preview: 'Pricing page and the demo video are the only two left…',
       time: '9:41',
       on: true,
@@ -29,7 +29,7 @@
     },
     {
       from: 'Design Team',
-      subj: 'Hero section — looks unreal now',
+      subj: 'Hero section, looks unreal now',
       preview: 'the desktop demo is so good. shipping this…',
       time: '8:12',
       unread: true,
@@ -44,7 +44,7 @@
   ];
 
   const body = [
-    "quick note before the demo — we're on track.",
+    "quick note before the demo, we're on track.",
     'Two items are left on the launch checklist:',
     '1. The pricing page (Sam is on it)',
     '2. The demo video (I can take it this afternoon)',
@@ -88,7 +88,7 @@
       <button class="tool">→</button>
       <button class="tool">🗑</button>
     </div>
-    <h4>Launch checklist — 2 items left</h4>
+    <h4>Launch checklist, 2 items left</h4>
     <p class="rfrom">From: <b>Maya Chen</b> &lt;maya@typie.cc&gt;</p>
     <p class="rto">To: Sam Baker, you</p>
     <div class="rbody">

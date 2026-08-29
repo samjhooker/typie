@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Builds "typie dev" — a side-by-side testing build that can run at the
+# Builds "typie dev", a side-by-side testing build that can run at the
 # same time as your installed production typie:
 #
 #   - bundle id app.typie.typie-dev  → the single-instance guard only
@@ -18,5 +18,5 @@ APP_NAME=typie-dev BUNDLE_ID=app.typie.typie-dev ./make_app.sh
 
 echo ""
 echo "→ run it:  open build/typie-dev.app"
-echo "  prod typie can stay running — they coexist by design"
+echo "  prod typie can stay running, they coexist by design"
 echo "  tip: pick a DIFFERENT hotkey in dev, or both apps will react to it"

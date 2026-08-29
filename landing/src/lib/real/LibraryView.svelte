@@ -9,12 +9,12 @@
     },
     {
       time: '14:08',
-      text: "quick voice note — don't forget to ship",
+      text: "quick voice note, don't forget to ship",
       isCall: false,
     },
     {
       time: '09:42',
-      text: 'okay so the plan is we ship the beta friday — two items left',
+      text: 'okay so the plan is we ship the beta friday, two items left',
       isCall: false,
       lat: '42ms',
     },
@@ -26,7 +26,7 @@
     },
     {
       time: 'Yesterday',
-      text: 'recipe note — grandma said add white pepper',
+      text: 'recipe note, grandma said add white pepper',
       isCall: false,
       lat: '51ms',
     },
@@ -157,7 +157,7 @@
 </style>
 
 <style>
-  /* dark — chips and meta on the library mock follow the theme */
+  /* dark, chips and meta on the library mock follow the theme */
   :global([data-theme='dark']) .lib {
     color: var(--text-2);
   }

@@ -4,7 +4,7 @@ import IOKit.hidsystem
 
 /// Global hotkey detection via a CGEventTap, Hex-style.
 ///
-/// We only listen for `flagsChanged` (modifier press/release) — per Hex's
+/// We only listen for `flagsChanged` (modifier press/release), per Hex's
 /// field notes, macOS delivers modifier events to a tap with mere
 /// *Accessibility* permission; only full keyDown/keyUp streams are gated
 /// behind Input Monitoring. The tap sits at the HID level and passes every
@@ -48,7 +48,7 @@ final class HotkeyMonitor {
         for (name, reason) in [(NSWorkspace.didWakeNotification, "system_wake"),
                                (NSWorkspace.sessionDidBecomeActiveNotification, "session_active")] {
             let observer = center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                AppLog.event("system transition (\(reason)) — recreating event tap")
+                AppLog.event("system transition (\(reason)), recreating event tap")
                 self?.recreateTap()
             }
             systemObservers.append(observer)
@@ -72,7 +72,7 @@ final class HotkeyMonitor {
             callback: callback,
             userInfo: context
         ) else {
-            AppLog.event("ERROR: event tap could not be created — accessibility=\(Self.accessibilityGranted(prompt: false)), inputMonitoring=\(Self.inputMonitoringGranted())")
+            AppLog.event("ERROR: event tap could not be created, accessibility=\(Self.accessibilityGranted(prompt: false)), inputMonitoring=\(Self.inputMonitoringGranted())")
             return
         }
 
@@ -80,7 +80,7 @@ final class HotkeyMonitor {
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
         CGEvent.tapEnable(tap: port, enable: true)
         tap = port
-        AppLog.event("event tap created (cghidEventTap) — accessibility=\(Self.accessibilityGranted(prompt: false)), inputMonitoring=\(Self.inputMonitoringGranted())")
+        AppLog.event("event tap created (cghidEventTap), accessibility=\(Self.accessibilityGranted(prompt: false)), inputMonitoring=\(Self.inputMonitoringGranted())")
     }
 
     private func recreateTap() {
@@ -104,7 +104,7 @@ final class HotkeyMonitor {
 
     private func handle(type: CGEventType, event: CGEvent) {
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-            AppLog.event("event tap disabled — recreating")
+            AppLog.event("event tap disabled, recreating")
             DispatchQueue.main.async { [weak self] in
                 self?.recreateTap()
             }

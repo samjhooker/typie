@@ -4,7 +4,7 @@ import Foundation
 import ScreenCaptureKit
 
 /// Captures SYSTEM audio (every app: Zoom, Meet in browser, Slack huddles,
-/// local playback) via ScreenCaptureKit — no virtual loopback driver
+/// local playback) via ScreenCaptureKit, no virtual loopback driver
 /// (PRD F4). macOS 13+, audio-only: video frames are never requested.
 ///
 /// Hardening: converted 16 kHz mono samples are appended straight to a
@@ -57,7 +57,7 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
             do {
                 try await self?.startStream()
             } catch {
-                AppLog.event("meeting: failed to start SCStream — \(error)")
+                AppLog.event("meeting: failed to start SCStream, \(error)")
                 await MainActor.run { [weak self] in
                     self?.finish(with: nil)
                 }
@@ -95,7 +95,7 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
     /// Stops capture; hands the recorded WAV back through `onFinish`.
     ///
     /// Hardened: SCStream.stopCapture() can stall for MINUTES waiting to
-    /// flush (observed 97s+, sometimes forever) — which used to freeze the
+    /// flush (observed 97s+, sometimes forever), which used to freeze the
     /// whole "writing it down…" state. So we detach from the stream
     /// immediately, seal + hand back the WAV right away, and tear the
     /// stream down best-effort in the background. Costs ≤ ~1s of tail audio;
@@ -103,11 +103,11 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
     func stop() {
         gate.lock(); pausedFlag = false; gate.unlock()
         guard let stream = self.stream else { return finish(with: nil) }
-        // detach FIRST — late delegate callbacks (didStopWithError) no-op
+        // detach FIRST, late delegate callbacks (didStopWithError) no-op
         // once stream is nil, so finish can't fire twice
         self.stream = nil
         let url = wavURL
-        AppLog.event("meeting: stop requested — sealing wav, tearing down stream in background")
+        AppLog.event("meeting: stop requested, sealing wav, tearing down stream in background")
 
         // best-effort teardown (also clears the macOS screen-recording badge)
         let teardown = Task.detached(priority: .utility) {
@@ -115,7 +115,7 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
                 try await stream.stopCapture()
                 AppLog.event("meeting: stream stopCapture completed")
             } catch {
-                AppLog.event("meeting: stream teardown — \(error.localizedDescription)")
+                AppLog.event("meeting: stream teardown, \(error.localizedDescription)")
             }
         }
         // don't let a stuck teardown leak forever
@@ -152,7 +152,7 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
         _ = CGRequestScreenCaptureAccess()
     }
 
-    // MARK: SCStreamOutput — arrives on outputQueue
+    // MARK: SCStreamOutput, arrives on outputQueue
 
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer,
                 of type: SCStreamOutputType) {
@@ -165,7 +165,7 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
     }
 
     func stream(_ stream: SCStream, didStopWithError error: Error) {
-        AppLog.event("meeting: stream stopped — \(error.localizedDescription)")
+        AppLog.event("meeting: stream stopped, \(error.localizedDescription)")
         Task { @MainActor [weak self] in
             guard let self, self.stream != nil else { return }
             let url = self.wavURL
@@ -205,7 +205,7 @@ final class SystemAudioRecorder: NSObject, SCStreamDelegate, SCStreamOutput {
         if !formatLogged {
             formatLogged = true
             let f = buffer.format
-            AppLog.event("meeting: first system-audio buffer — \(Int(f.sampleRate))Hz ch\(f.channelCount) inter\(f.isInterleaved) frames\(buffer.frameLength)")
+            AppLog.event("meeting: first system-audio buffer, \(Int(f.sampleRate))Hz ch\(f.channelCount) inter\(f.isInterleaved) frames\(buffer.frameLength)")
         }
 
         // heartbeat: log a 5s-window RMS of the RAW system feed

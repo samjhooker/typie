@@ -2,10 +2,10 @@ import SwiftUI
 
 /// Design system synced with landing/src/app.css.
 enum Theme {
-    // ── palette (landing :root — Gen Z: hot pink, butter, mint,
+    // ── palette (landing :root, Gen Z: hot pink, butter, mint,
     //    periwinkle; accents only, never body text) ────────────
     static let mint = Color(hex: 0x82EDA6)          // mint-400 brand mint
-    static let mintLive = Color(hex: 0x4ADE80)    // ★ mint-500 — REC/success (canonical)
+    static let mintLive = Color(hex: 0x4ADE80)    // ★ mint-500, REC/success (canonical)
     static let mint600 = Color(hex: 0x0F9D6A)     // mint-600 done/confirmed
     static let green = Color(hex: 0x03594D)       // teal-700 structural
     static let greenDeep = Color(hex: 0x02453C)   // teal-900
@@ -33,7 +33,7 @@ enum Theme {
     // pastel card fills (landing --card-*)
     static let cardLavender = Color(hex: 0xEFECFB)
     static let cardBlue = Color(hex: 0xDDE9FA)
-    static let cardGrey = Color(hex: 0xF2F4F7)    // was cardCream — neutral grey now
+    static let cardGrey = Color(hex: 0xF2F4F7)    // was cardCream, neutral grey now
     static let cardCream = Color(hex: 0xF2F4F7)   // legacy alias
     static let cardMint = Color(hex: 0xDFF0E4)
     static let pinkBand = Color(hex: 0xFBDAE4)
@@ -63,8 +63,8 @@ enum Theme {
     static let springy = Animation.timingCurve(0.22, 1.2, 0.36, 1, duration: 0.4)
     static let pop = Animation.timingCurve(0.2, 1.6, 0.35, 1, duration: 0.55)
 
-    /// Landing kickers are handwritten, hot pink, tilted a touch —
-    /// but in-app labels/instructions stay on Inter for readability.
+    /// Landing kickers are handwritten, hot pink, tilted a touch.
+/// But in-app labels/instructions stay on Inter for readability.
     static func kicker(_ text: String, color: Color? = nil) -> some View {
         Text(text.uppercased())
             .font(mono(11))

@@ -8,7 +8,7 @@
 {#if isDev}
   <span
     class="devtag"
-    title="typie dev — runs alongside your production typie">DEV</span
+    title="typie dev, runs alongside your production typie">DEV</span
   >
 {/if}
 

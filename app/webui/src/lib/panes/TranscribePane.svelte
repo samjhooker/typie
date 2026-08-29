@@ -31,7 +31,7 @@
   let sortBy = $state('newest');
   let shown = $state(PAGE);
 
-  // meetings live in their own Recordings pane — never listed here
+  // meetings live in their own Recordings pane, never listed here
   // (staged-for-delete items vanish instantly too)
   const pendingT = $derived(trash.pendingIds('transcript'));
   const library = $derived(
@@ -143,7 +143,7 @@
       <div>
         <h2>Transcripts</h2>
         <p>
-          drop any audio or video — diarized, timestamped, entirely on this Mac. <span
+          drop any audio or video, diarized, timestamped, entirely on this Mac. <span
             class="hand hint-hand">like otter, but offline</span
           >
         </p>
@@ -177,7 +177,7 @@
       {/if}
     </div>
   {:else}
-    <!-- live work: one card per file — uploading / running / waiting -->
+    <!-- live work: one card per file, uploading / running / waiting -->
     {#if hasWork}
       <div class="worklist">
         {#if uploading}
@@ -253,11 +253,11 @@
       </div>
       <h3>
         {hasWork
-          ? 'add more files — they line up in the queue'
+          ? 'add more files, they line up in the queue'
           : 'drop files, or click to browse'}
       </h3>
       <p class="mono-kicker">mp3 · m4a · wav · mp4 · several at once is fine</p>
-      <span class="hand note-hand">nothing uploads anywhere — promise</span>
+      <span class="hand note-hand">nothing uploads anywhere, promise</span>
     </div>
   {/if}
 
@@ -289,7 +289,7 @@
     <div class="empty">
       <span class="hand big"
         >{library.length === 0
-          ? 'no transcripts yet — drop a file up there ☝'
+          ? 'no transcripts yet, drop a file up there ☝'
           : `no matches for “${query}”`}</span
       >
     </div>

@@ -1,5 +1,5 @@
-/* Typie Design System — Canva-inspired delight + Apple precision */
-@import './tokens.css'; /* shared ramps — single source with the Mac app webui */
+/* Typie Design System, Canva-inspired delight + Apple precision */
+@import './tokens.css'; /* shared ramps, single source with the Mac app webui */
 :root {
   /* Light Theme (Default: warm editorial canvas, crisp ink, radiant pink) */
   --bg: #fbf9f6;
@@ -45,7 +45,11 @@
   --butter: #ffe79a;
   --sun: #fdc068;
   --card-cream: #fdf7eb;
-  /* app support colors (see DESIGN.md §5) — used by app-mock components */
+  --cream-50: #fffdf7;
+  --cream-100: #fdf8ee;
+  --cream-200: #fdf3dc;
+  --cream: #fffdf7;
+  /* app support colors (see DESIGN.md §5), used by app-mock components */
   --sky: #bcd6ff;
   --lavender: #ddd8ff;
   --lime: #d8e268;
@@ -92,7 +96,7 @@
     1,
     0.64,
     1
-  ); /* ease-out-quart — was referenced but never defined */
+  ); /* ease-out-quart, was referenced but never defined */
   --snap: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -112,7 +116,7 @@
   --ink: #f7f6f4;
   --text-1: #f7f6f4;
   --text-2: #a2a6b5;
-  --text-3: #8a8e9a; /* was #757989 — 3.8:1 on dark cards, needed 4.5 */
+  --text-3: #8a8e9a; /* was #757989, 3.8:1 on dark cards, needed 4.5 */
   --muted: #545766;
 
   --hotpink: #fc5681;
@@ -138,7 +142,7 @@
   --card-cream: #292014;
 
   /* ramp adjustments live in tokens.css (shared with the app webui);
-     only the warm-cream neutrals are landing-specific — and in dark they
+     only the warm-cream neutrals are landing-specific, and in dark they
      unify to the neutral surface family (user: one dark card color) */
   --cream-50: #14161f;
   --cream-100: #1b1e2a;
@@ -147,7 +151,7 @@
   --amber: #e59e12;
   --error: #ef4444;
 
-  /* dark card tints — unified to a single elevated surface (user call:
+  /* dark card tints, unified to a single elevated surface (user call:
      the dark blue/green/red tint variants looked muddy) */
   --card-blue: #1b1e2a;
   --card-lavender: #1b1e2a;
@@ -160,7 +164,7 @@
   --wash: rgba(255, 255, 255, 0.09);
   --wash-strong: rgba(255, 255, 255, 0.16);
   --info: #7a98fc;
-  /* app support colors — dark variants */
+  /* app support colors, dark variants */
   --sky: #1a2740;
   --lavender: #251f3d;
   --lime: #2a2f16;

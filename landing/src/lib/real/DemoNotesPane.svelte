@@ -14,21 +14,21 @@
   const baseNotes = [
     {
       id: '1',
-      text: 'podcast idea — the voice is the interface, not the keyboard',
+      text: 'podcast idea, the voice is the interface, not the keyboard',
       pinned: true,
       date: 'today',
       dur: '12s',
     },
     {
       id: '2',
-      text: 'standup — we ship friday, two things left: pricing and video',
+      text: 'standup, we ship friday, two things left: pricing and video',
       pinned: false,
       date: 'yesterday',
       dur: '8s',
     },
     {
       id: '3',
-      text: "grandma's recipe — add miso, trust me, white pepper too",
+      text: "grandma's recipe, add miso, trust me, white pepper too",
       pinned: false,
       date: '2 days ago',
       dur: '21s',
@@ -42,14 +42,14 @@
     },
     {
       id: '5',
-      text: "don't forget: hold option, don't click the mic icon",
+      text: "start notes from the notch or new note, ⌥ is only for dictating",
       pinned: false,
       date: 'today',
       dur: '5s',
     },
     {
       id: '6',
-      text: 'idea — offline is a feature, not a fallback',
+      text: 'idea, offline is a feature, not a fallback',
       pinned: false,
       date: 'today',
       dur: '9s',
@@ -79,7 +79,7 @@
     <div>
       <h2>Notes</h2>
       <p>
-        voice notes — captured, pinned, searchable <span class="hand hint-hand"
+        voice notes, captured, pinned, searchable <span class="hand hint-hand"
           >your pocket for thoughts</span
         >
       </p>
@@ -138,7 +138,7 @@
     {/each}
   </div>
 
-  <p class="privacy mono">● everything stays on this mac — no cloud.</p>
+  <p class="privacy mono">● everything stays on this mac, no cloud.</p>
 </div>
 
 <style>
@@ -225,7 +225,7 @@
     transform: translateY(-3px) rotate(0deg) !important;
     box-shadow: 0 10px 22px rgba(19, 23, 34, 0.13);
   }
-  /* fresh note that just landed — always at top-left, physically springs in so you SEE it arrive */
+  /* fresh note that just landed, always at top-left, physically springs in so you SEE it arrive */
   .sticky.fresh {
     order: -1;
     animation: landIn 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;

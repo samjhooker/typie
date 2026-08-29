@@ -3,7 +3,7 @@
 
   let {
     onBack = () => {},
-    title = 'Beta sync — Friday',
+    title = 'Beta sync, Friday',
     date = 'August 22, 2026',
     kind = 'call',
   } = $props();
@@ -37,7 +37,7 @@
       speaker: 0,
       name: 'Maya',
       time: '00:34',
-      text: 'cool. so the launch is friday — two items left on the checklist.',
+      text: 'cool. so the launch is friday, two items left on the checklist.',
     },
     {
       speaker: 1,
@@ -79,7 +79,7 @@
       speaker: 1,
       name: 'Sam',
       time: '03:40',
-      text: 'just pricing — we need to decide on the tiers.',
+      text: 'just pricing, we need to decide on the tiers.',
     },
     {
       speaker: 0,
@@ -198,14 +198,17 @@
     return idx;
   });
 
-  // keep the currently-playing turn in view as the playhead advances
+  // keep the currently-playing turn in view as the playhead advances,
+  // but only when the transcript pane itself is on screen, otherwise
+  // scrollIntoView would drag the whole page back to the hero demo
   let turnsEl = $state(null);
   $effect(() => {
     if (activeIdx < 0 || !turnsEl) return;
     const node = turnsEl.querySelector(`[data-idx="${activeIdx}"]`);
-    if (node) {
-      node.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
+    if (!node) return;
+    const r = turnsEl.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) return;
+    node.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   });
 
   function timeFromEvent(e) {

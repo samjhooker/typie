@@ -1,8 +1,8 @@
-/* typie web UI — same design system as typie.cc.
+/* typie web UI, same design system as typie.cc.
    cool near-white grey surfaces, radiant pink + butter + mint accents,
    IBM Plex Mono kickers, Caveat hand annotations. */
 
-/* shared ramps — single source with the landing (landing/src/tokens.css) */
+/* shared ramps, single source with the landing (landing/src/tokens.css) */
 @import '../../../landing/src/tokens.css';
 
 /* local fonts (bundled, offline) */
@@ -39,7 +39,7 @@
 }
 
 :root {
-  /* neutral cool greys, near-white (per user) — slightly navy-tinted
+  /* neutral cool greys, near-white (per user), slightly navy-tinted
      to match ink #131722. Accents keep their warmth. */
   --page: #fafbfc;
   --cream: #fafbfc;
@@ -49,13 +49,13 @@
   --ink: #131722;
   --text-1: var(--ink);
   --text-2: rgba(19, 23, 34, 0.76);
-  --text-3: rgba(19, 23, 34, 0.62); /* bumped from .54 — was 3.94:1, needed 4.5 */
+  --text-3: rgba(19, 23, 34, 0.62); /* bumped from .54, was 3.94:1, needed 4.5 */
 
-  /* grey ramp (app-only — landing uses warm cream instead) */
+  /* grey ramp (app-only, landing uses warm cream instead) */
   --grey-50: #fafbfc;
   --grey-100: #f2f4f7;
   --grey-200: #e8ebef;
-  /* legacy aliases — warm cream names resolve to the grey ramp */
+  /* legacy aliases, warm cream names resolve to the grey ramp */
   --cream-50: var(--grey-50);
   --cream-100: var(--grey-100);
   --cream-200: var(--grey-200);
@@ -64,12 +64,12 @@
   --sun: #fdc068;
   --sun-orange: #ff9124;
   --amber: #e59e12;
-  /* gold-ink light was #E59E12 = 2.06:1 on paper — deepened for AA */
+  /* gold-ink light was #E59E12 = 2.06:1 on paper, deepened for AA */
   --gold-ink: #9c5f06;
 
-  /* accents — never as body text */
+  /* accents, never as body text */
   --mint: #82eda6;
-  --mint-live: #4ade80; /* canonical mint-500 (was #6ee89a — off-spec) */
+  --mint-live: #4ade80; /* canonical mint-500 (was #6ee89a, off-spec) */
   --green: #03594d;
   --green-deep: #02453c;
   --sky: #bcd6ff;
@@ -97,7 +97,7 @@
   --sp5: #03594d;
   --sp6: #e59e12;
 
-  /* dark "ink" variants of the accents — for text/icons ON a tint of
+  /* dark "ink" variants of the accents, for text/icons ON a tint of
      the same hue (sky chip needs a deeper blue than periwinkle) */
   --peri-ink: #3a5a9a;
   --violet-ink: #6a52c9;
@@ -106,19 +106,19 @@
   --glow-pink: rgba(252, 86, 129, 0.22);
   --glow-mint: rgba(130, 237, 166, 0.28);
 
-  /* soft hairlines — neutral ink-alpha greys (were teal-tinted) */
+  /* soft hairlines, neutral ink-alpha greys (were teal-tinted) */
   --line: rgba(19, 23, 34, 0.1);
   --line-strong: rgba(19, 23, 34, 0.2);
 
-  /* shadows — tokenized so dark mode swaps them for black-alpha */
+  /* shadows, tokenized so dark mode swaps them for black-alpha */
   --shadow-card: rgba(19, 23, 34, 0.04);
   --shadow-knob: rgba(19, 23, 34, 0.3);
 
-  /* washes — hover fills / soft wells; flip to white-alpha in dark */
+  /* washes, hover fills / soft wells; flip to white-alpha in dark */
   --wash: rgba(19, 23, 34, 0.06);
   --wash-strong: rgba(19, 23, 34, 0.12);
   --switch-track: rgba(19, 23, 34, 0.16);
-  /* text on accent (hotpink) fills — dark ink passes AA on pink */
+  /* text on accent (hotpink) fills, dark ink passes AA on pink */
   --on-accent: #ffffff;
 
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -129,11 +129,11 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --snap: cubic-bezier(0.22, 1, 0.36, 1);
-  /* no overshoot — DESIGN.md §8 (was cubic-bezier(0.22, 1.2, …)) */
+  /* no overshoot, DESIGN.md §8 (was cubic-bezier(0.22, 1.2, …)) */
   --spring: cubic-bezier(0.34, 1, 0.64, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* true spring physics via linear() — ported from the landing's gold.css.
+  /* true spring physics via linear(), ported from the landing's gold.css.
      Unsupported engines fall back to `ease` (invalid at computed-value time). */
   --spring-snappy: linear(
     0,
@@ -184,7 +184,7 @@
   padding: 0;
 }
 
-/* ── dark theme — system default, toggleable in Settings.
+/* ── dark theme, system default, toggleable in Settings.
    Surfaces follow the landing's dark ramp; accents keep their hue. ── */
 :root[data-theme='dark'] {
   --page: #0c0d11;
@@ -211,7 +211,7 @@
   --violet-ink: #c3b1f2;
   --red-ink: #f08aa4;
 
-  /* deep teal ink is unreadable on dark card-mint — use light mint instead */
+  /* deep teal ink is unreadable on dark card-mint, use light mint instead */
   --green-deep: #7be495;
   --green: #7be495;
   --gold-ink: #e59e12; /* bright gold reads fine on dark */
@@ -228,7 +228,7 @@
   --wash: rgba(255, 255, 255, 0.09);
   --wash-strong: rgba(255, 255, 255, 0.16);
   --switch-track: rgba(255, 255, 255, 0.25);
-  /* white text on hotpink is 3.09:1 — too low for small text.
+  /* white text on hotpink is 3.09:1, too low for small text.
      Ink-dark on pink is 5.6:1, so dark mode puts dark text on pink. */
   --on-accent: #131722;
 }
@@ -286,7 +286,7 @@ textarea {
   color: #ffffff;
 }
 
-/* keyboard users deserve designed focus — same as the landing */
+/* keyboard users deserve designed focus, same as the landing */
 :focus-visible {
   outline: 2.5px solid var(--hotpink);
   outline-offset: 3px;
@@ -295,12 +295,12 @@ textarea {
 
 /* ── atmosphere (ported from gold.css) ───────────────────── */
 
-/* rhs is always white — no yellow gradient per request */
+/* rhs is always white, no yellow gradient per request */
 body::before {
   content: none;
 }
 
-/* film grain — the anti-flat. fixed, inert, invisible until gone */
+/* film grain, the anti-flat. fixed, inert, invisible until gone */
 body::after {
   content: '';
   position: fixed;
@@ -378,7 +378,7 @@ body::after {
 }
 
 .btn-butter {
-  /* butter stays light in both themes — text stays dark, always legible */
+  /* butter stays light in both themes, text stays dark, always legible */
   background: var(--butter);
   color: #131722;
   box-shadow: 0 4px 12px rgba(19, 23, 34, 0.12);
@@ -420,7 +420,7 @@ body::after {
   letter-spacing: 0.06em;
 }
 
-/* icon button — quiet square that fills on hover */
+/* icon button, quiet square that fills on hover */
 .icon-btn {
   display: inline-grid;
   place-items: center;
@@ -437,7 +437,7 @@ body::after {
   color: var(--ink);
 }
 
-/* text input — pill, cream on cream */
+/* text input, pill, cream on cream */
 .input {
   display: flex;
   align-items: center;
@@ -483,7 +483,7 @@ body::after {
   transition: width 0.35s var(--ease-out);
 }
 
-/* scrollbars — thin and green-tinted, not hidden (dashboards scroll a lot) */
+/* scrollbars, thin and green-tinted, not hidden (dashboards scroll a lot) */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

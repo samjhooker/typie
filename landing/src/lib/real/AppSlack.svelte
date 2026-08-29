@@ -1,5 +1,5 @@
 <script>
-  /* full Slack UI — used inside the hero Mac; receives the dictation replay */
+  /* full Slack UI, used inside the hero Mac; receives the dictation replay */
   let { typed = '', listening = false, pasted = false } = $props();
 
   const channels = [
@@ -24,7 +24,7 @@
     {
       who: 'Sam',
       color: '#2eb67d',
-      text: 'i do — numbers are final, drafting now.',
+      text: 'i do, numbers are final, drafting now.',
       time: '1h',
     },
     {

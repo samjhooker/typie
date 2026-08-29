@@ -177,7 +177,7 @@
     gap: clamp(20px, 2.8vw, 32px);
   }
 
-  /* bento law: one cell dominates — wide, not comedically tall */
+  /* bento law: one cell dominates, wide, not comedically tall */
   .c-lavender {
     grid-column: span 2;
   }

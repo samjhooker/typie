@@ -242,7 +242,7 @@
       linear-gradient(118deg, var(--sky) 0%, var(--lavender) 42%, var(--mint) 100%);
   }
 
-  /* islands — shared spec with Hero: UnevenRoundedRectangle continuous, bottom 10 idle → 18 expanded, shadow radius 12 y6 */
+  /* islands, shared spec with Hero: UnevenRoundedRectangle continuous, bottom 10 idle → 18 expanded, shadow radius 12 y6 */
   .island {
     position: absolute;
     top: 0;

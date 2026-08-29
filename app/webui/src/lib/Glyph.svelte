@@ -1,13 +1,13 @@
 <script>
   /**
    * typie's own pixel-flavoured glyphs (hand-authored SVGs).
-   *   note       — voice notes / the wall
-   *   transcript — transcripts & anything transcribed
-   *   record     — meeting recorder (armed)
-   *   stop       — meeting recorder (running)
-   *   home       — home / everything hub
-   *   history    — dictation history
-   *   gear       — settings
+   *   note, voice notes / the wall
+   *   transcript, transcripts & anything transcribed
+   *   record, meeting recorder (armed)
+   *   stop, meeting recorder (running)
+   *   home, home / everything hub
+   *   history, dictation history
+   *   gear, settings
    */
   const PATHS = {
     note: 'M20 22H4v-2h16v2ZM4 20H2V4h2v16Zm18 0h-2v-8h-8V4H4V2h12v2h-2v6h6V8h2v12ZM20 8h-2V6h2v2Zm-2-2h-2V4h2v2Z',
@@ -45,7 +45,7 @@
     display: inline-block;
     flex-shrink: 0;
     vertical-align: middle;
-    /* chunky strokes bleed past the 24×24 box — let them */
+    /* chunky strokes bleed past the 24×24 box, let them */
     overflow: visible;
   }
 </style>

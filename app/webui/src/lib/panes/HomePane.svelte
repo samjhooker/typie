@@ -30,7 +30,7 @@
     }
   });
 
-  // effective screen permission — respects OS + cached grant (avoids re-asking on nav)
+  // effective screen permission, respects OS + cached grant (avoids re-asking on nav)
   const hasScreen = $derived(
     ui.permissions.screen || local.askedScreenPermission
   );
@@ -41,7 +41,7 @@
     <h2>what are we typing today?</h2>
     <p>
       <span class="hand hint-hand"
-        >the key is the app — everything below is just the filing cabinet</span
+        >the key is the app, everything below is just the filing cabinet</span
       >
     </p>
   </header>
@@ -59,7 +59,7 @@
       </span>
     </div>
     <h3>hold. talk. done.</h3>
-    <p>says it wherever your cursor is — every app, zero cloud.</p>
+    <p>says it wherever your cursor is, every app, zero cloud.</p>
     {#if phaseLabel}
       <span class="livepill {phaseLabel.cls}"><i></i>{phaseLabel.text}</span>
     {/if}
@@ -131,7 +131,7 @@
       </div>
       <p>
         {meetings.length === 0
-          ? 'save the whole call offline — every voice, split by speaker.'
+          ? 'save the whole call offline, every voice, split by speaker.'
           : `${meetings.length} call${meetings.length === 1 ? '' : 's'} captured.`}
       </p>
       <div class="acts">
@@ -192,7 +192,7 @@
     </div>
   {/if}
 
-  <p class="privacy mono-kicker">● everything stays here — no cloud, ever.</p>
+  <p class="privacy mono-kicker">● everything stays here, no cloud, ever.</p>
 </div>
 
 <style>

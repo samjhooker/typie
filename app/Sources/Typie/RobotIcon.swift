@@ -7,7 +7,7 @@ enum RobotMood {
     case done
 }
 
-/// The one and only typie glyph — ported 1:1 from landing/src/lib/Robot.svelte.
+/// The one and only typie glyph, ported 1:1 from landing/src/lib/Robot.svelte.
 /// Same viewBox (-1 -0.5 26 25), same polygon paths, same stroke treatment:
 /// body 1.3 units round-joined, eyes 0.55 units.
 struct RobotIcon: View {
@@ -113,7 +113,7 @@ struct RobotIcon: View {
         return p
     }
 
-    /// Vertically squashes a polygon around its own center — the blink.
+    /// Vertically squashes a polygon around its own center, the blink.
     private func squashed(_ points: [CGPoint], factor: CGFloat) -> [CGPoint] {
         let ys = points.map(\.y)
         let center = (ys.min()! + ys.max()!) / 2
@@ -125,7 +125,7 @@ struct RobotIcon: View {
             // unit sized so the ~24-unit-wide, ~20-unit-tall glyph fits with margin
             let unit = min(size.width / 25, size.height / 22)
             // center on the glyph's visual mass (x: 1...23 → 12, y: 3...21 → 12),
-            // not the viewBox origin — otherwise it sits half a unit left
+            // not the viewBox origin, otherwise it sits half a unit left
             let ox = size.width / 2 - 12 * unit
             let oy = size.height / 2 - 12 * unit
 

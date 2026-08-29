@@ -1,5 +1,5 @@
 <script>
-  /* full Messages UI — used inside the hero Mac; the conversation receives the dictation */
+  /* full Messages UI, used inside the hero Mac; the conversation receives the dictation */
   let { typed = '', listening = false, pasted = false } = $props();
 
   const convos = [

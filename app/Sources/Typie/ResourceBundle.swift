@@ -5,7 +5,7 @@ extension Bundle {
     ///
     /// We deliberately avoid SwiftPM-generated `Bundle.module`: recent Swift
     /// versions generate an accessor that looks for `<name>.bundle` directly
-    /// inside the .app root — a location `codesign` refuses to seal on modern
+    /// inside the .app root, a location `codesign` refuses to seal on modern
     /// macOS ("unsealed contents present in the bundle root"), and it
     /// hard-falls back to the CI machine's absolute build path. This accessor
     /// checks the locations that actually work for a signed app *and* for

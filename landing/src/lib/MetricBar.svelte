@@ -8,7 +8,7 @@
   let pct = $state(0);
   let langs = $state(0);
 
-  /* quartic ease-out count-up — fast start, soft landing */
+  /* quartic ease-out count-up, fast start, soft landing */
   function count(to, set, dur = 1400) {
     const t0 = performance.now();
     const tick = (t) => {
@@ -91,7 +91,7 @@
     gap: 10px;
   }
 
-  /* monumental numbers — social proof encoded as typography */
+  /* monumental numbers, social proof encoded as typography */
   .num {
     font-family: var(--display);
     font-size: clamp(2.4rem, 5vw, 4rem);

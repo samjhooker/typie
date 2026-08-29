@@ -2,7 +2,7 @@
 # Builds typie.app then packages it into a distributable DMG.
 #
 # Layout (icon positions, window size, background image) comes from the
-# committed scripts/dmg-template/.DS_Store, captured once via Finder — so
+# committed scripts/dmg-template/.DS_Store, captured once via Finder, so
 # CI gets the identical polished layout with no GUI automation.
 # Regenerate the template: edit scripts/gen_dmg_background.swift, rerun it,
 # then re-run the Finder layout dance on a UDRW image (see git history).

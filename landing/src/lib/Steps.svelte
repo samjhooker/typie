@@ -19,7 +19,7 @@
       >
       <div class="txt">
         <h3>Hold the key</h3>
-        <p>Press Option in any app — from Slack to your IDE.</p>
+        <p>Press Option in any app, from Slack to your IDE.</p>
       </div>
     </div>
 

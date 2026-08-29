@@ -9,17 +9,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var phaseCancellable: AnyCancellable?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // never allow two instances of the SAME variant — they'd fight over
+        // never allow two instances of the SAME variant, they'd fight over
         // mic + event tap. dev (typie-dev) and prod run side by side on purpose
         let others = NSRunningApplication.runningApplications(withBundleIdentifier: AppVariant.bundleID)
             .filter { $0 != NSRunningApplication.current }
         if let existing = others.first {
-            AppLog.event("another typie already running (pid \(existing.processIdentifier)) — activating it and exiting")
+            AppLog.event("another typie already running (pid \(existing.processIdentifier)), activating it and exiting")
             NSApp.terminate(nil)
             return
         }
 
-        AppLog.event("— — — typie launched — — —")
+        AppLog.event("typie launched")
         NSApp.setActivationPolicy(.accessory)
         SoundPlayer.preload()
 
@@ -52,15 +52,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ = TranscriptStore.shared
 
         if settings.onboardingDone && ModelManager.modelsExist() {
-            // Quick permissions gate on every launch — if any of the three
+            // Quick permissions gate on every launch, if any of the three
             // required grants was revoked (e.g. Screen Recording after an
             // OS update), re-show just the permissions step before going live.
             if !Self.allPermissionsGranted() {
-                AppLog.event("launch path: permissions missing after setup — re-showing permissions step")
+                AppLog.event("launch path: permissions missing after setup, re-showing permissions step")
                 showOnboardingAtStep(1)
             } else {
-                AppLog.event("launch path: setup complete — going straight to live mode")
-                // model files are on disk but not in memory yet — load them
+                AppLog.event("launch path: setup complete, going straight to live mode")
+                // model files are on disk but not in memory yet, load them
                 Task { await ModelManager.shared.downloadAndLoad() }
                 finishSetup(closeOnboarding: false)
             }
@@ -79,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         DictationController.shared.startMonitoring()
         showNotchIfFree()
-        AppLog.event("setup complete — LIVE MODE: paste-at-cursor on, notch island on")
+        AppLog.event("setup complete, LIVE MODE: paste-at-cursor on, notch island on")
     }
 
     @objc func openAccessibilitySettings() {
@@ -94,13 +94,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        // Quick re-check on every foreground — if the user revoked a grant
+        // Quick re-check on every foreground, if the user revoked a grant
         // in System Settings while typie was backgrounded, surface the
         // permissions step immediately instead of failing silently.
         guard SettingsStore.shared.onboardingDone, ModelManager.modelsExist() else { return }
         guard onboardingController == nil else { return } // already showing
         guard !Self.allPermissionsGranted() else { return }
-        AppLog.event("permissions lost while backgrounded — re-showing permissions step")
+        AppLog.event("permissions lost while backgrounded, re-showing permissions step")
         showOnboardingAtStep(1)
     }
 
@@ -118,7 +118,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 title: AppVariant.displayName,
                 size: NSSize(width: 1276, height: 792)
             )
-            /// Closing the welcome window counts as finishing setup — people
+            /// Closing the welcome window counts as finishing setup, people
             /// close windows; they don't always hunt for the footer button.
             controller.onWillClose = { [weak self] in
                 guard let self, self.onboardingController === controller else { return }
@@ -186,7 +186,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         appController!.present()
     }
 
-    /// Always show the notch island — both variants may run side by side,
+    /// Always show the notch island, both variants may run side by side,
     /// and each gets its own island.
     private func showNotchIfFree() {
         NotchPanel.shared.show()

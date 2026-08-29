@@ -101,7 +101,7 @@
       {/each}
     </nav>
 
-    <!-- dictation status — lives in the sidebar now that the topbar is gone -->
+    <!-- dictation status, lives in the sidebar now that the topbar is gone -->
     {#if phaseLabel}
       <div
         class="livepill {phaseLabel.cls}"
@@ -147,7 +147,7 @@
 </div>
 
 <style>
-  /* no opaque background here — lets the warm body glows show through */
+  /* no opaque background here, lets the warm body glows show through */
   .shell {
     display: flex;
     height: 100vh;
@@ -316,7 +316,7 @@
       background-color 0.25s ease;
   }
 
-  /* dictation status pill — sidebar, under the nav */
+  /* dictation status pill, sidebar, under the nav */
   .livepill {
     display: inline-flex;
     align-items: center;
@@ -355,7 +355,7 @@
   }
 
   /* pane switches slide in from the right.
-     NB: NO filter here — WebKit keeps the animated filter value alive after
+     NB: NO filter here, WebKit keeps the animated filter value alive after
      the animation ends, and any non-none filter on an ancestor turns the pane
      into the containing block for position:fixed children (the AI side menu),
      making it scroll away with the page. Slide + fade only. */

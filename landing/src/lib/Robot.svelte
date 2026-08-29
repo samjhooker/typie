@@ -105,7 +105,7 @@
 </div>
 
 <style>
-  /* impeccable-disable bounce-easing — Robot moods use Theme.springy intentionally */
+  /* impeccable-disable bounce-easing, Robot moods use Theme.springy intentionally */
   .robot {
     display: block;
     line-height: 0;

@@ -6,7 +6,7 @@ export const sound = $state({ on: false });
 let ctx;
 
 /* real key-clack samples (public/sounds/), loaded lazily on first
-   use after the visitor opts in — never on page load */
+   use after the visitor opts in, never on page load */
 let buffers = {};
 
 async function sample(name) {

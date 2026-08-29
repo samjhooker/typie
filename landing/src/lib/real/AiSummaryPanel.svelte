@@ -1,7 +1,7 @@
 <script>
   // The ACTUAL AI-summary rail UI from the app (DemoTranscriptDetail's right
   // column) as a standalone panel: badge, summary, breakdown, key quotes.
-  // No header, no dock — just the real thing, cropped like a Stripe snippet.
+  // No header, no dock, just the real thing, cropped like a Stripe snippet.
   const summary =
     'Aligned on launch plan. Two remaining items: pricing page (Sam) and demo video (Maya). Team sync at 4pm. Personal plan stays free; open on the 80ms hold-option moment.';
 
@@ -92,10 +92,15 @@
     display: flex;
     flex-direction: column;
     text-align: left;
-    background: var(--cream-100); /* the app's real cream paper */
+    background: #fff; /* clean white paper in light mode */
     padding: 20px 20px 26px;
     height: 100%;
   }
+  /* dark mode keeps the original cream-paper treatment */
+  :global([data-theme='dark']) .ai {
+    background: var(--cream-100);
+  }
+
   .ai-head {
     display: flex;
     align-items: center;

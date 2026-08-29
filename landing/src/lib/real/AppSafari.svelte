@@ -1,5 +1,5 @@
 <script>
-  /* Safari UI — dictation pastes the spoken query straight into the Google search box */
+  /* Safari UI, dictation pastes the spoken query straight into the Google search box */
   let { typed = '', listening = false, pasted = false } = $props();
 
   const suggestions = [
@@ -88,7 +88,7 @@
         </p>
         <div class="res">
           <span class="res-url">notion.so › templates › launch-checklist</span>
-          <h4>Launch checklist — Notion Template</h4>
+          <h4>Launch checklist, Notion Template</h4>
           <p class="res-snippet">
             A ready-to-use launch checklist for startups. {typed}
           </p>
@@ -427,7 +427,7 @@
     color: #e8eaed;
   }
 
-  /* dark — round 2: searchbox, suggestions, results */
+  /* dark, round 2: searchbox, suggestions, results */
   :global([data-theme='dark']) .searchbox {
     background: #303134;
     border-color: #5f6368;
@@ -455,7 +455,7 @@
     color: #bdc1c6;
   }
 
-  /* dark — round 3: suggestion rows + result buttons */
+  /* dark, round 3: suggestion rows + result buttons */
   :global([data-theme='dark']) .sug-row:first-child {
     background: #3c4043;
   }

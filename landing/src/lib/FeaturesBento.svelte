@@ -9,8 +9,8 @@
     WifiOff,
     Code2,
   } from 'lucide-svelte';
+  import ShellFrame from './real/ShellFrame.svelte';
   import StickyWall from './real/StickyWall.svelte';
-  import WindowFrame from './real/WindowFrame.svelte';
   import TranscriptTurns from './real/TranscriptTurns.svelte';
   import AiSummaryPanel from './real/AiSummaryPanel.svelte';
   import Robot from './Robot.svelte';
@@ -62,16 +62,16 @@
       class="head"
       use:reveal
     >
-      <span class="kicker mono">FEATURES · SEVEN THINGS TYPIE DOES</span>
       <h2>Dictate. Capture. Remember.<br /><em>All on your Mac.</em></h2>
       <p class="sub">
-        No cloud, no bots, no subscriptions. Just talk — Typie handles the rest,
+        No cloud, no bots, no subscriptions. Just talk, Typie handles the rest,
         locally, in milliseconds.
       </p>
     </div>
 
     <div class="grid">
-      <!-- 01 — Voice notes (left, big) — real wall, 2×2 of 4 notes in a scrollable pane -->
+      <!-- 03, Voice notes (full width), real wall of notes in a scrollable pane -->
+      <!-- (visually 3rd, below dictate + offline; see grid order in styles) -->
       <article
         class="card c1"
         use:reveal
@@ -85,30 +85,31 @@
               strokeWidth={2.2}
             /></span
           >
-          <span class="num mono">01</span>
         </div>
         <h3>Voice notes, anywhere</h3>
         <p>
-          Quick thought? Hold ⌥, ramble, let go. It’s pinned to your Typie wall
-          — searchable, timestamped, local. Easy peasy.
+          Quick thought? Tap New Note in the app or the note button in the
+          notch, ramble, let go. It’s pinned to your Typie wall, searchable,
+          timestamped, local. Easy peasy.
         </p>
         <div
-          class="livePreview"
-          aria-hidden="true"
-        >
-          <WindowFrame title="Notes">
-            <div class="wallScroll">
-              <StickyWall
-                cols={2}
-                limit={6}
-              />
-            </div>
-            <div class="wallFade"></div>
-          </WindowFrame>
-        </div>
+           class="livePreview shellPreview"
+           aria-hidden="true"
+         >
+           <ShellFrame
+             active="notes"
+             sidebar={false}
+           >
+             <div class="wallScroll">
+               <StickyWall limit={6}
+               />
+             </div>
+           </ShellFrame>
+         </div>
+         <div class="inapp-caption mono">In-app · Notes: StickyWall, as you see it</div>
       </article>
 
-      <!-- 02 — Dictate into any app (right) — real Mac option key -->
+      <!-- 01, Dictate into any app (left), real Mac option key -->
       <article
         class="card c2"
         use:reveal={{ delay: 70 }}
@@ -122,7 +123,6 @@
               strokeWidth={2.2}
             /></span
           >
-          <span class="num mono">02</span>
         </div>
         <h3>Dictate into any app</h3>
         <p>
@@ -158,11 +158,12 @@
           </span>
         </div>
         <div class="demoMeta mono">
-          hold ⌥ · talk · release — 80 ms later it’s text
+          hold ⌥ · talk · release, 80 ms later it’s text
         </div>
       </article>
 
-      <!-- 03 — Transcribe & diarize — full width: 1/3 text left, 2/3 diarization UI right -->
+      <!-- 04, Transcribe & diarize, full width: 1/3 text left, 2/3 diarization UI right -->
+      <!-- (visually 4th; see grid order in styles) -->
       <article
         class="card c3 split"
         use:reveal
@@ -177,13 +178,13 @@
                 strokeWidth={2.2}
               /></span
             >
-            <span class="num mono">03</span>
+
           </div>
           <h3>Transcribe & diarize any file</h3>
           <p>
             Drop <code>mp3</code> <code>m4a</code> <code>wav</code>
             <code>mp4</code> onto Typie. Speakers are split, every turn is stamped,
-            and markdown is ready — fully offline.
+            and markdown is ready, fully offline.
           </p>
           <div
             class="exportRow mono"
@@ -194,43 +195,50 @@
             <span class="exChip">↓ .srt</span>
           </div>
         </div>
-        <div
-          class="livePreview transcriptPreview"
-          aria-hidden="true"
-        >
-          <WindowFrame title="Beta sync — Friday · 12:04">
-            <div class="tpLegend">
-              <span class="spPill"
-                ><i style="background:{SP_COLORS[0]}"></i>Maya</span
-              >
-              <span class="spPill"
-                ><i style="background:{SP_COLORS[1]}"></i>Sam</span
-              >
-              <span class="tpHint mono">diarized on-device</span>
-            </div>
-            <div class="tpTurns">
-              <TranscriptTurns />
-            </div>
-            <div class="tpScrub">
-              <span class="tpTime mono">00:00</span>
-              <div class="tpTrack">
-                {#each SEGS as seg, i (i)}
-                  <div
-                    class="tpSeg"
-                    style="left:{seg.left}%; width:{seg.width}%; background:{SP_COLORS[
-                      seg.s
-                    ]}"
-                  ></div>
-                {/each}
-                <i class="tpHead"></i>
-              </div>
-              <span class="tpTime mono">12:04</span>
-            </div>
-          </WindowFrame>
-        </div>
+        <div class="previewWrap">
+           <div
+             class="livePreview transcriptPreview shellPreview"
+             aria-hidden="true"
+           >
+             <ShellFrame
+               active="library"
+               sidebar={false}
+             >
+               <div class="tpLegend">
+                 <span class="spPill"
+                   ><i style="background:{SP_COLORS[0]}"></i>Maya</span
+                 >
+                 <span class="spPill"
+                   ><i style="background:{SP_COLORS[1]}"></i>Sam</span
+                 >
+                 <span class="tpHint mono">diarized on-device</span>
+               </div>
+               <div class="tpTurns">
+                 <TranscriptTurns />
+               </div>
+               <div class="tpScrub">
+                 <span class="tpTime mono">00:00</span>
+                 <div class="tpTrack">
+                   {#each SEGS as seg, i (i)}
+                     <div
+                       class="tpSeg"
+                       style="left:{seg.left}%; width:{seg.width}%; background:{SP_COLORS[
+                         seg.s
+                       ]}"
+                     ></div>
+                   {/each}
+                   <i class="tpHead"></i>
+                 </div>
+                 <span class="tpTime mono">12:04</span>
+               </div>
+             </ShellFrame>
+           </div>
+           <div class="inapp-caption mono">In-app · Transcript: speaker turns, searchable</div>
+         </div>
       </article>
 
-      <!-- 04 — Capture any call — Dialpad-style call app in the foreground -->
+      <!-- 06, Capture any call, Dialpad-style call app in the foreground -->
+      <!-- (visually 6th; see grid order in styles) -->
       <article
         class="card c4"
         use:reveal={{ delay: 70 }}
@@ -244,12 +252,12 @@
               strokeWidth={2.2}
             /></span
           >
-          <span class="num mono">04</span>
+
         </div>
         <h3>Capture any call or meeting</h3>
         <p>
-          Records system audio going <em>in</em> and <em>out</em> of your Mac — Zoom,
-          Meet, FaceTime — no bot ever joins. Attendees see nothing.
+          Records system audio going <em>in</em> and <em>out</em> of your Mac, Zoom,
+          Meet, FaceTime, no bot ever joins. Attendees see nothing.
         </p>
         <div
           class="livePreview callPreview"
@@ -443,7 +451,7 @@
         </div>
       </article>
 
-      <!-- 05 — AI summaries — 50/50: text left, the app's actual AI panel right -->
+      <!-- 05, AI summaries, 50/50: text left, the app's actual AI panel right -->
       <article
         class="card c5 split"
         use:reveal
@@ -458,7 +466,7 @@
                 strokeWidth={2.2}
               /></span
             >
-            <span class="num mono">05</span>
+
           </div>
           <h3>AI summaries, timestamps & actions</h3>
           <p>
@@ -479,18 +487,21 @@
             <span class="actChip">✓ Sync at 4pm</span>
           </div>
         </div>
-        <div
-          class="livePreview aiPreview"
-          aria-hidden="true"
-        >
-          <WindowFrame title="AI Summary">
-            <AiSummaryPanel />
-            <div class="previewFade"></div>
-          </WindowFrame>
-        </div>
+        <div class="previewWrap">
+           <div
+             class="livePreview aiPreview shellPreview"
+             aria-hidden="true"
+           >
+             <ShellFrame active="library">
+               <AiSummaryPanel />
+             </ShellFrame>
+           </div>
+           <div class="inapp-caption mono">In-app · AI summary: on-device breakdown</div>
+         </div>
       </article>
 
-      <!-- 06 — Offline — smaller — plain command, no terminal chrome -->
+      <!-- 02, Fully offline, plain command, no terminal chrome -->
+      <!-- (visually 3rd, right of dictate; see grid order in styles) -->
       <article
         class="card c6"
         use:reveal={{ delay: 70 }}
@@ -504,29 +515,29 @@
               strokeWidth={2.2}
             /></span
           >
-          <span class="num mono">06</span>
+
         </div>
         <h3>100% offline after first download</h3>
         <p>
           One 500 MB model download. After that: airplane mode, no Wi-Fi,
-          underground — every feature works. No server exists to receive your
+          underground, every feature works. No server exists to receive your
           voice.
         </p>
         <div
           class="cmd"
           aria-hidden="true"
         >
-          <span class="cmdLabel mono">try it yourself — watch the packets</span>
+          <span class="cmdLabel mono">try it yourself, watch the packets</span>
           <code class="cmdLine mono"
             ><span class="tprompt">$</span> lsof -i -a -p $(pgrep -x Typie)</code
           >
           <span class="cmdOut mono"
-            >(no output) — zero open connections, in or out</span
+            >(no output), zero open connections, in or out</span
           >
         </div>
       </article>
 
-      <!-- 07 — Free & OSS — larger -->
+      <!-- 07, Free & OSS, full width closer -->
       <article
         class="card c7"
         use:reveal
@@ -540,12 +551,12 @@
               strokeWidth={2.2}
             /></span
           >
-          <span class="num mono">07</span>
+
         </div>
         <h3>Free & open source</h3>
         <p>
           MIT on GitHub. No account, no credit card, no limits. Audit the Swift
-          + Svelte source whenever you want. We can add your graphic here — just
+          + Svelte source whenever you want. We can add your graphic here, just
           ask.
         </p>
         <div class="ossRow">
@@ -573,14 +584,6 @@
     text-align: center;
     max-width: 740px;
     margin: 0 auto 36px;
-  }
-  .kicker {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: var(--hotpink);
-    margin-bottom: 10px;
   }
   h2 {
     font-size: clamp(30px, 4vw, 48px);
@@ -611,7 +614,7 @@
   }
   .card {
     background-color: var(--surface);
-    /* stage texture — faint dot grid, the card reads as a mat */
+    /* stage texture, faint dot grid, the card reads as a mat */
     background-image: radial-gradient(
       rgba(19, 23, 34, 0.05) 1px,
       transparent 1px
@@ -627,36 +630,45 @@
     min-width: 0;
     overflow: hidden;
   }
-  /* no hover lift — deliberate */
+  /* no hover lift, deliberate */
   .card:hover {
     border-color: var(--line);
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
     transform: none;
   }
-  /* balanced bento: row 1 = 7/5, row 2 = 12 (1/3 text + 2/3 UI), row 3 = 6/6, row 4 = 5/7 */
+  /* visual order: [dictate | offline] → voice notes (full) → transcribe (full)
+     → [ai summaries | capture any call] → free & OSS (full). DOM order kept,
+     layout sequence driven by grid order. */
   .c1 {
-    grid-column: span 7;
+    grid-column: span 12;
+    order: 2;
   }
   .c2 {
-    grid-column: span 5;
+    grid-column: span 7;
+    order: 0;
     background-color: var(--card-mint);
   }
   .c3 {
     grid-column: span 12;
+    order: 3;
   }
   .c4 {
     grid-column: span 6;
+    order: 5;
     background-color: #fff7ed;
   }
   .c5 {
     grid-column: span 6;
+    order: 4;
     background-color: #faf5ff;
   }
   .c6 {
     grid-column: span 5;
+    order: 1;
   }
   .c7 {
-    grid-column: span 7;
+    grid-column: span 12;
+    order: 6;
     background-color: var(--ink);
     color: #f8fafc;
   }
@@ -667,14 +679,11 @@
   .c7 p {
     color: rgba(248, 250, 252, 0.82);
   }
-  .c7 .num {
-    color: rgba(255, 255, 255, 0.5);
-  }
   .c7 .muted {
     color: rgba(255, 255, 255, 0.55);
   }
 
-  /* horizontal split cards — text left, UI right */
+  /* horizontal split cards, text left, UI right */
   .split {
     flex-direction: row;
     align-items: stretch;
@@ -759,12 +768,6 @@
     border-color: rgba(255, 255, 255, 0.14);
     color: #fff;
   }
-  .num {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-3);
-    letter-spacing: 0.06em;
-  }
   h3 {
     font-size: 16.5px;
     font-weight: 800;
@@ -799,22 +802,11 @@
     border: 1px solid var(--line);
   }
 
-  /* ── 01 — voice notes: real wall, 2×2 visible, scrollable pane ── */
-  .wallPane {
-    position: relative;
-    margin-top: 8px;
-    flex: none;
-    height: 292px; /* exactly 2 rows visible + a peek of row 3 — invites scroll */
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: background 0.25s ease;
-  }
+  /* ── 01, voice notes: scrollable wall inside shell ── */
   .wallScroll {
     height: 100%;
     overflow-y: auto;
-    padding: 16px 16px 20px;
+    padding: 14px 14px 16px;
     scrollbar-width: thin;
     scrollbar-color: var(--line-strong) transparent;
   }
@@ -835,17 +827,8 @@
     font-size: 12.5px;
     line-height: 1.5;
   }
-  .wallFade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 22px;
-    background: linear-gradient(to bottom, transparent, var(--paper));
-    pointer-events: none;
-  }
 
-  /* ── 02 — dictate: real black Mac option key + blinking cursor ── */
+  /* ── 02, dictate: real black Mac option key + blinking cursor ── */
   .appsRow {
     display: flex;
     flex-wrap: wrap;
@@ -1029,7 +1012,7 @@
       opacity: 0;
     }
   }
-  /* the key itself presses down and springs back — synced with the text pop.
+  /* the key itself presses down and springs back, synced with the text pop.
      pressed = unmistakable: hot-pink face + glow, like the hero's optkey */
   .optionKey {
     animation: keyPress 3.2s var(--ease-out) infinite;
@@ -1077,7 +1060,7 @@
     margin-bottom: auto; /* balances the group vertically */
   }
 
-  /* ── live previews (no window chrome — just the UI component) ── */
+  /* ── live previews (no window chrome, just the UI component) ── */
   .livePreview {
     position: relative;
     margin-top: 0;
@@ -1090,22 +1073,7 @@
     flex-direction: column;
     box-shadow: none;
   }
-  .previewFade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 34px;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      var(--wbody, var(--surface))
-    );
-    pointer-events: none;
-    z-index: 3;
-  }
-
-  /* ── 03 — transcript: legend + turns + scrub along the bottom ── */
+  /* ── 03, transcript: legend + turns + scrub along the bottom ── */
   .transcriptPreview {
     min-height: 340px;
   }
@@ -1143,7 +1111,7 @@
   .tpTurns {
     position: relative;
     height: 236px;
-    overflow-y: auto; /* scrollable — a real pane, not a static crop */
+    overflow-y: auto; /* scrollable, a real pane, not a static crop */
     max-width: 560px;
     width: 100%;
     margin: 0 auto;
@@ -1224,7 +1192,7 @@
     }
   }
 
-  /* ── 04 — capture: sunset screen, notch island, Dialpad-style call app ── */
+  /* ── 04, capture: sunset screen, notch island, Dialpad-style call app ── */
   .callPreview {
     min-height: 350px;
     background: linear-gradient(
@@ -1374,17 +1342,19 @@
     }
   }
 
-  /* Dialpad-inspired call window — centered in the display */
+  /* Dialpad-inspired call window, centered in the display */
   .callWin {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    bottom: 46px;
-    width: 364px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 448px;
     display: flex;
     background: var(--surface);
     border-radius: 14px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+    box-shadow:
+      0 32px 64px -12px rgba(0, 0, 0, 0.45),
+      0 12px 28px -6px rgba(0, 0, 0, 0.32);
     overflow: hidden;
     text-align: left;
   }
@@ -1573,7 +1543,7 @@
     border-color: rgba(255, 255, 255, 0.14);
   }
 
-  /* ── 05 — AI summaries: the app's actual AI panel, scrollable ── */
+  /* ── 05, AI summaries: the app's actual AI panel, scrollable ── */
   .aiPreview {
     min-height: 340px;
   }
@@ -1595,7 +1565,62 @@
     border-radius: 99px;
   }
 
-  /* ── 06 — offline: plain command, no terminal chrome ── */
+  /* ── shell framing, in-app shell (no window chrome) ── */
+  .shellPreview {
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    min-height: 320px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+  }
+  .transcriptPreview.shellPreview {
+    height: 360px;
+    min-height: 360px;
+  }
+  .aiPreview.shellPreview {
+    height: 360px;
+    min-height: 360px;
+  }
+  .previewWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .c3 .previewWrap {
+    flex: 2 1 0;
+  }
+  .c5 .previewWrap {
+    flex: 1 1 0;
+  }
+  .inapp-caption {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    padding: 0 2px;
+  }
+  .inapp-caption::before {
+    content: '●';
+    color: var(--hotpink);
+    margin-right: 6px;
+    font-size: 7px;
+    vertical-align: 1px;
+  }
+  /* wall inside shell should fill shell main */
+  .shellPreview .wallScroll {
+    height: 100%;
+    min-height: 0;
+  }
+  .shellPreview :global(.shell-frame) {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
+  /* ── 06, offline: plain command, no terminal chrome ── */
   .cmd {
     margin-top: auto;
     display: flex;
@@ -1628,7 +1653,7 @@
     margin-right: 4px;
   }
 
-  /* ── 07 — OSS ── */
+  /* ── 07, OSS ── */
   .ossRow {
     display: flex;
     align-items: center;
@@ -1704,7 +1729,8 @@
       grid-column: span 1;
     }
     .c1,
-    .c3 {
+    .c3,
+    .c7 {
       grid-column: span 2;
     }
   }
@@ -1733,7 +1759,7 @@
       flex-wrap: wrap;
     }
     .callWin {
-      width: 280px;
+      width: 320px;
     }
   }
 </style>

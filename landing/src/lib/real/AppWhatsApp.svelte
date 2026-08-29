@@ -1,5 +1,5 @@
 <script>
-  /* WhatsApp Desktop UI — used inside the hero Mac; the chat composer receives the dictation */
+  /* WhatsApp Desktop UI, used inside the hero Mac; the chat composer receives the dictation */
   let { typed = '', listening = false, pasted = false } = $props();
 
   const chats = [

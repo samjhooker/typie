@@ -87,7 +87,7 @@
     onclick={toggle}
     aria-expanded={open}
     aria-haspopup="menu"
-    aria-label={'typie ' + current.id + ' — switch edition'}
+    aria-label={'typie ' + current.id + ', switch edition'}
   >
     {current.id}
     <svg

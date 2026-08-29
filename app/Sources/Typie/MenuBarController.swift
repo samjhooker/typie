@@ -14,7 +14,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         item.isVisible = true
         item.button?.image = Self.robotImage()
         item.button?.image?.isTemplate = true
-        AppLog.event("menu bar: status item set up — hasButton=\(item.button != nil), visible=\(item.isVisible)")
+        AppLog.event("menu bar: status item set up, hasButton=\(item.button != nil), visible=\(item.isVisible)")
 
         let menu = NSMenu()
         menu.delegate = self
@@ -38,7 +38,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     func refreshMenuTitle() {
         guard let button = statusItem?.button else { return }
-        // robot always stays put — he just changes colour with his mood
+        // robot always stays put, he just changes colour with his mood
         // tints come from Theme (DESIGN.md): hotpink, orange, mint-live
         switch DictationController.shared.phase {
         case .listening:
@@ -69,9 +69,9 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         switch phase {
         case .idle:
             switch settings.triggerMode {
-            case .both: statusText = "ready — hold or tap \(settings.hotkey.shortLabel)"
-            case .hold: statusText = "ready — hold \(settings.hotkey.shortLabel)"
-            case .toggle: statusText = "ready — tap \(settings.hotkey.shortLabel)"
+            case .both: statusText = "ready, hold or tap \(settings.hotkey.shortLabel)"
+            case .hold: statusText = "ready, hold \(settings.hotkey.shortLabel)"
+            case .toggle: statusText = "ready, tap \(settings.hotkey.shortLabel)"
             }
         case .listening:
             statusText = "listening…"
@@ -97,7 +97,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         // loud, visible warning when the hotkey can never fire
         if !HotkeyMonitor.accessibilityGranted(prompt: false) {
             let warn = NSMenuItem(
-                title: "⚠︎ accessibility permission missing — needed to paste text",
+                title: "⚠︎ accessibility permission missing, needed to paste text",
                 action: #selector(AppDelegate.openAccessibilitySettings), keyEquivalent: "")
             warn.target = appDelegate
             menu.addItem(warn)

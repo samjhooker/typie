@@ -14,12 +14,12 @@
   const transcripts = [
     {
       id: 't1',
-      fileName: 'Beta sync — Friday',
+      fileName: 'Beta sync, Friday',
       date: 'today',
       durationSeconds: 724,
       speakerCount: 2,
       isMeeting: true,
-      preview: 'and the checklist is done? two items — pricing and video',
+      preview: 'and the checklist is done? two items, pricing and video',
       isNew: true,
     },
     {
@@ -39,12 +39,12 @@
       durationSeconds: 512,
       speakerCount: 3,
       isMeeting: true,
-      preview: 'weekly sync — action items and blockers',
+      preview: 'weekly sync, action items and blockers',
       isNew: false,
     },
     {
       id: 't4',
-      fileName: 'Customer interview — Maya',
+      fileName: 'Customer interview, Maya',
       date: '2 days ago',
       durationSeconds: 1335,
       speakerCount: 2,
@@ -59,7 +59,7 @@
       durationSeconds: 2710,
       speakerCount: 2,
       isMeeting: false,
-      preview: 'the voice is the interface — discussing the future of input',
+      preview: 'the voice is the interface, discussing the future of input',
       isNew: false,
     },
     {
@@ -70,7 +70,7 @@
       speakerCount: 1,
       isMeeting: false,
       preview:
-        "grandma's secret — add miso, white pepper, and a pinch of sugar",
+        "grandma's secret, add miso, white pepper, and a pinch of sugar",
       isNew: false,
     },
   ];
@@ -108,7 +108,7 @@
         >
         <h3>drop anything</h3>
       </div>
-      <p class="mono">mp3 · m4a · wav · mp4 — or click to browse</p>
+      <p class="mono">mp3 · m4a · wav · mp4, or click to browse</p>
       <span class="hand dz-hand">several at once is fine</span>
     </div>
 
@@ -123,8 +123,8 @@
         <h3>capture a call</h3>
       </div>
       <p>
-        saves the whole conversation offline — their side from your Mac's sound,
-        yours mixed right in — then transcribes and splits the speakers.
+        saves the whole conversation offline, their side from your Mac's sound,
+        yours mixed right in, then transcribes and splits the speakers.
       </p>
       <div class="acts">
         <button class="btn small btn-mint">start capture</button>

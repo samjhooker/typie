@@ -42,7 +42,7 @@ the ~500 mb model -[ Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt
 transcription becomes real keyboard events into whatever app has focus. mail, slack, notes, electron abominations - if it accepts typing, typie works there. no clipboard pollution, no per-app integrations to maintain.
 
 **AppKit for the parts that touch your system, a bundled Svelte web UI (WKWebView) for the windows.**
-the dictation engine, hotkeys, notch island and menu bar are native; the settings/stats/onboarding windows are a Svelte 5 app (same design system as this site) served from local files inside a WKWebView — pretty and flexible without shipping a server or a network call.
+the dictation engine, hotkeys, notch island and menu bar are native; the settings/stats/onboarding windows are a Svelte 5 app (same design system as this site) served from local files inside a WKWebView, pretty and flexible without shipping a server or a network call.
 
 **carbon-era global hotkeys, fully remappable.**
 hold-to-talk on any modifier, rebound in-app. small feature, but it's the difference between a tool and a toy.

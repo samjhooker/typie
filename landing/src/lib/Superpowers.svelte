@@ -40,7 +40,7 @@
           <h3>Talk to your Mac</h3>
         </div>
         <p>
-          Hold option, mumble, ramble, talk too fast — the sentence you
+          Hold option, mumble, ramble, talk too fast, the sentence you
           <em>meant</em> lands wherever your cursor is, in about 80&nbsp;ms.
         </p>
         <div
@@ -102,7 +102,7 @@
           <h3>Capture any call</h3>
         </div>
         <p>
-          Zoom, Meet, phone calls — recorded straight off your Mac's audio,
+          Zoom, Meet, phone calls, recorded straight off your Mac's audio,
           transcribed and split by speaker. No bot crashes the party.
         </p>
         <div

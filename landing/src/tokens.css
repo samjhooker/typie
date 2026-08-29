@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════
-   Typie shared tokens — SINGLE SOURCE for landing + Mac app webui.
+   Typie shared tokens, SINGLE SOURCE for landing + Mac app webui.
    Ramps and accent hues only. Neutrals (page/paper/cream) differ
-   per product — landing is warm cream, the app is cool grey — so
+   per product, landing is warm cream, the app is cool grey, so
    they stay in each product's app.css.
    Synced from: /DESIGN.md
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Brand Primary — Radiant Pink ── */
+  /* ── Brand Primary, Radiant Pink ── */
   --pink-50: #fef1f4;
   --pink-100: #ffd3e0;
   --pink-200: #ffb7c9;
@@ -18,7 +18,7 @@
   --pink-700: #a62043;
   --pink-900: #24141c;
 
-  /* ── Signal — Truth Mint ── */
+  /* ── Signal, Truth Mint ── */
   --mint-50: #eef8f2;
   --mint-300: #7be495;
   --mint-400: #82eda6;
@@ -26,7 +26,7 @@
   --mint-600: #0f9d6a;
   --mint-900: #11231c;
 
-  /* ── Structure — Deep Teal ── */
+  /* ── Structure, Deep Teal ── */
   --teal-700: #03594d; /* ★ structural lines / focus */
   --teal-900: #02453c;
   --teal-950: #0b1f1b;

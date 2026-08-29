@@ -111,7 +111,7 @@
     trash.add('transcript', [item.id], item.fileName || 'transcript');
   }
 
-  // ── call capture live state — mirrors HomePane's chip (toggle + elapsed) ──
+  // ── call capture live state, mirrors HomePane's chip (toggle + elapsed) ──
   const capturing = $derived(ui.meeting.isCapturing);
   const hasScreen = $derived(
     ui.permissions.screen || local.askedScreenPermission
@@ -226,7 +226,7 @@
                 class="mono-kicker"
                 style="color:var(--red-ink)"
               >
-                {ui.transcribe.model.error ?? 'download failed — try again'}
+                {ui.transcribe.model.error ?? 'download failed, try again'}
               </p>{/if}
           </div>
         {:else if ui.transcribe.model.state === 'downloading'}
@@ -271,12 +271,12 @@
                 <h3>drop anything</h3>
               </div>
               <p class="mono-kicker">
-                mp3 · m4a · wav · mp4 — or click to browse
+                mp3 · m4a · wav · mp4, or click to browse
               </p>
               <span class="hand dz-hand">several at once is fine</span>
             </div>
 
-            <!-- capture card — pill parked in header next to title, same toggle as HomePane recs -->
+            <!-- capture card, pill parked in header next to title, same toggle as HomePane recs -->
             <div
               class="reccard"
               class:live={capturing}
@@ -327,11 +327,11 @@
               </div>
               <p>
                 {#if capturing}
-                  got it all — every voice on this Mac is being saved. stop
+                  got it all, every voice on this Mac is being saved. stop
                   whenever you're ready.
                 {:else}
-                  saves the whole conversation offline — their side from your
-                  Mac's sound, yours mixed right in — then transcribes and
+                  saves the whole conversation offline, their side from your
+                  Mac's sound, yours mixed right in, then transcribes and
                   splits the speakers.
                 {/if}
               </p>
@@ -343,7 +343,7 @@
             </div>
           </div>
 
-          <!-- live work: one card per file — uploading / running / waiting -->
+          <!-- live work: one card per file, uploading / running / waiting -->
           {#if hasWork}
             <div class="worklist">
               {#if uploading}
@@ -426,7 +426,7 @@
           <div class="empty">
             <span class="hand big"
               >{library.length === 0
-                ? 'nothing here yet — capture a call or drop a file ☝'
+                ? 'nothing here yet, capture a call or drop a file ☝'
                 : `no matches for “${query}”`}</span
             >
           </div>
@@ -609,7 +609,7 @@
   .dz-head h3 {
     font-size: 18px;
   }
-  /* header pill — pushed right, same mint/stop palette as HomePane */
+  /* header pill, pushed right, same mint/stop palette as HomePane */
   .capture-pill {
     margin-left: auto;
     display: flex;

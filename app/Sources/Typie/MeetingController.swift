@@ -61,7 +61,7 @@ final class MeetingController: ObservableObject {
         guard !isCapturing else { return }
         guard !processing else { fail("still filing the previous meeting") ; return }
         guard ModelManager.modelsExist() else { return fail("model not downloaded yet") }
-        guard DiarizeStore.shared.isReady else { return fail("diarizer model not ready — download it from transcripts") }
+        guard DiarizeStore.shared.isReady else { return fail("diarizer model not ready, download it from transcripts") }
         guard AudioCapture.micPermissionGranted() else { return fail("microphone permission missing") }
 
         // capture path: Core Audio system tap needs NO extra permissions and
@@ -70,15 +70,15 @@ final class MeetingController: ObservableObject {
         do {
             try tapRecorder.start()
             recorder = tapRecorder
-            AppLog.event("meeting: capture path — core-audio system tap")
+            AppLog.event("meeting: capture path, core-audio system tap")
         } catch {
-            AppLog.event("meeting: system tap unavailable — \(error.localizedDescription)")
+            AppLog.event("meeting: system tap unavailable, \(error.localizedDescription)")
             guard SystemAudioRecorder.permissionGranted() else {
                 let alert = NSAlert()
                 alert.messageText = "one permission needed"
                 alert.informativeText = """
-                    meeting capture records your Mac's own sound — the Zoom/Meet/Slack \
-                    side of a call — and turns it into a speaker-labeled transcript. \
+                    meeting capture records your Mac's own sound, the Zoom/Meet/Slack \
+                    side of a call, and turns it into a speaker-labeled transcript. \
                     nothing ever leaves this Mac.
 
                     macOS asks for Screen Recording permission once; grant it to typie \
@@ -95,9 +95,9 @@ final class MeetingController: ObservableObject {
             do {
                 try sckRecorder.start()
                 recorder = sckRecorder
-                AppLog.event("meeting: capture path — screencapturekit fallback")
+                AppLog.event("meeting: capture path, screencapturekit fallback")
             } catch {
-                return fail("couldn't start capture — \(error.localizedDescription)")
+                return fail("couldn't start capture, \(error.localizedDescription)")
             }
         }
         if SettingsStore.shared.meetingMixMic && !AudioCapture.micPermissionGranted() {
@@ -131,7 +131,7 @@ final class MeetingController: ObservableObject {
         let micSamples = wantMic ? micCapture.stop() : []
 
         processing = true
-        AppLog.event("meeting: stopping — sealing recording")
+        AppLog.event("meeting: stopping, sealing recording")
         pendingMic = micSamples
         // seal + hand back the wav NOW; onFinish drives finalizeMeeting.
         // stream teardown happens best-effort in the background.
@@ -142,7 +142,7 @@ final class MeetingController: ObservableObject {
 
     private func systemAudioFinished(_ url: URL?) {
         if isCapturing {
-            // stream died under us — wind down like a manual stop
+            // stream died under us, wind down like a manual stop
             isCapturing = false
             isPaused = false
             startedAt = nil
@@ -157,13 +157,13 @@ final class MeetingController: ObservableObject {
         }
     }
 
-    /// Everything after "stop" — mixing, transcribing, filing — happens here,
+    /// Everything after "stop", mixing, transcribing, filing, happens here,
     /// with all heavy work off the main actor so the UI stays responsive.
     private func finalizeMeeting(systemURL: URL?, mic: [Float]) async {
         var finalURL: URL?
         if let systemURL { finalURL = systemURL }
 
-        // mix in the mic side-track if one was recorded — per-sample Swift
+        // mix in the mic side-track if one was recorded, per-sample Swift
         // loop over potentially hours of audio, so: detached
         if !mic.isEmpty,
            Double(mic.count) / 16_000 > 0.5,
@@ -183,7 +183,7 @@ final class MeetingController: ObservableObject {
         processing = false
         clearShelfPin()
 
-        // the recording goes in front of the user RIGHT NOW — playable audio,
+        // the recording goes in front of the user RIGHT NOW, playable audio,
         // empty transcript. diarization fills in the words via the job queue.
         let f = DateFormatter()
         f.dateFormat = "d MMM, HH:mm"
@@ -262,7 +262,7 @@ final class MeetingController: ObservableObject {
             return (sum / Float(n)).squareRoot()
         }
 
-        // measure up to 5 minutes from each middle of the track — plenty for
+        // measure up to 5 minutes from each middle of the track, plenty for
         // a stable estimate without scanning hours of samples twice
         let probeLimit = 16_000 * 300
         let sysMid = Array(sys[(sys.count / 2)...]).prefix(probeLimit)
@@ -276,7 +276,7 @@ final class MeetingController: ObservableObject {
         var gMic: Float = micRms > 1e-3 ? target / micRms : 1
         gMic = min(max(gMic, 0.1), 1.2)  // tame hot mics; almost never boost
 
-        AppLog.event("meeting: mix levels — sys rms \(String(format: "%.4f", sysRms)) → ×\(String(format: "%.2f", gSys)), mic rms \(String(format: "%.4f", micRms)) → ×\(String(format: "%.2f", gMic))")
+        AppLog.event("meeting: mix levels, sys rms \(String(format: "%.4f", sysRms)) → ×\(String(format: "%.2f", gSys)), mic rms \(String(format: "%.4f", micRms)) → ×\(String(format: "%.2f", gMic))")
 
         let outCount = max(systemCount, mic.count)
         var mixed = [Float](repeating: 0, count: outCount)

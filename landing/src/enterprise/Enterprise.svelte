@@ -59,7 +59,7 @@
       name: 'Warp',
       brand: warp.svg,
       wave: '#34d399',
-      title: 'prod-bastion — ssh',
+      title: 'prod-bastion, ssh',
       meta: 'tty7',
       side: [],
       text: 'verify-backup --vault main --full',
@@ -190,7 +190,7 @@
     const prevTheme = meta?.getAttribute('content') ?? null;
     const prevTitle = document.title;
     meta?.setAttribute('content', '#0b0d12');
-    document.title = 'Typie Enterprise — On-Device Voice Input for Business';
+    document.title = 'Typie Enterprise, On-Device Voice Input for Business';
 
     onScroll();
     return () => {

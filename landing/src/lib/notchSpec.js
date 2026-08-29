@@ -1,19 +1,19 @@
-// Canonical notch geometry — single source of truth for landing.
+// Canonical notch geometry, single source of truth for landing.
 // Mirrors app/Sources/Typie/NotchPanel.swift + NotchView.swift so the
 // marketing site cannot drift from the shipped island.
-// • idleW    — measured hardware notch on 14" MBP (~174-186). 176 is the
+// • idleW, measured hardware notch on 14" MBP (~174-186). 176 is the
 //              design compromise that reads correct at landing scale.
-// • expandedW — app: max(320, notchWidth+140) ≈ 320-340. 344 matches the
+// • expandedW, app: max(320, notchWidth+140) ≈ 320-340. 344 matches the
 //               Hero's 340 hover wings with 4px breathing room.
-// • h        — menu bar / notch height. Real mac is 32-33pt; landing lid
+// • h, menu bar / notch height. Real mac is 32-33pt; landing lid
 //              mocks it at 24px (Hero) vs 28-34px (Notch band). We expose
 //              both so each surface can pick its scale while sharing radii.
-// • rIdle/rExpanded — UnevenRoundedRectangle bottom corners: 10 → 18-20
+// • rIdle/rExpanded, UnevenRoundedRectangle bottom corners: 10 → 18-20
 //                     (app: 10 idle, 20 expanded). Continuous curve.
 // Update here and both Hero + Notch band reflow together.
 
 export const NOTCH = {
-  // hero lid mock (inside the Mac window, 24px menubar) — mirrors NotchPanel: idle 10 → expanded 20 continuous
+  // hero lid mock (inside the Mac window, 24px menubar), mirrors NotchPanel: idle 10 → expanded 20 continuous
   hero: {
     idleW: 148,
     idleH: 24,
@@ -24,7 +24,7 @@ export const NOTCH = {
     rIdle: 10,
     rExpanded: 20,
   },
-  // feature band (standalone large notch, 28/34 scale) — same radii, scaled
+  // feature band (standalone large notch, 28/34 scale), same radii, scaled
   band: {
     idleW: 96,
     idleH: 28,
@@ -33,7 +33,7 @@ export const NOTCH = {
     rIdle: 10,
     rExpanded: 18,
   },
-  // app truth (for reference — not directly rendered in landing)
+  // app truth (for reference, not directly rendered in landing)
   app: {
     idleW: 186,
     idleH: 32,

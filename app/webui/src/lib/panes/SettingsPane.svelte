@@ -26,7 +26,7 @@
     return gb >= 1 ? `${gb.toFixed(1)} gb` : `${Math.round(b / 1024 ** 2)} mb`;
   }
 
-  // ── stats — re-implanted from StatsPane so Settings owns the receipts ──
+  // ── stats, re-implanted from StatsPane so Settings owns the receipts ──
   const stats = $derived(ui.stats);
   const timeSaved = $derived(timeSavedSeconds(stats));
   const dictations = $derived(stats.totalDictations);
@@ -109,7 +109,7 @@
         aria-label="appearance"
       >
         {#each [['light', 'light'], ['dark', 'dark']] as [value, label]}
-          <!-- no explicit system option — until you pick, follows your Mac -->
+          <!-- no explicit system option, until you pick, follows your Mac -->
           <button
             class:on={ui.settings.appearance === value}
             role="radio"
@@ -195,7 +195,7 @@
     </div>
   </section>
 
-  <!-- stats — formerly its own pane, now lives in Settings -->
+  <!-- stats, formerly its own pane, now lives in Settings -->
   <section class="card stats-sec">
     <h3>
       <span
@@ -206,7 +206,7 @@
     </h3>
     {#if dictations === 0}
       <div class="stats-empty">
-        <span class="hand big">no stats yet — start dictating!</span>
+        <span class="hand big">no stats yet, start dictating!</span>
         <p>this page fills itself in as you talk.</p>
       </div>
     {:else}
@@ -297,7 +297,7 @@
     </h3>
     <p class="pledge">
       audio goes mic → model → garbage collector. nothing is uploaded, ever.
-      delete the app and nothing remains. that's not a policy — it's the
+      delete the app and nothing remains. that's not a policy, it's the
       architecture.
     </p>
   </section>
@@ -386,7 +386,7 @@
     flex-shrink: 0;
   }
 
-  /* appearance segmented control — system | light | dark */
+  /* appearance segmented control, system | light | dark */
   .seg {
     display: inline-flex;
     background: var(--paper);
@@ -424,7 +424,7 @@
     color: var(--green-deep);
   }
 
-  /* stats — transplanted from StatsPane */
+  /* stats, transplanted from StatsPane */
   .stats-sec {
     gap: 16px;
   }
