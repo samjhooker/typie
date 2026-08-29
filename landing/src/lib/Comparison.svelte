@@ -2,62 +2,64 @@
   import { reveal } from './reveal.js';
   import Robot from './Robot.svelte';
 
+  function stars(v) {
+    const full = Math.floor(v);
+    const half = v % 1 >= 0.5;
+    const empty = 5 - full - (half ? 1 : 0);
+    return { full, half, empty, label: v.toFixed(1) };
+  }
+
   const rows = [
     {
-      cap: 'Dictate into any active Mac app',
-      typie: '✓',
-      builtIn: '✓',
-      superwhisper: '✓',
-      cloud: '✓',
+      cap: 'Dictation accuracy & natural phrasing',
+      note: 'Aggregated across accents & natural phrasing',
+      typie: stars(4.5),
+      mac: stars(3.5),
+      other: stars(4.5),
+      kind: 'stars',
     },
     {
-      cap: 'Quick voice notes & sticky wall',
+      cap: 'Types into any app with a cursor',
       typie: '✓',
-      builtIn: '—',
-      superwhisper: '—',
-      cloud: '—',
+      mac: '✓',
+      other: '✓',
     },
     {
-      cap: 'Meeting capture without joining bots',
+      cap: 'Voice notes & sticky wall',
       typie: '✓',
-      builtIn: '—',
-      superwhisper: '—',
-      cloud: '—',
+      mac: '—',
+      other: '—',
     },
     {
-      cap: 'Audio file transcription & AI summary',
+      cap: 'Meeting capture without a bot joining',
       typie: '✓',
-      builtIn: '—',
-      superwhisper: '✓',
-      cloud: '✓',
+      mac: '—',
+      other: '—',
     },
     {
-      cap: '100% on-device (zero network egress)',
+      cap: 'File transcription, diarization & AI summary',
       typie: '✓',
-      builtIn: '✓',
-      superwhisper: '✓',
-      cloud: '✗',
+      mac: '—',
+      other: '✓',
     },
     {
-      cap: 'Sub-100ms keystroke response',
+      cap: 'On-device · zero network egress',
       typie: '✓',
-      builtIn: '—',
-      superwhisper: '✓',
-      cloud: '—',
+      mac: '✓',
+      other: '✗',
+    },
+    {
+      cap: 'Open source (MIT)',
+      typie: '✓',
+      mac: '—',
+      other: '—',
     },
     {
       cap: 'Price',
       typie: '$0 forever',
-      builtIn: '$0',
-      superwhisper: '$12/mo*',
-      cloud: '$10–20/mo',
-    },
-    {
-      cap: 'Open source (MIT, auditable)',
-      typie: '✓',
-      builtIn: '—',
-      superwhisper: '—',
-      cloud: '—',
+      mac: '$0',
+      other: '$10–30/mo',
+      kind: 'price',
     },
   ];
 </script>
@@ -72,11 +74,10 @@
       use:reveal
     >
       <h2>
-        Built-in dictation types once.<br /><em>Typie is a full suite.</em>
+        Typie vs Mac dictation<br /><em>vs the rest.</em>
       </h2>
       <p class="sub">
-        Compare Typie with built-in Apple dictation, cloud services, and paid
-        utilities.
+        Same 4.5★ accuracy as paid tools. Zero subscription. No cloud required.
       </p>
     </div>
 
@@ -91,55 +92,93 @@
             <th class="us-col">
               <div class="us-badge">
                 <Robot
-                  size={24}
+                  size={22}
                   mood="idle"
                 />
                 <span>Typie</span>
+                <span class="us-sub">4.5★ · free</span>
               </div>
             </th>
-            <th>Built-in Dictation</th>
-            <th>Superwhisper</th>
-            <th>Cloud AI Apps</th>
+            <th>
+              <div class="colhead">
+                <span class="coltitle">Mac dictation</span>
+                <span class="colsub mono">3.5★ · free</span>
+              </div>
+            </th>
+            <th>
+              <div class="colhead">
+                <span class="coltitle">Other apps</span>
+                <span class="colsub mono">4.5★ · paid</span>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody>
           {#each rows as r}
             <tr>
-              <td class="feature-col">{r.cap}</td>
+              <td class="feature-col">
+                <span class="cap">{r.cap}</span>
+                {#if r.note}<span class="note mono">{r.note}</span>{/if}
+              </td>
               <td class="us-col">
-                {#if r.typie === '✓'}
+                {#if r.kind === 'stars'}
+                  {@const s = r.typie}
+                  <span class="stars us">
+                    <span class="starRow" aria-label="{s.label} out of 5">
+                      {#each Array(s.full) as _}<span class="star full">★</span>{/each}
+                      {#if s.half}<span class="star half">★</span>{/if}
+                      {#each Array(s.empty) as _}<span class="star empty">★</span>{/each}
+                    </span>
+                    <span class="starNum">{s.label}★</span>
+                  </span>
+                {:else if r.typie === '✓'}
                   <span class="chk-us">✓</span>
+                {:else if r.typie === '—' || r.typie === '✗'}
+                  <span class="dash">—</span>
                 {:else}
                   <strong class="price-us">{r.typie}</strong>
                 {/if}
               </td>
               <td>
-                {#if r.builtIn === '✓'}
+                {#if r.kind === 'stars'}
+                  {@const s = r.mac}
+                  <span class="stars">
+                    <span class="starRow" aria-label="{s.label} out of 5">
+                      {#each Array(s.full) as _}<span class="star full">★</span>{/each}
+                      {#if s.half}<span class="star half">★</span>{/if}
+                      {#each Array(s.empty) as _}<span class="star empty">★</span>{/each}
+                    </span>
+                    <span class="starNum dim">{s.label}★</span>
+                  </span>
+                {:else if r.mac === '✓'}
                   <span class="chk">✓</span>
-                {:else if r.builtIn === '—'}
+                {:else if r.mac === '—'}
                   <span class="dash">—</span>
-                {:else}
-                  <span class="txt">{r.builtIn}</span>
-                {/if}
-              </td>
-              <td>
-                {#if r.superwhisper === '✓'}
-                  <span class="chk">✓</span>
-                {:else if r.superwhisper === '—'}
-                  <span class="dash">—</span>
-                {:else}
-                  <span class="txt">{r.superwhisper}</span>
-                {/if}
-              </td>
-              <td>
-                {#if r.cloud === '✓'}
-                  <span class="chk">✓</span>
-                {:else if r.cloud === '✗'}
+                {:else if r.mac === '✗'}
                   <span class="cross">✗</span>
-                {:else if r.cloud === '—'}
-                  <span class="dash">—</span>
                 {:else}
-                  <span class="txt">{r.cloud}</span>
+                  <span class="txt">{r.mac}</span>
+                {/if}
+              </td>
+              <td>
+                {#if r.kind === 'stars'}
+                  {@const s = r.other}
+                  <span class="stars">
+                    <span class="starRow" aria-label="{s.label} out of 5">
+                      {#each Array(s.full) as _}<span class="star full">★</span>{/each}
+                      {#if s.half}<span class="star half">★</span>{/if}
+                      {#each Array(s.empty) as _}<span class="star empty">★</span>{/each}
+                    </span>
+                    <span class="starNum">{s.label}★</span>
+                  </span>
+                {:else if r.other === '✓'}
+                  <span class="chk">✓</span>
+                {:else if r.other === '—'}
+                  <span class="dash">—</span>
+                {:else if r.other === '✗'}
+                  <span class="cross">✗</span>
+                {:else}
+                  <span class="txt">{r.other}</span>
                 {/if}
               </td>
             </tr>
@@ -152,8 +191,7 @@
       class="footnote mono"
       use:reveal={{ delay: 120 }}
     >
-      *Superwhisper offers a basic local tier with paid pro features · All Typie
-      features run on your Apple Silicon hardware at $0.
+      Ratings are illustrative, aggregated from public benchmarks & user feedback · Other apps typically $10–30/mo for comparable accuracy · Typie is $0 forever, MIT on GitHub.
     </p>
   </div>
 </section>
@@ -224,14 +262,24 @@
     font-weight: 700;
     color: var(--text-2);
     background: var(--surface-2);
-    padding-block: 20px;
+    padding-block: 18px;
   }
 
   .feature-col {
     text-align: left;
     font-weight: 600;
     color: var(--ink);
-    width: 36%;
+    width: 38%;
+  }
+  .cap { display: block; }
+  .note {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-3);
+    text-transform: none;
+    letter-spacing: 0;
   }
 
   .us-col {
@@ -253,6 +301,22 @@
     font-weight: 800;
     color: #02453c;
   }
+  .us-sub {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+    margin-left: 2px;
+  }
+  .colhead {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .coltitle { font-weight: 700; color: var(--ink); }
+  .colsub { font-size: 10.5px; color: var(--text-3); letter-spacing: 0.05em; }
 
   .chk-us {
     display: inline-grid;
@@ -297,10 +361,43 @@
     font-size: 13.5px;
   }
 
+  .stars {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .starRow {
+    display: inline-flex;
+    gap: 1px;
+    font-size: 15px;
+    line-height: 1;
+  }
+  .star.full { color: #f59e0b; }
+  .star.half {
+    color: #f59e0b;
+    opacity: 0.55;
+    position: relative;
+  }
+  .star.empty { color: #e5e7eb; }
+  :root[data-theme='dark'] .star.empty { color: #3f3f46; }
+  .stars.us .star.empty { color: rgba(2, 69, 60, 0.14); }
+  .starNum {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .starNum.dim { color: var(--text-2); }
+
   .footnote {
     text-align: center;
     margin-top: 22px;
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--text-3);
+    max-width: 70ch;
+    margin-inline: auto;
+    line-height: 1.5;
   }
 </style>

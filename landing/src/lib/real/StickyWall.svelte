@@ -60,10 +60,12 @@
   }
 
   // optional note that flies in (used by landing demos)
-  let { extra = null } = $props();
+  // cols/limit — constrain to a fixed 2-col grid with N notes (bento previews)
+  let { extra = null, cols = 0, limit = 0 } = $props();
+  const shown = limit > 0 ? notes.slice(0, limit) : notes;
 </script>
 
-<div class="wall">
+<div class="wall" data-cols={cols || null}>
   {#if extra}
     <article
       class="sticky fresh"
@@ -79,7 +81,7 @@
     </article>
   {/if}
 
-  {#each notes as note (note.id)}
+  {#each shown as note (note.id)}
     {@const { tint, rot } = look(note.id)}
     <article
       class="sticky"
@@ -106,6 +108,12 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 14px;
     align-items: start;
+  }
+  .wall[data-cols='2'] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wall[data-cols='1'] {
+    grid-template-columns: 1fr;
   }
   .sticky {
     position: relative;

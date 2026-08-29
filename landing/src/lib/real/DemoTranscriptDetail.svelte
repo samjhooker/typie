@@ -13,7 +13,7 @@
   let query = $state('');
   let rate = $state(1);
   let playing = $state(false);
-  let currentTime = $state(134); // start at 02:14, where the conversation is
+  let currentTime = $state(0); // start at the very beginning
   let tlEl = $state(null);
   let dragging = $state(false);
 
@@ -24,94 +24,106 @@
     {
       speaker: 0,
       name: 'Maya',
-      time: '02:14',
-      text: 'and the launch checklist is basically done?',
+      time: '00:14',
+      text: "alright, let's get started. everyone here?",
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '02:18',
-      text: 'two items left. pricing page and the demo video.',
+      time: '00:21',
+      text: "yep, i'm here. screen's up.",
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '02:24',
-      text: 'perfect. i can take the video this afternoon.',
+      time: '00:34',
+      text: 'cool. so the launch is friday — two items left on the checklist.',
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '02:31',
+      time: '00:48',
+      text: 'pricing page and the demo video, right?',
+    },
+    {
+      speaker: 0,
+      name: 'Maya',
+      time: '00:55',
+      text: 'exactly. i can take the video this afternoon.',
+    },
+    {
+      speaker: 1,
+      name: 'Sam',
+      time: '01:08',
       text: "awesome. i'll handle the pricing page then.",
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '02:38',
-      text: "let's sync at 4 to make sure everything's aligned.",
+      time: '01:24',
+      text: "let's sync at four to make sure everything's aligned.",
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '02:44',
-      text: "sounds good. i'll also update the changelog.",
+      time: '02:05',
+      text: "sounds good. i'll also update the changelog before then.",
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '02:51',
+      time: '03:12',
       text: "great. anything else we're missing?",
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '02:56',
-      text: 'just the pricing — we need to decide on the tiers.',
+      time: '03:40',
+      text: 'just pricing — we need to decide on the tiers.',
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '03:08',
+      time: '04:58',
       text: 'free, plus, and team. i still like keeping the personal plan at zero.',
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '03:16',
+      time: '05:46',
       text: 'agreed. the whole point is it just works on your mac.',
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '03:22',
+      time: '06:30',
       text: 'and we should mention the 80ms thing in the video. people will feel it.',
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '03:29',
+      time: '07:22',
       text: "i'll put a hold-option shot right at the open.",
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '03:37',
+      time: '08:35',
       text: 'nice. i can grab b-roll of the notch listening too.',
     },
     {
       speaker: 1,
       name: 'Sam',
-      time: '03:44',
-      text: 'cool. i will have pricing live before the 4pm sync.',
+      time: '09:50',
+      text: 'cool. i will have pricing live before the four pm sync.',
     },
     {
       speaker: 0,
       name: 'Maya',
-      time: '03:51',
+      time: '10:40',
       text: "perfect. i think that's the whole list.",
     },
-    { speaker: 1, name: 'Sam', time: '03:58', text: 'ship it.' },
+    { speaker: 1, name: 'Sam', time: '11:52', text: 'ship it.' },
   ];
 
   const aiSummary =
@@ -119,41 +131,41 @@
 
   const aiSections = [
     {
-      ts: '02:14',
-      title: 'Checklist review',
-      points: ['all items complete except pricing and video'],
+      ts: '00:14',
+      title: 'Kickoff',
+      points: ['launch is friday', 'two items left on the checklist'],
     },
     {
-      ts: '02:31',
+      ts: '01:08',
       title: 'Task assignment',
       points: ['Sam handles pricing page', 'Maya records demo video'],
     },
     {
-      ts: '02:38',
+      ts: '01:24',
       title: 'Alignment',
       points: ['sync at 4pm', 'update changelog'],
     },
     {
-      ts: '03:08',
+      ts: '03:40',
       title: 'Pricing',
       points: ['keep personal plan free', 'plus and team tiers still TBD'],
     },
     {
-      ts: '03:22',
+      ts: '06:30',
       title: 'Demo video',
       points: ['open on hold-option', 'b-roll of the notch listening'],
     },
   ];
 
   const aiQuotes = [
-    { text: 'perfect. i can take the video', speaker: 'Maya', ts: '02:24' },
+    { text: 'i can take the video this afternoon', speaker: 'Maya', ts: '00:55' },
     {
       text: 'the whole point is it just works on your mac',
       speaker: 'Sam',
-      ts: '03:16',
+      ts: '05:46',
     },
-    { text: "i think that's the whole list", speaker: 'Maya', ts: '03:51' },
-    { text: 'ship it', speaker: 'Sam', ts: '03:58' },
+    { text: "i think that's the whole list", speaker: 'Maya', ts: '10:40' },
+    { text: 'ship it', speaker: 'Sam', ts: '11:52' },
   ];
 
   function spColor(i) {
@@ -182,6 +194,16 @@
     return idx;
   });
 
+  // keep the currently-playing turn in view as the playhead advances
+  let turnsEl = $state(null);
+  $effect(() => {
+    if (activeIdx < 0 || !turnsEl) return;
+    const node = turnsEl.querySelector(`[data-idx="${activeIdx}"]`);
+    if (node) {
+      node.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+
   function timeFromEvent(e) {
     const el = tlEl;
     if (!el) return currentTime;
@@ -208,7 +230,7 @@
     if (!playing) return;
     let last = performance.now();
     let raf = 0;
-    const speed = 18 * (rate || 1); // ~12 min call in ~40s at 1×, faster at 1.5/2×
+    const speed = 24 * (rate || 1); // ~12 min call in ~30s at 1×, faster at 1.5/2×
     const tick = (now) => {
       const dt = (now - last) / 1000;
       last = now;
@@ -285,11 +307,15 @@
         </div>
       </div>
 
-      <div class="turns">
+      <div
+        class="turns"
+        bind:this={turnsEl}
+      >
         {#each turns as turn, idx (idx)}
           <button
             class="oturn"
             class:now={idx === activeIdx}
+            data-idx={idx}
             onclick={() => {
               currentTime = parseTs(turn.time);
               playing = false;

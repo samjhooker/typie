@@ -5,7 +5,7 @@ import vscode from 'thesvg/visual-studio-code';
 import notion from 'thesvg/notion';
 import figma from 'thesvg/figma';
 import discord from 'thesvg/discord';
-import zoom from 'thesvg/zoom';
+import zoom from 'thesvg/zoom-2025';
 import telegram from 'thesvg/telegram';
 import whatsapp from 'thesvg/whatsapp';
 import imessage from 'thesvg/imessage';

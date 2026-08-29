@@ -178,13 +178,7 @@
       </a>
     </div>
 
-    <!-- Scroll Progress Indicator on the Pill -->
-    <div
-      class="pill-progress"
-      aria-hidden="true"
-    >
-      <i style="width:{progress * 100}%"></i>
-    </div>
+
   </div>
 </header>
 
@@ -336,20 +330,7 @@
     gap: 5px;
   }
 
-  /* Thin bottom progress bar */
-  .pill-progress {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 2px;
-  }
-  .pill-progress i {
-    display: block;
-    height: 100%;
-    background: linear-gradient(90deg, var(--hotpink), #ff8fab);
-    transition: width 0.08s linear;
-  }
+
 
   @media (max-width: 768px) {
     .links {

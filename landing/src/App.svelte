@@ -5,6 +5,8 @@
   import AppsRow from './lib/AppsRow.svelte';
   import Comparison from './lib/Comparison.svelte';
   import Depth from './lib/Depth.svelte';
+  import FeaturesBento from './lib/FeaturesBento.svelte';
+  import TweetBoard from './lib/TweetBoard.svelte';
   import Footer from './lib/Footer.svelte';
   import About from './lib/About.svelte';
   import Privacy from './lib/Privacy.svelte';
@@ -38,30 +40,19 @@
     <!-- Act 3: Any App With a Cursor -->
     <AppsRow />
 
+    <!-- Act 3.5: 7-Feature Bento — right after the dictate story, above comparison -->
+    <FeaturesBento />
+
     <!-- Act 4: The Local-Mac Comparison Aisle -->
     <Comparison />
 
     <!-- Act 5: Verified Physics & Engine -->
     <Depth />
 
-    <!-- Act 6: Quote Break -->
-    <section class="quote">
-      <div class="container">
-        <blockquote
-          class="bigquote"
-          use:reveal
-        >
-          “I used to type 200+ Slack messages and meeting summaries a day. Now I
-          just talk. <em>My wrists thank me.</em>”
-        </blockquote>
-        <p
-          class="qattr hand"
-          use:reveal={{ delay: 60 }}
-        >
-          Maya Chen · Engineering Founder
-        </p>
-      </div>
-    </section>
+    <!-- Act 6: Pinterest Tweet Board (replaces static testimonials) -->
+    <TweetBoard />
+
+
 
     <!-- Act 7: Private by Architecture -->
     <section
@@ -172,15 +163,7 @@
           </div>
         </div>
 
-        <div
-          class="secproof"
-          use:reveal={{ delay: 100 }}
-        >
-          <p class="mono">
-            Audit network sockets: <code>lsof -p $(pgrep typie) -i</code> returns
-            empty
-          </p>
-        </div>
+
       </div>
     </section>
 

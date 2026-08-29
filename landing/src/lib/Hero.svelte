@@ -14,21 +14,22 @@
   import DemoShell from './real/DemoShell.svelte';
   import DemoTranscriptDetail from './real/DemoTranscriptDetail.svelte';
   import AppSlack from './real/AppSlack.svelte';
-  import AppMail from './real/AppMail.svelte';
-  import AppDocs from './real/AppDocs.svelte';
-  import AppMessages from './real/AppMessages.svelte';
-  import imessage from 'thesvg/imessage';
+  import AppSafari from './real/AppSafari.svelte';
+  import AppOutlook from './real/AppOutlook.svelte';
+  import AppWhatsApp from './real/AppWhatsApp.svelte';
   import slackIco from 'thesvg/slack';
-  import gdocs from 'thesvg/google-docs';
+  import safariIco from 'thesvg/safari';
+  import outlookIco from 'thesvg/microsoft-outlook';
+  import zoom2025Mod from 'thesvg/zoom-2025';
+  import whatsappIco from 'thesvg/whatsapp';
 
   const svgOf = (mod) =>
     typeof mod === 'string' ? mod : (mod.svg ?? String(mod));
-  // Apple Mail — white envelope glyph (outer shell provides bluish background)
-  const MAIL_GLYPH =
-    '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5.2" width="18" height="13.6" rx="2.6" fill="white"/><path d="M3.6 6.2 L12 12.1 L20.4 6.2" stroke="#d1d5db" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/></svg>';
-  // iMessage — white bubble glyph (outer shell provides green background)
-  const MSG_GLYPH =
-    '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.8A7.2 7.2 0 0 0 4.8 12c0 2.05 1.05 3.9 2.7 5.05L6.2 19.3l2.75-1.32A7.15 7.15 0 0 0 12 19.2A7.2 7.2 0 0 0 12 4.8Z" fill="white"/></svg>';
+  // Zoom — use the wordmark (dark) with a custom Apple squircle background
+  // thesvg's wordmark is blue (#0b5cff) on transparent — invert to white for dark bg
+  const _zoomWordmarkRaw =
+    zoom2025Mod?.variants?.wordmark ?? zoom2025Mod?.svg ?? '';
+  const zoomWordmarkDark = _zoomWordmarkRaw.replaceAll('#0b5cff', '#ffffff').replaceAll('#0B5CFF', '#ffffff');
 
   let active = $state('dictate');
   let wifiOff = $state(false);
@@ -72,28 +73,32 @@
       id: 'slack',
       label: 'Slack',
       brand: svgOf(slackIco),
-      title: 'Slack — #product',
+      shell: 'pad',
+      title: 'Slack — #launch',
       text: "pricing page is sam's, video is mine — shipping friday 🚀",
     },
     {
-      id: 'docs',
-      label: 'Google Docs',
-      brand: svgOf(gdocs),
-      title: 'Q3 Roadmap — Google Docs',
-      text: 'Launch checklist: 1. Deploy binary 2. Test offline mode',
+      id: 'safari',
+      label: 'Safari',
+      brand: svgOf(safariIco),
+      shell: 'pad',
+      title: 'google.com — Safari',
+      text: 'launch checklist template',
     },
     {
-      id: 'mail',
-      label: 'Mail',
-      brand: MAIL_GLYPH,
-      title: 'Mail — Inbox',
-      text: 'Hi Sarah, thanks for the intro — 3pm PST works perfectly for me.',
+      id: 'outlook',
+      label: 'Outlook',
+      brand: svgOf(outlookIco),
+      shell: 'pad',
+      title: 'Inbox — Outlook',
+      text: 'hi sarah, thanks for the intro — 3pm PST works perfectly for me.',
     },
     {
-      id: 'imsg',
-      label: 'Messages',
-      brand: MSG_GLYPH,
-      title: 'Messages — Team Sync',
+      id: 'whatsapp',
+      label: 'WhatsApp',
+      brand: svgOf(whatsappIco),
+      shell: 'pad',
+      title: 'WhatsApp — Maya Chen',
       text: 'omw right now, grabbing coffee — want an oat latte?',
     },
   ];
@@ -501,7 +506,7 @@
                   size={13}
                   strokeWidth={2}
                 />
-                <span>Pull Wi-Fi</span>
+                <span>Turn off Wi-Fi</span>
               {/if}
             </button>
 
@@ -796,20 +801,20 @@
                           listening={isKeyHolding}
                           pasted={justPasted}
                         />
-                      {:else if currentDictateApp.id === 'mail'}
-                        <AppMail
+                      {:else if currentDictateApp.id === 'safari'}
+                        <AppSafari
                           typed={typedStream}
                           listening={isKeyHolding}
                           pasted={justPasted}
                         />
-                      {:else if currentDictateApp.id === 'docs'}
-                        <AppDocs
+                      {:else if currentDictateApp.id === 'outlook'}
+                        <AppOutlook
                           typed={typedStream}
                           listening={isKeyHolding}
                           pasted={justPasted}
                         />
                       {:else}
-                        <AppMessages
+                        <AppWhatsApp
                           typed={typedStream}
                           listening={isKeyHolding}
                           pasted={justPasted}
@@ -829,7 +834,9 @@
                       <span class="dots"><i></i><i></i><i></i></span>
                       <span class="calltitle">Launch Sync — zoom.us</span>
                       <span class="cspace"></span>
-                      <span class="zoom-timer mono">00:12</span>
+                      <span class="zoom-rec">
+                        <i class="rec-dot"></i>REC <span class="zoom-timer mono">{capStep >= 1 ? '00:12' : '00:00'}</span>
+                      </span>
                     </header>
 
                     <div class="callbody">
@@ -844,8 +851,24 @@
                               style="background:{p.c}">{p.n[0]}</span
                             >
                             <figcaption class="cname">{p.n}</figcaption>
+                            {#if liveSpeaker === i}
+                              <span class="cwave" aria-hidden="true"
+                                ><i></i><i></i><i></i><i></i></span
+                              >
+                            {/if}
                           </figure>
                         {/each}
+                      </div>
+                      <div class="zoom-controls">
+                        <button class="zc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+                        <button class="zc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/></svg></button>
+                        <button class="zc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+                        <button class="zc rec on" title="Typie is recording system audio locally"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7"/></svg></button>
+                        <button class="zc end"><svg viewBox="0 0 24 24" width="18" height="18" fill="#fff" stroke="none"><path d="M3 9a13 13 0 0 1 18 0v6l-4 1-2-3a8 8 0 0 0-6 0l-2 3-4-1z"/></svg></button>
+                      </div>
+                      <div class="zoom-typie-badge">
+                        <Robot size={16} mood="idle" />
+                        <span>Typie · recording locally · 0 bytes sent</span>
                       </div>
                     </div>
                   </div>
@@ -945,7 +968,7 @@
                         </p>
                         <p class="dz-sub mono">
                           {#if fileStep === 2}
-                            0 bytes sent · local Nvidia Parakeet model
+                            0 bytes sent · on-device · offline
                           {:else}
                             mp3 · m4a · wav · mp4
                           {/if}
@@ -987,7 +1010,10 @@
                 aria-label={a.label}
                 title={a.label}
               >
-                <span class="dico" data-app={a.id}
+                <span
+                  class="dico"
+                  data-app={a.id}
+                  data-shell={a.shell}
                   >{@html nsSvg(a.brand, 'dk' + a.id)}</span
                 >
                 <i
@@ -996,6 +1022,24 @@
                 ></i>
               </button>
             {/each}
+            <button
+              class="ditem"
+              class:on={active === 'capture'}
+              onclick={() => selectFeature('capture')}
+              aria-label="Zoom"
+              title="Zoom — capture a meeting"
+            >
+              <span
+                class="dico"
+                data-app="zoom"
+                data-shell="zoom-wordmark"
+                >{@html nsSvg(zoomWordmarkDark, 'dkzoom')}</span
+              >
+              <i
+                class="ddot"
+                aria-hidden="true"
+              ></i>
+            </button>
             <button
               class="ditem"
               class:on={active === 'notes' || active === 'summarize'}
@@ -1758,26 +1802,44 @@
     }
   }
   .optcap {
+    position: relative;
     width: 58px;
-    height: 48px;
-    border-radius: 10px;
-    background: #3a3e4c;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-bottom: 5px solid #1a1c24;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1px;
+    height: 58px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #1a1d23 0%, #0f1115 100%);
+    border: 1px solid #2d333f;
+    border-bottom-width: 4px;
+    display: block;
     color: #fff;
     box-shadow:
-      0 6px 12px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      0 4px 12px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transition:
       transform 0.14s var(--spring),
       background-color 0.14s ease,
       border-color 0.14s ease,
       box-shadow 0.14s ease;
+  }
+  /* same anatomy as the bento keycap: ⌥ top-right, option bottom */
+  .optcap b {
+    position: absolute;
+    top: 7px;
+    right: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1;
+  }
+  .optcap small {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: lowercase;
   }
   .optcap b {
     font-size: 18px;
@@ -1792,13 +1854,13 @@
     opacity: 0.8;
   }
   .optcap.pressed {
-    transform: translateY(4px) scale(0.96);
-    background: var(--hotpink);
-    border-color: #ff7a9c;
-    border-bottom-width: 2px;
+    transform: translateY(3px) scale(0.97);
+    background: linear-gradient(180deg, #ff7a9c 0%, var(--hotpink) 100%);
+    border-color: #ff9db6;
+    border-bottom-width: 1px;
     box-shadow:
       0 1px 4px rgba(0, 0, 0, 0.45),
-      0 0 22px var(--hotpink-glow);
+      0 0 24px var(--hotpink-glow);
   }
   .optkey.done .optcap {
     background: #0f9d6a;
@@ -1810,6 +1872,7 @@
     flex-direction: column;
     gap: 1px;
     text-align: left;
+    width: 168px; /* fixed so status text changes never shift the key */
   }
   .optstatus {
     font-size: 11px;
@@ -1930,7 +1993,8 @@
     height: 100%;
     background: linear-gradient(90deg, var(--purple), var(--hotpink));
     border-radius: 999px;
-    animation: dzFill 1.8s ease-in-out infinite;
+    width: 0%;
+    animation: dzFill 1.9s ease-out forwards;
   }
   @keyframes dzFill {
     0% {
@@ -1975,13 +2039,41 @@
   }
   .zoom-timer {
     font-size: 11px;
-    color: #9ca3af;
+    color: #e5e7eb;
     letter-spacing: 0.04em;
+    margin-left: 4px;
+  }
+  .zoom-rec {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .rec-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ef4444;
+    margin-right: 4px;
+    animation: recblink 1s steps(1) infinite;
+  }
+  @keyframes recblink {
+    50% {
+      opacity: 0.25;
+    }
   }
 
   .callbody {
     flex: 1;
     display: flex;
+    flex-direction: column;
     background: #0f1117;
     color: #fff;
   }
@@ -2026,6 +2118,85 @@
     font-size: 11px;
     font-weight: 600;
     opacity: 0.8;
+  }
+  .cwave {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 12px;
+  }
+  .cwave i {
+    width: 2px;
+    border-radius: 2px;
+    background: #4ade80;
+    height: 40%;
+    animation: cwave 0.6s ease-in-out infinite alternate;
+  }
+  .cwave i:nth-child(2) {
+    animation-delay: 0.1s;
+    height: 90%;
+  }
+  .cwave i:nth-child(3) {
+    animation-delay: 0.2s;
+    height: 60%;
+  }
+  .cwave i:nth-child(4) {
+    animation-delay: 0.3s;
+    height: 80%;
+  }
+  @keyframes cwave {
+    to {
+      height: 25%;
+    }
+  }
+
+  .zoom-controls {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .zc {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #3a3d4a;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .zc:hover {
+    background: #4a4e5c;
+  }
+  .zc.rec {
+    background: #2a3a2e;
+  }
+  .zc.rec.on {
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.5);
+  }
+  .zc.end {
+    background: #ef4444;
+  }
+  .zoom-typie-badge {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    align-self: center;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    background: rgba(252, 86, 129, 0.14);
+    border: 1px solid rgba(252, 86, 129, 0.35);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fdb6c7;
   }
 
   .typie-loading {
@@ -2137,10 +2308,11 @@
     place-items: center;
     border-radius: 10px;
     overflow: hidden;
-    background: transparent;
+    background: #ffffff;
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.10);
+      0 4px 12px rgba(0, 0, 0, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
     transition: box-shadow 0.18s ease;
   }
   .ditem:hover .dico {
@@ -2153,41 +2325,70 @@
     height: 22px;
     display: block;
   }
-  /* per-app outer shells — same 40×40, inner glyph 22×22 well-padded */
-  .dico[data-app='slack'] {
-    background: #611f69;
-  }
-  .dico[data-app='slack'] :global(svg) {
-    width: 22px;
-    height: 22px;
-  }
-  .dico[data-app='slack'] :global(path) {
-    fill: #ffffff !important;
-  }
-  .dico[data-app='docs'] {
+  /* dock icons — real brand logos on solid Apple squircles (no transparency) */
+  .dico[data-shell='pad'] {
     background: #ffffff;
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.10),
+      0 4px 12px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
-  .dico[data-app='docs'] :global(svg) {
-    width: 22px;
-    height: 22px;
+  .dico[data-shell='pad'] :global(svg) {
+    width: 26px;
+    height: 26px;
   }
-  .dico[data-app='mail'] {
-    background: linear-gradient(180deg, #0a84ff 0%, #0060df 100%);
+  .dico[data-shell='cover'] :global(svg) {
+    width: 100%;
+    height: 100%;
   }
-  .dico[data-app='mail'] :global(svg) {
-    width: 22px;
-    height: 22px;
+  /* solid Apple-style backgrounds per brand — never transparent */
+  .dico[data-app='slack'] {
+    background: #ffffff;
   }
-  .dico[data-app='imsg'] {
-    background: #30d158;
+  .dico[data-app='safari'] {
+    background: #ffffff;
   }
-  .dico[data-app='imsg'] :global(svg) {
-    width: 22px;
-    height: 22px;
+  .dico[data-app='safari'] :global(svg) {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
+  }
+  .dico[data-app='outlook'] {
+    background: #ffffff;
+  }
+  .dico[data-app='outlook'] :global(svg) {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
+  }
+  .dico[data-app='whatsapp'] {
+    background: #ffffff;
+  }
+  .dico[data-app='whatsapp'] :global(svg) {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
+  }
+  .dico[data-app='zoom'] {
+    /* custom Apple squircle background for the wordmark-dark — Zoom blue, solid, no transparency */
+    background: linear-gradient(135deg, #0b5cff 0%, #0845bf 55%, #4f90ee 100%);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.18),
+      0 4px 12px rgba(11, 92, 255, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .dico[data-app='zoom'] :global(svg) {
+    width: 78%;
+    height: auto;
+    display: block;
+    border-radius: 0;
+  }
+  /* keep cover fallback rounded if ever used */
+  .dico[data-shell='cover'] :global(svg) {
+    border-radius: 0;
   }
   .dico.dtyp {
     background: #ffffff;
@@ -2262,7 +2463,8 @@
     }
     .optcap {
       width: 50px;
-      height: 42px;
+      height: 50px;
+      border-radius: 14px;
     }
   }
 </style>
