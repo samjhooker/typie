@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>typie</title>
     <script>
       // surface JS errors in the native log instead of a silent blank window
@@ -11,7 +14,12 @@
           window.webkit?.messageHandlers.typie.postMessage({
             type: 'log',
             message:
-              'error: ' + (e.message || e.error) + ' @ ' + (e.filename || '') + ':' + e.lineno,
+              'error: ' +
+              (e.message || e.error) +
+              ' @ ' +
+              (e.filename || '') +
+              ':' +
+              e.lineno,
           });
         } catch {}
       });
@@ -27,6 +35,9 @@
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <script
+      type="module"
+      src="/src/main.js"
+    ></script>
   </body>
 </html>

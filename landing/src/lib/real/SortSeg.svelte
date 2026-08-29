@@ -3,7 +3,11 @@
   let { options = [], value = $bindable() } = $props();
 </script>
 
-<div class="seg" role="group" aria-label="sort order">
+<div
+  class="seg"
+  role="group"
+  aria-label="sort order"
+>
   {#each options as o (o.id)}
     <button
       class:selected={value === o.id}

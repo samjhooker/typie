@@ -15,7 +15,10 @@
   </div>
   <div class="summary-body">
     {#each summaryLines as line, i}
-      <div class="summary-line" style="animation-delay:{i * 70}ms">
+      <div
+        class="summary-line"
+        style="animation-delay:{i * 70}ms"
+      >
         <span class="summary-bullet"></span>
         <span class="summary-text">{line}</span>
       </div>

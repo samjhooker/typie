@@ -6,7 +6,10 @@
 </script>
 
 {#if isDev}
-  <span class="devtag" title="typie dev — runs alongside your production typie">DEV</span>
+  <span
+    class="devtag"
+    title="typie dev — runs alongside your production typie">DEV</span
+  >
 {/if}
 
 <style>

@@ -26,7 +26,11 @@
     height: 100%;
     min-height: 200px;
     overflow: hidden;
-    background: radial-gradient(ellipse at 50% 30%, rgba(110, 232, 154, 0.06) 0%, transparent 60%);
+    background: radial-gradient(
+      ellipse at 50% 30%,
+      rgba(110, 232, 154, 0.06) 0%,
+      transparent 60%
+    );
   }
 
   .hero-col {

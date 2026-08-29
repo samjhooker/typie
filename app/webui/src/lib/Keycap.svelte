@@ -19,7 +19,11 @@
     <strong class:recording={ui.capturingHotkey}>
       {ui.capturingHotkey ? 'press a modifier…' : ui.settings.hotkey}
     </strong>
-    <span>{ui.capturingHotkey ? 'esc to cancel' : 'click the key to remap it'}</span>
+    <span
+      >{ui.capturingHotkey
+        ? 'esc to cancel'
+        : 'click the key to remap it'}</span
+    >
   </div>
 </div>
 

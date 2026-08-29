@@ -7,25 +7,44 @@
   const loop = [...APPS, ...APPS, ...APPS, ...APPS];
 </script>
 
-<section class="apps" id="apps">
+<section
+  class="apps"
+  id="apps"
+>
   <div class="container">
-    <div class="head" use:reveal>
+    <div
+      class="head"
+      use:reveal
+    >
       <h2 class="subhead">
         If your cursor <em>blinks</em> there,<br />Typie types there.
       </h2>
       <p class="sub">
-        Synthetic keyboard events straight into the active window. No per-app plugins or clipboard
-        hacks.
+        Synthetic keyboard events straight into the active window. No per-app
+        plugins or clipboard hacks.
       </p>
     </div>
   </div>
 
-  <div class="container marquee" use:reveal={{ delay: 80 }}>
-    <span class="peekbot" aria-hidden="true"><Robot size={46} mood="listening" /></span>
+  <div
+    class="container marquee"
+    use:reveal={{ delay: 80 }}
+  >
+    <span
+      class="peekbot"
+      aria-hidden="true"
+      ><Robot
+        size={46}
+        mood="listening"
+      /></span
+    >
     <div class="viewport">
       <ul class="track">
         {#each loop as app, j}
-          <li class="card" aria-hidden={j >= loop.length / 4}>
+          <li
+            class="card"
+            aria-hidden={j >= loop.length / 4}
+          >
             <i class="ic">{@html nsSvg(app.s, `app-${j}-${app.n}`)}</i>
             <span>{app.n}</span>
           </li>
@@ -98,8 +117,20 @@
     overflow: hidden;
     padding-block: 14px;
     margin-block: -14px;
-    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
   }
 
   .track {

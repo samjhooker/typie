@@ -13,7 +13,9 @@
   onMount(() => {
     // initialize theme
     const saved = localStorage.getItem('typie-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
     if (saved === 'dark' || (!saved && prefersDark)) {
       isDark = true;
       document.documentElement.dataset.theme = 'dark';
@@ -54,9 +56,16 @@
 />
 
 <!-- Quiet corner theme toggle when at the very top -->
-<div class="top-corner-bar" class:fade-out={scrolled}>
+<div
+  class="top-corner-bar"
+  class:fade-out={scrolled}
+>
   <div class="container top-corner-inner">
-    <a href="/" class="corner-brand" aria-label="Typie home">
+    <a
+      href="/"
+      class="corner-brand"
+      aria-label="Typie home"
+    >
       <Logo size={22} />
     </a>
     <button
@@ -66,27 +75,58 @@
       title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
     >
       {#if isDark}
-        <Sun size={16} strokeWidth={2} />
+        <Sun
+          size={16}
+          strokeWidth={2}
+        />
       {:else}
-        <Moon size={16} strokeWidth={2} />
+        <Moon
+          size={16}
+          strokeWidth={2}
+        />
       {/if}
     </button>
   </div>
 </div>
 
 <!-- Scroll-Revealed Floating Glass Navbar -->
-<header class="floating-nav" class:visible={scrolled}>
+<header
+  class="floating-nav"
+  class:visible={scrolled}
+>
   <div class="nav-pill">
-    <a href="/" class="brand" aria-label="Typie home">
+    <a
+      href="/"
+      class="brand"
+      aria-label="Typie home"
+    >
       <Logo size={20} />
     </a>
 
-    <nav class="links" aria-label="primary">
-      <a href="#apps" class:active={active === 'apps'}>Everywhere</a>
-      <a href="#compare" class:active={active === 'compare'}>Comparison</a>
-      <a href="#engine" class:active={active === 'engine'}>Engine</a>
-      <a href="#privacy" class:active={active === 'privacy'}>Privacy</a>
-      <a href="#faq" class:active={active === 'faq'}>FAQ</a>
+    <nav
+      class="links"
+      aria-label="primary"
+    >
+      <a
+        href="#apps"
+        class:active={active === 'apps'}>Everywhere</a
+      >
+      <a
+        href="#compare"
+        class:active={active === 'compare'}>Comparison</a
+      >
+      <a
+        href="#engine"
+        class:active={active === 'engine'}>Engine</a
+      >
+      <a
+        href="#privacy"
+        class:active={active === 'privacy'}>Privacy</a
+      >
+      <a
+        href="#faq"
+        class:active={active === 'faq'}>FAQ</a
+      >
     </nav>
 
     <div class="right">
@@ -97,14 +137,28 @@
         title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
       >
         {#if isDark}
-          <Sun size={15} strokeWidth={2} />
+          <Sun
+            size={15}
+            strokeWidth={2}
+          />
         {:else}
-          <Moon size={15} strokeWidth={2} />
+          <Moon
+            size={15}
+            strokeWidth={2}
+          />
         {/if}
       </button>
 
-      <a href="https://github.com/samjhooker/typie/releases/latest" class="btn btn-primary navcta">
-        <svg viewBox="0 0 384 512" width="12" height="12" fill="currentColor" aria-hidden="true"
+      <a
+        href="https://github.com/samjhooker/typie/releases/latest"
+        class="btn btn-primary navcta"
+      >
+        <svg
+          viewBox="0 0 384 512"
+          width="12"
+          height="12"
+          fill="currentColor"
+          aria-hidden="true"
           ><path
             d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.7-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
           /></svg
@@ -114,7 +168,12 @@
     </div>
 
     <!-- Scroll Progress Indicator on the Pill -->
-    <div class="pill-progress" aria-hidden="true"><i style="width:{progress * 100}%"></i></div>
+    <div
+      class="pill-progress"
+      aria-hidden="true"
+    >
+      <i style="width:{progress * 100}%"></i>
+    </div>
   </div>
 </header>
 

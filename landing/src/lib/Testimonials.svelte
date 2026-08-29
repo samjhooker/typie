@@ -28,26 +28,53 @@
 
 <section class="testimonials field pop-c">
   <div class="container">
-    <h2 class="subhead" use:reveal>
+    <h2
+      class="subhead"
+      use:reveal
+    >
       Loved by people who
       <span class="squiggle"
         >type all day
-        <svg viewBox="0 0 120 14" aria-hidden="true">
-          <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" />
+        <svg
+          viewBox="0 0 120 14"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 9c22-6 44-6 56-3s34 4 56-2"
+            stroke="var(--hotpink)"
+          />
         </svg>
       </span>
     </h2>
 
     <div class="grid">
-      <figure class="card featured" style="background:{featured.bg}" use:reveal>
-        <div class="cameo left" aria-hidden="true">
+      <figure
+        class="card featured"
+        style="background:{featured.bg}"
+        use:reveal
+      >
+        <div
+          class="cameo left"
+          aria-hidden="true"
+        >
           <span class="cam-bubble hand">we definitely<br />real people</span>
-          <Robot size={44} mood="thinking" />
+          <Robot
+            size={44}
+            mood="thinking"
+          />
         </div>
         <div class="head">
-          <AssetSlot id="avatar-0" width="60px" round>
+          <AssetSlot
+            id="avatar-0"
+            width="60px"
+            round
+          >
             {#snippet fallback()}
-              <span class="avatar" style="background:{featured.tone}" aria-hidden="true"></span>
+              <span
+                class="avatar"
+                style="background:{featured.tone}"
+                aria-hidden="true"
+              ></span>
             {/snippet}
           </AssetSlot>
           <blockquote>{featured.q}</blockquote>
@@ -57,11 +84,23 @@
 
       <div class="side">
         {#each quotes as t, i}
-          <figure class="card" style="background:{t.bg}" use:reveal={{ delay: 90 + i * 90 }}>
+          <figure
+            class="card"
+            style="background:{t.bg}"
+            use:reveal={{ delay: 90 + i * 90 }}
+          >
             <div class="head">
-              <AssetSlot id={`avatar-${i + 1}`} width="46px" round>
+              <AssetSlot
+                id={`avatar-${i + 1}`}
+                width="46px"
+                round
+              >
                 {#snippet fallback()}
-                  <span class="avatar sm" style="background:{t.tone}" aria-hidden="true"></span>
+                  <span
+                    class="avatar sm"
+                    style="background:{t.tone}"
+                    aria-hidden="true"
+                  ></span>
                 {/snippet}
               </AssetSlot>
               <blockquote>{t.q}</blockquote>

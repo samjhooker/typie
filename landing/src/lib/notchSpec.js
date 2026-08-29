@@ -47,7 +47,8 @@ export const NOTCH = {
     shadowIdle: '0 3px 10px rgba(0,0,0,.16)',
     shadowExpanded: '0 8px 24px rgba(0,0,0,.38)',
     shadowApp: '0 4px 14px rgba(0,0,0,.28)',
-    camGradient: 'radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%)',
+    camGradient:
+      'radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%)',
     camRing: 'inset 0 0 0 1px rgba(120,130,150,.35), 0 0 0 2px #000',
   },
 };

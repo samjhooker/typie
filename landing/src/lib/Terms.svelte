@@ -43,9 +43,22 @@
 </svelte:head>
 
 <PageShell>
-  <p class="hand kicker" use:reveal>the other short one.</p>
-  <h1 class="subhead" use:reveal>Terms of use</h1>
-  <p class="intro" use:reveal={{ delay: 60 }}>
+  <p
+    class="hand kicker"
+    use:reveal
+  >
+    the other short one.
+  </p>
+  <h1
+    class="subhead"
+    use:reveal
+  >
+    Terms of use
+  </h1>
+  <p
+    class="intro"
+    use:reveal={{ delay: 60 }}
+  >
     Basic rules for using Typie. Written so this URL exists. Not a novel.
   </p>
 
@@ -58,7 +71,9 @@
     {/each}
   </div>
 
-  <p class="fine mono">Last updated: August 2026 · Typie · a tiny robot with one job</p>
+  <p class="fine mono">
+    Last updated: August 2026 · Typie · a tiny robot with one job
+  </p>
 </PageShell>
 
 <style>

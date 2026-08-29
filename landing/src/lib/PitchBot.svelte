@@ -29,7 +29,8 @@
     edu: {
       title: 'typie campus sales',
       meta: 'district reps · 1 (small, plastic)',
-      greeting: "hi! i handle campus licensing. by which i mean: there isn't any.",
+      greeting:
+        "hi! i handle campus licensing. by which i mean: there isn't any.",
       pitch:
         "booking a pilot? great news — it's already free. teachers, students, ten-thousand-seat districts: same download, $0 forever. grab it on GitHub. no forms, no quotes, no me.",
       quick: ['price?', 'FERPA?', 'quote?'],
@@ -101,15 +102,27 @@
   {#if pitch.open}
     <div class="panel">
       <header>
-        <span class="hbot"><Robot size={32} mood={thinking ? 'thinking' : 'idle'} /></span>
+        <span class="hbot"
+          ><Robot
+            size={32}
+            mood={thinking ? 'thinking' : 'idle'}
+          /></span
+        >
         <div class="ht">
           <strong>{c.title}</strong>
           <span class="mono">{c.meta}</span>
         </div>
-        <button class="x" onclick={() => (pitch.open = false)} aria-label="Close chat">–</button>
+        <button
+          class="x"
+          onclick={() => (pitch.open = false)}
+          aria-label="Close chat">–</button
+        >
       </header>
 
-      <div class="msgs" bind:this={list}>
+      <div
+        class="msgs"
+        bind:this={list}
+      >
         {#each msgs as m}
           <p class="msg {m.who}">{m.text}</p>
         {/each}
@@ -120,7 +133,10 @@
 
       <div class="quick">
         {#each c.quick as q}
-          <button onclick={() => send(q)} disabled={thinking}>{q}</button>
+          <button
+            onclick={() => send(q)}
+            disabled={thinking}>{q}</button
+          >
         {/each}
       </div>
 
@@ -135,7 +151,11 @@
           placeholder="negotiate with the robot"
           aria-label="Message typie sales"
         />
-        <button class="send" type="submit" disabled={thinking || !draft.trim()}>↑</button>
+        <button
+          class="send"
+          type="submit"
+          disabled={thinking || !draft.trim()}>↑</button
+        >
       </form>
 
       <a
@@ -159,7 +179,10 @@
     {#if pitch.open}
       ✕
     {:else}
-      <Robot size={38} mood={thinking ? 'listening' : 'idle'} />
+      <Robot
+        size={38}
+        mood={thinking ? 'listening' : 'idle'}
+      />
     {/if}
   </button>
 </div>

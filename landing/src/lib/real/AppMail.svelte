@@ -55,7 +55,10 @@
   <aside class="boxes">
     <div class="title-bar"><span class="ttl">Mailboxes</span></div>
     {#each mailboxes as mb}
-      <div class="mbox" class:on={mb.on}>
+      <div
+        class="mbox"
+        class:on={mb.on}
+      >
         <span class="bi">{mb.icon}</span>
         <span class="bn">{mb.name}</span>
         {#if mb.count}<b class="cnt">{mb.count}</b>{/if}
@@ -66,7 +69,11 @@
   <section class="mlist">
     <div class="search">⌕ Search in "Inbox"</div>
     {#each messages as m}
-      <div class="mrow" class:on={m.on} class:unread={m.unread}>
+      <div
+        class="mrow"
+        class:on={m.on}
+        class:unread={m.unread}
+      >
         <div class="mfrom">{m.from}</div>
         <div class="msubj">{m.subj}</div>
         <p class="mprev">{m.preview}</p>
@@ -89,7 +96,11 @@
         <p>{para}</p>
       {/each}
     </div>
-    <div class="reply" class:armed={listening || typed} class:pasted>
+    <div
+      class="reply"
+      class:armed={listening || typed}
+      class:pasted
+    >
       {#if typed}
         <p class="rtext pop">{typed}<span class="caret"></span></p>
       {:else}

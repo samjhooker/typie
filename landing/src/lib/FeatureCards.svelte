@@ -4,18 +4,27 @@
   import Notch from './Notch.svelte';
 </script>
 
-<section class="features field pop-b" id="features">
+<section
+  class="features field pop-b"
+  id="features"
+>
   <div class="container grid">
     <!-- Talk like you think -->
-    <article class="card c-lavender" use:reveal>
+    <article
+      class="card c-lavender"
+      use:reveal
+    >
       <h3>Talk like you think</h3>
       <div class="body">
         <p>
-          No commands, no robot voice. Mumble, ramble, talk too fast, it still comes out as the
-          sentence you meant.
+          No commands, no robot voice. Mumble, ramble, talk too fast, it still
+          comes out as the sentence you meant.
         </p>
         <div class="art">
-          <span class="botpair" aria-hidden="true">
+          <span
+            class="botpair"
+            aria-hidden="true"
+          >
             <span class="lift">
               <img
                 class="wave-icon"
@@ -31,7 +40,11 @@
                 <span class="spark s1">✦</span>
                 <span class="spark s2">✧</span>
                 <span class="bot bot-purple"
-                  ><Robot size={92} mood="listening" bg="var(--card-lavender)" /></span
+                  ><Robot
+                    size={92}
+                    mood="listening"
+                    bg="var(--card-lavender)"
+                  /></span
                 >
               </span>
               <i class="ground g-bot"></i>
@@ -42,15 +55,21 @@
     </article>
 
     <!-- Privacy -->
-    <article class="card c-blue" use:reveal={{ delay: 80 }}>
+    <article
+      class="card c-blue"
+      use:reveal={{ delay: 80 }}
+    >
       <h3>Your voice never leaves your Mac</h3>
       <div class="body">
         <p>
-          Transcribed on-device, then the audio is gone. No cloud, no uploads. We couldn’t hear you
-          if we tried.
+          Transcribed on-device, then the audio is gone. No cloud, no uploads.
+          We couldn’t hear you if we tried.
         </p>
         <div class="art">
-          <span class="lock-scene" aria-hidden="true">
+          <span
+            class="lock-scene"
+            aria-hidden="true"
+          >
             <img
               class="lock-icon"
               src="{import.meta.env.BASE_URL}assets/privacy-lock.webp"
@@ -63,7 +82,11 @@
                 <span class="spark s1">✦</span>
                 <span class="spark s2">✧</span>
                 <span class="bot bot-navy"
-                  ><Robot size={64} mood="idle" bg="var(--card-blue)" /></span
+                  ><Robot
+                    size={64}
+                    mood="idle"
+                    bg="var(--card-blue)"
+                  /></span
                 >
               </span>
               <i class="ground g-bot"></i>
@@ -74,20 +97,30 @@
     </article>
 
     <!-- Ridiculously fast -->
-    <article class="card c-cream" use:reveal>
+    <article
+      class="card c-cream"
+      use:reveal
+    >
       <h3>Ridiculously fast</h3>
       <div class="body">
         <p>
-          No server round trip. Words land in about 100 milliseconds, roughly the pause between your
-          own sentences.
+          No server round trip. Words land in about 100 milliseconds, roughly
+          the pause between your own sentences.
         </p>
         <div class="art">
-          <span class="speedscene" aria-hidden="true">
+          <span
+            class="speedscene"
+            aria-hidden="true"
+          >
             <span class="hub mascot">
               <span class="tilt">
                 <span class="spark s1">✦</span>
                 <span class="bot bot-orange"
-                  ><Robot size={78} mood="idle" bg="var(--card-cream)" /></span
+                  ><Robot
+                    size={78}
+                    mood="idle"
+                    bg="var(--card-cream)"
+                  /></span
                 >
               </span>
               <i class="ground g-bot"></i>
@@ -101,13 +134,16 @@
     </article>
 
     <!-- Hold. Speak. Release. -->
-    <article class="card c-mint" use:reveal={{ delay: 80 }}>
+    <article
+      class="card c-mint"
+      use:reveal={{ delay: 80 }}
+    >
       <h3>Hold. Speak. Release.</h3>
       <div class="body">
         <div class="copy">
           <p>
-            One shortcut. That’s the whole interface. Hold ⌥, say the thing, let go, and you’re back
-            in the sentence.
+            One shortcut. That’s the whole interface. Hold ⌥, say the thing, let
+            go, and you’re back in the sentence.
           </p>
           <p>And if you wanna go real crazy, you can even remap the key.</p>
         </div>
@@ -213,7 +249,8 @@
 
   .card {
     border-radius: var(--radius-card);
-    padding: clamp(26px, 3vw, 36px) clamp(26px, 3vw, 36px) clamp(22px, 2.6vw, 30px);
+    padding: clamp(26px, 3vw, 36px) clamp(26px, 3vw, 36px)
+      clamp(22px, 2.6vw, 30px);
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -336,12 +373,20 @@
 
   .g-wave {
     width: 72%;
-    background: radial-gradient(ellipse at center, rgba(200, 140, 253, 0.32) 0%, transparent 72%);
+    background: radial-gradient(
+      ellipse at center,
+      rgba(200, 140, 253, 0.32) 0%,
+      transparent 72%
+    );
   }
 
   .g-bot {
     width: 70%;
-    background: radial-gradient(ellipse at center, rgba(19, 23, 34, 0.16) 0%, transparent 72%);
+    background: radial-gradient(
+      ellipse at center,
+      rgba(19, 23, 34, 0.16) 0%,
+      transparent 72%
+    );
   }
 
   @keyframes wavebob {

@@ -62,23 +62,38 @@
   ];
 </script>
 
-<section class="compare-section" id="compare">
+<section
+  class="compare-section"
+  id="compare"
+>
   <div class="container">
-    <div class="head" use:reveal>
-      <h2>Built-in dictation types once.<br /><em>Typie is a full suite.</em></h2>
+    <div
+      class="head"
+      use:reveal
+    >
+      <h2>
+        Built-in dictation types once.<br /><em>Typie is a full suite.</em>
+      </h2>
       <p class="sub">
-        Compare Typie with built-in Apple dictation, cloud services, and paid utilities.
+        Compare Typie with built-in Apple dictation, cloud services, and paid
+        utilities.
       </p>
     </div>
 
-    <div class="tablewrap" use:reveal={{ delay: 80 }}>
+    <div
+      class="tablewrap"
+      use:reveal={{ delay: 80 }}
+    >
       <table>
         <thead>
           <tr>
             <th class="feature-col">Feature</th>
             <th class="us-col">
               <div class="us-badge">
-                <Robot size={24} mood="idle" />
+                <Robot
+                  size={24}
+                  mood="idle"
+                />
                 <span>Typie</span>
               </div>
             </th>
@@ -133,9 +148,12 @@
       </table>
     </div>
 
-    <p class="footnote mono" use:reveal={{ delay: 120 }}>
-      *Superwhisper offers a basic local tier with paid pro features · All Typie features run on
-      your Apple Silicon hardware at $0.
+    <p
+      class="footnote mono"
+      use:reveal={{ delay: 120 }}
+    >
+      *Superwhisper offers a basic local tier with paid pro features · All Typie
+      features run on your Apple Silicon hardware at $0.
     </p>
   </div>
 </section>

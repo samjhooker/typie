@@ -27,9 +27,15 @@
   ];
 </script>
 
-<section class="ctaband field" id="pricing">
+<section
+  class="ctaband field"
+  id="pricing"
+>
   <div class="container">
-    <div class="banner" use:reveal>
+    <div
+      class="banner"
+      use:reveal
+    >
       <div class="copy">
         <p class="hand kicker">pricing, sort of</p>
         <h2>Your voice. Anywhere.</h2>
@@ -38,7 +44,10 @@
 
       <div class="plans">
         {#each plans as p}
-          <article class="plan" class:popular={p.popular}>
+          <article
+            class="plan"
+            class:popular={p.popular}
+          >
             {#if p.popular}
               <span class="badge">Most popular</span>
             {/if}
@@ -50,32 +59,79 @@
                 <li><span>✓</span>{f}</li>
               {/each}
             </ul>
-            <DownloadCta kind={p.popular ? 'butter' : 'ghost'} label={p.label} />
+            <DownloadCta
+              kind={p.popular ? 'butter' : 'ghost'}
+              label={p.label}
+            />
           </article>
         {/each}
       </div>
 
       <p class="specs mono">macOS 14+ · Apple Silicon · still $0</p>
 
-      <div class="scene" aria-hidden="true">
-        <AssetSlot id="cta-scene" width="100%">
+      <div
+        class="scene"
+        aria-hidden="true"
+      >
+        <AssetSlot
+          id="cta-scene"
+          width="100%"
+        >
           {#snippet fallback()}
-            <svg viewBox="0 0 1200 200" preserveAspectRatio="xMidYMax slice">
+            <svg
+              viewBox="0 0 1200 200"
+              preserveAspectRatio="xMidYMax slice"
+            >
               <defs>
-                <clipPath id="cta-tl"><rect x="-40" y="-36" width="40" height="80" /></clipPath>
-                <clipPath id="cta-tr"><rect x="-40" y="-36" width="40" height="80" /></clipPath>
+                <clipPath id="cta-tl"
+                  ><rect
+                    x="-40"
+                    y="-36"
+                    width="40"
+                    height="80"
+                  /></clipPath
+                >
+                <clipPath id="cta-tr"
+                  ><rect
+                    x="-40"
+                    y="-36"
+                    width="40"
+                    height="80"
+                  /></clipPath
+                >
               </defs>
 
               <!-- left hills, back to front -->
-              <path d="M0 200V78c28-18 72-8 118 22 40 26 78 70 128 100H0Z" fill="#8fd49a" />
-              <path d="M0 200V128c70-38 150-28 238 8 48 20 92 40 148 64H0Z" fill="#c5e6b8" />
-              <path d="M0 200V118c38-28 88-24 128 10 22 20 44 48 78 72H0Z" fill="#4eae6e" />
-              <path d="M0 200V148c48-36 110-28 168 12 28 20 54 28 86 40H0Z" fill="#3e9a5c" />
+              <path
+                d="M0 200V78c28-18 72-8 118 22 40 26 78 70 128 100H0Z"
+                fill="#8fd49a"
+              />
+              <path
+                d="M0 200V128c70-38 150-28 238 8 48 20 92 40 148 64H0Z"
+                fill="#c5e6b8"
+              />
+              <path
+                d="M0 200V118c38-28 88-24 128 10 22 20 44 48 78 72H0Z"
+                fill="#4eae6e"
+              />
+              <path
+                d="M0 200V148c48-36 110-28 168 12 28 20 54 28 86 40H0Z"
+                fill="#3e9a5c"
+              />
 
               <!-- right hills -->
-              <path d="M1200 200V128c-70-42-150-28-230 10-40 20-78 40-130 62h360Z" fill="#c5e6b8" />
-              <path d="M1200 200V150c-50-32-110-22-168 8-32 16-62 28-98 42h266Z" fill="#7ec98c" />
-              <path d="M1200 200V158c-42-24-96-16-148 14-22 14-44 22-70 28h218Z" fill="#3e9a5c" />
+              <path
+                d="M1200 200V128c-70-42-150-28-230 10-40 20-78 40-130 62h360Z"
+                fill="#c5e6b8"
+              />
+              <path
+                d="M1200 200V150c-50-32-110-22-168 8-32 16-62 28-98 42h266Z"
+                fill="#7ec98c"
+              />
+              <path
+                d="M1200 200V158c-42-24-96-16-148 14-22 14-44 22-70 28h218Z"
+                fill="#3e9a5c"
+              />
 
               <!-- left tree -->
               <g transform="translate(248 86)">
@@ -87,16 +143,64 @@
                   stroke-linecap="round"
                 />
                 <g>
-                  <ellipse cx="-8" cy="10" rx="20" ry="18" fill="#8fc86e" />
-                  <ellipse cx="10" cy="8" rx="18" ry="17" fill="#8fc86e" />
-                  <ellipse cx="1" cy="-6" rx="16" ry="15" fill="#8fc86e" />
-                  <ellipse cx="-2" cy="18" rx="15" ry="13" fill="#8fc86e" />
+                  <ellipse
+                    cx="-8"
+                    cy="10"
+                    rx="20"
+                    ry="18"
+                    fill="#8fc86e"
+                  />
+                  <ellipse
+                    cx="10"
+                    cy="8"
+                    rx="18"
+                    ry="17"
+                    fill="#8fc86e"
+                  />
+                  <ellipse
+                    cx="1"
+                    cy="-6"
+                    rx="16"
+                    ry="15"
+                    fill="#8fc86e"
+                  />
+                  <ellipse
+                    cx="-2"
+                    cy="18"
+                    rx="15"
+                    ry="13"
+                    fill="#8fc86e"
+                  />
                 </g>
                 <g clip-path="url(#cta-tl)">
-                  <ellipse cx="-8" cy="10" rx="20" ry="18" fill="#5aa34c" />
-                  <ellipse cx="10" cy="8" rx="18" ry="17" fill="#5aa34c" />
-                  <ellipse cx="1" cy="-6" rx="16" ry="15" fill="#5aa34c" />
-                  <ellipse cx="-2" cy="18" rx="15" ry="13" fill="#5aa34c" />
+                  <ellipse
+                    cx="-8"
+                    cy="10"
+                    rx="20"
+                    ry="18"
+                    fill="#5aa34c"
+                  />
+                  <ellipse
+                    cx="10"
+                    cy="8"
+                    rx="18"
+                    ry="17"
+                    fill="#5aa34c"
+                  />
+                  <ellipse
+                    cx="1"
+                    cy="-6"
+                    rx="16"
+                    ry="15"
+                    fill="#5aa34c"
+                  />
+                  <ellipse
+                    cx="-2"
+                    cy="18"
+                    rx="15"
+                    ry="13"
+                    fill="#5aa34c"
+                  />
                 </g>
               </g>
 
@@ -110,33 +214,112 @@
                   stroke-linecap="round"
                 />
                 <g>
-                  <ellipse cx="-7" cy="8" rx="17" ry="16" fill="#9ed48a" />
-                  <ellipse cx="9" cy="7" rx="16" ry="15" fill="#9ed48a" />
-                  <ellipse cx="1" cy="-5" rx="14" ry="13" fill="#9ed48a" />
+                  <ellipse
+                    cx="-7"
+                    cy="8"
+                    rx="17"
+                    ry="16"
+                    fill="#9ed48a"
+                  />
+                  <ellipse
+                    cx="9"
+                    cy="7"
+                    rx="16"
+                    ry="15"
+                    fill="#9ed48a"
+                  />
+                  <ellipse
+                    cx="1"
+                    cy="-5"
+                    rx="14"
+                    ry="13"
+                    fill="#9ed48a"
+                  />
                 </g>
                 <g clip-path="url(#cta-tr)">
-                  <ellipse cx="-7" cy="8" rx="17" ry="16" fill="#6bb25c" />
-                  <ellipse cx="9" cy="7" rx="16" ry="15" fill="#6bb25c" />
-                  <ellipse cx="1" cy="-5" rx="14" ry="13" fill="#6bb25c" />
+                  <ellipse
+                    cx="-7"
+                    cy="8"
+                    rx="17"
+                    ry="16"
+                    fill="#6bb25c"
+                  />
+                  <ellipse
+                    cx="9"
+                    cy="7"
+                    rx="16"
+                    ry="15"
+                    fill="#6bb25c"
+                  />
+                  <ellipse
+                    cx="1"
+                    cy="-5"
+                    rx="14"
+                    ry="13"
+                    fill="#6bb25c"
+                  />
                 </g>
               </g>
 
               <!-- house -->
               <g transform="translate(1048 86)">
-                <path d="M34 36l22 8v32l-22-7Z" fill="#3d54d0" />
-                <path d="M6 36h28v32H6Z" fill="#5470f5" />
-                <path d="M22 8l36 28-22 8L6 36Z" fill="#e24a3c" />
-                <path d="M6 36l16-28 12 6-16 22Z" fill="#ef5b4a" />
-                <g stroke="#c43b30" stroke-width="1.2" fill="none">
+                <path
+                  d="M34 36l22 8v32l-22-7Z"
+                  fill="#3d54d0"
+                />
+                <path
+                  d="M6 36h28v32H6Z"
+                  fill="#5470f5"
+                />
+                <path
+                  d="M22 8l36 28-22 8L6 36Z"
+                  fill="#e24a3c"
+                />
+                <path
+                  d="M6 36l16-28 12 6-16 22Z"
+                  fill="#ef5b4a"
+                />
+                <g
+                  stroke="#c43b30"
+                  stroke-width="1.2"
+                  fill="none"
+                >
                   <path d="M12 30l24 10" />
                   <path d="M16 24l24 10" />
                   <path d="M20 18l22 9" />
                 </g>
-                <rect x="42" y="10" width="7" height="12" rx="1" fill="#d44538" />
-                <path d="M16 48c0-5 4-9 8-9s8 4 8 9v20H16Z" fill="#2c3f9e" />
-                <path d="M20 44c0-3 2.4-5 4-5s4 2 4 5v6h-8Z" fill="#f3e4b0" />
-                <rect x="42" y="44" width="6" height="6" rx="1" fill="#f3e4b0" />
-                <rect x="42" y="54" width="6" height="6" rx="1" fill="#f3e4b0" />
+                <rect
+                  x="42"
+                  y="10"
+                  width="7"
+                  height="12"
+                  rx="1"
+                  fill="#d44538"
+                />
+                <path
+                  d="M16 48c0-5 4-9 8-9s8 4 8 9v20H16Z"
+                  fill="#2c3f9e"
+                />
+                <path
+                  d="M20 44c0-3 2.4-5 4-5s4 2 4 5v6h-8Z"
+                  fill="#f3e4b0"
+                />
+                <rect
+                  x="42"
+                  y="44"
+                  width="6"
+                  height="6"
+                  rx="1"
+                  fill="#f3e4b0"
+                />
+                <rect
+                  x="42"
+                  y="54"
+                  width="6"
+                  height="6"
+                  rx="1"
+                  fill="#f3e4b0"
+                />
               </g>
             </svg>
           {/snippet}
@@ -156,7 +339,8 @@
     position: relative;
     background: var(--butter);
     border-radius: var(--radius-surface);
-    padding: clamp(36px, 5vw, 56px) clamp(20px, 3.5vw, 48px) clamp(150px, 18vw, 210px);
+    padding: clamp(36px, 5vw, 56px) clamp(20px, 3.5vw, 48px)
+      clamp(150px, 18vw, 210px);
     overflow: hidden;
   }
 

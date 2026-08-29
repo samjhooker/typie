@@ -69,14 +69,17 @@
       durationSeconds: 90,
       speakerCount: 1,
       isMeeting: false,
-      preview: "grandma's secret — add miso, white pepper, and a pinch of sugar",
+      preview:
+        "grandma's secret — add miso, white pepper, and a pinch of sugar",
       isNew: false,
     },
   ];
 
   function fmtDur(s) {
     const n = Math.round(s || 0);
-    return n > 0 ? `${Math.floor(n / 60)}m ${String(n % 60).padStart(2, '0')}s` : '';
+    return n > 0
+      ? `${Math.floor(n / 60)}m ${String(n % 60).padStart(2, '0')}s`
+      : '';
   }
 
   let { onSelect = () => {} } = $props();
@@ -97,7 +100,12 @@
   <div class="actions">
     <div class="dropzone">
       <div class="dz-head">
-        <span class="ico"><Glyph name="transcript" size={17} /></span>
+        <span class="ico"
+          ><Glyph
+            name="transcript"
+            size={17}
+          /></span
+        >
         <h3>drop anything</h3>
       </div>
       <p class="mono">mp3 · m4a · wav · mp4 — or click to browse</p>
@@ -106,12 +114,17 @@
 
     <div class="reccard">
       <div class="dz-head">
-        <span class="ico call-ico"><Glyph name="record" size={15} /></span>
+        <span class="ico call-ico"
+          ><Glyph
+            name="record"
+            size={15}
+          /></span
+        >
         <h3>capture a call</h3>
       </div>
       <p>
-        saves the whole conversation offline — their side from your Mac's sound, yours mixed right
-        in — then transcribes and splits the speakers.
+        saves the whole conversation offline — their side from your Mac's sound,
+        yours mixed right in — then transcribes and splits the speakers.
       </p>
       <div class="acts">
         <button class="btn small btn-mint">start capture</button>
@@ -123,20 +136,36 @@
   <div class="lib-head">
     <h3>All conversations <span class="count">{transcripts.length}</span></h3>
     <div class="lib-tools">
-      <SortSeg options={SORTS} bind:value={sortBy} />
+      <SortSeg
+        options={SORTS}
+        bind:value={sortBy}
+      />
       <label class="input search">
         <span class="search-icon">⌕</span>
-        <input bind:value={query} placeholder="search…" spellcheck="false" />
+        <input
+          bind:value={query}
+          placeholder="search…"
+          spellcheck="false"
+        />
       </label>
     </div>
   </div>
 
   <div class="grid">
     {#each transcripts as item (item.id)}
-      <button class="tcard card" onclick={onSelect}>
+      <button
+        class="tcard card"
+        onclick={onSelect}
+      >
         <div class="top">
-          <span class="ico" class:meeting={item.isMeeting}>
-            <Glyph name={item.isMeeting ? 'record' : 'transcript'} size={15} />
+          <span
+            class="ico"
+            class:meeting={item.isMeeting}
+          >
+            <Glyph
+              name={item.isMeeting ? 'record' : 'transcript'}
+              size={15}
+            />
           </span>
           <span class="chips">
             {#if item.isNew}
@@ -152,8 +181,14 @@
         </p>
         <p class="peek">{item.preview}</p>
         <span class="acts">
-          <span class="icon-btn" title="export markdown">↓</span>
-          <span class="icon-btn" title="delete">🗑</span>
+          <span
+            class="icon-btn"
+            title="export markdown">↓</span
+          >
+          <span
+            class="icon-btn"
+            title="delete">🗑</span
+          >
         </span>
       </button>
     {/each}

@@ -39,11 +39,24 @@
 </svelte:head>
 
 <PageShell>
-  <p class="hand kicker" use:reveal>the short one.</p>
-  <h1 class="subhead" use:reveal>Privacy policy</h1>
-  <p class="intro" use:reveal={{ delay: 60 }}>
-    Typie is built so your voice never leaves your computer. This page exists because people ask for
-    one.
+  <p
+    class="hand kicker"
+    use:reveal
+  >
+    the short one.
+  </p>
+  <h1
+    class="subhead"
+    use:reveal
+  >
+    Privacy policy
+  </h1>
+  <p
+    class="intro"
+    use:reveal={{ delay: 60 }}
+  >
+    Typie is built so your voice never leaves your computer. This page exists
+    because people ask for one.
   </p>
 
   <div class="wrap">
@@ -56,7 +69,8 @@
   </div>
 
   <p class="fine mono">
-    Last updated: August 2026 · Questions: the robot on the home page knows as much as we do.
+    Last updated: August 2026 · Questions: the robot on the home page knows as
+    much as we do.
   </p>
 </PageShell>
 

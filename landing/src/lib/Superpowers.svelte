@@ -6,43 +6,81 @@
   /* one app, four jobs. if it needs a paragraph to explain, it doesn't ship */
 </script>
 
-<section class="field pop-b" id="features">
+<section
+  class="field pop-b"
+  id="features"
+>
   <div class="container">
-    <p class="mono kicker" style="text-align:center">chapter 02 · what it does</p>
-    <h2 class="subhead" use:reveal>
+    <p
+      class="mono kicker"
+      style="text-align:center"
+    >
+      chapter 02 · what it does
+    </p>
+    <h2
+      class="subhead"
+      use:reveal
+    >
       One app. <span class="accent">Four tricks.</span> Zero cloud.
     </h2>
 
     <div class="grid">
       <!-- dictate -->
-      <article class="card c-pink" use:reveal>
+      <article
+        class="card c-pink"
+        use:reveal
+      >
         <div class="head">
-          <span class="bot"><Robot size={46} mood="listening" /></span>
+          <span class="bot"
+            ><Robot
+              size={46}
+              mood="listening"
+            /></span
+          >
           <h3>Talk to your Mac</h3>
         </div>
         <p>
           Hold option, mumble, ramble, talk too fast — the sentence you
           <em>meant</em> lands wherever your cursor is, in about 80&nbsp;ms.
         </p>
-        <div class="art" aria-hidden="true">
+        <div
+          class="art"
+          aria-hidden="true"
+        >
           <span class="keycap">⌥</span>
-          <span class="wave"><TalkWave n={9} color="#fc5681" /></span>
+          <span class="wave"
+            ><TalkWave
+              n={9}
+              color="#fc5681"
+            /></span
+          >
           <span class="arrowline">→</span>
           <span class="outtext">it's typed.</span>
         </div>
       </article>
 
       <!-- notes -->
-      <article class="card c-lavender" use:reveal={{ delay: 70 }}>
+      <article
+        class="card c-lavender"
+        use:reveal={{ delay: 70 }}
+      >
         <div class="head">
-          <span class="bot"><Robot size={46} mood="idle" /></span>
+          <span class="bot"
+            ><Robot
+              size={46}
+              mood="idle"
+            /></span
+          >
           <h3>Notes that file themselves</h3>
         </div>
         <p>
-          Quick thoughts become searchable voice notes. Pin the good ones, export as markdown, find
-          anything later.
+          Quick thoughts become searchable voice notes. Pin the good ones,
+          export as markdown, find anything later.
         </p>
-        <div class="art notes" aria-hidden="true">
+        <div
+          class="art notes"
+          aria-hidden="true"
+        >
           <span class="note n1">podcast idea ✦</span>
           <span class="note n2">grandma's recipe</span>
           <span class="note n3">standup rant 🫠</span>
@@ -50,16 +88,27 @@
       </article>
 
       <!-- calls -->
-      <article class="card c-blue" use:reveal={{ delay: 140 }}>
+      <article
+        class="card c-blue"
+        use:reveal={{ delay: 140 }}
+      >
         <div class="head">
-          <span class="bot"><Robot size={46} mood="thinking" /></span>
+          <span class="bot"
+            ><Robot
+              size={46}
+              mood="thinking"
+            /></span
+          >
           <h3>Capture any call</h3>
         </div>
         <p>
-          Zoom, Meet, phone calls — recorded straight off your Mac's audio, transcribed and split by
-          speaker. No bot crashes the party.
+          Zoom, Meet, phone calls — recorded straight off your Mac's audio,
+          transcribed and split by speaker. No bot crashes the party.
         </p>
-        <div class="art call" aria-hidden="true">
+        <div
+          class="art call"
+          aria-hidden="true"
+        >
           <span class="speaker s1">maya</span>
           <span class="speaker s2">sam</span>
           <span class="rec mono">● rec</span>
@@ -67,16 +116,27 @@
       </article>
 
       <!-- summaries -->
-      <article class="card c-mint" use:reveal={{ delay: 210 }}>
+      <article
+        class="card c-mint"
+        use:reveal={{ delay: 210 }}
+      >
         <div class="head">
-          <span class="bot"><Robot size={46} mood="done" /></span>
+          <span class="bot"
+            ><Robot
+              size={46}
+              mood="done"
+            /></span
+          >
           <h3>Summaries from Apple Intelligence</h3>
         </div>
         <p>
-          When the call ends, your Mac writes the title, summary and key points. On-device AI. Works
-          even if the wifi is a rumor.
+          When the call ends, your Mac writes the title, summary and key points.
+          On-device AI. Works even if the wifi is a rumor.
         </p>
-        <div class="art summary" aria-hidden="true">
+        <div
+          class="art summary"
+          aria-hidden="true"
+        >
           <span class="pill p1">✦ title</span>
           <span class="pill p2">3 key points</span>
           <span class="pill p3">verbatim quotes</span>

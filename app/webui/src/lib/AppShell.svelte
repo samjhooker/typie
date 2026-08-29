@@ -34,7 +34,8 @@
       stats: 'home',
     };
     const nid = map[p] ?? p;
-    if (['home', 'notes', 'library', 'history', 'settings'].includes(nid)) local.pane = nid;
+    if (['home', 'notes', 'library', 'history', 'settings'].includes(nid))
+      local.pane = nid;
   };
 
   if (!nav.some((n) => n.id === local.pane)) local.pane = 'home';
@@ -51,14 +52,22 @@
   });
 
   // Slack-style: reading a conversation → the rail collapses to icons
-  const compact = $derived(local.pane === 'library' && !!local.selectedTranscriptId);
+  const compact = $derived(
+    local.pane === 'library' && !!local.selectedTranscriptId
+  );
 </script>
 
-<div class="shell" class:compact>
+<div
+  class="shell"
+  class:compact
+>
   <!-- ── sidebar ── -->
   <aside class="sidebar">
     <div class="brand">
-      <Robot size={26} mood={ui.dictation.phase === 'listening' ? 'listening' : 'idle'} />
+      <Robot
+        size={26}
+        mood={ui.dictation.phase === 'listening' ? 'listening' : 'idle'}
+      />
       <span class="word">typie<i>.</i></span>
       <DevTag />
     </div>
@@ -76,9 +85,15 @@
         >
           <span class="nav-ico">
             {#if item.glyph}
-              <Glyph name={item.glyph} size={17} />
+              <Glyph
+                name={item.glyph}
+                size={17}
+              />
             {:else}
-              <item.icon size={17} strokeWidth={2.1} />
+              <item.icon
+                size={17}
+                strokeWidth={2.1}
+              />
             {/if}
           </span>
           <span class="nav-label">{item.label}</span>
@@ -88,7 +103,10 @@
 
     <!-- dictation status — lives in the sidebar now that the topbar is gone -->
     {#if phaseLabel}
-      <div class="livepill {phaseLabel.cls}" title={phaseLabel.text}>
+      <div
+        class="livepill {phaseLabel.cls}"
+        title={phaseLabel.text}
+      >
         <i></i>{#if !compact}{phaseLabel.text}{/if}
       </div>
     {/if}
@@ -97,7 +115,10 @@
 
     <div class="local-card">
       <div class="row">
-        <Robot size={16} mood="idle" />
+        <Robot
+          size={16}
+          mood="idle"
+        />
         <strong>everything stays here</strong>
       </div>
       <p>all transcription runs on this Mac. no cloud, ever.</p>

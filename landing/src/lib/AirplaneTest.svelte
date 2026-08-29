@@ -17,7 +17,10 @@
 
   $effect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const iv = setInterval(() => (phrase = (phrase + 1) % PHRASES.length), 2600);
+    const iv = setInterval(
+      () => (phrase = (phrase + 1) % PHRASES.length),
+      2600
+    );
     return () => clearInterval(iv);
   });
 
@@ -28,30 +31,64 @@
   ];
 </script>
 
-<section class="airplane field" id="offline">
+<section
+  class="airplane field"
+  id="offline"
+>
   <div class="container">
-    <p class="mono kicker" style="text-align:center">chapter 03 · the independence test</p>
-    <h2 class="subhead" use:reveal>
+    <p
+      class="mono kicker"
+      style="text-align:center"
+    >
+      chapter 03 · the independence test
+    </p>
+    <h2
+      class="subhead"
+      use:reveal
+    >
       The <span class="squiggle"
         >airplane test
-        <svg viewBox="0 0 120 14" aria-hidden="true">
-          <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--ink)" />
+        <svg
+          viewBox="0 0 120 14"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 9c22-6 44-6 56-3s34 4 56-2"
+            stroke="var(--ink)"
+          />
         </svg>
       </span>
     </h2>
-    <p class="lede" use:reveal={{ delay: 60 }}>
+    <p
+      class="lede"
+      use:reveal={{ delay: 60 }}
+    >
       Wifi off. Airplane mode on. Watch which apps keep their brains.
     </p>
 
     <!-- the switch -->
-    <div class="switchrow" use:reveal={{ delay: 100 }}>
-      <button class="wifi" role="switch" aria-checked={!online} onclick={() => (online = !online)}>
-        <span class="track" class:off={!online}>
+    <div
+      class="switchrow"
+      use:reveal={{ delay: 100 }}
+    >
+      <button
+        class="wifi"
+        role="switch"
+        aria-checked={!online}
+        onclick={() => (online = !online)}
+      >
+        <span
+          class="track"
+          class:off={!online}
+        >
           <span class="knob"></span>
         </span>
         <span class="wlbl mono">home wifi · {online ? 'on' : 'off'}</span>
       </button>
-      <p class="status mono" class:off={!online}>
+      <p
+        class="status mono"
+        class:off={!online}
+      >
         {#if online}
           connected · everyone works, some of them by phoning home
         {:else}
@@ -70,30 +107,52 @@
         >
           <header>
             {#if a.local}
-              <span class="bot"><Robot size={40} mood={online ? 'idle' : 'listening'} /></span>
+              <span class="bot"
+                ><Robot
+                  size={40}
+                  mood={online ? 'idle' : 'listening'}
+                /></span
+              >
             {:else}
-              <span class="cloudglyph" aria-hidden="true">{online ? '☁️' : '🌩️'}</span>
+              <span
+                class="cloudglyph"
+                aria-hidden="true">{online ? '☁️' : '🌩️'}</span
+              >
             {/if}
             <b>{a.label}</b>
           </header>
 
           <div class="body">
             {#if a.local}
-              <span class="wave"><TalkWave n={7} color="#03594d" /></span>
+              <span class="wave"
+                ><TalkWave
+                  n={7}
+                  color="#03594d"
+                /></span
+              >
               {#key phrase}
                 <p class="livephrase">“{PHRASES[phrase]}”</p>
               {/key}
             {:else}
               {#key online}
-                <p class="cloudline" class:sad={!online}>
-                  {online ? 'streaming audio to the data center…' : '✗ can’t reach their servers'}
+                <p
+                  class="cloudline"
+                  class:sad={!online}
+                >
+                  {online
+                    ? 'streaming audio to the data center…'
+                    : '✗ can’t reach their servers'}
                 </p>
               {/key}
             {/if}
           </div>
 
           <footer>
-            <span class="pill" class:ok={a.local || online} class:err={!online && !a.local}>
+            <span
+              class="pill"
+              class:ok={a.local || online}
+              class:err={!online && !a.local}
+            >
               {#if a.local}
                 ● runs on your disk
               {:else if online}
@@ -107,7 +166,10 @@
       {/each}
     </div>
 
-    <p class="punch hand" use:reveal={{ delay: 200 }}>
+    <p
+      class="punch hand"
+      use:reveal={{ delay: 200 }}
+    >
       same flight. one of these still takes notes.
     </p>
   </div>
@@ -116,7 +178,11 @@
 <style>
   .airplane {
     background:
-      radial-gradient(90% 120% at 85% -20%, rgba(188, 214, 255, 0.55) 0%, transparent 55%),
+      radial-gradient(
+        90% 120% at 85% -20%,
+        rgba(188, 214, 255, 0.55) 0%,
+        transparent 55%
+      ),
       var(--paper);
   }
 

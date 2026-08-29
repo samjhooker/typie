@@ -12,8 +12,10 @@
   import appleNotes from '../assets/apple-notes-icon.svg?raw';
   import { nsSvg } from './svgid.js';
 
-  const pressSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keypress.wav') : null;
-  const releaseSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keyrelease.wav') : null;
+  const pressSfx =
+    typeof Audio !== 'undefined' ? new Audio('/sounds/keypress.wav') : null;
+  const releaseSfx =
+    typeof Audio !== 'undefined' ? new Audio('/sounds/keyrelease.wav') : null;
 
   function playSfx(sfx) {
     if (!sfx) return;
@@ -44,7 +46,13 @@
       icon: '📝',
       title: 'Notes',
       meta: 'iCloud',
-      side: [['All iCloud'], ['Notes', '12'], ['Shopping', '2'], ['Work', '4'], ['Ideas', '7']],
+      side: [
+        ['All iCloud'],
+        ['Notes', '12'],
+        ['Shopping', '2'],
+        ['Work', '4'],
+        ['Ideas', '7'],
+      ],
       text: 'oat milk, candles, call mum, ship the changelog',
     },
     {
@@ -66,7 +74,13 @@
       icon: '💼',
       title: '#launch-week',
       meta: '4 members',
-      side: [['# launch-week'], ['# general'], ['# design'], ['# random'], ['# marketing']],
+      side: [
+        ['# launch-week'],
+        ['# general'],
+        ['# design'],
+        ['# random'],
+        ['# marketing'],
+      ],
       text: 'just shipped the new build - feedback welcome!',
     },
     {
@@ -272,7 +286,10 @@
   onblur={() => release()}
 />
 
-<div class="stage" bind:this={root}>
+<div
+  class="stage"
+  bind:this={root}
+>
   {#key scene.id}
     <p class="tryhint mono">
       <button
@@ -289,7 +306,11 @@
       press & <b>hold</b> to try it live
     </p>
 
-    <div class="mac" class:listening={mode === 'listening'} class:done={mode === 'done'}>
+    <div
+      class="mac"
+      class:listening={mode === 'listening'}
+      class:done={mode === 'done'}
+    >
       <div class="smenubar">
         <span class="mbleft mono">
           <b class="apple"></b>
@@ -297,17 +318,40 @@
           <span>File</span><span>Edit</span><span>View</span><span>Help</span>
         </span>
         <div class="notchwrap">
-          <div class="notch" class:open={notchOpen}>
-            <span class="nleft" class:show={notchOpen} aria-hidden="true">
+          <div
+            class="notch"
+            class:open={notchOpen}
+          >
+            <span
+              class="nleft"
+              class:show={notchOpen}
+              aria-hidden="true"
+            >
               <Robot
                 size={22}
-                mood={mode === 'listening' ? 'listening' : mode === 'done' ? 'done' : 'idle'}
+                mood={mode === 'listening'
+                  ? 'listening'
+                  : mode === 'done'
+                    ? 'done'
+                    : 'idle'}
               />
             </span>
-            <span class="cam" aria-hidden="true"></span>
-            <span class="nright" class:show={notchOpen} aria-hidden="true">
+            <span
+              class="cam"
+              aria-hidden="true"
+            ></span>
+            <span
+              class="nright"
+              class:show={notchOpen}
+              aria-hidden="true"
+            >
               {#if mode === 'listening'}
-                <span class="wave"><TalkWave n={5} color="#fc5681" /></span>
+                <span class="wave"
+                  ><TalkWave
+                    n={5}
+                    color="#fc5681"
+                  /></span
+                >
               {:else if mode === 'done'}
                 <span class="nok mono">✓ {lastMs} ms</span>
               {/if}
@@ -326,7 +370,13 @@
           >
             <path d="M4.5 12.5a11 11 0 0 1 15 0" />
             <path d="M8.3 16.3a6 6 0 0 1 7.4 0" />
-            <circle cx="12" cy="19.6" r="1.4" fill="currentColor" stroke="none" />
+            <circle
+              cx="12"
+              cy="19.6"
+              r="1.4"
+              fill="currentColor"
+              stroke="none"
+            />
           </svg>
           <i class="bat"></i>
         </span>
@@ -335,45 +385,66 @@
       <div class="desk">
         <div class="chromewrap">
           {#if scene.id === 'docs'}
-            <div class="browser" aria-hidden="true">
+            <div
+              class="browser"
+              aria-hidden="true"
+            >
               <div class="btabs">
                 <span class="btab on"
-                  ><i class="bfav">{@html nsSvg(chrome, 'cfav')}</i>launch notes - Google Docs<i
-                    class="bx">✕</i
-                  ></span
+                  ><i class="bfav">{@html nsSvg(chrome, 'cfav')}</i>launch notes
+                  - Google Docs<i class="bx">✕</i></span
                 >
                 <span class="btab new">+</span>
               </div>
               <div class="burl">
                 <span class="bnav">‹ › ⟳</span>
-                <span class="baddr">docs.google.com/document/d/launch-notes</span>
+                <span class="baddr"
+                  >docs.google.com/document/d/launch-notes</span
+                >
                 <span class="bprof">S</span>
               </div>
             </div>
           {/if}
-          <div class="window theme-{scene.id}" class:done={mode === 'done'}>
+          <div
+            class="window theme-{scene.id}"
+            class:done={mode === 'done'}
+          >
             {#if scene.id === 'docs'}
               <div class="docsbar">
-                <i class="dlogo" aria-hidden="true">{@html nsSvg(gdocs.svg, 'dlog')}</i>
+                <i
+                  class="dlogo"
+                  aria-hidden="true">{@html nsSvg(gdocs.svg, 'dlog')}</i
+                >
                 <div class="dmeta">
-                  <p class="dn"><b>launch notes</b><span aria-hidden="true">☆</span></p>
-                  <p class="dmenu mono">File Edit View Insert Format Tools Help</p>
+                  <p class="dn">
+                    <b>launch notes</b><span aria-hidden="true">☆</span>
+                  </p>
+                  <p class="dmenu mono">
+                    File Edit View Insert Format Tools Help
+                  </p>
                 </div>
                 <span class="dshare">Share</span>
               </div>
             {/if}
             <div class="titlebar">
-              <span class="tl" aria-hidden="true"
+              <span
+                class="tl"
+                aria-hidden="true"
                 ><i class="r"></i><i class="y"></i><i class="g"></i></span
               >
-              {#if scene.id === 'chat'}<span class="tavatar" aria-hidden="true">A</span>{/if}
+              {#if scene.id === 'chat'}<span
+                  class="tavatar"
+                  aria-hidden="true">A</span
+                >{/if}
               <span class="wtitle">{scene.title}</span>
               <span class="meta mono">{scene.meta}</span>
             </div>
             <div class="winbody">
               <aside class="side">
                 <p class="side-h">
-                  {#if scene.brand}<i class="bmark" aria-hidden="true"
+                  {#if scene.brand}<i
+                      class="bmark"
+                      aria-hidden="true"
                       >{@html nsSvg(scene.brand, 'sh' + scene.id)}</i
                     >{/if}
                   {scene.name}
@@ -381,24 +452,38 @@
                 <ul>
                   {#each scene.side as [label, count], i}
                     <li class:on={i === 0}>
-                      <i class="av" aria-hidden="true">{label[0]}</i>{label}{#if count}<b>{count}</b
-                        >{/if}
+                      <i
+                        class="av"
+                        aria-hidden="true">{label[0]}</i
+                      >{label}{#if count}<b>{count}</b>{/if}
                     </li>
                   {/each}
                 </ul>
               </aside>
               <div class="paper">
                 {#if mode === 'listening'}
-                  <div class="talking" aria-hidden="true">
-                    <TalkWave n={17} color={scene.wave} />
+                  <div
+                    class="talking"
+                    aria-hidden="true"
+                  >
+                    <TalkWave
+                      n={17}
+                      color={scene.wave}
+                    />
                     <p class="hint2 hand">say anything…</p>
                   </div>
                 {:else if mode === 'done'}
                   {#key step}
                     <div class="popwrap">
-                      <div class="sparkles" aria-hidden="true">
+                      <div
+                        class="sparkles"
+                        aria-hidden="true"
+                      >
                         {#each Array(10) as _, i}
-                          <span style="--a:{i * 36}deg; animation-delay:{i * 30}ms">✦</span>
+                          <span
+                            style="--a:{i * 36}deg; animation-delay:{i * 30}ms"
+                            >✦</span
+                          >
                         {/each}
                       </div>
                       {#if scene.id === 'notes'}
@@ -410,23 +495,40 @@
                         <div class="bubble-out">{scene.text}</div>
                       {:else if scene.id === 'slack'}
                         <div class="slack-msg">
-                          <i class="sava sa" aria-hidden="true">A</i>
+                          <i
+                            class="sava sa"
+                            aria-hidden="true">A</i
+                          >
                           <div class="sbody">
-                            <p class="shead"><b>alex</b><span class="mono">2h ago</span></p>
-                            <p class="stext">ok who wants to present tomorrow?</p>
+                            <p class="shead">
+                              <b>alex</b><span class="mono">2h ago</span>
+                            </p>
+                            <p class="stext">
+                              ok who wants to present tomorrow?
+                            </p>
                           </div>
                         </div>
                         <div class="slack-msg">
-                          <i class="sava ss" aria-hidden="true">S</i>
+                          <i
+                            class="sava ss"
+                            aria-hidden="true">S</i
+                          >
                           <div class="sbody">
-                            <p class="shead"><b>sam</b><span class="mono">45m ago</span></p>
+                            <p class="shead">
+                              <b>sam</b><span class="mono">45m ago</span>
+                            </p>
                             <p class="stext">i've got slides four to nine</p>
                           </div>
                         </div>
                         <div class="slack-msg">
-                          <i class="sava" aria-hidden="true">Y</i>
+                          <i
+                            class="sava"
+                            aria-hidden="true">Y</i
+                          >
                           <div class="sbody">
-                            <p class="shead"><b>you</b><span class="mono">now</span></p>
+                            <p class="shead">
+                              <b>you</b><span class="mono">now</span>
+                            </p>
                             <p class="stext">{scene.text}</p>
                           </div>
                         </div>
@@ -439,7 +541,9 @@
                         <p class="note-text">{scene.text}</p>
                       {:else if scene.id === 'code'}
                         <p class="code">
-                          <span class="ckw">const</span> <span class="cvar">note</span> =
+                          <span class="ckw">const</span>
+                          <span class="cvar">note</span>
+                          =
                           <span class="cstr">'{scene.text}'</span>
                         </p>
                       {:else}
@@ -450,7 +554,9 @@
                   {/key}
                 {:else}
                   {#if scene.id === 'mail'}
-                    <div class="fields"><span>To: chad@</span><span>Subject: tonight</span></div>
+                    <div class="fields">
+                      <span>To: chad@</span><span>Subject: tonight</span>
+                    </div>
                   {:else if scene.id === 'notes'}
                     <p class="note-title">Today</p>
                     <p class="note-date mono">just now</p>
@@ -459,16 +565,26 @@
                   {:else if scene.id === 'slack'}
                     <p class="chan"># launch-week</p>
                     <div class="slack-msg">
-                      <i class="sava sa" aria-hidden="true">A</i>
+                      <i
+                        class="sava sa"
+                        aria-hidden="true">A</i
+                      >
                       <div class="sbody">
-                        <p class="shead"><b>alex</b><span class="mono">2h ago</span></p>
+                        <p class="shead">
+                          <b>alex</b><span class="mono">2h ago</span>
+                        </p>
                         <p class="stext">ok who wants to present tomorrow?</p>
                       </div>
                     </div>
                     <div class="slack-msg">
-                      <i class="sava ss" aria-hidden="true">S</i>
+                      <i
+                        class="sava ss"
+                        aria-hidden="true">S</i
+                      >
                       <div class="sbody">
-                        <p class="shead"><b>sam</b><span class="mono">45m ago</span></p>
+                        <p class="shead">
+                          <b>sam</b><span class="mono">45m ago</span>
+                        </p>
                         <p class="stext">i've got slides four to nine</p>
                       </div>
                     </div>
@@ -496,8 +612,10 @@
               aria-label={s.name}
             >
               <span class="dicon">
-                {#if s.id === 'docs'}<i class="dbmark">{@html nsSvg(chrome, 'dkdocs')}</i
-                  >{:else if s.brand}<i class="dbmark">{@html nsSvg(s.brand, 'dk' + s.id)}</i
+                {#if s.id === 'docs'}<i class="dbmark"
+                    >{@html nsSvg(chrome, 'dkdocs')}</i
+                  >{:else if s.brand}<i class="dbmark"
+                    >{@html nsSvg(s.brand, 'dk' + s.id)}</i
                   >{:else}{s.icon}{/if}
               </span>
               <i class="dot"></i>
@@ -735,9 +853,21 @@
       0 4px 14px rgba(3, 43, 37, 0.08),
       inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     background:
-      radial-gradient(120% 90% at 15% 0%, rgba(88, 232, 148, 0.9), transparent 62%),
-      radial-gradient(120% 110% at 90% 10%, rgba(140, 185, 255, 0.95), transparent 58%),
-      radial-gradient(110% 85% at 55% 105%, rgba(255, 158, 216, 0.65), transparent 60%),
+      radial-gradient(
+        120% 90% at 15% 0%,
+        rgba(88, 232, 148, 0.9),
+        transparent 62%
+      ),
+      radial-gradient(
+        120% 110% at 90% 10%,
+        rgba(140, 185, 255, 0.95),
+        transparent 58%
+      ),
+      radial-gradient(
+        110% 85% at 55% 105%,
+        rgba(255, 158, 216, 0.65),
+        transparent 60%
+      ),
       linear-gradient(160deg, #cff2b4 0%, #bcc9ff 52%, #ffd0ec 100%);
     transition: box-shadow 0.3s var(--ease-out);
   }
@@ -880,7 +1010,12 @@
     height: 10px;
     border-radius: 50%;
     justify-self: center;
-    background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    background: radial-gradient(
+      circle at 35% 32%,
+      #4a5568 0 18%,
+      #151a22 42%,
+      #07080c 100%
+    );
     box-shadow:
       inset 0 0 0 1px rgba(120, 130, 150, 0.35),
       0 0 0 2px #000;
@@ -950,9 +1085,21 @@
     padding: clamp(18px, 3vw, 30px);
     padding-bottom: clamp(64px, 8vw, 76px);
     background:
-      radial-gradient(120% 90% at 15% 0%, rgba(88, 232, 148, 0.9), transparent 62%),
-      radial-gradient(120% 110% at 90% 10%, rgba(140, 185, 255, 0.95), transparent 58%),
-      radial-gradient(110% 85% at 55% 105%, rgba(255, 158, 216, 0.65), transparent 60%),
+      radial-gradient(
+        120% 90% at 15% 0%,
+        rgba(88, 232, 148, 0.9),
+        transparent 62%
+      ),
+      radial-gradient(
+        120% 110% at 90% 10%,
+        rgba(140, 185, 255, 0.95),
+        transparent 58%
+      ),
+      radial-gradient(
+        110% 85% at 55% 105%,
+        rgba(255, 158, 216, 0.65),
+        transparent 60%
+      ),
       linear-gradient(160deg, #cff2b4 0%, #bcc9ff 52%, #ffd0ec 100%);
   }
 

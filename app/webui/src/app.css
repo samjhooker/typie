@@ -91,7 +91,8 @@
   --line-strong: rgba(3, 89, 77, 0.22);
 
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --display: 'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
+  --display:
+    'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
   --sans: 'Inter', -apple-system, system-ui, sans-serif;
   --hand: 'Caveat', cursive;
 

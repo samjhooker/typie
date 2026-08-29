@@ -56,7 +56,9 @@
       case 'oldest':
         return arr.sort((a, b) => new Date(a.date) - new Date(b.date));
       case 'longest':
-        return arr.sort((a, b) => (b.durationSeconds || 0) - (a.durationSeconds || 0));
+        return arr.sort(
+          (a, b) => (b.durationSeconds || 0) - (a.durationSeconds || 0)
+        );
       default:
         return arr.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
@@ -69,7 +71,9 @@
     shown = PAGE;
   });
 
-  const hasWork = $derived(uploading !== null || ui.transcribe.busy || ui.transcribe.queued > 0);
+  const hasWork = $derived(
+    uploading !== null || ui.transcribe.busy || ui.transcribe.queued > 0
+  );
   const waitList = $derived(
     ui.transcribe.busy ? ui.transcribe.queue.slice(1) : ui.transcribe.queue
   );
@@ -85,16 +89,21 @@
     if (activeQ && activeQ.name === item.fileName) {
       const label = STAGE_LABELS[ui.transcribe.stage] || 'working…';
       const pct =
-        ui.transcribe.progress != null ? ` ${Math.round(ui.transcribe.progress * 100)}%` : '';
+        ui.transcribe.progress != null
+          ? ` ${Math.round(ui.transcribe.progress * 100)}%`
+          : '';
       return { cls: 'busy', label: label + pct };
     }
-    if (waitList.some((q) => q.name === item.fileName)) return { cls: 'wait', label: 'in queue' };
+    if (waitList.some((q) => q.name === item.fileName))
+      return { cls: 'wait', label: 'in queue' };
     return { cls: 'wait', label: 'warming up…' };
   }
 
   function fmtDur(s) {
     const n = Math.round(s || 0);
-    return n > 0 ? `${Math.floor(n / 60)}m ${String(n % 60).padStart(2, '0')}s` : '';
+    return n > 0
+      ? `${Math.floor(n / 60)}m ${String(n % 60).padStart(2, '0')}s`
+      : '';
   }
 
   function onDelete(e, item) {
@@ -104,7 +113,9 @@
 
   // ── call capture live state — mirrors HomePane's chip (toggle + elapsed) ──
   const capturing = $derived(ui.meeting.isCapturing);
-  const hasScreen = $derived(ui.permissions.screen || local.askedScreenPermission);
+  const hasScreen = $derived(
+    ui.permissions.screen || local.askedScreenPermission
+  );
   // 1s tick while capturing so the elapsed time breathes
   let nowTick = $state(Date.now());
   $effect(() => {
@@ -112,7 +123,9 @@
     const t = setInterval(() => (nowTick = Date.now()), 1000);
     return () => clearInterval(t);
   });
-  const startedMs = $derived(ui.meeting.startedAt ? Date.parse(ui.meeting.startedAt) : NaN);
+  const startedMs = $derived(
+    ui.meeting.startedAt ? Date.parse(ui.meeting.startedAt) : NaN
+  );
   const elapsedLabel = $derived.by(() => {
     if (!capturing || Number.isNaN(startedMs)) return '';
     const s = Math.max(0, Math.floor((nowTick - startedMs) / 1000));
@@ -149,8 +162,16 @@
     });
     for (let off = 0; off < file.size; off += CHUNK) {
       const chunk = await file.slice(off, off + CHUNK).arrayBuffer();
-      send({ type: 'transcribeDropChunk', index: off / CHUNK, b64: bufToB64(chunk) });
-      uploading = { name: file.name, sent: Math.min(off + CHUNK, file.size), total: file.size };
+      send({
+        type: 'transcribeDropChunk',
+        index: off / CHUNK,
+        b64: bufToB64(chunk),
+      });
+      uploading = {
+        name: file.name,
+        sent: Math.min(off + CHUNK, file.size),
+        total: file.size,
+      };
     }
     send({ type: 'transcribeDropEnd' });
     uploading = null;
@@ -193,10 +214,13 @@
 
         {#if ui.transcribe.model.state === 'notDownloaded' || ui.transcribe.model.state === 'failed'}
           <div class="gate card">
-            <p><b>one-time setup:</b> speaker models (~22 mb) are needed for diarization.</p>
+            <p>
+              <b>one-time setup:</b> speaker models (~22 mb) are needed for diarization.
+            </p>
             <button
               class="btn btn-pink small"
-              onclick={() => send({ type: 'startDiarizerDownload' })}>download models</button
+              onclick={() => send({ type: 'startDiarizerDownload' })}
+              >download models</button
             >
             {#if ui.transcribe.model.state === 'failed'}<p
                 class="mono-kicker"
@@ -208,14 +232,19 @@
         {:else if ui.transcribe.model.state === 'downloading'}
           <div class="gate card">
             <div class="progress">
-              <div style="width:{Math.max(3, ui.transcribe.model.fraction * 100)}%"></div>
+              <div
+                style="width:{Math.max(3, ui.transcribe.model.fraction * 100)}%"
+              ></div>
             </div>
             <p class="mono-kicker">
               {Math.round(ui.transcribe.model.fraction * 100)}% downloading…
             </p>
           </div>
         {:else if ui.transcribe.model.state === 'compiling' || ui.transcribe.model.state === 'unknown'}
-          <div class="gate card" style="padding:12px 16px">
+          <div
+            class="gate card"
+            style="padding:12px 16px"
+          >
             <p class="mono-kicker">preparing models…</p>
           </div>
         {/if}
@@ -241,21 +270,31 @@
                 <span class="ico"><UploadCloud size={17} /></span>
                 <h3>drop anything</h3>
               </div>
-              <p class="mono-kicker">mp3 · m4a · wav · mp4 — or click to browse</p>
+              <p class="mono-kicker">
+                mp3 · m4a · wav · mp4 — or click to browse
+              </p>
               <span class="hand dz-hand">several at once is fine</span>
             </div>
 
             <!-- capture card — pill parked in header next to title, same toggle as HomePane recs -->
-            <div class="reccard" class:live={capturing}>
+            <div
+              class="reccard"
+              class:live={capturing}
+            >
               <div class="dz-head">
                 <span class="ico call-ico"
-                  ><Glyph name={capturing ? 'stop' : 'record'} size={15} /></span
+                  ><Glyph
+                    name={capturing ? 'stop' : 'record'}
+                    size={15}
+                  /></span
                 >
                 <h3>capture a call</h3>
                 <!-- header pill: start → stop + elapsed, mirrors HomePane's btn-mint/btn-stop -->
                 <div class="capture-pill">
                   {#if ui.meeting.processing}
-                    <span class="livedot"><Loader2 size={12} /> filing recording…</span>
+                    <span class="livedot"
+                      ><Loader2 size={12} /> filing recording…</span
+                    >
                   {:else}
                     <button
                       class="btn small"
@@ -263,15 +302,22 @@
                       class:btn-stop={capturing}
                       class:btn-pink={!hasScreen && !capturing}
                       onclick={() => {
-                        if (!hasScreen) send({ type: 'requestScreenPermission' });
+                        if (!hasScreen)
+                          send({ type: 'requestScreenPermission' });
                         send({ type: 'toggleMeetingRecording' });
                       }}
                     >
-                      {#if !hasScreen}<ShieldCheck size={12} />{:else if capturing}<Glyph
+                      {#if !hasScreen}<ShieldCheck
+                          size={12}
+                        />{:else if capturing}<Glyph
                           name="stop"
                           size={11}
                         />{:else}<MonitorUp size={12} />{/if}
-                      {!hasScreen ? 'grant & record' : capturing ? 'stop capture' : 'start capture'}
+                      {!hasScreen
+                        ? 'grant & record'
+                        : capturing
+                          ? 'stop capture'
+                          : 'start capture'}
                     </button>
                     {#if capturing}
                       <span class="livedot"><i></i>{elapsedLabel}</span>
@@ -281,14 +327,18 @@
               </div>
               <p>
                 {#if capturing}
-                  got it all — every voice on this Mac is being saved. stop whenever you're ready.
+                  got it all — every voice on this Mac is being saved. stop
+                  whenever you're ready.
                 {:else}
-                  saves the whole conversation offline — their side from your Mac's sound, yours
-                  mixed right in — then transcribes and splits the speakers.
+                  saves the whole conversation offline — their side from your
+                  Mac's sound, yours mixed right in — then transcribes and
+                  splits the speakers.
                 {/if}
               </p>
               {#if !capturing}
-                <span class="hand rec-hand">blip blip blip → full transcript</span>
+                <span class="hand rec-hand"
+                  >blip blip blip → full transcript</span
+                >
               {/if}
             </div>
           </div>
@@ -309,13 +359,16 @@
                     ></div>
                   </div>
                   <span class="eta mono-kicker"
-                    >{Math.round((uploading.sent / Math.max(1, uploading.total)) * 100)}%</span
+                    >{Math.round(
+                      (uploading.sent / Math.max(1, uploading.total)) * 100
+                    )}%</span
                   >
                 </div>
               {:else if activeQ}
                 <div class="wrow card">
                   <span class="stg"
-                    ><Loader2 size={14} /> {ui.transcribe.stage || 'processing'}</span
+                    ><Loader2 size={14} />
+                    {ui.transcribe.stage || 'processing'}</span
                   >
                   <span class="fname">{activeQ.name}</span>
                   <div class="bar slim">
@@ -353,10 +406,18 @@
         <div class="lib-head">
           <h3>All conversations <span class="count">{sorted.length}</span></h3>
           <div class="lib-tools">
-            <SortSeg options={SORTS} bind:value={sortBy} />
+            <SortSeg
+              options={SORTS}
+              bind:value={sortBy}
+            />
             <label class="input search">
               <Search size={14} />
-              <input bind:value={query} placeholder="search…" spellcheck="false" data-search />
+              <input
+                bind:value={query}
+                placeholder="search…"
+                spellcheck="false"
+                data-search
+              />
             </label>
           </div>
         </div>
@@ -373,14 +434,25 @@
           <div class="grid">
             {#each visible as item (item.id)}
               {@const st = item.turnCount > 0 ? null : statusOf(item)}
-              <button class="tcard card" onclick={() => (local.selectedTranscriptId = item.id)}>
+              <button
+                class="tcard card"
+                onclick={() => (local.selectedTranscriptId = item.id)}
+              >
                 <div class="top">
-                  <span class="ico" class:meeting={item.isMeeting}>
-                    <Glyph name={item.isMeeting ? 'record' : 'transcript'} size={15} />
+                  <span
+                    class="ico"
+                    class:meeting={item.isMeeting}
+                  >
+                    <Glyph
+                      name={item.isMeeting ? 'record' : 'transcript'}
+                      size={15}
+                    />
                   </span>
                   <span class="chips">
                     {#if st}
-                      <span class="chip st {st.cls}"><Loader2 size={11} /> {st.label}</span>
+                      <span class="chip st {st.cls}"
+                        ><Loader2 size={11} /> {st.label}</span
+                      >
                     {:else if !local.openedIds[item.id]}
                       <span class="chip new">new</span>
                     {/if}
@@ -389,13 +461,16 @@
                 <h4>
                   <InlineEdit
                     value={item.fileName}
-                    onSave={(v) => send({ type: 'transcriptsRename', id: item.id, name: v })}
+                    onSave={(v) =>
+                      send({ type: 'transcriptsRename', id: item.id, name: v })}
                   />
                 </h4>
                 <p class="meta">
                   {fmtDateSmart(item.date)}{item.durationSeconds > 1
                     ? ` · ${fmtDur(item.durationSeconds)}`
-                    : ''}{item.speakerCount > 0 ? ` · ${item.speakerCount} spk` : ''}
+                    : ''}{item.speakerCount > 0
+                    ? ` · ${item.speakerCount} spk`
+                    : ''}
                 </p>
                 <p class="peek">{item.preview}</p>
                 <span class="acts">
@@ -407,10 +482,18 @@
                     onkeydown={(e) =>
                       e.key === 'Enter' &&
                       (e.stopPropagation(),
-                      send({ type: 'transcriptExport', id: item.id, format: 'md' }))}
+                      send({
+                        type: 'transcriptExport',
+                        id: item.id,
+                        format: 'md',
+                      }))}
                     onclick={(e) => {
                       e.stopPropagation();
-                      send({ type: 'transcriptExport', id: item.id, format: 'md' });
+                      send({
+                        type: 'transcriptExport',
+                        id: item.id,
+                        format: 'md',
+                      });
                     }}><Download size={13} /></span
                   >
                   <span
@@ -419,7 +502,8 @@
                     tabindex="0"
                     title="delete"
                     onkeydown={(e) => e.key === 'Enter' && onDelete(e, item)}
-                    onclick={(e) => onDelete(e, item)}><Trash2 size={13} /></span
+                    onclick={(e) => onDelete(e, item)}
+                    ><Trash2 size={13} /></span
                   >
                 </span>
               </button>
@@ -568,7 +652,11 @@
       border-color 0.3s var(--ease-out);
   }
   .reccard.live {
-    background: linear-gradient(120deg, var(--pink-band) 45%, var(--card-cream));
+    background: linear-gradient(
+      120deg,
+      var(--pink-band) 45%,
+      var(--card-cream)
+    );
   }
   .livedot {
     display: inline-flex;

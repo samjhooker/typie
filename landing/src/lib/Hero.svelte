@@ -2,7 +2,15 @@
   import { reveal } from './reveal.js';
   import { nsSvg } from './svgid.js';
   import Robot from './Robot.svelte';
-  import { Mic, PhoneCall, FileAudio, StickyNote, Wifi, WifiOff, FileText } from 'lucide-svelte';
+  import {
+    Mic,
+    PhoneCall,
+    FileAudio,
+    StickyNote,
+    Wifi,
+    WifiOff,
+    FileText,
+  } from 'lucide-svelte';
   import DemoShell from './real/DemoShell.svelte';
   import DemoTranscriptDetail from './real/DemoTranscriptDetail.svelte';
   import AppSlack from './real/AppSlack.svelte';
@@ -13,7 +21,8 @@
   import slackIco from 'thesvg/slack';
   import gdocs from 'thesvg/google-docs';
 
-  const svgOf = (mod) => (typeof mod === 'string' ? mod : (mod.svg ?? String(mod)));
+  const svgOf = (mod) =>
+    typeof mod === 'string' ? mod : (mod.svg ?? String(mod));
   const MAIL_SVG =
     '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" fill="#3b82f6"/><path d="m4.5 7.5 7.5 6 7.5-6" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -86,7 +95,9 @@
   ];
 
   let dictateAppIdx = $state(0);
-  const currentDictateApp = $derived(DICTATE_APPS[dictateAppIdx % DICTATE_APPS.length]);
+  const currentDictateApp = $derived(
+    DICTATE_APPS[dictateAppIdx % DICTATE_APPS.length]
+  );
 
   let typedStream = $state('');
   let isKeyHolding = $state(false);
@@ -325,7 +336,9 @@
     date: 'just now',
     dur: '6s',
   };
-  const notesExtra = $derived(active === 'notes' && otherStep >= 4 ? NOTES_EXTRA : null);
+  const notesExtra = $derived(
+    active === 'notes' && otherStep >= 4 ? NOTES_EXTRA : null
+  );
 
   /* ── call capture data ── */
   const CALL_PEOPLE = [
@@ -340,20 +353,29 @@
     return 'Typie';
   });
 
-  const activeFeature = $derived(features.find((f) => f.id === active) ?? features[0]);
+  const activeFeature = $derived(
+    features.find((f) => f.id === active) ?? features[0]
+  );
 </script>
 
-<section class="hero" id="top">
+<section
+  class="hero"
+  id="top"
+>
   <div class="container">
     <!-- Hero Headline & Core Value Proposition -->
-    <div class="hero-top" use:reveal>
+    <div
+      class="hero-top"
+      use:reveal
+    >
       <h1>
         It types what you say.<br />
         <em>Then it keeps going.</em>
       </h1>
       <p class="sub">
-        Hold ⌥, speak naturally, and let go. Typie types into any app in 80 milliseconds, records
-        meetings without bots, and organizes voice notes — 100% offline on Apple Silicon.
+        Hold ⌥, speak naturally, and let go. Typie types into any app in 80
+        milliseconds, records meetings without bots, and organizes voice notes —
+        100% offline on Apple Silicon.
       </p>
 
       <div class="actions">
@@ -361,7 +383,12 @@
           href="https://github.com/samjhooker/typie/releases/latest"
           class="btn btn-primary bigcta"
         >
-          <svg viewBox="0 0 384 512" width="16" height="16" fill="currentColor" aria-hidden="true"
+          <svg
+            viewBox="0 0 384 512"
+            width="16"
+            height="16"
+            fill="currentColor"
+            aria-hidden="true"
             ><path
               d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.7-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
             /></svg
@@ -378,13 +405,22 @@
         </a>
       </div>
 
-      <p class="trust-line" use:reveal={{ delay: 100 }}>
-        Instant keystrokes · 100% offline · No account required · Open source MIT
+      <p
+        class="trust-line"
+        use:reveal={{ delay: 100 }}
+      >
+        Instant keystrokes · 100% offline · No account required · Open source
+        MIT
       </p>
     </div>
 
     <!-- 4 Interactive Pillar Tabs -->
-    <div class="vprops" role="tablist" aria-label="Typie features" use:reveal>
+    <div
+      class="vprops"
+      role="tablist"
+      aria-label="Typie features"
+      use:reveal
+    >
       {#each features as f (f.id)}
         {@const Icon = f.icon}
         <button
@@ -395,20 +431,38 @@
           aria-selected={active === f.id}
           onclick={() => selectFeature(f.id)}
         >
-          <span class="vico" aria-hidden="true"><Icon size={16} strokeWidth={2.2} /></span>
+          <span
+            class="vico"
+            aria-hidden="true"
+            ><Icon
+              size={16}
+              strokeWidth={2.2}
+            /></span
+          >
           <span class="vlabel">{f.label}</span>
         </button>
       {/each}
     </div>
-    <p class="vcap" use:reveal={{ delay: 40 }}>{activeFeature.desc}</p>
+    <p
+      class="vcap"
+      use:reveal={{ delay: 40 }}
+    >
+      {activeFeature.desc}
+    </p>
 
     <!-- The Full Mac Hardware Display -->
-    <div class="stage-wrap" id="demo" use:reveal={{ delay: 120 }}>
+    <div
+      class="stage-wrap"
+      id="demo"
+      use:reveal={{ delay: 120 }}
+    >
       <div class="mac">
         <div class="lid">
           <!-- Mac Menu Bar -->
           <div class="menubar">
-            <svg class="apple" viewBox="0 0 384 512"
+            <svg
+              class="apple"
+              viewBox="0 0 384 512"
               ><path
                 fill="currentColor"
                 d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
@@ -430,10 +484,16 @@
                 : 'Click to test offline / airplane mode'}
             >
               {#if wifiOff}
-                <WifiOff size={13} strokeWidth={2} />
+                <WifiOff
+                  size={13}
+                  strokeWidth={2}
+                />
                 <span>Offline · 0 bytes sent</span>
               {:else}
-                <Wifi size={13} strokeWidth={2} />
+                <Wifi
+                  size={13}
+                  strokeWidth={2}
+                />
                 <span>Pull Wi-Fi</span>
               {/if}
             </button>
@@ -442,7 +502,10 @@
           </div>
 
           {#if notchRipple}
-            <div class="notch-aura {rippleTone}" aria-hidden="true">
+            <div
+              class="notch-aura {rippleTone}"
+              aria-hidden="true"
+            >
               <span class="ring"></span>
               <span class="ring"></span>
               <span class="ring"></span>
@@ -502,7 +565,8 @@
                       fill="none"
                       stroke="var(--hotpink)"
                       stroke-width="2"
-                      stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13" /></svg
+                      stroke-linecap="round"
+                      ><path d="M3 3l10 10M13 3L3 13" /></svg
                     >
                   </button>
                 {:else if notchMode === 'hover' || (notchMode === 'idle' && notchHover)}
@@ -523,13 +587,22 @@
                   </button>
                 {:else if notchMode === 'transcribing'}
                   <!-- Pink Waveform (Screenshot 2) -->
-                  <div class="nwave" aria-hidden="true">
+                  <div
+                    class="nwave"
+                    aria-hidden="true"
+                  >
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                   </div>
                 {:else if notchMode === 'donems'}
                   <!-- 80ms Done Checkmark -->
                   <div class="done-pill">
-                    <svg viewBox="0 0 14 14" width="12" height="12" class="chk" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 14 14"
+                      width="12"
+                      height="12"
+                      class="chk"
+                      aria-hidden="true"
+                    >
                       <path
                         d="M2.5 7.5l3 3 6-7"
                         fill="none"
@@ -543,8 +616,14 @@
                   </div>
                 {:else if notchMode === 'noterec'}
                   <!-- Note Recording Icon -->
-                  <span class="note-icn" title="Recording note">
-                    <svg viewBox="0 0 16 16" width="16" height="16"
+                  <span
+                    class="note-icn"
+                    title="Recording note"
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="16"
+                      height="16"
                       ><path
                         d="M3 2h7l3 3v9H3z"
                         fill="none"
@@ -560,8 +639,14 @@
                   </span>
                 {:else if notchMode === 'callrec'}
                   <!-- Call Recording Icon -->
-                  <span class="call-icn" title="Recording call">
-                    <svg viewBox="0 0 16 16" width="16" height="16"
+                  <span
+                    class="call-icn"
+                    title="Recording call"
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="16"
+                      height="16"
                       ><rect
                         x="2.5"
                         y="2.5"
@@ -570,11 +655,20 @@
                         fill="none"
                         stroke="#4ade80"
                         stroke-width="1.8"
-                      /><rect x="6" y="6" width="4" height="4" fill="#4ade80" /></svg
+                      /><rect
+                        x="6"
+                        y="6"
+                        width="4"
+                        height="4"
+                        fill="#4ade80"
+                      /></svg
                     >
                   </span>
                 {:else if notchMode === 'processing'}
-                  <div class="nwave process" aria-hidden="true">
+                  <div
+                    class="nwave process"
+                    aria-hidden="true"
+                  >
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                   </div>
                 {/if}
@@ -584,9 +678,15 @@
             <!-- Expanded 3-Action Dropdown (Screenshot 4) -->
             {#if notchMode === 'menu'}
               <div class="notch-menu-grid">
-                <button class="nmenu-item" onclick={() => selectFeature('notes')}>
+                <button
+                  class="nmenu-item"
+                  onclick={() => selectFeature('notes')}
+                >
                   <span class="nmenu-icn">
-                    <svg viewBox="0 0 16 16" width="18" height="18"
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="18"
+                      height="18"
                       ><path
                         d="M3 2h7l3 3v9H3z"
                         fill="none"
@@ -605,9 +705,15 @@
 
                 <span class="nmenu-divider"></span>
 
-                <button class="nmenu-item" onclick={() => selectFeature('capture')}>
+                <button
+                  class="nmenu-item"
+                  onclick={() => selectFeature('capture')}
+                >
                   <span class="nmenu-icn">
-                    <svg viewBox="0 0 16 16" width="18" height="18"
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="18"
+                      height="18"
                       ><rect
                         x="2.5"
                         y="2.5"
@@ -616,7 +722,13 @@
                         fill="none"
                         stroke="#4ade80"
                         stroke-width="1.6"
-                      /><rect x="6" y="6" width="4" height="4" fill="#4ade80" /></svg
+                      /><rect
+                        x="6"
+                        y="6"
+                        width="4"
+                        height="4"
+                        fill="#4ade80"
+                      /></svg
                     >
                   </span>
                   <span class="nmenu-label">record call</span>
@@ -624,9 +736,15 @@
 
                 <span class="nmenu-divider"></span>
 
-                <button class="nmenu-item" onclick={() => selectFeature('summarize')}>
+                <button
+                  class="nmenu-item"
+                  onclick={() => selectFeature('summarize')}
+                >
                   <span class="nmenu-icn">
-                    <svg viewBox="0 0 16 16" width="18" height="18"
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="18"
+                      height="18"
                       ><path
                         d="M4 1.5h5.5L13 5v9.5H4z"
                         fill="none"
@@ -672,9 +790,17 @@
                           pasted={justPasted}
                         />
                       {:else if currentDictateApp.id === 'mail'}
-                        <AppMail typed={typedStream} listening={isKeyHolding} pasted={justPasted} />
+                        <AppMail
+                          typed={typedStream}
+                          listening={isKeyHolding}
+                          pasted={justPasted}
+                        />
                       {:else if currentDictateApp.id === 'docs'}
-                        <AppDocs typed={typedStream} listening={isKeyHolding} pasted={justPasted} />
+                        <AppDocs
+                          typed={typedStream}
+                          listening={isKeyHolding}
+                          pasted={justPasted}
+                        />
                       {:else}
                         <AppMessages
                           typed={typedStream}
@@ -702,8 +828,14 @@
                     <div class="callbody">
                       <div class="callgrid">
                         {#each CALL_PEOPLE as p, i}
-                          <figure class="ctile" class:speaking={liveSpeaker === i}>
-                            <span class="cini" style="background:{p.c}">{p.n[0]}</span>
+                          <figure
+                            class="ctile"
+                            class:speaking={liveSpeaker === i}
+                          >
+                            <span
+                              class="cini"
+                              style="background:{p.c}">{p.n[0]}</span
+                            >
                             <figcaption class="cname">{p.n}</figcaption>
                           </figure>
                         {/each}
@@ -718,7 +850,12 @@
                       <span class="winmeta mono">on-device</span>
                     </header>
                     <div class="typie-loading fade-in">
-                      <span class="load-bot"><Robot size={44} mood="listening" /></span>
+                      <span class="load-bot"
+                        ><Robot
+                          size={44}
+                          mood="listening"
+                        /></span
+                      >
                       <p>Transcribing on Apple Silicon…</p>
                       <div class="loadbar"><i></i></div>
                       <span class="mono">0 bytes sent · local model</span>
@@ -748,7 +885,11 @@
                     <span class="winmeta mono">on-device storage</span>
                   </header>
                   <div class="shellslot">
-                    <DemoShell startPane="notes" {notesExtra} locked={true} />
+                    <DemoShell
+                      startPane="notes"
+                      {notesExtra}
+                      locked={true}
+                    />
                   </div>
                 </div>
               </div>
@@ -761,7 +902,9 @@
                     <span class="dots"><i></i><i></i><i></i></span>
                     <span class="wintxt">Typie — File Transcription</span>
                     <span class="winmeta mono"
-                      >{fileStep >= 3 ? 'transcribed · on-device' : 'drop zone'}</span
+                      >{fileStep >= 3
+                        ? 'transcribed · on-device'
+                        : 'drop zone'}</span
                     >
                   </header>
 
@@ -781,7 +924,10 @@
                         </div>
                       </div>
 
-                      <div class="dz-target" class:active={fileStep >= 1}>
+                      <div
+                        class="dz-target"
+                        class:active={fileStep >= 1}
+                      >
                         <div class="dz-glow"></div>
                         <p class="dz-title">
                           {#if fileStep === 2}
@@ -821,17 +967,24 @@
           </div>
 
           <!-- Bottom App Dock for Switching Apps -->
-          <nav class="dock" aria-label="Target applications">
+          <nav
+            class="dock"
+            aria-label="Target applications"
+          >
             {#each DICTATE_APPS as a, i}
               <button
                 class="ditem"
-                class:on={active === 'dictate' && dictateAppIdx % DICTATE_APPS.length === i}
+                class:on={active === 'dictate' &&
+                  dictateAppIdx % DICTATE_APPS.length === i}
                 onclick={() => pickDictateApp(i)}
                 aria-label={a.label}
                 title={a.label}
               >
                 <span class="dico">{@html nsSvg(a.brand, 'dk' + a.id)}</span>
-                <i class="ddot" aria-hidden="true"></i>
+                <i
+                  class="ddot"
+                  aria-hidden="true"
+                ></i>
               </button>
             {/each}
             <button
@@ -841,16 +994,35 @@
               aria-label="Typie App"
               title="Typie App"
             >
-              <span class="dico dtyp"><Robot size={22} mood="idle" /></span>
-              <i class="ddot" aria-hidden="true"></i>
+              <span class="dico dtyp"
+                ><Robot
+                  size={22}
+                  mood="idle"
+                /></span
+              >
+              <i
+                class="ddot"
+                aria-hidden="true"
+              ></i>
             </button>
           </nav>
         </div>
         <!-- Mac keyboard deck — Option lives here so it never covers the screen -->
-        <div class="mac-deck" class:dictate={active === 'dictate'} aria-hidden="true">
+        <div
+          class="mac-deck"
+          class:dictate={active === 'dictate'}
+          aria-hidden="true"
+        >
           {#if active === 'dictate'}
-            <div class="optkey" class:pressed={isKeyHolding} class:done={isDictateDone}>
-              <span class="optcap" class:pressed={isKeyHolding}>
+            <div
+              class="optkey"
+              class:pressed={isKeyHolding}
+              class:done={isDictateDone}
+            >
+              <span
+                class="optcap"
+                class:pressed={isKeyHolding}
+              >
                 <b>⌥</b>
                 <small>option</small>
               </span>

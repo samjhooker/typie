@@ -5,8 +5,14 @@
   const paras = [
     { cls: 'title', text: 'Launch plan' },
     { cls: 'sub', text: 'Friday ship · owned by everyone' },
-    { cls: 'body', text: 'Two items left before we ship: the pricing page and the demo video.' },
-    { cls: 'body', text: "Everything else is locked. Let's sync at 4 to make sure nothing slips." },
+    {
+      cls: 'body',
+      text: 'Two items left before we ship: the pricing page and the demo video.',
+    },
+    {
+      cls: 'body',
+      text: "Everything else is locked. Let's sync at 4 to make sure nothing slips.",
+    },
   ];
 </script>
 
@@ -19,9 +25,9 @@
     <span class="share">Share</span>
   </div>
   <div class="toolbar">
-    <span class="file">File</span><span>Edit</span><span>View</span><span>Insert</span><span
-      >Format</span
-    ><span>Tools</span>
+    <span class="file">File</span><span>Edit</span><span>View</span><span
+      >Insert</span
+    ><span>Format</span><span>Tools</span>
     <span class="spacer"></span>
     <span class="tbtool">100%</span>
   </div>
@@ -31,7 +37,12 @@
         <p class={p.cls}>{p.text}</p>
       {/each}
       {#if typed}
-        <p class="body fresh" class:pop={pasted}>{typed}<span class="caret"></span></p>
+        <p
+          class="body fresh"
+          class:pop={pasted}
+        >
+          {typed}<span class="caret"></span>
+        </p>
       {:else if listening}
         <p class="body listening">listening…</p>
       {/if}

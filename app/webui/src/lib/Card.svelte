@@ -6,7 +6,10 @@
 <section class="card">
   {#if title}
     <header>
-      <span class="chip" style="background:{tint}">{icon}</span>
+      <span
+        class="chip"
+        style="background:{tint}">{icon}</span
+      >
       <h2>{title}</h2>
     </header>
   {/if}

@@ -42,7 +42,11 @@
   });
 </script>
 
-<section class="metricband" id="metrics" bind:this={el}>
+<section
+  class="metricband"
+  id="metrics"
+  bind:this={el}
+>
   <div class="container">
     <ul class="metrics">
       <li use:reveal>

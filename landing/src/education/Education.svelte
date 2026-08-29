@@ -199,28 +199,32 @@
       prefix: '',
       suffix: '',
       unit: 'bytes',
-      label: 'of student audio ever transmitted. The architecture has no path out.',
+      label:
+        'of student audio ever transmitted. The architecture has no path out.',
     },
     {
       value: 100,
       prefix: '<',
       suffix: '',
       unit: 'ms',
-      label: 'release-to-keystroke latency. Faster than a student can find the period key.',
+      label:
+        'release-to-keystroke latency. Faster than a student can find the period key.',
     },
     {
       value: 100,
       prefix: '',
       suffix: '%',
       unit: 'local',
-      label: 'of inference on-device. Works on filtered, throttled, or absent Wi-Fi.',
+      label:
+        'of inference on-device. Works on filtered, throttled, or absent Wi-Fi.',
     },
     {
       value: 0,
       prefix: '$',
       suffix: '',
       unit: 'per seat',
-      label: 'for every educator. No licenses, no meters, no procurement cycle.',
+      label:
+        'for every educator. No licenses, no meters, no procurement cycle.',
     },
   ];
 
@@ -259,18 +263,30 @@
   onpointerup={hRelease}
 />
 
-<div class="edu" id="top">
+<div
+  class="edu"
+  id="top"
+>
   <!-- ============ nav ============ -->
-  <header class="edu-nav" class:scrolled>
+  <header
+    class="edu-nav"
+    class:scrolled
+  >
     <div class="container bar">
       <div
         class="edu-brand"
         style="--vn-fg: var(--ink); --vn-accent: var(--accent); --vn-menu-bg: var(--paper-raise); --vn-menu-border: var(--line); --vn-menu-shadow: 0 18px 44px rgba(22, 56, 43, 0.16); --vn-item-fg: var(--ink); --vn-item-muted: var(--muted); --vn-item-hover: rgba(22, 56, 43, 0.05);"
       >
-        <VariantSwitcher variant="education" logoSize={24} />
+        <VariantSwitcher
+          variant="education"
+          logoSize={24}
+        />
       </div>
 
-      <nav class="edu-links" aria-label="primary">
+      <nav
+        class="edu-links"
+        aria-label="primary"
+      >
         <a href="#why">Why typie</a>
         <a href="#classrooms">Classrooms</a>
         <a href="#deployment">Deployment</a>
@@ -287,7 +303,11 @@
         }}>Book a pilot</a
       >
     </div>
-    <div class="progress" style="--p:{progress}" aria-hidden="true"></div>
+    <div
+      class="progress"
+      style="--p:{progress}"
+      aria-hidden="true"
+    ></div>
   </header>
 
   <!-- ============ hero: asymmetric split, hand-annotated ============ -->
@@ -301,23 +321,37 @@
           Every student<br />has a
           <span class="circled">
             voice<em>.</em>
-            <svg class="ring" viewBox="0 0 230 100" preserveAspectRatio="none" aria-hidden="true">
+            <svg
+              class="ring"
+              viewBox="0 0 230 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
               <path
                 d="M115 10 C 42 4, 8 32, 12 54 C 17 84, 96 96, 158 89 C 210 83, 224 56, 217 36 C 210 15, 166 4, 124 9"
               />
             </svg>
           </span>
         </h1>
-        <p class="scribble" aria-hidden="true">
+        <p
+          class="scribble"
+          aria-hidden="true"
+        >
           no cloud. no consent-form chase!
-          <svg viewBox="0 0 60 44" aria-hidden="true">
-            <path d="M52 4 C 40 26, 26 32, 8 34" /><path d="M17 27 L 7 35 L 19 39" />
+          <svg
+            viewBox="0 0 60 44"
+            aria-hidden="true"
+          >
+            <path d="M52 4 C 40 26, 26 32, 8 34" /><path
+              d="M17 27 L 7 35 L 19 39"
+            />
           </svg>
         </p>
 
         <p class="sub">
-          Sub-100&nbsp;ms dictation, fully offline, on every school Mac. Student audio never leaves
-          the device, because there is no cloud to send it to.
+          Sub-100&nbsp;ms dictation, fully offline, on every school Mac. Student
+          audio never leaves the device, because there is no cloud to send it
+          to.
         </p>
         <div class="cta">
           <a
@@ -331,7 +365,10 @@
         </div>
       </div>
 
-      <div class="hero-demo" bind:this={heroDemoEl}>
+      <div
+        class="hero-demo"
+        bind:this={heroDemoEl}
+      >
         <div
           class="hd-desktop"
           class:live={hphase === 'listening'}
@@ -349,11 +386,26 @@
             aria-hidden="true"
           >
             {#if hphase === 'listening'}
-              <span class="ibot"><Robot size={15} mood="listening" /></span>
+              <span class="ibot"
+                ><Robot
+                  size={15}
+                  mood="listening"
+                /></span
+              >
               <span class="icam"></span>
-              <span class="iwave"><TalkWave n={5} color="#fc5681" /></span>
+              <span class="iwave"
+                ><TalkWave
+                  n={5}
+                  color="#fc5681"
+                /></span
+              >
             {:else if hphase === 'done'}
-              <span class="ibot"><Robot size={17} mood="done" /></span>
+              <span class="ibot"
+                ><Robot
+                  size={17}
+                  mood="done"
+                /></span
+              >
               <span class="icam"></span>
               <span class="ims">✓ 84ms</span>
             {:else}
@@ -361,8 +413,14 @@
             {/if}
           </div>
 
-          <div class="menubar" aria-hidden="true">
-            <svg class="apple" viewBox="0 0 384 512" aria-hidden="true"
+          <div
+            class="menubar"
+            aria-hidden="true"
+          >
+            <svg
+              class="apple"
+              viewBox="0 0 384 512"
+              aria-hidden="true"
               ><path
                 fill="currentColor"
                 d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
@@ -382,7 +440,9 @@
               stroke-width="1.4"
               stroke-linecap="round"
               aria-hidden="true"
-              ><path d="M1.5 4.4a10 10 0 0 1 13 0" /><path d="M3.9 7a6.4 6.4 0 0 1 8.2 0" /><circle
+              ><path d="M1.5 4.4a10 10 0 0 1 13 0" /><path
+                d="M3.9 7a6.4 6.4 0 0 1 8.2 0"
+              /><circle
                 cx="8"
                 cy="9.9"
                 r="1.15"
@@ -390,7 +450,10 @@
                 stroke="none"
               /></svg
             >
-            <svg class="sicn" viewBox="0 0 25 12" aria-hidden="true"
+            <svg
+              class="sicn"
+              viewBox="0 0 25 12"
+              aria-hidden="true"
               ><rect
                 x="0.5"
                 y="0.5"
@@ -399,7 +462,14 @@
                 rx="3.2"
                 fill="none"
                 stroke="currentColor"
-              /><rect x="2.5" y="2.5" width="14" height="7" rx="1.6" fill="currentColor" /><path
+              /><rect
+                x="2.5"
+                y="2.5"
+                width="14"
+                height="7"
+                rx="1.6"
+                fill="currentColor"
+              /><path
                 d="M23 4v4a2.2 2.2 0 0 0 0-4z"
                 fill="currentColor"
               /></svg
@@ -414,7 +484,10 @@
             class:switching={hphase === 'switch'}
           >
             <div class="titlebar">
-              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span
+                class="lights"
+                aria-hidden="true"><i></i><i></i><i></i></span
+              >
               <span class="wtitle">{SCENES[hscene].title}</span>
               <span class="meta mono">{SCENES[hscene].meta}</span>
             </div>
@@ -422,8 +495,13 @@
             <div class="winbody">
               <aside class="side">
                 <p class="side-h">
-                  <i class="bmark" aria-hidden="true"
-                    >{@html nsSvg(SCENES[hscene].brand, 'hsh' + SCENES[hscene].id)}</i
+                  <i
+                    class="bmark"
+                    aria-hidden="true"
+                    >{@html nsSvg(
+                      SCENES[hscene].brand,
+                      'hsh' + SCENES[hscene].id
+                    )}</i
                   >
                   {SCENES[hscene].name}
                 </p>
@@ -438,8 +516,14 @@
 
               <div class="paper">
                 {#if hphase === 'listening'}
-                  <div class="talking" aria-hidden="true">
-                    <TalkWave n={13} color={SCENES[hscene].wave} />
+                  <div
+                    class="talking"
+                    aria-hidden="true"
+                  >
+                    <TalkWave
+                      n={13}
+                      color={SCENES[hscene].wave}
+                    />
                     <p class="hint2">say anything…</p>
                   </div>
                 {:else if SCENES[hscene].id === 'canva'}
@@ -450,7 +534,8 @@
                         0,
                         hchars
                       )}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span
-                          class="ghost">words land here, as real keystrokes</span
+                          class="ghost"
+                          >words land here, as real keystrokes</span
                         >{/if}<span
                         class="caret"
                         class:hidden={hphase === 'done'}
@@ -461,9 +546,14 @@
                 {:else if SCENES[hscene].id === 'classroom'}
                   <div class="stream">
                     <div class="shead">
-                      <i class="sava" aria-hidden="true">MR</i>
+                      <i
+                        class="sava"
+                        aria-hidden="true">MR</i
+                      >
                       <div class="swho">
-                        <b>Ms. Rivera</b><span class="mono">Cell Bio · just now</span>
+                        <b>Ms. Rivera</b><span class="mono"
+                          >Cell Bio · just now</span
+                        >
                       </div>
                     </div>
                     <p class="stream-text">
@@ -471,7 +561,8 @@
                         0,
                         hchars
                       )}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span
-                          class="ghost">words land here, as real keystrokes</span
+                          class="ghost"
+                          >words land here, as real keystrokes</span
                         >{/if}<span
                         class="caret"
                         class:hidden={hphase === 'done'}
@@ -481,7 +572,9 @@
                   </div>
                 {:else}
                   <div class="fields">
-                    <span>To: Maya's parents</span><span>Subject: Science project</span>
+                    <span>To: Maya's parents</span><span
+                      >Subject: Science project</span
+                    >
                   </div>
                   <p class="mail-text">
                     {SCENES[hscene].text.slice(
@@ -489,7 +582,10 @@
                       hchars
                     )}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span
                         class="ghost">words land here, as real keystrokes</span
-                      >{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"
+                      >{/if}<span
+                      class="caret"
+                      class:hidden={hphase === 'done'}
+                      aria-hidden="true"
                     ></span>
                   </p>
                   <span class="sendbtn">Send</span>
@@ -510,7 +606,9 @@
                 aria-label={s.name}
               >
                 <span class="dicon"
-                  ><i class="dbmark" aria-hidden="true">{@html nsSvg(s.brand, 'dk' + s.id)}</i
+                  ><i
+                    class="dbmark"
+                    aria-hidden="true">{@html nsSvg(s.brand, 'dk' + s.id)}</i
                   ></span
                 >
                 <i class="dot"></i>
@@ -555,12 +653,30 @@
   <!-- ============ compliance strip ============ -->
   <div class="edu-comply">
     <div class="container row">
-      <span class="cell" use:reveal><i>/</i> FERPA aligned</span>
-      <span class="cell" use:reveal={{ delay: 0.06 }}><i>/</i> COPPA aligned</span>
-      <span class="cell" use:reveal={{ delay: 0.12 }}><i>/</i> GDPR-K aligned</span>
-      <span class="cell" use:reveal={{ delay: 0.18 }}><i>/</i> Zero retention</span>
-      <span class="cell" use:reveal={{ delay: 0.24 }}><i>/</i> Audio never transmitted</span>
-      <span class="cell" use:reveal={{ delay: 0.3 }}><i>/</i> DPA on request</span>
+      <span
+        class="cell"
+        use:reveal><i>/</i> FERPA aligned</span
+      >
+      <span
+        class="cell"
+        use:reveal={{ delay: 0.06 }}><i>/</i> COPPA aligned</span
+      >
+      <span
+        class="cell"
+        use:reveal={{ delay: 0.12 }}><i>/</i> GDPR-K aligned</span
+      >
+      <span
+        class="cell"
+        use:reveal={{ delay: 0.18 }}><i>/</i> Zero retention</span
+      >
+      <span
+        class="cell"
+        use:reveal={{ delay: 0.24 }}><i>/</i> Audio never transmitted</span
+      >
+      <span
+        class="cell"
+        use:reveal={{ delay: 0.3 }}><i>/</i> DPA on request</span
+      >
     </div>
   </div>
 
@@ -569,10 +685,15 @@
     <div class="container">
       <div class="grid">
         {#each stats as s, i}
-          <div class="stat" use:reveal={{ delay: i * 0.08 }}>
+          <div
+            class="stat"
+            use:reveal={{ delay: i * 0.08 }}
+          >
             <span class="num"
-              >{s.prefix}<span data-count={s.value} use:countup>{s.value}</span><sub>{s.unit}</sub
-              ></span
+              >{s.prefix}<span
+                data-count={s.value}
+                use:countup>{s.value}</span
+              ><sub>{s.unit}</sub></span
             >
             <span class="label">{s.label}</span>
           </div>
@@ -582,24 +703,34 @@
   </section>
 
   <!-- ============ why typie: bento ============ -->
-  <section class="block edu-bento" id="why">
+  <section
+    class="block edu-bento"
+    id="why"
+  >
     <div class="container">
       <p class="eyebrow"><b>01</b> / why typie</p>
       <h2 use:reveal>The daily tool your<br />devices already owed you.</h2>
-      <p class="lede" use:reveal={{ delay: 0.08 }}>
-        One native app, installed once, working in every application on every Mac. No integrations
-        to maintain, no vendor dashboard, no per-app plugins to break after every update.
+      <p
+        class="lede"
+        use:reveal={{ delay: 0.08 }}
+      >
+        One native app, installed once, working in every application on every
+        Mac. No integrations to maintain, no vendor dashboard, no per-app
+        plugins to break after every update.
       </p>
 
       <div class="grid">
-        <div class="edu-card-wrap primary" use:reveal>
+        <div
+          class="edu-card-wrap primary"
+          use:reveal
+        >
           <div class="edu-card">
             <span class="tag">works everywhere</span>
             <h3>Every app they already use</h3>
             <p>
-              Output lands as real keyboard events in whatever has focus: Docs, Slides, Canvas,
-              PowerSchool, email, legacy gradebooks, locked-down exam browsers. If it accepts
-              typing, typie works there.
+              Output lands as real keyboard events in whatever has focus: Docs,
+              Slides, Canvas, PowerSchool, email, legacy gradebooks, locked-down
+              exam browsers. If it accepts typing, typie works there.
             </p>
             <pre>$ typie --trace
 mic        ▸ on-device ASR (nvidia parakeet, local)
@@ -607,51 +738,69 @@ network    ▸ bytes transmitted: <b>0</b>
 telemetry  ▸ endpoints configured: <b>none</b>
 output     ▸ CGEvent keystrokes ▸ active application</pre>
             <p>
-              This is the entire data flow. Three hops, none of them leave the machine. Your privacy
-              office can verify it with a packet capture between periods.
+              This is the entire data flow. Three hops, none of them leave the
+              machine. Your privacy office can verify it with a packet capture
+              between periods.
             </p>
           </div>
         </div>
 
-        <div class="edu-card-wrap" use:reveal={{ delay: 0.08 }}>
+        <div
+          class="edu-card-wrap"
+          use:reveal={{ delay: 0.08 }}
+        >
           <div class="edu-card">
             <span class="tag">your curriculum</span>
             <h3>Speaks the subject</h3>
             <p>
-              Photosynthesis, mitochondria, the Treaty of Versailles, AP Chem nomenclature. Domain
-              terminology recognized correctly, in 100+ languages, on hardware the district already
-              owns.
+              Photosynthesis, mitochondria, the Treaty of Versailles, AP Chem
+              nomenclature. Domain terminology recognized correctly, in 100+
+              languages, on hardware the district already owns.
             </p>
           </div>
         </div>
 
-        <div class="edu-card-wrap" use:reveal={{ delay: 0.16 }}>
+        <div
+          class="edu-card-wrap"
+          use:reveal={{ delay: 0.16 }}
+        >
           <div class="edu-card">
             <span class="tag">it-friendly</span>
             <h3>MDM-native deployment</h3>
             <p>
-              Standard .app packaging for Jamf, Kandji, and Intune. No daemons, no kernel
-              extensions, no system services, no helpdesk tickets.
+              Standard .app packaging for Jamf, Kandji, and Intune. No daemons,
+              no kernel extensions, no system services, no helpdesk tickets.
             </p>
           </div>
         </div>
 
-        <div class="edu-card-wrap half" use:reveal={{ delay: 0.24 }}>
+        <div
+          class="edu-card-wrap half"
+          use:reveal={{ delay: 0.24 }}
+        >
           <div class="edu-card">
             <span class="tag">accessibility</span>
             <h3>Built-in, not bolted-on</h3>
             <p>
-              Sub-100 ms voice input supports WCAG 2.2 and Section 508 goals, with remappable
-              hold-to-talk keys for every motor-preference profile. An accommodation that feels like
-              a superpower.
+              Sub-100 ms voice input supports WCAG 2.2 and Section 508 goals,
+              with remappable hold-to-talk keys for every motor-preference
+              profile. An accommodation that feels like a superpower.
             </p>
           </div>
         </div>
 
-        <div class="edu-card-wrap half" use:reveal={{ delay: 0.32 }}>
+        <div
+          class="edu-card-wrap half"
+          use:reveal={{ delay: 0.32 }}
+        >
           <div class="edu-card">
             <span class="tag">student records</span>
-            <div class="bignum"><span data-count={0} use:countup>0</span></div>
+            <div class="bignum">
+              <span
+                data-count={0}
+                use:countup>0</span
+              >
+            </div>
             <p>voice recordings stored anywhere. Ever.</p>
           </div>
         </div>
@@ -660,60 +809,76 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
   </section>
 
   <!-- ============ classrooms: stacked showcase ============ -->
-  <section class="block edu-class" id="classrooms">
+  <section
+    class="block edu-class"
+    id="classrooms"
+  >
     <div class="container">
       <p class="eyebrow"><b>02</b> / classrooms</p>
       <h2 use:reveal>One tool.<br />Three jobs done.</h2>
 
       <div class="rows">
-        <div class="row" use:reveal>
+        <div
+          class="row"
+          use:reveal
+        >
           <div class="txt">
             <span class="tag">teachers</span>
             <h3>Feedback at the speed of speech</h3>
             <p>
-              Comments in Docs, notes in the gradebook, parent emails between classes. Teachers
-              speak roughly three times faster than they type, which turns Sunday-night marking into
-              an afternoon task.
+              Comments in Docs, notes in the gradebook, parent emails between
+              classes. Teachers speak roughly three times faster than they type,
+              which turns Sunday-night marking into an afternoon task.
             </p>
           </div>
           <div class="viz tilt-l">
             <div class="card-note">
               <p class="note-q">
-                &ldquo;Strong thesis — tighten paragraph two and cite your source.&rdquo;
+                &ldquo;Strong thesis — tighten paragraph two and cite your
+                source.&rdquo;
               </p>
-              <p class="note-m">feedback · 38 words · 11s spoken · 0 bytes sent</p>
+              <p class="note-m">
+                feedback · 38 words · 11s spoken · 0 bytes sent
+              </p>
             </div>
           </div>
         </div>
 
-        <div class="row flip" use:reveal>
+        <div
+          class="row flip"
+          use:reveal
+        >
           <div class="txt">
             <span class="tag">students</span>
             <h3>Draft out loud, revise in writing</h3>
             <p>
-              First drafts dictated before self-consciousness kicks in. For ELL learners, students
-              with dyslexia, and anyone whose ideas outrun their keyboarding, the gap between
-              thinking and writing closes.
+              First drafts dictated before self-consciousness kicks in. For ELL
+              learners, students with dyslexia, and anyone whose ideas outrun
+              their keyboarding, the gap between thinking and writing closes.
             </p>
           </div>
           <div class="viz tilt-r">
             <div class="card-note">
               <p class="note-q">
-                &ldquo;Intro, three body paragraphs, counterclaim, conclusion.&rdquo;
+                &ldquo;Intro, three body paragraphs, counterclaim,
+                conclusion.&rdquo;
               </p>
               <p class="note-m">outline · 480 words drafted · 100% offline</p>
             </div>
           </div>
         </div>
 
-        <div class="row" use:reveal>
+        <div
+          class="row"
+          use:reveal
+        >
           <div class="txt">
             <span class="tag">it &amp; administration</span>
             <h3>Nothing to audit. Nothing to breach.</h3>
             <p>
-              No student data ever reaches a vendor, so there is no incident response plan to write
-              and no breach notification letter to dread. Push the package over MDM and the
-              deployment is finished.
+              No student data ever reaches a vendor, so there is no incident
+              response plan to write and no breach notification letter to dread.
+              Push the package over MDM and the deployment is finished.
             </p>
           </div>
           <div class="viz tilt-l">
@@ -732,51 +897,68 @@ breach surface           ▸ <b>n/a</b></pre>
   <!-- ============ quote ============ -->
   <section class="block tight edu-quote">
     <div class="container">
-      <hr class="line" use:reveal />
+      <hr
+        class="line"
+        use:reveal
+      />
       <figure style="padding-top:56px">
         <blockquote use:reveal>
-          &ldquo;Our previous dictation tool sent student audio to three subprocessors. Typie sends
-          it to
+          &ldquo;Our previous dictation tool sent student audio to three
+          subprocessors. Typie sends it to
           <em>a garbage collector.</em>&rdquo;
         </blockquote>
         <figcaption use:reveal={{ delay: 0.1 }}>
-          Director of technology &middot; public school district &middot; 4,000 staff MacBooks
+          Director of technology &middot; public school district &middot; 4,000
+          staff MacBooks
         </figcaption>
       </figure>
     </div>
   </section>
 
   <!-- ============ deployment ============ -->
-  <section class="block edu-deploy" id="deployment">
+  <section
+    class="block edu-deploy"
+    id="deployment"
+  >
     <div class="container">
       <p class="eyebrow"><b>03</b> / deployment</p>
       <h2 use:reveal>Pilot to rollout<br />in one prep term.</h2>
 
       <div class="grid">
-        <div class="edu-step" use:reveal>
+        <div
+          class="edu-step"
+          use:reveal
+        >
           <span class="no">/ 01</span>
           <h3>Pilot</h3>
           <p>
-            Start free with a single department. Ten minutes of setup, no training required: hold a
-            key, talk, release. Gather the staff quotes while your privacy office reads the
-            architecture docs.
+            Start free with a single department. Ten minutes of setup, no
+            training required: hold a key, talk, release. Gather the staff
+            quotes while your privacy office reads the architecture docs.
           </p>
         </div>
-        <div class="edu-step" use:reveal={{ delay: 0.08 }}>
+        <div
+          class="edu-step"
+          use:reveal={{ delay: 0.08 }}
+        >
           <span class="no">/ 02</span>
           <h3>Deploy</h3>
           <p>
-            Push the package through your existing MDM. Campus licensing adds SSO-based seat
-            management and a DPA sized to your jurisdiction. Nothing touches your network after day
-            one.
+            Push the package through your existing MDM. Campus licensing adds
+            SSO-based seat management and a DPA sized to your jurisdiction.
+            Nothing touches your network after day one.
           </p>
         </div>
-        <div class="edu-step" use:reveal={{ delay: 0.16 }}>
+        <div
+          class="edu-step"
+          use:reveal={{ delay: 0.16 }}
+        >
           <span class="no">/ 03</span>
           <h3>Roll out</h3>
           <p>
-            Most users are productive in ninety seconds, which keeps adoption steep and PD sessions
-            short. Helpdesk tickets stay near zero because there is no cloud service to go down.
+            Most users are productive in ninety seconds, which keeps adoption
+            steep and PD sessions short. Helpdesk tickets stay near zero because
+            there is no cloud service to go down.
           </p>
         </div>
       </div>
@@ -786,22 +968,33 @@ breach surface           ▸ <b>n/a</b></pre>
   <!-- ============ visual break ============ -->
   <section class="edu-break">
     <div class="container">
-      <h2 use:reveal>No uploads<i>.</i> No transcripts<i>.</i> No exceptions<i>.</i></h2>
+      <h2 use:reveal>
+        No uploads<i>.</i> No transcripts<i>.</i> No exceptions<i>.</i>
+      </h2>
     </div>
   </section>
 
   <!-- ============ pricing ============ -->
-  <section class="block edu-pricing" id="pricing">
+  <section
+    class="block edu-pricing"
+    id="pricing"
+  >
     <div class="container">
       <p class="eyebrow"><b>04</b> / pricing</p>
       <h2 use:reveal>Free for teachers.<br />Honest for districts.</h2>
-      <p class="lede" use:reveal={{ delay: 0.08 }}>
-        Inference runs on hardware schools already own, so our costs do not scale with your usage.
-        Neither should your invoice.
+      <p
+        class="lede"
+        use:reveal={{ delay: 0.08 }}
+      >
+        Inference runs on hardware schools already own, so our costs do not
+        scale with your usage. Neither should your invoice.
       </p>
 
       <div class="grid">
-        <div class="plan" use:reveal>
+        <div
+          class="plan"
+          use:reveal
+        >
           <div class="edu-plan featured">
             <div class="headrow">
               <span class="tier">Educator</span>
@@ -814,14 +1007,25 @@ breach surface           ▸ <b>n/a</b></pre>
               <li>Remappable hotkeys &amp; vocabularies</li>
               <li>All future updates included</li>
             </ul>
-            <a href="/#download" class="btn btn-solid">Get typie free</a>
+            <a
+              href="/#download"
+              class="btn btn-solid">Get typie free</a
+            >
           </div>
         </div>
 
-        <div class="plan" use:reveal={{ delay: 0.08 }}>
+        <div
+          class="plan"
+          use:reveal={{ delay: 0.08 }}
+        >
           <div class="edu-plan">
             <span class="tier">Campus &amp; District</span>
-            <div class="price" style="font-size:2rem;padding-block:8px">Talk to us</div>
+            <div
+              class="price"
+              style="font-size:2rem;padding-block:8px"
+            >
+              Talk to us
+            </div>
             <ul>
               <li>Volume licensing via MDM</li>
               <li>SSO portal + SCIM seat management</li>
@@ -844,14 +1048,23 @@ breach surface           ▸ <b>n/a</b></pre>
   </section>
 
   <!-- ============ faq ============ -->
-  <section class="block edu-faq" id="faq">
+  <section
+    class="block edu-faq"
+    id="faq"
+  >
     <div class="container">
       <p class="eyebrow"><b>05</b> / faq</p>
       <h2 use:reveal>Questions your privacy<br />office asks first.</h2>
 
-      <div class="list" use:reveal={{ delay: 0.1 }}>
+      <div
+        class="list"
+        use:reveal={{ delay: 0.1 }}
+      >
         {#each faqs as f, i}
-          <div class="edu-item" class:open={openFaq === i}>
+          <div
+            class="edu-item"
+            class:open={openFaq === i}
+          >
             <button
               class="q"
               aria-expanded={openFaq === i}
@@ -859,9 +1072,15 @@ breach surface           ▸ <b>n/a</b></pre>
               onclick={() => (openFaq = openFaq === i ? -1 : i)}
             >
               {f.q}
-              <span class="plus" aria-hidden="true"></span>
+              <span
+                class="plus"
+                aria-hidden="true"
+              ></span>
             </button>
-            <div class="a" id={'edu-faq-a-' + i}>
+            <div
+              class="a"
+              id={'edu-faq-a-' + i}
+            >
               <div><p>{f.a}</p></div>
             </div>
           </div>
@@ -874,7 +1093,10 @@ breach surface           ▸ <b>n/a</b></pre>
   <section class="edu-final">
     <div class="container">
       <h2 use:reveal>Give every classroom<br />a voice<em>.</em></h2>
-      <div class="actions" use:reveal={{ delay: 0.12 }}>
+      <div
+        class="actions"
+        use:reveal={{ delay: 0.12 }}
+      >
         <a
           href="mailto:sales@typie.cc?subject=Education%20pilot"
           class="btn btn-solid"
@@ -889,10 +1111,19 @@ breach surface           ▸ <b>n/a</b></pre>
 
   <!-- ============ footer ============ -->
   <footer class="edu-footer">
-    <div class="container top" use:reveal>
-      <a href="/" class="edu-brand">
+    <div
+      class="container top"
+      use:reveal
+    >
+      <a
+        href="/"
+        class="edu-brand"
+      >
         <Logo size={22} />
-        <span class="divider" aria-hidden="true"></span>
+        <span
+          class="divider"
+          aria-hidden="true"
+        ></span>
         <small>education</small>
       </a>
 
@@ -939,7 +1170,10 @@ breach surface           ▸ <b>n/a</b></pre>
       </div>
     </div>
 
-    <div class="container base" use:reveal>
+    <div
+      class="container base"
+      use:reveal
+    >
       <span>&copy; {new Date().getFullYear()} typie</span>
       <span>zero bytes transmitted since install</span>
     </div>

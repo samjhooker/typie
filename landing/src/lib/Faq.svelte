@@ -43,28 +43,88 @@
   let open = $state(0);
 </script>
 
-<section class="field field-cream" id="faq">
+<section
+  class="field field-cream"
+  id="faq"
+>
   <div class="container wrap">
     <div class="left">
       <h2 use:reveal>Frequently<br />asked<br />questions</h2>
-      <svg class="starburst" viewBox="0 0 60 60" aria-hidden="true">
-        <g stroke="var(--hotpink)" stroke-width="3.5" stroke-linecap="round">
-          <line x1="30" y1="4" x2="30" y2="18" />
-          <line x1="30" y1="42" x2="30" y2="56" />
-          <line x1="4" y1="30" x2="18" y2="30" />
-          <line x1="42" y1="30" x2="56" y2="30" />
-          <line x1="11" y1="11" x2="21" y2="21" />
-          <line x1="39" y1="39" x2="49" y2="49" />
-          <line x1="49" y1="11" x2="39" y2="21" />
-          <line x1="21" y1="39" x2="11" y2="49" />
+      <svg
+        class="starburst"
+        viewBox="0 0 60 60"
+        aria-hidden="true"
+      >
+        <g
+          stroke="var(--hotpink)"
+          stroke-width="3.5"
+          stroke-linecap="round"
+        >
+          <line
+            x1="30"
+            y1="4"
+            x2="30"
+            y2="18"
+          />
+          <line
+            x1="30"
+            y1="42"
+            x2="30"
+            y2="56"
+          />
+          <line
+            x1="4"
+            y1="30"
+            x2="18"
+            y2="30"
+          />
+          <line
+            x1="42"
+            y1="30"
+            x2="56"
+            y2="30"
+          />
+          <line
+            x1="11"
+            y1="11"
+            x2="21"
+            y2="21"
+          />
+          <line
+            x1="39"
+            y1="39"
+            x2="49"
+            y2="49"
+          />
+          <line
+            x1="49"
+            y1="11"
+            x2="39"
+            y2="21"
+          />
+          <line
+            x1="21"
+            y1="39"
+            x2="11"
+            y2="49"
+          />
         </g>
       </svg>
     </div>
 
-    <div class="list" use:reveal={{ delay: 60 }}>
+    <div
+      class="list"
+      use:reveal={{ delay: 60 }}
+    >
       {#each items as item, i}
-        <div class="row" class:open={open === i}>
-          <button onclick={() => (open = open === i ? -1 : i)} aria-expanded={open === i}>
+        <div
+          class="row"
+          class:open={open === i}
+        >
+          <button
+            onclick={() => (open = open === i ? -1 : i)}
+            aria-expanded={open === i}
+          >
             <span class="plus">{open === i ? '−' : '+'}</span>
             <span class="q">{item.q}</span>
           </button>

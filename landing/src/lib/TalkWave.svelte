@@ -2,7 +2,11 @@
   let { n = 13, color = 'currentColor' } = $props();
 </script>
 
-<div class="talkwave" style="color:{color}" aria-hidden="true">
+<div
+  class="talkwave"
+  style="color:{color}"
+  aria-hidden="true"
+>
   {#each Array(n) as _, i}
     <i style="--i:{i}"></i>
   {/each}

@@ -85,10 +85,17 @@
       </p>
     </div>
     <div class="tools">
-      <SortSeg options={SORTS} bind:value={sortBy} />
+      <SortSeg
+        options={SORTS}
+        bind:value={sortBy}
+      />
       <label class="input search">
         <span class="search-icon">⌕</span>
-        <input bind:value={query} placeholder="search notes…" spellcheck="false" />
+        <input
+          bind:value={query}
+          placeholder="search notes…"
+          spellcheck="false"
+        />
       </label>
     </div>
   </header>
@@ -106,15 +113,26 @@
         <footer>
           <span class="meta">{note.date} · {note.dur}</span>
           <span class="acts">
-            <button class="icon-btn" title="copy">📋</button>
-            <button class="icon-btn" title={note.pinned ? 'unpin' : 'pin'}
+            <button
+              class="icon-btn"
+              title="copy">📋</button
+            >
+            <button
+              class="icon-btn"
+              title={note.pinned ? 'unpin' : 'pin'}
               >{note.pinned ? '📌' : '📍'}</button
             >
-            <button class="icon-btn" title="delete">🗑</button>
+            <button
+              class="icon-btn"
+              title="delete">🗑</button
+            >
           </span>
         </footer>
         {#if note.pinned}
-          <span class="pin" style="background:{tint.pin}"></span>
+          <span
+            class="pin"
+            style="background:{tint.pin}"
+          ></span>
         {/if}
       </article>
     {/each}

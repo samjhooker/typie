@@ -8,7 +8,9 @@
   let draft = $state('');
   let thinking = $state(false);
   let list = $state(null);
-  let msgs = $state([{ who: 'bot', text: 'hi. i handle support. well. me and one sentence.' }]);
+  let msgs = $state([
+    { who: 'bot', text: 'hi. i handle support. well. me and one sentence.' },
+  ]);
 
   const REPLIES = [
     "it's free and works fully offline.",
@@ -73,15 +75,27 @@
   {#if chat.open}
     <div class="panel">
       <header>
-        <span class="hbot"><Robot size={34} mood={thinking ? 'thinking' : 'idle'} /></span>
+        <span class="hbot"
+          ><Robot
+            size={34}
+            mood={thinking ? 'thinking' : 'idle'}
+          /></span
+        >
         <div class="ht">
           <strong>typie support</strong>
           <span class="mono">avg response · &lt;100 ms*</span>
         </div>
-        <button class="x" onclick={() => (chat.open = false)} aria-label="Close chat">–</button>
+        <button
+          class="x"
+          onclick={() => (chat.open = false)}
+          aria-label="Close chat">–</button
+        >
       </header>
 
-      <div class="msgs" bind:this={list}>
+      <div
+        class="msgs"
+        bind:this={list}
+      >
         {#each msgs as m}
           <p class="msg {m.who}">{m.text}</p>
         {/each}
@@ -92,7 +106,10 @@
 
       <div class="quick">
         {#each QUICK as q}
-          <button onclick={() => send(q)} disabled={thinking}>{q}</button>
+          <button
+            onclick={() => send(q)}
+            disabled={thinking}>{q}</button
+          >
         {/each}
       </div>
 
@@ -107,7 +124,11 @@
           placeholder="type a voice message (with your hands)"
           aria-label="Message typie support"
         />
-        <button class="send" type="submit" disabled={thinking || !draft.trim()}>↑</button>
+        <button
+          class="send"
+          type="submit"
+          disabled={thinking || !draft.trim()}>↑</button
+        >
       </form>
 
       <p class="fine mono">*response time is comedic, not contractual</p>
@@ -122,7 +143,10 @@
     {#if chat.open}
       ✕
     {:else}
-      <Robot size={40} mood={thinking ? 'listening' : 'idle'} />
+      <Robot
+        size={40}
+        mood={thinking ? 'listening' : 'idle'}
+      />
     {/if}
   </button>
 </div>

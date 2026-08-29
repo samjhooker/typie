@@ -6,7 +6,10 @@
   <div class="call-inner">
     <div class="waveform">
       {#each dots as _, i}
-        <span class="bar" style="animation-delay:{i * 120}ms"></span>
+        <span
+          class="bar"
+          style="animation-delay:{i * 120}ms"
+        ></span>
       {/each}
     </div>
     <p class="label">Call active</p>

@@ -1,5 +1,11 @@
 <script>
-  import { ui, send, transcriptCache, local, dismissAiNudge } from '../bridge.svelte.js';
+  import {
+    ui,
+    send,
+    transcriptCache,
+    local,
+    dismissAiNudge,
+  } from '../bridge.svelte.js';
   import InlineEdit from '../InlineEdit.svelte';
   import {
     ArrowLeft,
@@ -66,18 +72,28 @@
       ? {
           ...meta,
           ...(cached ?? {}),
-          speakerNames: { ...(meta.speakerNames ?? {}), ...(cached?.speakerNames ?? {}) },
+          speakerNames: {
+            ...(meta.speakerNames ?? {}),
+            ...(cached?.speakerNames ?? {}),
+          },
           // AI fields: prefer cached when it has real content, but fall through to meta when cached is empty/stale
-          aiTitle: cached?.aiTitle && cached.aiTitle !== '' ? cached.aiTitle : (meta.aiTitle ?? ''),
+          aiTitle:
+            cached?.aiTitle && cached.aiTitle !== ''
+              ? cached.aiTitle
+              : (meta.aiTitle ?? ''),
           aiSummary:
             cached?.aiSummary && cached.aiSummary !== ''
               ? cached.aiSummary
               : (meta.aiSummary ?? ''),
           aiStatus:
-            cached?.aiStatus && cached.aiStatus !== '' ? cached.aiStatus : (meta.aiStatus ?? ''),
+            cached?.aiStatus && cached.aiStatus !== ''
+              ? cached.aiStatus
+              : (meta.aiStatus ?? ''),
           aiEngine: cached?.aiEngine ?? meta.aiEngine ?? '',
           aiTopics:
-            cached?.aiTopics && cached.aiTopics.length ? cached.aiTopics : (meta.aiTopics ?? []),
+            cached?.aiTopics && cached.aiTopics.length
+              ? cached.aiTopics
+              : (meta.aiTopics ?? []),
         }
       : null
   );
@@ -86,7 +102,9 @@
   const filtered = $derived(
     !t || query.trim() === ''
       ? turns
-      : turns.filter((x) => x.text.toLowerCase().includes(query.trim().toLowerCase()))
+      : turns.filter((x) =>
+          x.text.toLowerCase().includes(query.trim().toLowerCase())
+        )
   );
   const visibleTurns = $derived(filtered.slice(0, shown));
   $effect(() => {
@@ -121,7 +139,12 @@
   }
   function saveRename() {
     if (renaming != null && renameVal.trim() && t) {
-      send({ type: 'transcriptsRenameSpeaker', id: t.id, index: renaming, name: renameVal.trim() });
+      send({
+        type: 'transcriptsRenameSpeaker',
+        id: t.id,
+        index: renaming,
+        name: renameVal.trim(),
+      });
     }
     renaming = null;
   }
@@ -155,7 +178,10 @@
   }
   function seekTo(s, andPlay = false) {
     if (!audioEl) return;
-    audioEl.currentTime = Math.max(0, Math.min(s, duration || t?.durationSeconds || 0));
+    audioEl.currentTime = Math.max(
+      0,
+      Math.min(s, duration || t?.durationSeconds || 0)
+    );
     if (andPlay && !playing) audioEl.play().catch(() => {});
   }
 
@@ -186,7 +212,11 @@
   // real word timings when present; legacy transcripts get estimates
   function wordsOf(turn) {
     if (turn.words?.length) {
-      return turn.words.map((w) => ({ text: w.text, start: w.start, end: w.end }));
+      return turn.words.map((w) => ({
+        text: w.text,
+        start: w.start,
+        end: w.end,
+      }));
     }
     const parts = (turn.text || '').split(/\s+/).filter(Boolean);
     const totalLen = parts.reduce((a, p) => a + p.length + 1, 0) || 1;
@@ -201,7 +231,9 @@
   }
 
   const activeTurnIdx = $derived(
-    turns.findIndex((turn) => currentTime >= turn.start && currentTime < turn.end + 0.3)
+    turns.findIndex(
+      (turn) => currentTime >= turn.start && currentTime < turn.end + 0.3
+    )
   );
   const activeTurn = $derived(activeTurnIdx >= 0 ? turns[activeTurnIdx] : null);
 
@@ -209,8 +241,12 @@
   let turnEls = {};
   $effect(() => {
     if (!playing || activeTurnIdx < 0) return;
-    if (activeTurnIdx >= shown) shown = Math.min(filtered.length, activeTurnIdx + 25);
-    turnEls[activeTurnIdx]?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    if (activeTurnIdx >= shown)
+      shown = Math.min(filtered.length, activeTurnIdx + 25);
+    turnEls[activeTurnIdx]?.scrollIntoView({
+      block: 'center',
+      behavior: 'smooth',
+    });
   });
 
   // reset when switching transcripts
@@ -235,16 +271,20 @@
   const aiSections = $derived.by(() => {
     const secs = _aiSections;
     if (secs.length <= 1) return secs;
-    const dur = t?.durationSeconds || Math.max(...turns.map((x) => x.end), 0) || 0;
+    const dur =
+      t?.durationSeconds || Math.max(...turns.map((x) => x.end), 0) || 0;
     const outOfBounds = secs.filter((s) => s.start > dur + 30).length;
-    const dup = secs.filter((s, i) => i > 0 && Math.abs(s.start - secs[i - 1].start) < 15).length;
+    const dup = secs.filter(
+      (s, i) => i > 0 && Math.abs(s.start - secs[i - 1].start) < 15
+    ).length;
     if (outOfBounds === 0 && dup < secs.length / 2) return secs;
     // redistribute clustered / OOB entries proportionally
     const sorted = [...secs].sort((a, b) => a.start - b.start);
     return sorted
       .map((s, i) => {
         const needFix =
-          s.start > dur + 30 || (i > 0 && Math.abs(s.start - sorted[i - 1].start) < 15);
+          s.start > dur + 30 ||
+          (i > 0 && Math.abs(s.start - sorted[i - 1].start) < 15);
         if (!needFix) return s;
         const frac = i / Math.max(1, sorted.length - 1);
         const target = Math.round(frac * dur);
@@ -262,7 +302,8 @@
       .sort((a, b) => a.start - b.start);
   });
   const aiQuotes = $derived.by(() => {
-    const dur = t?.durationSeconds || Math.max(...turns.map((x) => x.end), 0) || 0;
+    const dur =
+      t?.durationSeconds || Math.max(...turns.map((x) => x.end), 0) || 0;
     return _aiQuotes.map((q) => {
       if (q.start <= dur + 30) return q;
       // clamp hallucinated 7h timestamps to end of meeting minus spread
@@ -373,7 +414,10 @@
 {#if !t}
   <div class="missing">
     <p>transcript not found.</p>
-    <button class="btn btn-ghost small" onclick={onBack}>← back</button>
+    <button
+      class="btn btn-ghost small"
+      onclick={onBack}>← back</button
+    >
   </div>
 {:else}
   <div
@@ -384,26 +428,32 @@
     class:resizing
   >
     <div class="cols">
-      <div class="content-col" bind:this={contentColEl}>
+      <div
+        class="content-col"
+        bind:this={contentColEl}
+      >
         <!-- sticky header: arrow + title + exports on one line -->
         <header>
           <div class="titlerow">
-            <button class="back-arrow" onclick={onBack} aria-label="back"
-              ><ArrowLeft size={18} /></button
+            <button
+              class="back-arrow"
+              onclick={onBack}
+              aria-label="back"><ArrowLeft size={18} /></button
             >
             <div class="titleblock">
               <h2>
                 <InlineEdit
                   value={t.fileName}
                   size="lg"
-                  onSave={(v) => send({ type: 'transcriptsRename', id: t.id, name: v })}
+                  onSave={(v) =>
+                    send({ type: 'transcriptsRename', id: t.id, name: v })}
                 />
               </h2>
               <p class="meta mono-kicker">
-                {fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length} speaker{speakers.length ===
-                1
-                  ? ''
-                  : 's'}{t.isMeeting ? ' · call' : ''}
+                {fmtDate(t.date)} · {fmtDur(duration || t.durationSeconds)} · {speakers.length}
+                speaker{speakers.length === 1 ? '' : 's'}{t.isMeeting
+                  ? ' · call'
+                  : ''}
               </p>
             </div>
             <div class="exports">
@@ -411,17 +461,20 @@
                 <button
                   class="btn btn-ghost small"
                   onclick={() => setRailOpen(true)}
-                  title="AI summary, breakdown & quotes"><Sparkles size={13} /> details</button
+                  title="AI summary, breakdown & quotes"
+                  ><Sparkles size={13} /> details</button
                 >
               {/if}
               <button
                 class="btn btn-ghost small"
-                onclick={() => send({ type: 'transcriptExport', id: t.id, format: 'md' })}
+                onclick={() =>
+                  send({ type: 'transcriptExport', id: t.id, format: 'md' })}
                 ><Download size={13} /> .md</button
               >
               <button
                 class="btn btn-ghost small"
-                onclick={() => send({ type: 'transcriptExport', id: t.id, format: 'txt' })}
+                onclick={() =>
+                  send({ type: 'transcriptExport', id: t.id, format: 'txt' })}
                 ><Download size={13} /> .txt</button
               >
             </div>
@@ -431,7 +484,11 @@
         <div class="filters">
           <label class="input search">
             <Search size={14} />
-            <input bind:value={query} placeholder="search this transcript…" spellcheck="false" />
+            <input
+              bind:value={query}
+              placeholder="search this transcript…"
+              spellcheck="false"
+            />
           </label>
 
           <!-- Apple Intelligence hint — sits between search and speakers, only
@@ -440,10 +497,13 @@
             <div class="ai-banner card">
               <Sparkles size={13} />
               <span
-                ><b>want summaries & topics?</b> enable Apple Intelligence in System Settings.</span
+                ><b>want summaries & topics?</b> enable Apple Intelligence in System
+                Settings.</span
               >
-              <button class="banner-x" onclick={dismissAiNudge} aria-label="dismiss"
-                ><X size={12} /></button
+              <button
+                class="banner-x"
+                onclick={dismissAiNudge}
+                aria-label="dismiss"><X size={12} /></button
               >
             </div>
           {/if}
@@ -453,7 +513,10 @@
             <div class="legend">
               {#each speakers as i (i)}
                 {#if renaming === i}
-                  <span class="speaker pill editing" style="--c:{spColor(i)}">
+                  <span
+                    class="speaker pill editing"
+                    style="--c:{spColor(i)}"
+                  >
                     <input
                       bind:value={renameVal}
                       onkeydown={(e) => {
@@ -462,7 +525,10 @@
                       }}
                       spellcheck="false"
                     />
-                    <button class="ok" onclick={saveRename}><Check size={12} /></button>
+                    <button
+                      class="ok"
+                      onclick={saveRename}><Check size={12} /></button
+                    >
                   </span>
                 {:else}
                   <button
@@ -483,16 +549,26 @@
         <!-- transcript — otter-style blocks -->
         {#if turns.length === 0}
           <div class="pending">
-            <span class="hand big">recording saved — the words are on their way…</span>
-            <p class="mono-kicker">transcription + speaker labels land here automatically</p>
+            <span class="hand big"
+              >recording saved — the words are on their way…</span
+            >
+            <p class="mono-kicker">
+              transcription + speaker labels land here automatically
+            </p>
           </div>
         {:else}
           <div class="turns">
             {#each visibleTurns as turn, idx (idx)}
               {@const isNow = t.audioUrl && turn === activeTurn}
-              <div class="oturn" class:now={isNow} bind:this={turnEls[idx]}>
+              <div
+                class="oturn"
+                class:now={isNow}
+                bind:this={turnEls[idx]}
+              >
                 <div class="ohead">
-                  <span class="avatar" style="background:{spColor(turn.speaker)}"
+                  <span
+                    class="avatar"
+                    style="background:{spColor(turn.speaker)}"
                     >{spInitial(turn.speaker)}</span
                   >
                   <span class="oname">{spName(turn.speaker)}</span>
@@ -509,8 +585,11 @@
                   {#each wordsOf(turn) as w, wi (wi)}
                     <span
                       class="w"
-                      class:on={t.audioUrl && currentTime >= w.start && currentTime < w.end}
-                      onclick={() => t.audioUrl && seekTo(w.start, true)}>{w.text}</span
+                      class:on={t.audioUrl &&
+                        currentTime >= w.start &&
+                        currentTime < w.end}
+                      onclick={() => t.audioUrl && seekTo(w.start, true)}
+                      >{w.text}</span
                     >
                   {/each}
                 </p>
@@ -568,11 +647,14 @@
                   ><Sparkles size={13} /> local heuristic</span
                 >
               {:else}
-                <span class="ai-badge"><Sparkles size={13} /> on-device AI</span>
+                <span class="ai-badge"><Sparkles size={13} /> on-device AI</span
+                >
               {/if}
               <span class="rail-actions">
                 {#if aiStatus === 'pending'}
-                  <span class="mono-kicker ai-pending"><Loader2 size={12} /> generating…</span>
+                  <span class="mono-kicker ai-pending"
+                    ><Loader2 size={12} /> generating…</span
+                  >
                 {:else if aiSummary}
                   <button
                     class="btn btn-ghost small ai-regen"
@@ -580,20 +662,27 @@
                     title="regenerate"><Wand2 size={12} /></button
                   >
                 {:else if aiStatus === 'failed'}
-                  <span class="mono-kicker" style="color:var(--red-ink)">failed</span>
+                  <span
+                    class="mono-kicker"
+                    style="color:var(--red-ink)">failed</span
+                  >
                 {/if}
                 <button
                   class="rail-close"
                   onclick={() => setRailOpen(false)}
                   title="hide AI panel"
-                  aria-label="hide AI panel"><PanelRightClose size={14} /></button
+                  aria-label="hide AI panel"
+                  ><PanelRightClose size={14} /></button
                 >
               </span>
             </div>
 
             {#if aiStatus === 'pending'}
               <!-- skeleton — the shape of what's coming, shimmering -->
-              <div class="skel" aria-hidden="true">
+              <div
+                class="skel"
+                aria-hidden="true"
+              >
                 <div class="skel-line w60 title"></div>
                 <div class="skel-line"></div>
                 <div class="skel-line w80"></div>
@@ -634,7 +723,9 @@
                         title="play from {section.timestampLabel}"
                       >
                         <Clock size={11} />
-                        <span class="sec-ts mono-kicker">{section.timestampLabel}</span>
+                        <span class="sec-ts mono-kicker"
+                          >{section.timestampLabel}</span
+                        >
                         <span class="sec-title">{section.title}</span>
                       </button>
                       {#if section.points?.length > 0}
@@ -645,7 +736,9 @@
                                 onclick={() => seekTo(point.start, true)}
                                 title="play from here"
                               >
-                                <span class="pt-ts mono-kicker">{fmtDur(point.start)}</span>
+                                <span class="pt-ts mono-kicker"
+                                  >{fmtDur(point.start)}</span
+                                >
                                 <span class="pt-text">{point.text}</span>
                               </button>
                             </li>
@@ -680,14 +773,18 @@
                       title="play from {quote.ts}"
                     >
                       <span class="q-text">“{quote.text}”</span>
-                      <span class="q-meta mono-kicker">{quote.speaker || '—'} · {quote.ts}</span>
+                      <span class="q-meta mono-kicker"
+                        >{quote.speaker || '—'} · {quote.ts}</span
+                      >
                     </button>
                   {/each}
                 </div>
               {/if}
             {:else}
               <p class="ai-empty">no summary yet</p>
-              <button class="btn btn-pink small" onclick={generateAI}
+              <button
+                class="btn btn-pink small"
+                onclick={generateAI}
                 ><Sparkles size={13} /> summarize with Apple Intelligence</button
               >
             {/if}
@@ -700,7 +797,10 @@
     <!-- bottom bar: static, stuck to viewport bottom like header -->
     {#if t.audioUrl}
       <div class="dock">
-        <button class="play" onclick={togglePlay}>
+        <button
+          class="play"
+          onclick={togglePlay}
+        >
           {#if playing}<Pause size={16} />{:else}<Play size={16} />{/if}
         </button>
         <span class="time mono-kicker now">{fmtClock(currentTime)}</span>
@@ -722,25 +822,39 @@
             )}
         >
           {#each filtered as seg}
-            {@const left = (seg.start / Math.max(1, duration || t.durationSeconds)) * 100}
+            {@const left =
+              (seg.start / Math.max(1, duration || t.durationSeconds)) * 100}
             {@const width = Math.max(
               0.4,
-              ((seg.end - seg.start) / Math.max(1, duration || t.durationSeconds)) * 100
+              ((seg.end - seg.start) /
+                Math.max(1, duration || t.durationSeconds)) *
+                100
             )}
             <div
               class="seg"
-              style="left:{left}%; width:{width}%; background:{spColor(seg.speaker)}"
+              style="left:{left}%; width:{width}%; background:{spColor(
+                seg.speaker
+              )}"
             ></div>
           {/each}
-          <div class="head" style="left:{(duration ? currentTime / duration : 0) * 100}%">
+          <div
+            class="head"
+            style="left:{(duration ? currentTime / duration : 0) * 100}%"
+          >
             <i></i>
           </div>
         </div>
 
-        <span class="time mono-kicker dim">{fmtClock(duration || t.durationSeconds)}</span>
+        <span class="time mono-kicker dim"
+          >{fmtClock(duration || t.durationSeconds)}</span
+        >
         <div class="rates">
           {#each [0.75, 1, 1.5, 2] as r (r)}
-            <button class="rate" class:on={rate === r} onclick={() => setRate(r)}>{r}×</button>
+            <button
+              class="rate"
+              class:on={rate === r}
+              onclick={() => setRate(r)}>{r}×</button
+            >
           {/each}
         </div>
 

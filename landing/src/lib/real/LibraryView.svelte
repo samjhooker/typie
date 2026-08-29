@@ -1,14 +1,29 @@
 <script>
   const items = [
-    { time: '14:22', text: 'and the checklist is done?', isCall: true, spk: 2, dur: '12m' },
-    { time: '14:08', text: "quick voice note — don't forget to ship", isCall: false },
+    {
+      time: '14:22',
+      text: 'and the checklist is done?',
+      isCall: true,
+      spk: 2,
+      dur: '12m',
+    },
+    {
+      time: '14:08',
+      text: "quick voice note — don't forget to ship",
+      isCall: false,
+    },
     {
       time: '09:42',
       text: 'okay so the plan is we ship the beta friday — two items left',
       isCall: false,
       lat: '42ms',
     },
-    { time: '09:40', text: 'follow up email to send after the call', isCall: false, lat: '38ms' },
+    {
+      time: '09:40',
+      text: 'follow up email to send after the call',
+      isCall: false,
+      lat: '38ms',
+    },
     {
       time: 'Yesterday',
       text: 'recipe note — grandma said add white pepper',
@@ -28,7 +43,10 @@
   </div>
   <div class="rows">
     {#each items as item}
-      <div class="row" class:call={item.isCall}>
+      <div
+        class="row"
+        class:call={item.isCall}
+      >
         <span class="time">{item.time}</span>
         <p class="text">{item.text}</p>
         {#if item.isCall}

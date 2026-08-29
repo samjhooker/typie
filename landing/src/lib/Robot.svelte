@@ -1,5 +1,10 @@
 <script>
-  let { size = 100, mood = 'idle', eye = 'currentColor', bg = 'none' } = $props();
+  let {
+    size = 100,
+    mood = 'idle',
+    eye = 'currentColor',
+    bg = 'none',
+  } = $props();
 
   /* ---- eye tracking: all robots watch the cursor ---- */
   let ex = $state(0);
@@ -60,18 +65,38 @@
     stroke-linejoin="round"
   >
     {#if bg !== 'none'}
-      <path fill={bg} stroke="none" d="M5 7h14v12H5z" />
+      <path
+        fill={bg}
+        stroke="none"
+        d="M5 7h14v12H5z"
+      />
     {/if}
     <!-- bottom bar -->
     <path d="M19 21H5v-2h14v2Z" />
 
     <!-- ears (the pillars) -->
-    <path class="ear ear-l" d="M5 19H3v-4H1v-2h2V9h2v10Z" />
-    <path class="ear ear-r" d="M21 13h2v2h-2v4h-2V9h2v4Z" />
+    <path
+      class="ear ear-l"
+      d="M5 19H3v-4H1v-2h2V9h2v10Z"
+    />
+    <path
+      class="ear ear-r"
+      d="M21 13h2v2h-2v4h-2V9h2v4Z"
+    />
 
     <!-- eyes (the two key squares) -->
-    <path class="eye eye-l" fill={eye} stroke-width="0.55" d="M10 16H8v-4h2v4Z" />
-    <path class="eye eye-r" fill={eye} stroke-width="0.55" d="M16 16h-2v-4h2v4Z" />
+    <path
+      class="eye eye-l"
+      fill={eye}
+      stroke-width="0.55"
+      d="M10 16H8v-4h2v4Z"
+    />
+    <path
+      class="eye eye-r"
+      fill={eye}
+      stroke-width="0.55"
+      d="M16 16h-2v-4h2v4Z"
+    />
 
     <!-- screen + flag -->
     <path d="M13 7h6v2H5V7h6V5h2v2Z" />

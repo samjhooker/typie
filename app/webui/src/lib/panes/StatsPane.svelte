@@ -1,5 +1,10 @@
 <script>
-  import { ui, timeSavedSeconds, formatDuration, formatLatency } from '../bridge.svelte.js';
+  import {
+    ui,
+    timeSavedSeconds,
+    formatDuration,
+    formatLatency,
+  } from '../bridge.svelte.js';
 
   const stats = $derived(ui.stats);
 
@@ -91,7 +96,10 @@
           {#each days as d, i (i)}
             <div
               class="barcol"
-              title="{d.date.toLocaleDateString()} · {d.count} dictation{d.count === 1 ? '' : 's'}"
+              title="{d.date.toLocaleDateString()} · {d.count} dictation{d.count ===
+              1
+                ? ''
+                : 's'}"
             >
               <div
                 class="bar"
@@ -103,7 +111,8 @@
           {/each}
         </div>
         <p class="foot mono-kicker">
-          {activeDays} active day{activeDays === 1 ? '' : 's'} · peak {maxCount} in a day
+          {activeDays} active day{activeDays === 1 ? '' : 's'} · peak {maxCount}
+          in a day
         </p>
       </div>
 
@@ -115,13 +124,17 @@
             <div
               class="cell"
               title="{h}:00 · {v} dictations"
-              style="--a:{v ? Math.min(1, v / Math.max(1, Math.max(...hours))) : 0}"
+              style="--a:{v
+                ? Math.min(1, v / Math.max(1, Math.max(...hours)))
+                : 0}"
               class:on={v > 0}
             ></div>
           {/each}
         </div>
         <p class="foot mono-kicker">
-          {hours.some((v) => v > 0) ? `you're loudest around ${peakHour}:00` : 'no pattern yet'}
+          {hours.some((v) => v > 0)
+            ? `you're loudest around ${peakHour}:00`
+            : 'no pattern yet'}
         </p>
       </div>
     </div>

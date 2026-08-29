@@ -72,19 +72,29 @@
     >
       <p class="txt">{extra.text}</p>
       <footer><span class="meta">{extra.meta}</span></footer>
-      {#if extra.pinned}<span class="pin" style="background:{extra.tint.pin}"></span>{/if}
+      {#if extra.pinned}<span
+          class="pin"
+          style="background:{extra.tint.pin}"
+        ></span>{/if}
     </article>
   {/if}
 
   {#each notes as note (note.id)}
     {@const { tint, rot } = look(note.id)}
-    <article class="sticky" style="background:{tint.bg}; rotate:{rot}" class:pinned={note.pinned}>
+    <article
+      class="sticky"
+      style="background:{tint.bg}; rotate:{rot}"
+      class:pinned={note.pinned}
+    >
       <p class="txt">{note.text}</p>
       <footer>
         <span class="meta">{note.date} · {note.dur}</span>
       </footer>
       {#if note.pinned}
-        <span class="pin" style="background:{tint.pin}"></span>
+        <span
+          class="pin"
+          style="background:{tint.pin}"
+        ></span>
       {/if}
     </article>
   {/each}

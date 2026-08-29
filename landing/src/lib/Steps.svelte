@@ -3,33 +3,76 @@
   import { Mic, MoveRight, CornerDownLeft } from 'lucide-svelte';
 </script>
 
-<section class="steps-section" aria-label="How typie works">
+<section
+  class="steps-section"
+  aria-label="How typie works"
+>
   <div class="container row">
-    <div class="step" use:reveal>
+    <div
+      class="step"
+      use:reveal
+    >
       <span class="step-num mono">01</span>
-      <span class="key" aria-hidden="true">⌥</span>
+      <span
+        class="key"
+        aria-hidden="true">⌥</span
+      >
       <div class="txt">
         <h3>Hold the key</h3>
         <p>Press Option in any app — from Slack to your IDE.</p>
       </div>
     </div>
 
-    <span class="arrow" aria-hidden="true"><MoveRight size={18} strokeWidth={1.8} /></span>
+    <span
+      class="arrow"
+      aria-hidden="true"
+      ><MoveRight
+        size={18}
+        strokeWidth={1.8}
+      /></span
+    >
 
-    <div class="step" use:reveal={{ delay: 80 }}>
+    <div
+      class="step"
+      use:reveal={{ delay: 80 }}
+    >
       <span class="step-num mono">02</span>
-      <span class="ic" aria-hidden="true"><Mic size={20} strokeWidth={2} /></span>
+      <span
+        class="ic"
+        aria-hidden="true"
+        ><Mic
+          size={20}
+          strokeWidth={2}
+        /></span
+      >
       <div class="txt">
         <h3>Speak naturally</h3>
         <p>Talk at your pace. Nvidia Parakeet transcribes in RAM.</p>
       </div>
     </div>
 
-    <span class="arrow" aria-hidden="true"><MoveRight size={18} strokeWidth={1.8} /></span>
+    <span
+      class="arrow"
+      aria-hidden="true"
+      ><MoveRight
+        size={18}
+        strokeWidth={1.8}
+      /></span
+    >
 
-    <div class="step" use:reveal={{ delay: 160 }}>
+    <div
+      class="step"
+      use:reveal={{ delay: 160 }}
+    >
       <span class="step-num mono">03</span>
-      <span class="ic done" aria-hidden="true"><CornerDownLeft size={20} strokeWidth={2} /></span>
+      <span
+        class="ic done"
+        aria-hidden="true"
+        ><CornerDownLeft
+          size={20}
+          strokeWidth={2}
+        /></span
+      >
       <div class="txt">
         <h3>It's typed</h3>
         <p>Release. Keystrokes land at your cursor in 80 milliseconds.</p>

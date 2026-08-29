@@ -6,7 +6,10 @@
 
 <section class="notchband">
   <div class="panel">
-    <div class="copy" use:reveal>
+    <div
+      class="copy"
+      use:reveal
+    >
       <p class="hand kicker">It lives in your notch.</p>
       <h2>Always there<br /><span class="nowrap">when you need it.</span></h2>
       <div class="body">
@@ -15,22 +18,74 @@
           Hold <i class="keyhint mono">&#8997;</i>, speak, release.<br />
           Your words appear.
         </p>
-        <svg class="starburst" viewBox="0 0 60 60" aria-hidden="true">
-          <g stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round">
-            <line x1="30" y1="4" x2="30" y2="18" />
-            <line x1="30" y1="42" x2="30" y2="56" />
-            <line x1="4" y1="30" x2="18" y2="30" />
-            <line x1="42" y1="30" x2="56" y2="30" />
-            <line x1="11" y1="11" x2="21" y2="21" />
-            <line x1="39" y1="39" x2="49" y2="49" />
-            <line x1="49" y1="11" x2="39" y2="21" />
-            <line x1="21" y1="39" x2="11" y2="49" />
+        <svg
+          class="starburst"
+          viewBox="0 0 60 60"
+          aria-hidden="true"
+        >
+          <g
+            stroke="var(--ink)"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          >
+            <line
+              x1="30"
+              y1="4"
+              x2="30"
+              y2="18"
+            />
+            <line
+              x1="30"
+              y1="42"
+              x2="30"
+              y2="56"
+            />
+            <line
+              x1="4"
+              y1="30"
+              x2="18"
+              y2="30"
+            />
+            <line
+              x1="42"
+              y1="30"
+              x2="56"
+              y2="30"
+            />
+            <line
+              x1="11"
+              y1="11"
+              x2="21"
+              y2="21"
+            />
+            <line
+              x1="39"
+              y1="39"
+              x2="49"
+              y2="49"
+            />
+            <line
+              x1="49"
+              y1="11"
+              x2="39"
+              y2="21"
+            />
+            <line
+              x1="21"
+              y1="39"
+              x2="11"
+              y2="49"
+            />
           </g>
         </svg>
       </div>
     </div>
 
-    <div class="stack" use:reveal={{ delay: 80 }} aria-hidden="true">
+    <div
+      class="stack"
+      use:reveal={{ delay: 80 }}
+      aria-hidden="true"
+    >
       <!-- idle: just the hardware camera notch -->
       <div class="lid">
         <div class="screen">
@@ -44,9 +99,19 @@
       <div class="lid">
         <div class="screen">
           <div class="island live">
-            <span class="bot"><Robot size={20} mood="listening" /></span>
+            <span class="bot"
+              ><Robot
+                size={20}
+                mood="listening"
+              /></span
+            >
             <span class="cam"></span>
-            <span class="wave"><TalkWave n={5} color="#fc5681" /></span>
+            <span class="wave"
+              ><TalkWave
+                n={5}
+                color="#fc5681"
+              /></span
+            >
           </div>
         </div>
       </div>
@@ -55,7 +120,12 @@
       <div class="lid">
         <div class="screen">
           <div class="island live done">
-            <span class="bot"><Robot size={22} mood="done" /></span>
+            <span class="bot"
+              ><Robot
+                size={22}
+                mood="done"
+              /></span
+            >
             <span class="cam"></span>
             <span class="ms">✓ 80ms</span>
           </div>
@@ -79,7 +149,8 @@
     background: var(--pink-band);
     border-radius: 28px;
     overflow: hidden;
-    padding: clamp(32px, 4.5vw, 56px) 0 clamp(32px, 4.5vw, 56px) clamp(28px, 4vw, 56px);
+    padding: clamp(32px, 4.5vw, 56px) 0 clamp(32px, 4.5vw, 56px)
+      clamp(28px, 4vw, 56px);
   }
 
   .copy {
@@ -158,8 +229,16 @@
     border-radius: 21px 0 0 0;
     overflow: hidden;
     background:
-      radial-gradient(130% 160% at 0% -10%, rgba(130, 237, 166, 0.55) 0%, transparent 52%),
-      radial-gradient(110% 140% at 100% 0%, rgba(252, 86, 129, 0.28) 0%, transparent 48%),
+      radial-gradient(
+        130% 160% at 0% -10%,
+        rgba(130, 237, 166, 0.55) 0%,
+        transparent 52%
+      ),
+      radial-gradient(
+        110% 140% at 100% 0%,
+        rgba(252, 86, 129, 0.28) 0%,
+        transparent 48%
+      ),
       linear-gradient(118deg, #bcd6ff 0%, #ddd8ff 42%, #82eda6 100%);
   }
 
@@ -200,7 +279,12 @@
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    background: radial-gradient(
+      circle at 35% 32%,
+      #4a5568 0 18%,
+      #151a22 42%,
+      #07080c 100%
+    );
     box-shadow:
       inset 0 0 0 1px rgba(120, 130, 150, 0.4),
       0 0 0 2px #000;

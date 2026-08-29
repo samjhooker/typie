@@ -4,11 +4,18 @@
 </script>
 
 {#if trash.entries.length}
-  <div class="toasts" role="status" aria-live="polite">
+  <div
+    class="toasts"
+    role="status"
+    aria-live="polite"
+  >
     {#each trash.entries as t (t.uid)}
       <div class="toast">
         <span class="msg"><Trash2 size={13} /> deleted <b>{t.preview}</b></span>
-        <button class="undo" onclick={() => trash.undo(t.uid)}>undo</button>
+        <button
+          class="undo"
+          onclick={() => trash.undo(t.uid)}>undo</button
+        >
       </div>
     {/each}
   </div>

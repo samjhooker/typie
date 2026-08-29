@@ -16,13 +16,22 @@
   ];
 </script>
 
-<div class="ticker" aria-label="manifesto ticker">
+<div
+  class="ticker"
+  aria-label="manifesto ticker"
+>
   <div class="belt">
     {#each [0, 1, 2, 3] as copy (copy)}
-      <div class="run" aria-hidden={copy !== 0}>
+      <div
+        class="run"
+        aria-hidden={copy !== 0}
+      >
         {#each items as it}
           <span class="item">{it.txt}</span>
-          <span class="star" style="color:{it.c}">✦</span>
+          <span
+            class="star"
+            style="color:{it.c}">✦</span
+          >
         {/each}
       </div>
     {/each}

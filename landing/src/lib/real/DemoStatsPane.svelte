@@ -6,14 +6,32 @@
   const avgLatency = '82ms';
 
   const barData = [3, 0, 5, 8, 12, 2, 0, 4, 7, 15, 9, 3, 0, 6];
-  const barLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const barLabels = [
+    'M',
+    'T',
+    'W',
+    'T',
+    'F',
+    'S',
+    'S',
+    'M',
+    'T',
+    'W',
+    'T',
+    'F',
+    'S',
+    'S',
+  ];
   const maxCount = Math.max(...barData);
   const activeDays = barData.filter((v) => v > 0).length;
 
   const hours = [
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 0, 0,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    0, 0, 0,
   ];
-  const hourBuckets = [0, 0, 0, 0, 0, 0, 0, 1, 3, 5, 12, 8, 6, 4, 11, 9, 7, 5, 3, 2, 1, 0, 0, 0];
+  const hourBuckets = [
+    0, 0, 0, 0, 0, 0, 0, 1, 3, 5, 12, 8, 6, 4, 11, 9, 7, 5, 3, 2, 1, 0, 0, 0,
+  ];
   const maxHour = Math.max(...hourBuckets);
   const peakHour = hourBuckets.indexOf(Math.max(...hourBuckets));
 </script>
@@ -56,7 +74,10 @@
       <h3>last two weeks</h3>
       <div class="bars">
         {#each barData as count, i (i)}
-          <div class="barcol" title="{count} dictation{count === 1 ? '' : 's'}">
+          <div
+            class="barcol"
+            title="{count} dictation{count === 1 ? '' : 's'}"
+          >
             <div
               class="bar"
               class:hot={count === maxCount && count > 0}
@@ -66,7 +87,9 @@
           </div>
         {/each}
       </div>
-      <p class="foot mono">{activeDays} active days · peak {maxCount} in a day</p>
+      <p class="foot mono">
+        {activeDays} active days · peak {maxCount} in a day
+      </p>
     </div>
 
     <div class="panel card">
@@ -85,7 +108,9 @@
     </div>
   </div>
 
-  <p class="hand closer">that's roughly 96 pages of text you didn't have to type.</p>
+  <p class="hand closer">
+    that's roughly 96 pages of text you didn't have to type.
+  </p>
 </div>
 
 <style>

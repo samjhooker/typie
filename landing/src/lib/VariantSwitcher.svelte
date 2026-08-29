@@ -1,7 +1,12 @@
 <script>
   import Logo from './Logo.svelte';
 
-  let { variant = 'personal', logoSize = 24, logoColor = null, personalHref = '/' } = $props();
+  let {
+    variant = 'personal',
+    logoSize = 24,
+    logoColor = null,
+    personalHref = '/',
+  } = $props();
 
   const VARIANTS = [
     {
@@ -10,11 +15,23 @@
       label: 'Personal',
       desc: 'Everyday dictation, free forever',
     },
-    { id: 'education', href: '/education', label: 'Education', desc: 'K-12 & higher ed' },
-    { id: 'enterprise', href: '/enterprise', label: 'Enterprise', desc: 'Fleet deployments' },
+    {
+      id: 'education',
+      href: '/education',
+      label: 'Education',
+      desc: 'K-12 & higher ed',
+    },
+    {
+      id: 'enterprise',
+      href: '/enterprise',
+      label: 'Enterprise',
+      desc: 'Fleet deployments',
+    },
   ];
 
-  const current = $derived(VARIANTS.find((v) => v.id === variant) ?? VARIANTS[0]);
+  const current = $derived(
+    VARIANTS.find((v) => v.id === variant) ?? VARIANTS[0]
+  );
 
   let open = $state(false);
   let root = $state(null);
@@ -44,12 +61,25 @@
 
 <svelte:window onkeydown={onKey} />
 
-<div class="vn" bind:this={root}>
-  <a href={current.href} class="vn-logo" aria-label={'typie ' + current.id + ' home'}>
-    <Logo size={logoSize} color={logoColor} />
+<div
+  class="vn"
+  bind:this={root}
+>
+  <a
+    href={current.href}
+    class="vn-logo"
+    aria-label={'typie ' + current.id + ' home'}
+  >
+    <Logo
+      size={logoSize}
+      color={logoColor}
+    />
   </a>
 
-  <span class="vn-divider" aria-hidden="true"></span>
+  <span
+    class="vn-divider"
+    aria-hidden="true"
+  ></span>
 
   <button
     class="vn-trigger"
@@ -60,7 +90,11 @@
     aria-label={'typie ' + current.id + ' — switch edition'}
   >
     {current.id}
-    <svg class="chev" viewBox="0 0 10 6" aria-hidden="true">
+    <svg
+      class="chev"
+      viewBox="0 0 10 6"
+      aria-hidden="true"
+    >
       <path
         d="M1 1l4 4 4-4"
         fill="none"
@@ -73,7 +107,10 @@
   </button>
 
   {#if open}
-    <div class="vn-menu" role="menu">
+    <div
+      class="vn-menu"
+      role="menu"
+    >
       {#each VARIANTS as v (v.id)}
         <a
           role="menuitem"
@@ -86,7 +123,10 @@
             <b>{v.label}</b>
             <span>{v.desc}</span>
           </span>
-          <i class="vn-dot" aria-hidden="true"></i>
+          <i
+            class="vn-dot"
+            aria-hidden="true"
+          ></i>
         </a>
       {/each}
     </div>
@@ -183,7 +223,8 @@
     padding: 10px 12px;
     border-radius: 9px;
     text-decoration: none;
-    transition: background-color 160ms var(--ease-snap, cubic-bezier(0.22, 1, 0.36, 1));
+    transition: background-color 160ms
+      var(--ease-snap, cubic-bezier(0.22, 1, 0.36, 1));
   }
 
   .vn-item:hover {

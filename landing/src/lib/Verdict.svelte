@@ -5,35 +5,68 @@
   /* stripped to the three differentiators that actually move people */
   const rows = [
     { label: 'Works fully offline', typie: 'yes', them: ['no', 'yes', 'no'] },
-    { label: 'Price', typie: '$0 forever', them: ['$12/mo', 'from free*', '$$$'] },
+    {
+      label: 'Price',
+      typie: '$0 forever',
+      them: ['$12/mo', 'from free*', '$$$'],
+    },
     { label: 'Account required', typie: 'no', them: ['yes', 'no', 'yes'] },
   ];
 </script>
 
-<section class="verdict field pop-c" id="versus">
+<section
+  class="verdict field pop-c"
+  id="versus"
+>
   <div class="container">
-    <p class="mono kicker" style="text-align:center">chapter 04 · the receipts</p>
-    <h2 class="subhead" use:reveal>
+    <p
+      class="mono kicker"
+      style="text-align:center"
+    >
+      chapter 04 · the receipts
+    </p>
+    <h2
+      class="subhead"
+      use:reveal
+    >
       Go ahead,
       <span class="squiggle"
         >comparison-shop
-        <svg viewBox="0 0 120 14" aria-hidden="true">
-          <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" />
+        <svg
+          viewBox="0 0 120 14"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 9c22-6 44-6 56-3s34 4 56-2"
+            stroke="var(--hotpink)"
+          />
         </svg>
       </span>
     </h2>
-    <p class="lede" use:reveal={{ delay: 60 }}>
-      Screenshot this table. Send it to the group chat deciding for you. We'll wait.
+    <p
+      class="lede"
+      use:reveal={{ delay: 60 }}
+    >
+      Screenshot this table. Send it to the group chat deciding for you. We'll
+      wait.
     </p>
 
-    <div class="tablewrap" use:reveal={{ delay: 120 }}>
+    <div
+      class="tablewrap"
+      use:reveal={{ delay: 120 }}
+    >
       <table>
         <thead>
           <tr>
             <th class="rowlabel"><span class="mono">what matters</span></th>
             <th class="typie">
               <span class="sticker hand">← you, probably</span>
-              <span class="bot"><Robot size={40} mood="idle" /></span>
+              <span class="bot"
+                ><Robot
+                  size={40}
+                  mood="idle"
+                /></span
+              >
               <span class="name">typie</span>
               <span class="tag hand">$0 · offline</span>
             </th>
@@ -48,9 +81,15 @@
               <td class="rowlabel">{row.label}</td>
               <td class="typie">
                 {#if row.typie === 'yes'}
-                  <span class="mark yes" aria-label="yes">✓</span>
+                  <span
+                    class="mark yes"
+                    aria-label="yes">✓</span
+                  >
                 {:else if row.typie === 'no'}
-                  <span class="mark no" aria-label="no">✗</span>
+                  <span
+                    class="mark no"
+                    aria-label="no">✗</span
+                  >
                 {:else}
                   <span class="big">{row.typie}</span>
                 {/if}
@@ -58,11 +97,20 @@
               {#each row.them as cell}
                 <td>
                   {#if cell === 'yes'}
-                    <span class="mark yes dim" aria-label="yes">✓</span>
+                    <span
+                      class="mark yes dim"
+                      aria-label="yes">✓</span
+                    >
                   {:else if cell === 'no'}
-                    <span class="mark no" aria-label="no">✗</span>
+                    <span
+                      class="mark no"
+                      aria-label="no">✗</span
+                    >
                   {:else if cell === '—'}
-                    <span class="dash" aria-label="not available">—</span>
+                    <span
+                      class="dash"
+                      aria-label="not available">—</span
+                    >
                   {:else}
                     <span class="small">{cell}</span>
                   {/if}
@@ -74,9 +122,12 @@
       </table>
     </div>
 
-    <p class="fine mono" use:reveal>
-      *superwhisper's free tier covers local models · competitor plans change, check their sites ·
-      every ✓ in our column runs on your mac
+    <p
+      class="fine mono"
+      use:reveal
+    >
+      *superwhisper's free tier covers local models · competitor plans change,
+      check their sites · every ✓ in our column runs on your mac
     </p>
   </div>
 </section>

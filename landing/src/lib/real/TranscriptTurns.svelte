@@ -18,7 +18,12 @@
       time: '02:24',
       text: 'perfect. i can take the video this afternoon.',
     },
-    { speaker: 1, name: 'Sam', time: '02:31', text: "awesome. i'll handle the pricing page then." },
+    {
+      speaker: 1,
+      name: 'Sam',
+      time: '02:31',
+      text: "awesome. i'll handle the pricing page then.",
+    },
     {
       speaker: 0,
       name: 'Maya',
@@ -27,7 +32,14 @@
     },
   ];
 
-  const SP_COLORS = ['#fc5681', '#6f8ffb', '#c88cfd', '#ff9124', '#03594d', '#e59e12'];
+  const SP_COLORS = [
+    '#fc5681',
+    '#6f8ffb',
+    '#c88cfd',
+    '#ff9124',
+    '#03594d',
+    '#e59e12',
+  ];
   function spColor(i) {
     return SP_COLORS[i % SP_COLORS.length];
   }
@@ -37,7 +49,10 @@
   {#each turns as turn, i (i)}
     <div class="oturn">
       <div class="ohead">
-        <span class="avatar" style="background:{spColor(turn.speaker)}">{turn.name[0]}</span>
+        <span
+          class="avatar"
+          style="background:{spColor(turn.speaker)}">{turn.name[0]}</span
+        >
         <span class="oname">{turn.name}</span>
         <span class="ts">{turn.time}</span>
       </div>

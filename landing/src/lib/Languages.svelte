@@ -31,27 +31,57 @@
   ];
 </script>
 
-<section class="langs field" id="languages">
+<section
+  class="langs field"
+  id="languages"
+>
   <div class="container">
-    <h2 class="subhead" use:reveal>
+    <h2
+      class="subhead"
+      use:reveal
+    >
       25 languages.
       <span class="squiggle"
         >No cloud.
-        <svg viewBox="0 0 120 14" aria-hidden="true">
-          <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" />
+        <svg
+          viewBox="0 0 120 14"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 9c22-6 44-6 56-3s34 4 56-2"
+            stroke="var(--hotpink)"
+          />
         </svg>
       </span>
     </h2>
-    <p class="lede" use:reveal={{ delay: 60 }}>
-      Fast, accurate transcription that runs <strong>entirely on your Mac</strong>. Your audio is
-      processed locally and never uploaded. Powered by NVIDIA’s Parakeet model.
+    <p
+      class="lede"
+      use:reveal={{ delay: 60 }}
+    >
+      Fast, accurate transcription that runs <strong
+        >entirely on your Mac</strong
+      >. Your audio is processed locally and never uploaded. Powered by NVIDIA’s
+      Parakeet model.
     </p>
 
-    <div class="wrap" use:reveal={{ delay: 100 }}>
-      <span class="peek" aria-hidden="true"><Robot size={44} mood="idle" /></span>
+    <div
+      class="wrap"
+      use:reveal={{ delay: 100 }}
+    >
+      <span
+        class="peek"
+        aria-hidden="true"
+        ><Robot
+          size={44}
+          mood="idle"
+        /></span
+      >
       <ul class="board">
         {#each langs as lang}
-          <li class="card" lang={lang.n}>
+          <li
+            class="card"
+            lang={lang.n}
+          >
             <span class="native">{lang.native}</span>
             <span class="name">{lang.n}</span>
           </li>

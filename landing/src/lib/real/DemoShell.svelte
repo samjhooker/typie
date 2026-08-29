@@ -7,7 +7,12 @@
   import DemoTranscriptDetail from './DemoTranscriptDetail.svelte';
   import DemoStatsPane from './DemoStatsPane.svelte';
 
-  let { startPane = 'home', startTranscript = null, notesExtra = null, locked = false } = $props();
+  let {
+    startPane = 'home',
+    startTranscript = null,
+    notesExtra = null,
+    locked = false,
+  } = $props();
   let pane = $state('home');
   let selectedTranscript = $state(null);
 
@@ -41,7 +46,10 @@
 <div class="shell">
   <aside class="sidebar">
     <div class="brand">
-      <Robot size={26} mood="idle" />
+      <Robot
+        size={26}
+        mood="idle"
+      />
       <span class="word">typie<i>.</i></span>
     </div>
 
@@ -55,7 +63,12 @@
           onclick={() => go(item.id)}
           disabled={locked && item.id !== startPane}
         >
-          <span class="nav-ico"><Glyph name={item.glyph} size={17} /></span>
+          <span class="nav-ico"
+            ><Glyph
+              name={item.glyph}
+              size={17}
+            /></span
+          >
           <span class="nav-label">{item.label}</span>
         </button>
       {/each}
@@ -65,7 +78,10 @@
 
     <div class="local-card">
       <div class="row">
-        <Robot size={16} mood="idle" />
+        <Robot
+          size={16}
+          mood="idle"
+        />
         <strong>everything stays here</strong>
       </div>
       <p>all transcription runs on this Mac. no cloud, ever.</p>
@@ -146,7 +162,8 @@
     --line-strong: rgba(3, 89, 77, 0.22);
     --radius-card: 20px;
     --mono: 'IBM Plex Mono', ui-monospace, monospace;
-    --display: 'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
+    --display:
+      'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
     --sans: 'Inter', -apple-system, system-ui, sans-serif;
     --hand: 'Caveat', cursive;
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

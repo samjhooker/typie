@@ -21,7 +21,8 @@ export function reveal(node, opts = {}) {
 }
 
 const REDUCED =
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Count-up for stat numerals. Opacity-free, transform-free, rAF driven.
 export function countup(node, opts = {}) {

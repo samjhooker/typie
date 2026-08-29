@@ -46,7 +46,11 @@
   ];
 
   const thread = [
-    { mine: false, text: 'ok the hero section looks so good now', time: '9:38' },
+    {
+      mine: false,
+      text: 'ok the hero section looks so good now',
+      time: '9:38',
+    },
     { mine: true, text: 'right?? the desktop demo sells it', time: '9:39' },
     { mine: false, text: 'and it types into every app for real', time: '9:40' },
   ];
@@ -56,8 +60,14 @@
   <aside class="list">
     <div class="search">⌕ Search</div>
     {#each convos as c}
-      <div class="row" class:on={c.id === 1}>
-        <span class="av" style="background:{c.color}">{c.av}</span>
+      <div
+        class="row"
+        class:on={c.id === 1}
+      >
+        <span
+          class="av"
+          style="background:{c.color}">{c.av}</span
+        >
         <div class="meta">
           <div class="top"><b>{c.name}</b><span class="t">{c.time}</span></div>
           <p class="last">{c.last}</p>
@@ -68,7 +78,10 @@
 
   <section class="chat">
     <header>
-      <span class="av sm" style="background:#34c759">MC</span>
+      <span
+        class="av sm"
+        style="background:#34c759">MC</span
+      >
       <div>
         <b>Maya Chen</b>
         <p>iMessage</p>
@@ -78,7 +91,10 @@
 
     <div class="bubbles">
       {#each thread as m}
-        <div class="bub" class:mine={m.mine}>
+        <div
+          class="bub"
+          class:mine={m.mine}
+        >
           <p>{m.text}</p>
           <span class="tm"
             >{m.time}{#if m.mine}<i>✓✓</i>{/if}</span
@@ -86,19 +102,32 @@
         </div>
       {/each}
       {#if typed}
-        <div class="bub mine fresh" class:pop={pasted}>
+        <div
+          class="bub mine fresh"
+          class:pop={pasted}
+        >
           <p>{typed}</p>
           <span class="tm">9:41<i>✓✓</i></span>
         </div>
       {/if}
     </div>
 
-    <div class="composer" class:armed={listening || typed} class:pasted>
+    <div
+      class="composer"
+      class:armed={listening || typed}
+      class:pasted
+    >
       <span class="plus">+</span>
       {#if typed}
-        <span class="field typed" class:pop={pasted}>{typed}<span class="caret"></span></span>
+        <span
+          class="field typed"
+          class:pop={pasted}>{typed}<span class="caret"></span></span
+        >
       {:else}
-        <span class="field" class:dim={listening}>{listening ? 'listening…' : 'iMessage'}</span>
+        <span
+          class="field"
+          class:dim={listening}>{listening ? 'listening…' : 'iMessage'}</span
+        >
       {/if}
       <span class="mic">🎙</span>
     </div>

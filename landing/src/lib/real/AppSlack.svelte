@@ -2,16 +2,37 @@
   /* full Slack UI — used inside the hero Mac; receives the dictation replay */
   let { typed = '', listening = false, pasted = false } = $props();
 
-  const channels = ['# general', '# launch', '# design', '# eng', '# deal-review'];
+  const channels = [
+    '# general',
+    '# launch',
+    '# design',
+    '# eng',
+    '# deal-review',
+  ];
   const dms = [
     { n: 'Maya Chen', c: '#36c5f0' },
     { n: 'Sam Baker', c: '#2eb67d' },
     { n: 'Alex', c: '#ecb22e' },
   ];
   const msgs = [
-    { who: 'Maya', color: '#36c5f0', text: 'ok, who owns the Q3 close narrative?', time: '2h' },
-    { who: 'Sam', color: '#2eb67d', text: 'i do — numbers are final, drafting now.', time: '1h' },
-    { who: 'Maya', color: '#36c5f0', text: 'perfect. churn held flat at 2.1% right?', time: '55m' },
+    {
+      who: 'Maya',
+      color: '#36c5f0',
+      text: 'ok, who owns the Q3 close narrative?',
+      time: '2h',
+    },
+    {
+      who: 'Sam',
+      color: '#2eb67d',
+      text: 'i do — numbers are final, drafting now.',
+      time: '1h',
+    },
+    {
+      who: 'Maya',
+      color: '#36c5f0',
+      text: 'perfect. churn held flat at 2.1% right?',
+      time: '55m',
+    },
   ];
 </script>
 
@@ -21,13 +42,23 @@
     <div class="grp">
       <p class="glabel">Channels</p>
       {#each channels as c, i}
-        <div class="ci" class:on={i === 1}><span>{c}</span></div>
+        <div
+          class="ci"
+          class:on={i === 1}
+        >
+          <span>{c}</span>
+        </div>
       {/each}
     </div>
     <div class="grp">
       <p class="glabel">Direct messages</p>
       {#each dms as d}
-        <div class="ci"><span class="dot" style="background:{d.c}"></span><span>{d.n}</span></div>
+        <div class="ci">
+          <span
+            class="dot"
+            style="background:{d.c}"
+          ></span><span>{d.n}</span>
+        </div>
       {/each}
     </div>
   </aside>
@@ -37,7 +68,10 @@
     <div class="msgs">
       {#each msgs as m}
         <div class="m">
-          <span class="av" style="background:{m.color}">{m.who[0]}</span>
+          <span
+            class="av"
+            style="background:{m.color}">{m.who[0]}</span
+          >
           <div class="mbody">
             <p class="mhead"><b>{m.who}</b><span class="t">{m.time}</span></p>
             <p class="mtxt">{m.text}</p>
@@ -46,20 +80,37 @@
       {/each}
       {#if typed}
         <div class="m">
-          <span class="av" style="background:#e01e5a">y</span>
+          <span
+            class="av"
+            style="background:#e01e5a">y</span
+          >
           <div class="mbody">
             <p class="mhead"><b>you</b><span class="t">now</span></p>
-            <p class="mtxt fresh" class:pop={pasted}>{typed}</p>
+            <p
+              class="mtxt fresh"
+              class:pop={pasted}
+            >
+              {typed}
+            </p>
           </div>
         </div>
       {/if}
     </div>
-    <div class="msginput" class:armed={listening || typed} class:pasted>
+    <div
+      class="msginput"
+      class:armed={listening || typed}
+      class:pasted
+    >
       <span class="plus">+</span>
       {#if typed}
-        <span class="field typed" class:pop={pasted}>{typed}<span class="caret"></span></span>
+        <span
+          class="field typed"
+          class:pop={pasted}>{typed}<span class="caret"></span></span
+        >
       {:else}
-        <span class="field" class:dim={listening}
+        <span
+          class="field"
+          class:dim={listening}
           >{listening ? 'listening…' : 'Message #launch'}</span
         >
       {/if}

@@ -7,9 +7,15 @@
 <div class="page">
   <header>
     <div class="container bar">
-      <a href="/" aria-label="Typie home"><Logo size={26} /></a>
+      <a
+        href="/"
+        aria-label="Typie home"><Logo size={26} /></a
+      >
       <div class="actions">
-        <a href="/" class="back">← home</a>
+        <a
+          href="/"
+          class="back">← home</a
+        >
         <DownloadCta kind="green" />
       </div>
     </div>

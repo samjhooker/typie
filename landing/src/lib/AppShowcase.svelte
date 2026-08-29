@@ -3,13 +3,20 @@
   import DemoShell from './real/DemoShell.svelte';
 </script>
 
-<section class="showcase field" id="showcase">
-  <div class="container" use:reveal>
+<section
+  class="showcase field"
+  id="showcase"
+>
+  <div
+    class="container"
+    use:reveal
+  >
     <div class="shhead">
       <p class="mono">Inside the app</p>
       <h2>The workspace,<br /><em>on your Mac.</em></h2>
       <p class="sub">
-        Not a mockup. This is the actual app — sidebar, panes, transcription, AI. Try it.
+        Not a mockup. This is the actual app — sidebar, panes, transcription,
+        AI. Try it.
       </p>
       <div class="nav-pills">
         <span class="pill">Home</span>
@@ -21,7 +28,10 @@
 
     <div class="macmini">
       <div class="lidmini">
-        <div class="wallpaper" aria-hidden="true">
+        <div
+          class="wallpaper"
+          aria-hidden="true"
+        >
           <span class="streak s1"></span><span class="streak s2"></span>
         </div>
         <div class="notchmini"><span class="botmini">⬢</span></div>
@@ -29,7 +39,10 @@
           <div class="winbar">
             <span class="dots"><i></i><i></i><i></i></span>
             <span class="mono">typie</span>
-            <span class="mono" style="opacity:.45">offline</span>
+            <span
+              class="mono"
+              style="opacity:.45">offline</span
+            >
           </div>
           <div class="winbody">
             <DemoShell />
@@ -38,7 +51,9 @@
       </div>
       <div class="basemini"><i></i></div>
     </div>
-    <p class="mono hint">All of this runs on your Mac. Pull the wifi — it still works.</p>
+    <p class="mono hint">
+      All of this runs on your Mac. Pull the wifi — it still works.
+    </p>
   </div>
 </section>
 

@@ -15,7 +15,12 @@
     let last = performance.now();
     let spawnAcc = 400;
     let id = 0;
-    const colors = ['var(--mint)', 'var(--butter)', 'var(--pink)', 'var(--lavender)'];
+    const colors = [
+      'var(--mint)',
+      'var(--butter)',
+      'var(--pink)',
+      'var(--lavender)',
+    ];
 
     const tick = (now) => {
       const dt = Math.min(40, now - last);
@@ -74,15 +79,26 @@
     <span class="chip score-chip">caught · {score}</span>
   </header>
 
-  <div class="arena" onpointermove={move} ontouchstart={move} style="width:{W}px">
+  <div
+    class="arena"
+    onpointermove={move}
+    ontouchstart={move}
+    style="width:{W}px"
+  >
     {#each items as it (it.id)}
       <span
         class="snack"
         style="left:{it.x}px; top:{it.y}px; background:{it.c}; transform:translate(-50%,-50%) rotate({it.r}deg)"
       ></span>
     {/each}
-    <div class="bot" style="transform:translateX({robotX}px) translateX(-50%)">
-      <Robot size={34} mood="listening" />
+    <div
+      class="bot"
+      style="transform:translateX({robotX}px) translateX(-50%)"
+    >
+      <Robot
+        size={34}
+        mood="listening"
+      />
     </div>
     <div class="floor"></div>
   </div>

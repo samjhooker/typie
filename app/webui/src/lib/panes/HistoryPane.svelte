@@ -24,14 +24,20 @@
   });
 
   const grouped = $derived.by(() => {
-    let items = [...ui.history].sort((a, b) => new Date(b.date) - new Date(a.date));
+    let items = [...ui.history].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       items = items.filter((h) => h.text.toLowerCase().includes(q));
     }
     items = items.filter((h) => !pending.has(h.id)).slice(0, shown);
     const day = (d) =>
-      new Date(new Date(d).getFullYear(), new Date(d).getMonth(), new Date(d).getDate()).getTime();
+      new Date(
+        new Date(d).getFullYear(),
+        new Date(d).getMonth(),
+        new Date(d).getDate()
+      ).getTime();
     const today = day(new Date());
     const yest = today - 86400000;
     const thisYear = new Date().getFullYear();
@@ -48,7 +54,12 @@
                 undefined,
                 dt.getFullYear() === thisYear
                   ? { weekday: 'long', month: 'long', day: 'numeric' }
-                  : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }
+                  : {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    }
               );
       let g = groups.find((x) => x.label === label);
       if (!g) {
@@ -61,7 +72,10 @@
   });
 
   function fmtTime(iso) {
-    return new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    return new Date(iso).toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
   function fmtLat(ms) {
     return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
@@ -69,7 +83,11 @@
 
   function doDelete(e, h) {
     e.stopPropagation();
-    trash.add('history', [h.id], (h.text || '').trim().slice(0, 48) || 'dictation');
+    trash.add(
+      'history',
+      [h.id],
+      (h.text || '').trim().slice(0, 48) || 'dictation'
+    );
   }
   function doClearAll() {
     if (ui.history.length === 0) return;
@@ -98,10 +116,19 @@
     <div class="tools">
       <label class="input search">
         <Search size={14} />
-        <input bind:value={query} placeholder="search dictations…" spellcheck="false" data-search />
+        <input
+          bind:value={query}
+          placeholder="search dictations…"
+          spellcheck="false"
+          data-search
+        />
       </label>
       {#if ui.history.length > 0}
-        <button class="clearall" title="delete every dictation" onclick={doClearAll}>
+        <button
+          class="clearall"
+          title="delete every dictation"
+          onclick={doClearAll}
+        >
           <Trash2 size={12} /> clear all
         </button>
       {/if}
@@ -130,7 +157,9 @@
               <span class="time mono-kicker">{fmtTime(h.date)}</span>
               <p class="txt">{h.text}</p>
               <span class="tail">
-                <span class="chip lat" title="transcription latency"
+                <span
+                  class="chip lat"
+                  title="transcription latency"
                   ><Zap size={10} />{fmtLat(h.latencyMs)}</span
                 >
                 <button
@@ -141,9 +170,15 @@
                     markCopied(h.id);
                   }}
                 >
-                  {#if local.copiedId === h.id}<Check size={13} />{:else}<Copy size={13} />{/if}
+                  {#if local.copiedId === h.id}<Check size={13} />{:else}<Copy
+                      size={13}
+                    />{/if}
                 </button>
-                <button class="icon-btn del" title="delete" onclick={(e) => doDelete(e, h)}>
+                <button
+                  class="icon-btn del"
+                  title="delete"
+                  onclick={(e) => doDelete(e, h)}
+                >
                   <Trash2 size={13} />
                 </button>
               </span>
@@ -155,10 +190,19 @@
 
     {#if shown < totalMatched}
       <div class="expand">
-        <div class="meter" aria-hidden="true">
-          <div style="width:{Math.max(4, (visibleCount / totalMatched) * 100)}%"></div>
+        <div
+          class="meter"
+          aria-hidden="true"
+        >
+          <div
+            style="width:{Math.max(4, (visibleCount / totalMatched) * 100)}%"
+          ></div>
         </div>
-        <button class="more" use:infinite={() => (shown += PAGE)} onclick={() => (shown += PAGE)}>
+        <button
+          class="more"
+          use:infinite={() => (shown += PAGE)}
+          onclick={() => (shown += PAGE)}
+        >
           expand more · showing {visibleCount} of {totalMatched}
         </button>
       </div>

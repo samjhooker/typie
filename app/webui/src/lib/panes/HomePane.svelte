@@ -13,7 +13,9 @@
   const transcripts = $derived(ui.transcripts.filter((t) => !t.isMeeting));
   const meetings = $derived(ui.transcripts.filter((t) => t.isMeeting));
   const transcriptMinutes = $derived(
-    Math.round(transcripts.reduce((a, t) => a + (t.durationSeconds || 0), 0) / 60)
+    Math.round(
+      transcripts.reduce((a, t) => a + (t.durationSeconds || 0), 0) / 60
+    )
   );
   const latest = $derived(ui.history.slice(0, 3));
 
@@ -29,7 +31,9 @@
   });
 
   // effective screen permission — respects OS + cached grant (avoids re-asking on nav)
-  const hasScreen = $derived(ui.permissions.screen || local.askedScreenPermission);
+  const hasScreen = $derived(
+    ui.permissions.screen || local.askedScreenPermission
+  );
 </script>
 
 <div class="wrap">
@@ -65,21 +69,31 @@
   <div class="grid">
     <section class="feat card vnotes">
       <div class="feat-head">
-        <Glyph name="note" size={16} />
+        <Glyph
+          name="note"
+          size={16}
+        />
         <h4>quick note</h4>
       </div>
       {#if notes[0]}
         <p class="peek">
-          “{notes[0].text.length > 80 ? notes[0].text.slice(0, 80) + '…' : notes[0].text}”
+          “{notes[0].text.length > 80
+            ? notes[0].text.slice(0, 80) + '…'
+            : notes[0].text}”
         </p>
       {:else}
         <p>speak and it sticks to the wall.</p>
       {/if}
       <div class="acts">
-        <button class="btn btn-pink small" onclick={() => send({ type: 'toggleNoteRecording' })}>
+        <button
+          class="btn btn-pink small"
+          onclick={() => send({ type: 'toggleNoteRecording' })}
+        >
           <Pencil size={12} /> new note
         </button>
-        <button class="btn btn-ghost small" onclick={go('notes')}
+        <button
+          class="btn btn-ghost small"
+          onclick={go('notes')}
           >{notes.length} on the wall <ArrowRight size={11} /></button
         >
       </div>
@@ -87,7 +101,10 @@
 
     <section class="feat card xcripts">
       <div class="feat-head">
-        <Glyph name="transcript" size={16} />
+        <Glyph
+          name="transcript"
+          size={16}
+        />
         <h4>transcribe a file</h4>
       </div>
       <p>
@@ -97,15 +114,19 @@
         <span class="hand inline-hand">like otter, but offline</span>
       </p>
       <div class="acts">
-        <button class="btn btn-butter small" onclick={go('library')}
-          >open library <ArrowRight size={11} /></button
+        <button
+          class="btn btn-butter small"
+          onclick={go('library')}>open library <ArrowRight size={11} /></button
         >
       </div>
     </section>
 
     <section class="feat card recs">
       <div class="feat-head">
-        <Glyph name="record" size={16} />
+        <Glyph
+          name="record"
+          size={16}
+        />
         <h4>call capture</h4>
       </div>
       <p>
@@ -124,15 +145,18 @@
             if (!ui.meeting.isCapturing) local.pane = 'library';
           }}
         >
-          {#if !hasScreen}<ShieldCheck size={12} />{:else}<MonitorUp size={12} />{/if}
+          {#if !hasScreen}<ShieldCheck size={12} />{:else}<MonitorUp
+              size={12}
+            />{/if}
           {!hasScreen
             ? 'grant & record'
             : ui.meeting.isCapturing
               ? 'stop capture'
               : 'start capture'}
         </button>
-        <button class="btn btn-ghost small" onclick={go('library')}
-          >past calls <ArrowRight size={11} /></button
+        <button
+          class="btn btn-ghost small"
+          onclick={go('library')}>past calls <ArrowRight size={11} /></button
         >
       </div>
     </section>
@@ -142,17 +166,27 @@
   {#if ui.history.length > 0}
     <div class="recent">
       <div class="bot">
-        <Robot size={40} mood={phaseLabel ? 'listening' : 'idle'} />
+        <Robot
+          size={40}
+          mood={phaseLabel ? 'listening' : 'idle'}
+        />
         <span class="hand botname">typie heard:</span>
       </div>
       <div class="bubbles">
         {#each latest as h, i (h.id)}
-          <div class="bubble" class:alt={i % 2 === 1}>{h.text}</div>
+          <div
+            class="bubble"
+            class:alt={i % 2 === 1}
+          >
+            {h.text}
+          </div>
         {/each}
-        <button class="more" onclick={go('history')}>
-          {ui.history.length} thing{ui.history.length === 1 ? '' : 's'} you've said <ArrowRight
-            size={11}
-          />
+        <button
+          class="more"
+          onclick={go('history')}
+        >
+          {ui.history.length} thing{ui.history.length === 1 ? '' : 's'} you've said
+          <ArrowRight size={11} />
         </button>
       </div>
     </div>

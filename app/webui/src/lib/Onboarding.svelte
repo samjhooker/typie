@@ -24,17 +24,23 @@
 
   // ── model states ─────────────────────────────────────────────
   const modelReady = $derived(ui.model.status === 'ready');
-  const downloadApproved = $derived(ui.model.status !== 'notDownloaded' || ui.modelsExist);
+  const downloadApproved = $derived(
+    ui.model.status !== 'notDownloaded' || ui.modelsExist
+  );
 
   // speaker-label models (diarization) — downloaded alongside the main brain
   const diarizerState = $derived(ui.transcribe.model.state);
   const diarizerReady = $derived(diarizerState === 'ready');
   const diarizerBusy = $derived(
-    diarizerState === 'downloading' || diarizerState === 'compiling' || diarizerState === 'unknown'
+    diarizerState === 'downloading' ||
+      diarizerState === 'compiling' ||
+      diarizerState === 'unknown'
   );
   const diarizerFraction = $derived(ui.transcribe.model.fraction || 0);
   const allDownloadsReady = $derived(modelReady && diarizerReady);
-  const anythingFailed = $derived(ui.model.status === 'failed' || diarizerState === 'failed');
+  const anythingFailed = $derived(
+    ui.model.status === 'failed' || diarizerState === 'failed'
+  );
 
   // ── permissions — all three required ─────────────────────────
   const allPermissionsDone = $derived(
@@ -45,7 +51,9 @@
     local.step === 2
       ? allDownloadsReady
         ? 'done'
-        : ui.model.status === 'downloading' || ui.model.status === 'loading' || diarizerBusy
+        : ui.model.status === 'downloading' ||
+            ui.model.status === 'loading' ||
+            diarizerBusy
           ? 'thinking'
           : 'idle'
       : local.step === 3
@@ -100,7 +108,11 @@
     }
   });
   $effect(() => {
-    if (local.step === 2 && modelReady && (diarizerReady || diarizerState === 'failed')) {
+    if (
+      local.step === 2 &&
+      modelReady &&
+      (diarizerReady || diarizerState === 'failed')
+    ) {
       const t = setTimeout(() => {
         if (local.step === 2) {
           autoAdvancing = true;
@@ -133,14 +145,18 @@
   const nextEnabled = $derived(
     local.step === 0 ||
       (local.step === 1 && allPermissionsDone) ||
-      (local.step === 2 && modelReady && (diarizerReady || diarizerState === 'failed'))
+      (local.step === 2 &&
+        modelReady &&
+        (diarizerReady || diarizerState === 'failed'))
   );
 
   const stepHint = $derived(
     [
       'no account, no cloud, ever',
       'one-time things — we’ll never ask again',
-      autoAdvancing ? 'moving on its own…' : 'the whole brain + ears, onto this Mac',
+      autoAdvancing
+        ? 'moving on its own…'
+        : 'the whole brain + ears, onto this Mac',
       'try it — say something nice',
     ][local.step]
   );
@@ -149,17 +165,33 @@
 </script>
 
 <div class="onboard">
-  <div class="blob b1" aria-hidden="true"></div>
-  <div class="blob b2" aria-hidden="true"></div>
+  <div
+    class="blob b1"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="blob b2"
+    aria-hidden="true"
+  ></div>
 
-  <div class="rail" aria-hidden="true">
-    <div class="rail-fill" style="width:{progressPct}%"></div>
+  <div
+    class="rail"
+    aria-hidden="true"
+  >
+    <div
+      class="rail-fill"
+      style="width:{progressPct}%"
+    ></div>
   </div>
 
   <header class="top">
     <div class="brand">
-      <Robot size={26} mood={robotMood} />
-      <span class="word">typie{ui.variant === 'dev' ? ' dev' : ''}<i>.</i></span>
+      <Robot
+        size={26}
+        mood={robotMood}
+      />
+      <span class="word">typie{ui.variant === 'dev' ? ' dev' : ''}<i>.</i></span
+      >
       <DevTag />
     </div>
     <span class="mono-kicker">step {local.step + 1} of {STEP_COUNT}</span>
@@ -169,22 +201,38 @@
     {#key local.step}
       {#if local.step === 0}
         <section class="welcome enter-up">
-          <div class="big-bot"><Robot size={54} mood="idle" /></div>
+          <div class="big-bot">
+            <Robot
+              size={54}
+              mood="idle"
+            />
+          </div>
           <h1>hold a key. say the thing.</h1>
-          <p class="sub">Your words appear wherever your cursor is — entirely on this Mac.</p>
+          <p class="sub">
+            Your words appear wherever your cursor is — entirely on this Mac.
+          </p>
           <div class="trio">
             <div class="card trio-card">
-              <span class="tile" style="background:var(--mint)"><Keyboard size={20} /></span>
+              <span
+                class="tile"
+                style="background:var(--mint)"><Keyboard size={20} /></span
+              >
               <strong>works everywhere</strong>
               <span>any app that accepts typing</span>
             </div>
             <div class="card trio-card">
-              <span class="tile" style="background:var(--butter)"><Zap size={20} /></span>
+              <span
+                class="tile"
+                style="background:var(--butter)"><Zap size={20} /></span
+              >
               <strong>instant</strong>
               <span>text lands in ~100 ms</span>
             </div>
             <div class="card trio-card">
-              <span class="tile" style="background:var(--sky)"><ShieldCheck size={20} /></span>
+              <span
+                class="tile"
+                style="background:var(--sky)"><ShieldCheck size={20} /></span
+              >
               <strong>zero cloud</strong>
               <span>audio never leaves this Mac</span>
             </div>
@@ -193,17 +241,29 @@
       {:else if local.step === 1}
         <section class="perms enter-up">
           <h1>three quick permissions</h1>
-          <p class="sub">one-time things, straight to macOS — typie never sees them twice</p>
+          <p class="sub">
+            one-time things, straight to macOS — typie never sees them twice
+          </p>
 
           <div class="perm-list">
-            <div class="card perm" class:granted={ui.permissions.mic}>
-              <span class="tile" style="background:var(--mint)"><Mic size={21} /></span>
+            <div
+              class="card perm"
+              class:granted={ui.permissions.mic}
+            >
+              <span
+                class="tile"
+                style="background:var(--mint)"><Mic size={21} /></span
+              >
               <div class="body">
                 <strong>Microphone</strong>
-                <p>hears you while the key is held. processed on-device, thrown away after.</p>
+                <p>
+                  hears you while the key is held. processed on-device, thrown
+                  away after.
+                </p>
               </div>
               {#if ui.permissions.mic}
-                <span class="chip granted-chip"><Check size={12} />granted</span>
+                <span class="chip granted-chip"><Check size={12} />granted</span
+                >
               {:else}
                 <button
                   class="btn btn-pink small"
@@ -214,16 +274,24 @@
               {/if}
             </div>
 
-            <div class="card perm" class:granted={ui.permissions.ax}>
-              <span class="tile" style="background:var(--lavender)"
+            <div
+              class="card perm"
+              class:granted={ui.permissions.ax}
+            >
+              <span
+                class="tile"
+                style="background:var(--lavender)"
                 ><Accessibility size={21} /></span
               >
               <div class="body">
                 <strong>Accessibility</strong>
-                <p>watches for the hotkey and types where your cursor already is.</p>
+                <p>
+                  watches for the hotkey and types where your cursor already is.
+                </p>
               </div>
               {#if ui.permissions.ax}
-                <span class="chip granted-chip"><Check size={12} />granted</span>
+                <span class="chip granted-chip"><Check size={12} />granted</span
+                >
               {:else}
                 <button
                   class="btn btn-pink small"
@@ -234,19 +302,29 @@
               {/if}
             </div>
 
-            <div class="card perm" class:granted={ui.permissions.screen}>
-              <span class="tile" style="background:var(--card-blue)"
+            <div
+              class="card perm"
+              class:granted={ui.permissions.screen}
+            >
+              <span
+                class="tile"
+                style="background:var(--card-blue)"
                 ><MonitorSpeaker size={21} /></span
               >
               <div class="body">
                 <strong>Screen recording</strong>
-                <p>captures call audio so meeting transcripts include everyone.</p>
+                <p>
+                  captures call audio so meeting transcripts include everyone.
+                </p>
                 {#if !ui.permissions.screen}
-                  <span class="relaunch">macOS finishes this one after a relaunch</span>
+                  <span class="relaunch"
+                    >macOS finishes this one after a relaunch</span
+                  >
                 {/if}
               </div>
               {#if ui.permissions.screen}
-                <span class="chip granted-chip"><Check size={12} />granted</span>
+                <span class="chip granted-chip"><Check size={12} />granted</span
+                >
               {:else}
                 <button
                   class="btn btn-pink small"
@@ -260,14 +338,21 @@
         </section>
       {:else if local.step === 2}
         <section class="model enter-up">
-          <div class="halo" class:pulse={!allDownloadsReady}>
-            <Robot size={56} mood={robotMood} />
+          <div
+            class="halo"
+            class:pulse={!allDownloadsReady}
+          >
+            <Robot
+              size={56}
+              mood={robotMood}
+            />
           </div>
           <h1>{allDownloadsReady ? 'all set' : 'one-time downloads'}</h1>
 
           {#if modelReady && diarizerReady}
             <p class="note">
-              <WifiOff size={15} /> everything's installed — from here on, everything happens offline.
+              <WifiOff size={15} /> everything's installed — from here on, everything
+              happens offline.
             </p>
           {:else}
             <!-- main ASR model -->
@@ -276,10 +361,15 @@
               class:done={modelReady}
               class:failed={ui.model.status === 'failed'}
             >
-              <span class="tile" style="background:var(--mint)"><Brain size={21} /></span>
+              <span
+                class="tile"
+                style="background:var(--mint)"><Brain size={21} /></span
+              >
               <div class="body">
                 <header class="rowhead">
-                  <strong>the brain</strong><span class="mono-kicker">dictation · ~470 mb</span>
+                  <strong>the brain</strong><span class="mono-kicker"
+                    >dictation · ~470 mb</span
+                  >
                 </header>
                 {#if modelReady}
                   <p class="stat done"><Check size={12} /> ready</p>
@@ -287,14 +377,17 @@
                   <p class="error">{ui.model.error}</p>
                   <button
                     class="btn btn-pink small"
-                    onclick={() => send({ type: 'startModelDownload' })}>try again</button
+                    onclick={() => send({ type: 'startModelDownload' })}
+                    >try again</button
                   >
                 {:else if ui.model.status === 'loading'}
                   <div class="progress"><div style="width:98%"></div></div>
                   <p class="stat">waking it up…</p>
                 {:else}
                   <div class="progress">
-                    <div style="width:{Math.max(3, ui.model.fraction * 100)}%"></div>
+                    <div
+                      style="width:{Math.max(3, ui.model.fraction * 100)}%"
+                    ></div>
                   </div>
                   <p class="stat">
                     {ui.model.fraction > 0.01
@@ -311,7 +404,10 @@
               class:done={diarizerReady}
               class:failed={diarizerState === 'failed'}
             >
-              <span class="tile" style="background:var(--lavender)"><Ear size={21} /></span>
+              <span
+                class="tile"
+                style="background:var(--lavender)"><Ear size={21} /></span
+              >
               <div class="body">
                 <header class="rowhead">
                   <strong>the ears</strong><span class="mono-kicker"
@@ -324,14 +420,17 @@
                   <p class="error">{ui.transcribe.model.error}</p>
                   <button
                     class="btn btn-pink small"
-                    onclick={() => send({ type: 'startDiarizerDownload' })}>try again</button
+                    onclick={() => send({ type: 'startDiarizerDownload' })}
+                    >try again</button
                   >
                 {:else if diarizerState === 'compiling'}
                   <div class="progress"><div style="width:96%"></div></div>
                   <p class="stat">waking them up…</p>
                 {:else}
                   <div class="progress">
-                    <div style="width:{Math.max(3, diarizerFraction * 100)}%"></div>
+                    <div
+                      style="width:{Math.max(3, diarizerFraction * 100)}%"
+                    ></div>
                   </div>
                   <p class="stat">
                     {diarizerFraction > 0.01
@@ -342,7 +441,9 @@
               </div>
             </div>
 
-            <p class="note">after this, typie never needs the internet again.</p>
+            <p class="note">
+              after this, typie never needs the internet again.
+            </p>
 
             {#if !anythingFailed}
               <DownloadGame />
@@ -357,22 +458,30 @@
             <span class="cap-static">{ui.settings.hotkeyShort}</span>
             <p class="how-text">
               {#if ui.settings.triggerMode === 'toggle'}
-                tap <b>{ui.settings.hotkey.toLowerCase()}</b>, say anything out loud, tap again.
+                tap <b>{ui.settings.hotkey.toLowerCase()}</b>, say anything out
+                loud, tap again.
               {:else}
-                hold <b>{ui.settings.hotkey.toLowerCase()}</b>, say anything out loud, let go.
+                hold <b>{ui.settings.hotkey.toLowerCase()}</b>, say anything out
+                loud, let go.
               {/if}
             </p>
           </div>
 
-          <div class="result card" class:flash={local.flash}>
+          <div
+            class="result card"
+            class:flash={local.flash}
+          >
             {#if ui.dictation.phase === 'listening'}
-              <span class="state live"><AudioLines size={18} /> listening…</span>
+              <span class="state live"><AudioLines size={18} /> listening…</span
+              >
             {:else if ui.dictation.phase === 'transcribing'}
               <span class="state think">thinking…</span>
             {:else if local.practice}
               <p class="words">{local.practice}</p>
             {:else}
-              <p class="placeholder">your words will land here — in big letters</p>
+              <p class="placeholder">
+                your words will land here — in big letters
+              </p>
             {/if}
           </div>
 
@@ -380,26 +489,46 @@
             <span class="mono-kicker">more to explore inside</span>
             <div class="feat-row">
               <div class="card feat">
-                <span class="tile sm" style="background:var(--card-cream)"
+                <span
+                  class="tile sm"
+                  style="background:var(--card-cream)"
                   ><NotebookPen size={18} /></span
                 >
-                <div><strong>quick notes</strong><span>dictation kept with its audio</span></div>
-              </div>
-              <div class="card feat">
-                <span class="tile sm" style="background:var(--card-blue)"><FileUp size={18} /></span
-                >
-                <div><strong>upload audio</strong><span>transcripts with speaker labels</span></div>
-              </div>
-              <div class="card feat">
-                <span class="tile sm" style="background:var(--pink)"><Phone size={18} /></span>
                 <div>
-                  <strong>meeting capture</strong><span>live transcripts of your calls</span>
+                  <strong>quick notes</strong><span
+                    >dictation kept with its audio</span
+                  >
+                </div>
+              </div>
+              <div class="card feat">
+                <span
+                  class="tile sm"
+                  style="background:var(--card-blue)"><FileUp size={18} /></span
+                >
+                <div>
+                  <strong>upload audio</strong><span
+                    >transcripts with speaker labels</span
+                  >
+                </div>
+              </div>
+              <div class="card feat">
+                <span
+                  class="tile sm"
+                  style="background:var(--pink)"><Phone size={18} /></span
+                >
+                <div>
+                  <strong>meeting capture</strong><span
+                    >live transcripts of your calls</span
+                  >
                 </div>
               </div>
             </div>
           </div>
 
-          <button class="btn btn-pink explore" onclick={() => send({ type: 'completeOnboarding' })}>
+          <button
+            class="btn btn-pink explore"
+            onclick={() => send({ type: 'completeOnboarding' })}
+          >
             explore typie →
           </button>
         </section>
@@ -410,7 +539,11 @@
   <footer>
     <span class="hand hint">{stepHint}</span>
     {#if local.step < 3}
-      <button class="btn btn-pink" disabled={!nextEnabled} onclick={() => goTo(local.step + 1)}>
+      <button
+        class="btn btn-pink"
+        disabled={!nextEnabled}
+        onclick={() => goTo(local.step + 1)}
+      >
         {buttonLabel}
       </button>
     {/if}
@@ -441,7 +574,11 @@
     height: 480px;
     top: -160px;
     right: -120px;
-    background: radial-gradient(circle, rgba(130, 237, 166, 0.5), transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(130, 237, 166, 0.5),
+      transparent 70%
+    );
     animation: drift-a 22s ease-in-out infinite alternate;
   }
 
@@ -450,7 +587,11 @@
     height: 420px;
     bottom: -180px;
     left: -140px;
-    background: radial-gradient(circle, rgba(255, 211, 224, 0.55), transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 211, 224, 0.55),
+      transparent 70%
+    );
     animation: drift-b 26s ease-in-out infinite alternate;
   }
 

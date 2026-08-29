@@ -24,7 +24,8 @@
   --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
 
-  --display: 'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
+  --display:
+    'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
   --hand: 'Caveat', cursive;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
 
@@ -296,8 +297,16 @@ html.edu-page {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 36%, rgba(255, 252, 240, 0.9) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 34% at 80% 66%, rgba(252, 86, 129, 0.06) 0%, transparent 70%);
+    radial-gradient(
+      ellipse 60% 50% at 50% 36%,
+      rgba(255, 252, 240, 0.9) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 34% at 80% 66%,
+      rgba(252, 86, 129, 0.06) 0%,
+      transparent 70%
+    );
   animation: glowIn 1400ms var(--ease-inout) both;
 }
 
@@ -481,7 +490,11 @@ html.edu-page {
   border-radius: 16px;
   padding-bottom: 62px;
   background:
-    radial-gradient(120% 150% at 0% -10%, rgba(252, 86, 129, 0.12) 0%, transparent 50%),
+    radial-gradient(
+      120% 150% at 0% -10%,
+      rgba(252, 86, 129, 0.12) 0%,
+      transparent 50%
+    ),
     linear-gradient(118deg, #2c6350 0%, #245443 45%, #295c49 100%);
   border: 1px solid rgba(22, 56, 43, 0.4);
   box-shadow:
@@ -1013,7 +1026,12 @@ html.edu-page {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+  background: radial-gradient(
+    circle at 35% 32%,
+    #4a5568 0 18%,
+    #151a22 42%,
+    #07080c 100%
+  );
   box-shadow:
     inset 0 0 0 1px rgba(120, 130, 150, 0.4),
     0 0 0 2px #000;
@@ -1731,7 +1749,8 @@ html.edu-page {
 .edu-plan.featured {
   border-color: rgba(252, 86, 129, 0.5);
   background:
-    linear-gradient(180deg, rgba(252, 86, 129, 0.05), transparent 40%), var(--paper-raise);
+    linear-gradient(180deg, rgba(252, 86, 129, 0.05), transparent 40%),
+    var(--paper-raise);
 }
 
 @media (hover: hover) {

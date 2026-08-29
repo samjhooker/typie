@@ -6,8 +6,14 @@
   const LETTERS = ['t', 'y', 'p', 'i', 'e'];
 </script>
 
-<span class="logo" style="font-size:{size}px; {color ? `--tone:${color}` : ''}">
-  <Robot size={Math.round(size * 1.15)} mood="idle" />
+<span
+  class="logo"
+  style="font-size:{size}px; {color ? `--tone:${color}` : ''}"
+>
+  <Robot
+    size={Math.round(size * 1.15)}
+    mood="idle"
+  />
   <span class="word">
     {#each LETTERS as ch}<b>{ch}</b>{/each}<i>.</i>
   </span>

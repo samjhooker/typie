@@ -33,18 +33,29 @@
   ];
 </script>
 
-<section class="depth" id="engine">
+<section
+  class="depth"
+  id="engine"
+>
   <div class="container">
-    <div class="head" use:reveal>
+    <div
+      class="head"
+      use:reveal
+    >
       <h2>Engineered for physics, not <em>promises.</em></h2>
       <p class="sub">
-        Local execution eliminates network round-trips, subscriptions, and privacy risk.
+        Local execution eliminates network round-trips, subscriptions, and
+        privacy risk.
       </p>
     </div>
 
     <div class="stats">
       {#each STATS as s, i (s.label)}
-        <div class="stat" use:reveal={{ delay: i * 90 }} style="--c:{s.color}">
+        <div
+          class="stat"
+          use:reveal={{ delay: i * 90 }}
+          style="--c:{s.color}"
+        >
           <span class="num">{s.n}<i>{s.unit}</i></span>
           <span class="lab">{s.label}</span>
           <span class="note">{s.note}</span>
@@ -52,7 +63,10 @@
       {/each}
     </div>
 
-    <p class="meta foot mono" use:reveal={{ delay: 120 }}>
+    <p
+      class="meta foot mono"
+      use:reveal={{ delay: 120 }}
+    >
       Nvidia Parakeet · Apple Silicon FluidAudio · MIT License · Local Inference
     </p>
   </div>

@@ -40,9 +40,19 @@
     >
   </span>
 {:else}
-  <span class="ie {size}" class:empty={!value}>
-    <span class="txt" class:placeholder={!value}>{value || 'untitled'}</span>
-    <button class="pencil" title="rename" onclick={start}><Pencil size={11} /></button>
+  <span
+    class="ie {size}"
+    class:empty={!value}
+  >
+    <span
+      class="txt"
+      class:placeholder={!value}>{value || 'untitled'}</span
+    >
+    <button
+      class="pencil"
+      title="rename"
+      onclick={start}><Pencil size={11} /></button
+    >
   </span>
 {/if}
 

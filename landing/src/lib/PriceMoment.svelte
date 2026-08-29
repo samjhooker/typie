@@ -35,19 +35,34 @@
   });
 </script>
 
-<section class="priceband field-butter" id="pricing" bind:this={el}>
+<section
+  class="priceband field-butter"
+  id="pricing"
+  bind:this={el}
+>
   <div class="container">
-    <p class="mono kicker" style="text-align:center;margin-bottom:clamp(24px,4vh,36px)">
+    <p
+      class="mono kicker"
+      style="text-align:center;margin-bottom:clamp(24px,4vh,36px)"
+    >
       chapter 05 · the price
     </p>
   </div>
   <div class="container inner">
-    <p class="struck" use:reveal>
+    <p
+      class="struck"
+      use:reveal
+    >
       <span class="mono kicker">a dictation subscription</span>
       <span class="amount">$144<span class="per">/year</span></span>
     </p>
 
-    <svg class="arrow" viewBox="0 0 90 60" aria-hidden="true" use:reveal={{ delay: 120 }}>
+    <svg
+      class="arrow"
+      viewBox="0 0 90 60"
+      aria-hidden="true"
+      use:reveal={{ delay: 120 }}
+    >
       <path
         d="M6 14 C 30 8, 52 18, 66 34 M66 34 l-13 -2 M66 34 l1 -13"
         fill="none"
@@ -58,16 +73,31 @@
       />
     </svg>
 
-    <div class="zero" use:reveal={{ delay: 200 }}>
+    <div
+      class="zero"
+      use:reveal={{ delay: 200 }}
+    >
       <b class="num">$0</b>
-      <span class="hand sub">forever. not "free tier". not "free trial". just free.</span>
+      <span class="hand sub"
+        >forever. not "free tier". not "free trial". just free.</span
+      >
     </div>
 
-    <p class="kickerline" use:reveal={{ delay: 280 }}>
+    <p
+      class="kickerline"
+      use:reveal={{ delay: 280 }}
+    >
       that's <b>${saved || '…'}</b> still in your pocket every year
     </p>
 
-    <span class="bot" aria-hidden="true"><Robot size={54} mood="done" /></span>
+    <span
+      class="bot"
+      aria-hidden="true"
+      ><Robot
+        size={54}
+        mood="done"
+      /></span
+    >
   </div>
 </section>
 

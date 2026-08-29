@@ -10,10 +10,18 @@
   ];
 </script>
 
-<section class="pipeband" id="privacy">
-  <div class="container inner" use:reveal>
+<section
+  class="pipeband"
+  id="privacy"
+>
+  <div
+    class="container inner"
+    use:reveal
+  >
     <p class="mono kicker">the entire privacy policy</p>
-    <h2>Your voice goes<br /><span class="accent">here → here → gone.</span></h2>
+    <h2>
+      Your voice goes<br /><span class="accent">here → here → gone.</span>
+    </h2>
 
     <div
       class="pipe"
@@ -21,13 +29,19 @@
       aria-label="audio flows from your microphone through the on-device model to the garbage collector. no server exists."
     >
       {#each stops as s, i}
-        <div class="stop" style="--i:{i}">
+        <div
+          class="stop"
+          style="--i:{i}"
+        >
           <span class="ico">{s.icon}</span>
           <span class="lbl">{s.label}</span>
           {#if s.note}<span class="note mono">{s.note}</span>{/if}
         </div>
         {#if i < stops.length - 1}
-          <span class="flow" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span
+            class="flow"
+            aria-hidden="true"><i></i><i></i><i></i></span
+          >
         {/if}
       {/each}
     </div>

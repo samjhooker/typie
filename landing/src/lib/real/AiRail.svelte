@@ -15,7 +15,10 @@
   });
 </script>
 
-<div class="rail" class:compact>
+<div
+  class="rail"
+  class:compact
+>
   <div class="rail-head">
     <span class="mono">TRANSFORM</span>
     <span class="ai-dot"></span>
@@ -25,7 +28,10 @@
   <div class="section">
     <h4 class="section-title">Summary</h4>
     {#each summaryLines as line, i}
-      <div class="pline" style="animation-delay:{120 + i * 80}ms">
+      <div
+        class="pline"
+        style="animation-delay:{120 + i * 80}ms"
+      >
         <span class="pbullet"></span>
         <span>{line}</span>
       </div>

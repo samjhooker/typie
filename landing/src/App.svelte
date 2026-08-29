@@ -47,28 +47,48 @@
     <!-- Act 6: Quote Break -->
     <section class="quote">
       <div class="container">
-        <blockquote class="bigquote" use:reveal>
-          “I used to type 200+ Slack messages and meeting summaries a day. Now I just talk. <em
-            >My wrists thank me.</em
-          >”
+        <blockquote
+          class="bigquote"
+          use:reveal
+        >
+          “I used to type 200+ Slack messages and meeting summaries a day. Now I
+          just talk. <em>My wrists thank me.</em>”
         </blockquote>
-        <p class="qattr hand" use:reveal={{ delay: 60 }}>Maya Chen · Engineering Founder</p>
+        <p
+          class="qattr hand"
+          use:reveal={{ delay: 60 }}
+        >
+          Maya Chen · Engineering Founder
+        </p>
       </div>
     </section>
 
     <!-- Act 7: Private by Architecture -->
-    <section class="security" id="privacy">
+    <section
+      class="security"
+      id="privacy"
+    >
       <div class="container">
-        <div class="sectionhead" use:reveal>
+        <div
+          class="sectionhead"
+          use:reveal
+        >
           <h2>Private by architecture.<br /><em>Not by policy.</em></h2>
           <p>
-            No toggles to flip, no cloud terms to trust. The network path simply does not exist.
+            No toggles to flip, no cloud terms to trust. The network path simply
+            does not exist.
           </p>
         </div>
 
-        <div class="secrows" use:reveal={{ delay: 60 }}>
+        <div
+          class="secrows"
+          use:reveal={{ delay: 60 }}
+        >
           <div class="secrow">
-            <span class="secicn" aria-hidden="true">
+            <span
+              class="secicn"
+              aria-hidden="true"
+            >
               <svg
                 viewBox="0 0 16 16"
                 width="22"
@@ -79,21 +99,28 @@
                 stroke-linecap="round"
                 ><path
                   d="M1.5 5.5a10 10 0 0 1 13 0M3.9 8a6.4 6.4 0 0 1 8.2 0M6.2 10.5a2.9 2.9 0 0 1 3.6 0"
-                /><circle cx="8" cy="13" r="1.2" fill="currentColor" stroke="none" /><path
-                  d="M2 2l12 12"
-                /></svg
+                /><circle
+                  cx="8"
+                  cy="13"
+                  r="1.2"
+                  fill="currentColor"
+                  stroke="none"
+                /><path d="M2 2l12 12" /></svg
               >
             </span>
             <div>
               <h3>Zero network egress</h3>
               <p>
-                Mic → Nvidia Parakeet in RAM → CGEvent keystrokes. Audio is discarded immediately
-                after transcription.
+                Mic → Nvidia Parakeet in RAM → CGEvent keystrokes. Audio is
+                discarded immediately after transcription.
               </p>
             </div>
           </div>
           <div class="secrow">
-            <span class="secicn" aria-hidden="true">
+            <span
+              class="secicn"
+              aria-hidden="true"
+            >
               <svg
                 viewBox="0 0 16 16"
                 width="22"
@@ -103,19 +130,26 @@
                 stroke-width="1.8"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><circle cx="7" cy="7" r="5" /><path d="m11 11 3.5 3.5M5 7l1.5 1.5L9 5.5" /></svg
+                ><circle
+                  cx="7"
+                  cy="7"
+                  r="5"
+                /><path d="m11 11 3.5 3.5M5 7l1.5 1.5L9 5.5" /></svg
               >
             </span>
             <div>
               <h3>Verify it yourself</h3>
               <p>
-                Turn on Airplane mode or pull the Wi-Fi. Every feature continues to work with zero
-                connection.
+                Turn on Airplane mode or pull the Wi-Fi. Every feature continues
+                to work with zero connection.
               </p>
             </div>
           </div>
           <div class="secrow">
-            <span class="secicn" aria-hidden="true">
+            <span
+              class="secicn"
+              aria-hidden="true"
+            >
               <svg
                 viewBox="0 0 16 16"
                 width="22"
@@ -131,60 +165,76 @@
             <div>
               <h3>Open source, MIT</h3>
               <p>
-                Every line of code is open on GitHub. Audit the Swift and Svelte sources anytime.
+                Every line of code is open on GitHub. Audit the Swift and Svelte
+                sources anytime.
               </p>
             </div>
           </div>
         </div>
 
-        <div class="secproof" use:reveal={{ delay: 100 }}>
+        <div
+          class="secproof"
+          use:reveal={{ delay: 100 }}
+        >
           <p class="mono">
-            Audit network sockets: <code>lsof -p $(pgrep typie) -i</code> returns empty
+            Audit network sockets: <code>lsof -p $(pgrep typie) -i</code> returns
+            empty
           </p>
         </div>
       </div>
     </section>
 
     <!-- Act 8: Questions Answered -->
-    <section class="faq" id="faq">
+    <section
+      class="faq"
+      id="faq"
+    >
       <div class="container">
         <h2 use:reveal>Frequently asked questions</h2>
-        <div class="faqlist" use:reveal={{ delay: 40 }}>
+        <div
+          class="faqlist"
+          use:reveal={{ delay: 40 }}
+        >
           <details open>
             <summary>Does my voice ever touch the internet?</summary>
             <p>
-              No. Mic → local model → keystrokes, all on your Apple Silicon chip. Audio never leaves
-              RAM and is discarded instantly. The only download is the 500 MB model on initial
-              setup.
+              No. Mic → local model → keystrokes, all on your Apple Silicon
+              chip. Audio never leaves RAM and is discarded instantly. The only
+              download is the 500 MB model on initial setup.
             </p>
           </details>
           <details>
             <summary>Which apps does Typie work in?</summary>
             <p>
-              Any application that accepts text. Slack, Mail, Notion, VS Code, Cursor, Linear,
-              Google Docs, Apple Notes, and browsers. If there's a cursor, it types there.
+              Any application that accepts text. Slack, Mail, Notion, VS Code,
+              Cursor, Linear, Google Docs, Apple Notes, and browsers. If there's
+              a cursor, it types there.
             </p>
           </details>
           <details>
-            <summary>How is this different from built-in macOS dictation?</summary>
+            <summary
+              >How is this different from built-in macOS dictation?</summary
+            >
             <p>
-              Speed (80 ms), higher accuracy with Nvidia Parakeet, continuous dictation without
-              timeout interruptions, and a full workspace for voice notes and bot-free meeting
-              recording.
+              Speed (80 ms), higher accuracy with Nvidia Parakeet, continuous
+              dictation without timeout interruptions, and a full workspace for
+              voice notes and bot-free meeting recording.
             </p>
           </details>
           <details>
             <summary>Does a bot join my Zoom or Google Meet calls?</summary>
             <p>
-              Never. Typie captures audio locally via macOS system audio loopback. No participant
-              sees a notetaker bot because everything is handled on-device.
+              Never. Typie captures audio locally via macOS system audio
+              loopback. No participant sees a notetaker bot because everything
+              is handled on-device.
             </p>
           </details>
           <details>
             <summary>Which languages are supported?</summary>
             <p>
-              25 European languages via Nvidia Parakeet. Transcripts can be exported with speaker
-              diarization, timestamps, and AI-structured summaries.
+              25 European languages via Nvidia Parakeet. Transcripts can be
+              exported with speaker diarization, timestamps, and AI-structured
+              summaries.
             </p>
           </details>
         </div>
@@ -193,14 +243,22 @@
 
     <!-- Act 9: Final Call to Action -->
     <section class="final">
-      <div class="container finalinner" use:reveal>
+      <div
+        class="container finalinner"
+        use:reveal
+      >
         <h2>Just talk.<br /><em>It's typed.</em></h2>
         <div class="actions">
           <a
             href="https://github.com/samjhooker/typie/releases/latest"
             class="btn btn-primary bigcta"
           >
-            <svg viewBox="0 0 384 512" width="16" height="16" fill="currentColor" aria-hidden="true"
+            <svg
+              viewBox="0 0 384 512"
+              width="16"
+              height="16"
+              fill="currentColor"
+              aria-hidden="true"
               ><path
                 d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.7-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
               /></svg
@@ -216,7 +274,10 @@
             View on GitHub
           </a>
         </div>
-        <p class="trust mono" use:reveal={{ delay: 100 }}>
+        <p
+          class="trust mono"
+          use:reveal={{ delay: 100 }}
+        >
           No credit card · Native Apple Silicon · macOS 14+ · MIT License
         </p>
       </div>

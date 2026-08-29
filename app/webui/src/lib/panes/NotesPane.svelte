@@ -1,6 +1,15 @@
 <script>
   import { ui, send, local } from '../bridge.svelte.js';
-  import { Plus, Pin, PinOff, Copy, Trash2, AudioLines, Pencil, Search } from 'lucide-svelte';
+  import {
+    Plus,
+    Pin,
+    PinOff,
+    Copy,
+    Trash2,
+    AudioLines,
+    Pencil,
+    Search,
+  } from 'lucide-svelte';
   import { markCopied } from '../bridge.svelte.js';
   import SortSeg from '../SortSeg.svelte';
   import { infinite } from '../infinite.js';
@@ -13,7 +22,10 @@
     { bg: 'var(--card-mint)', pin: 'var(--mint-live)' },
     { bg: 'var(--pink-band)', pin: 'var(--hotpink)' },
     { bg: 'var(--card-blue)', pin: 'var(--periwinkle)' },
-    { bg: 'color-mix(in srgb, var(--lime) 38%, #fffdf7)', pin: 'var(--gold-ink)' },
+    {
+      bg: 'color-mix(in srgb, var(--lime) 38%, #fffdf7)',
+      pin: 'var(--gold-ink)',
+    },
   ];
   const rots = ['-0.7deg', '0.5deg', '-0.4deg', '0.8deg', '-0.9deg', '0.3deg'];
 
@@ -33,7 +45,8 @@
     ui.notes.filter(
       (n) =>
         !pending.has(n.id) &&
-        (!query.trim() || n.text.toLowerCase().includes(query.trim().toLowerCase()))
+        (!query.trim() ||
+          n.text.toLowerCase().includes(query.trim().toLowerCase()))
     )
   );
   // pinned notes always float to the top; the chosen order applies within
@@ -42,9 +55,13 @@
     const pin = (n) => -n.pinned;
     switch (sortBy) {
       case 'oldest':
-        return arr.sort((a, b) => pin(a) - pin(b) || new Date(a.date) - new Date(b.date));
+        return arr.sort(
+          (a, b) => pin(a) - pin(b) || new Date(a.date) - new Date(b.date)
+        );
       default:
-        return arr.sort((a, b) => pin(a) - pin(b) || new Date(b.date) - new Date(a.date));
+        return arr.sort(
+          (a, b) => pin(a) - pin(b) || new Date(b.date) - new Date(a.date)
+        );
     }
   });
   const visible = $derived(sorted.slice(0, shown));
@@ -85,12 +102,22 @@
       </p>
     </div>
     <div class="tools">
-      <SortSeg options={SORTS} bind:value={sortBy} />
+      <SortSeg
+        options={SORTS}
+        bind:value={sortBy}
+      />
       <label class="input search">
         <Search size={14} />
-        <input bind:value={query} placeholder="search notes…" spellcheck="false" />
+        <input
+          bind:value={query}
+          placeholder="search notes…"
+          spellcheck="false"
+        />
       </label>
-      <button class="btn btn-pink" onclick={doNewNote}>
+      <button
+        class="btn btn-pink"
+        onclick={doNewNote}
+      >
         <Pencil size={15} /> new note
       </button>
     </div>
@@ -104,7 +131,9 @@
   {:else if sorted.length === 0}
     <div class="empty">
       <span class="hand big"
-        >{query.trim() ? `no matches for “${query}”` : 'the wall is empty…'}</span
+        >{query.trim()
+          ? `no matches for “${query}”`
+          : 'the wall is empty…'}</span
       >
       {#if query.trim()}<p>try a different search.</p>{/if}
     </div>
@@ -133,31 +162,43 @@
                   markCopied(note.id);
                 }}
               >
-                {#if local.copiedId === note.id}<span class="copied">✓</span>{:else}<Copy
-                    size={13}
-                  />{/if}
+                {#if local.copiedId === note.id}<span class="copied">✓</span
+                  >{:else}<Copy size={13} />{/if}
               </button>
               <button
                 class="icon-btn"
                 title={note.pinned ? 'unpin' : 'pin'}
                 onclick={() => send({ type: 'notesTogglePin', id: note.id })}
               >
-                {#if note.pinned}<PinOff size={13} />{:else}<Pin size={13} />{/if}
+                {#if note.pinned}<PinOff size={13} />{:else}<Pin
+                    size={13}
+                  />{/if}
               </button>
-              <button class="icon-btn" title="delete" onclick={() => doDelete(note)}>
+              <button
+                class="icon-btn"
+                title="delete"
+                onclick={() => doDelete(note)}
+              >
                 <Trash2 size={13} />
               </button>
             </span>
           </footer>
           {#if note.pinned}
-            <span class="pin" style="background:{tint.pin}"></span>
+            <span
+              class="pin"
+              style="background:{tint.pin}"
+            ></span>
           {/if}
         </article>
       {/each}
     </div>
 
     {#if visible.length < sorted.length}
-      <button class="more" use:infinite={() => (shown += PAGE)} onclick={() => (shown += PAGE)}>
+      <button
+        class="more"
+        use:infinite={() => (shown += PAGE)}
+        onclick={() => (shown += PAGE)}
+      >
         show more · {sorted.length - visible.length} left
       </button>
     {/if}

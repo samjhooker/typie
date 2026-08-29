@@ -35,7 +35,12 @@ export const ui = $state({
     error: '',
     result: null,
   },
-  stats: { totalWords: 0, totalDictations: 0, totalAudioSeconds: 0, avgLatencyMs: 0 },
+  stats: {
+    totalWords: 0,
+    totalDictations: 0,
+    totalAudioSeconds: 0,
+    avgLatencyMs: 0,
+  },
   storage: { usedBytes: 0, freeBytes: 0, totalBytes: 0 },
   history: [],
   notes: [],

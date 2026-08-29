@@ -12,13 +12,17 @@ export function ripple(node) {
   function spawn(e) {
     const r = node.getBoundingClientRect();
     const d = Math.max(r.width, r.height) * 2.2;
-    const light = node.classList.contains('btn-butter') || node.classList.contains('btn-ghost');
+    const light =
+      node.classList.contains('btn-butter') ||
+      node.classList.contains('btn-ghost');
     const el = document.createElement('span');
     el.className = 'ripple-dot';
     el.style.width = el.style.height = `${d}px`;
     el.style.left = `${e.clientX - r.left - d / 2}px`;
     el.style.top = `${e.clientY - r.top - d / 2}px`;
-    el.style.backgroundColor = light ? 'rgba(19, 23, 34, 0.14)' : 'rgba(255, 255, 255, 0.35)';
+    el.style.backgroundColor = light
+      ? 'rgba(19, 23, 34, 0.14)'
+      : 'rgba(255, 255, 255, 0.35)';
     node.appendChild(el);
     el.addEventListener('animationend', () => el.remove());
   }

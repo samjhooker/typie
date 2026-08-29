@@ -1,9 +1,23 @@
 <script>
-  import { ui, send, timeSavedSeconds, formatDuration, formatLatency } from '../bridge.svelte.js';
+  import {
+    ui,
+    send,
+    timeSavedSeconds,
+    formatDuration,
+    formatLatency,
+  } from '../bridge.svelte.js';
   import Keycap from '../Keycap.svelte';
   import TriggerPicker from '../TriggerPicker.svelte';
   import Toggle from '../Toggle.svelte';
-  import { FolderOpen, Mic, History, Rocket, Lock, AudioLines, BarChart3 } from 'lucide-svelte';
+  import {
+    FolderOpen,
+    Mic,
+    History,
+    Rocket,
+    Lock,
+    AudioLines,
+    BarChart3,
+  } from 'lucide-svelte';
 
   function fmtBytes(b) {
     if (!b) return '0 mb';
@@ -66,7 +80,10 @@
   <!-- dictation -->
   <section class="card">
     <h3>
-      <span class="ico" style="background:var(--pink); color:var(--hotpink)"><Mic size={15} /></span
+      <span
+        class="ico"
+        style="background:var(--pink); color:var(--hotpink)"
+        ><Mic size={15} /></span
       > dictation
     </h3>
     <div class="keyblock">
@@ -100,7 +117,9 @@
   <!-- audio -->
   <section class="card">
     <h3>
-      <span class="ico" style="background:var(--lavender); color:var(--violet-ink)"
+      <span
+        class="ico"
+        style="background:var(--lavender); color:var(--violet-ink)"
         ><AudioLines size={15} /></span
       > audio
     </h3>
@@ -130,7 +149,9 @@
   <!-- storage -->
   <section class="card">
     <h3>
-      <span class="ico" style="background:var(--card-mint); color:var(--green-deep)"
+      <span
+        class="ico"
+        style="background:var(--card-mint); color:var(--green-deep)"
         ><FolderOpen size={15} /></span
       > storage
     </h3>
@@ -139,7 +160,10 @@
         <strong>{fmtBytes(ui.storage.usedBytes)} used</strong>
         <span>notes, transcripts and models, all under typie's folder</span>
       </div>
-      <button class="btn btn-ghost small" onclick={() => send({ type: 'revealStorage' })}>
+      <button
+        class="btn btn-ghost small"
+        onclick={() => send({ type: 'revealStorage' })}
+      >
         <FolderOpen size={13} /> reveal in finder
       </button>
     </div>
@@ -148,7 +172,9 @@
   <!-- stats — formerly its own pane, now lives in Settings -->
   <section class="card stats-sec">
     <h3>
-      <span class="ico" style="background:var(--card-blue); color:var(--peri-ink)"
+      <span
+        class="ico"
+        style="background:var(--card-blue); color:var(--peri-ink)"
         ><BarChart3 size={15} /></span
       > stats
     </h3>
@@ -187,7 +213,8 @@
             {#each days as d, i (i)}
               <div
                 class="barcol"
-                title="{d.date.toLocaleDateString()} · {d.count} dictation{d.count === 1
+                title="{d.date.toLocaleDateString()} · {d.count} dictation{d.count ===
+                1
                   ? ''
                   : 's'}"
               >
@@ -201,7 +228,8 @@
             {/each}
           </div>
           <p class="foot mono-kicker">
-            {activeDays} active day{activeDays === 1 ? '' : 's'} · peak {maxCount} in a day
+            {activeDays} active day{activeDays === 1 ? '' : 's'} · peak {maxCount}
+            in a day
           </p>
         </div>
         <div class="panel">
@@ -211,13 +239,17 @@
               <div
                 class="cell"
                 title="{h}:00 · {v} dictations"
-                style="--a:{v ? Math.min(1, v / Math.max(1, Math.max(...hours))) : 0}"
+                style="--a:{v
+                  ? Math.min(1, v / Math.max(1, Math.max(...hours)))
+                  : 0}"
                 class:on={v > 0}
               ></div>
             {/each}
           </div>
           <p class="foot mono-kicker">
-            {hours.some((v) => v > 0) ? `you're loudest around ${peakHour}:00` : 'no pattern yet'}
+            {hours.some((v) => v > 0)
+              ? `you're loudest around ${peakHour}:00`
+              : 'no pattern yet'}
           </p>
         </div>
       </div>
@@ -232,13 +264,16 @@
   <!-- privacy -->
   <section class="card privacy">
     <h3>
-      <span class="ico" style="background:var(--mint); color:var(--green-deep)"
+      <span
+        class="ico"
+        style="background:var(--mint); color:var(--green-deep)"
         ><Lock size={15} /></span
       > privacy
     </h3>
     <p class="pledge">
-      audio goes mic → model → garbage collector. nothing is uploaded, ever. delete the app and
-      nothing remains. that's not a policy — it's the architecture.
+      audio goes mic → model → garbage collector. nothing is uploaded, ever.
+      delete the app and nothing remains. that's not a policy — it's the
+      architecture.
     </p>
   </section>
 </div>

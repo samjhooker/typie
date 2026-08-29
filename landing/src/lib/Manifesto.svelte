@@ -66,10 +66,17 @@
   ];
 </script>
 
-<section class="manifesto" bind:this={el} id="why">
+<section
+  class="manifesto"
+  bind:this={el}
+  id="why"
+>
   <!-- sticky stage -->
   <div class="stage">
-    <div class="washes" aria-hidden="true">
+    <div
+      class="washes"
+      aria-hidden="true"
+    >
       {#each washes as w, i}
         <span style="background:{w.c}; opacity:{visibility(i)}"></span>
       {/each}
@@ -81,8 +88,10 @@
       {@const v = visibility(i)}
       <h2
         class="line {line.tone}"
-        style="opacity:{v}; transform: translateY({(1 - v) * 46}px); filter: blur({(1 - v) *
-          8}px); visibility:{v < 0.05 ? 'hidden' : 'visible'}"
+        style="opacity:{v}; transform: translateY({(1 - v) *
+          46}px); filter: blur({(1 - v) * 8}px); visibility:{v < 0.05
+          ? 'hidden'
+          : 'visible'}"
       >
         <!-- eslint-disable-next-line svelte/no-at-html-tags -- static copy above -->
         {@html line.html}
@@ -90,9 +99,15 @@
     {/each}
 
     <!-- scroll progress rail -->
-    <span class="rail" aria-hidden="true"><i style="height:{p * 100}%"></i></span>
+    <span
+      class="rail"
+      aria-hidden="true"><i style="height:{p * 100}%"></i></span
+    >
 
-    <span class="scrollhint mono" style="opacity:{Math.max(0, 1 - p * 6)}">keep scrolling ↓</span>
+    <span
+      class="scrollhint mono"
+      style="opacity:{Math.max(0, 1 - p * 6)}">keep scrolling ↓</span
+    >
   </div>
 </section>
 

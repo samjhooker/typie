@@ -13,28 +13,50 @@
 </svelte:head>
 
 <PageShell>
-  <p class="hand kicker" use:reveal>one robot. one job.</p>
-  <h1 class="subhead" use:reveal>About Typie</h1>
+  <p
+    class="hand kicker"
+    use:reveal
+  >
+    one robot. one job.
+  </p>
+  <h1
+    class="subhead"
+    use:reveal
+  >
+    About Typie
+  </h1>
 
   <div class="grid">
-    <div class="col" use:reveal={{ delay: 80 }}>
+    <div
+      class="col"
+      use:reveal={{ delay: 80 }}
+    >
       <p class="lede">
-        Saying a sentence is fast. Typing it is slow. Every other dictation tool wanted to ship your
-        voice to a server first.
+        Saying a sentence is fast. Typing it is slow. Every other dictation tool
+        wanted to ship your voice to a server first.
       </p>
       <p>
-        Typie doesn’t. It runs on your Mac, in the notch, and nowhere else. Hold option, speak,
-        release. Your words land in whatever you were already typing - Mail, Slack, Notes, the
-        cursed CRM.
+        Typie doesn’t. It runs on your Mac, in the notch, and nowhere else. Hold
+        option, speak, release. Your words land in whatever you were already
+        typing - Mail, Slack, Notes, the cursed CRM.
       </p>
       <p>
-        It’s free because charging for a key you already own felt rude. It’s private because the
-        audio never leaves the machine. That’s the whole company.
+        It’s free because charging for a key you already own felt rude. It’s
+        private because the audio never leaves the machine. That’s the whole
+        company.
       </p>
     </div>
 
-    <aside class="side" use:reveal={{ delay: 140 }}>
-      <span class="glyph"><Robot mood="idle" size={120} /></span>
+    <aside
+      class="side"
+      use:reveal={{ delay: 140 }}
+    >
+      <span class="glyph"
+        ><Robot
+          mood="idle"
+          size={120}
+        /></span
+      >
       <ul class="facts">
         <li><strong>&lt;100 ms</strong><span>lips to letters</span></li>
         <li><strong>0 bytes</strong><span>leave this Mac</span></li>

@@ -7,10 +7,16 @@
 <footer>
   <div class="container top">
     <div class="brand">
-      <a href="/" aria-label="Typie home"><Logo size={24} /></a>
+      <a
+        href="/"
+        aria-label="Typie home"><Logo size={24} /></a
+      >
       <p class="tag">just talk. <em>it's typed.</em></p>
     </div>
-    <nav class="cols" aria-label="footer">
+    <nav
+      class="cols"
+      aria-label="footer"
+    >
       <div class="col">
         <div class="col-title mono">Product</div>
         <a href="#demo">The Mac Experience</a>
@@ -26,20 +32,32 @@
       </div>
       <div class="col">
         <div class="col-title mono">Resources</div>
-        <a href="https://github.com/samjhooker/typie/releases/latest" target="_blank" rel="noopener"
-          >Releases</a
+        <a
+          href="https://github.com/samjhooker/typie/releases/latest"
+          target="_blank"
+          rel="noopener">Releases</a
         >
-        <a href="https://github.com/samjhooker/typie" target="_blank" rel="noopener">GitHub (MIT)</a
+        <a
+          href="https://github.com/samjhooker/typie"
+          target="_blank"
+          rel="noopener">GitHub (MIT)</a
         >
         <a href="mailto:hello@typie.cc">Contact</a>
       </div>
     </nav>
   </div>
   <div class="container bottom">
-    <div class="mono">© {year} Typie · Built for macOS · Apple Silicon native</div>
+    <div class="mono">
+      © {year} Typie · Built for macOS · Apple Silicon native
+    </div>
     <div class="mono">typie.cc</div>
   </div>
-  <div class="ghost" aria-hidden="true">typie</div>
+  <div
+    class="ghost"
+    aria-hidden="true"
+  >
+    typie
+  </div>
 </footer>
 
 <style>

@@ -1,6 +1,13 @@
 <script>
   import { ui, send, local } from '../bridge.svelte.js';
-  import { Search, UploadCloud, Trash2, Download, CheckCircle2, Loader2 } from 'lucide-svelte';
+  import {
+    Search,
+    UploadCloud,
+    Trash2,
+    Download,
+    CheckCircle2,
+    Loader2,
+  } from 'lucide-svelte';
   import InlineEdit from '../InlineEdit.svelte';
   import SortSeg from '../SortSeg.svelte';
   import Glyph from '../Glyph.svelte';
@@ -27,7 +34,9 @@
   // meetings live in their own Recordings pane — never listed here
   // (staged-for-delete items vanish instantly too)
   const pendingT = $derived(trash.pendingIds('transcript'));
-  const library = $derived(ui.transcripts.filter((x) => !x.isMeeting && !pendingT.has(x.id)));
+  const library = $derived(
+    ui.transcripts.filter((x) => !x.isMeeting && !pendingT.has(x.id))
+  );
   const filtered = $derived(
     query.trim() === ''
       ? library
@@ -37,7 +46,9 @@
             .includes(query.trim().toLowerCase())
         )
   );
-  const hasWork = $derived(uploading !== null || ui.transcribe.busy || ui.transcribe.queued > 0);
+  const hasWork = $derived(
+    uploading !== null || ui.transcribe.busy || ui.transcribe.queued > 0
+  );
   // queue items not yet running (when busy, the first entry IS the active job)
   const waitList = $derived(
     ui.transcribe.busy ? ui.transcribe.queue.slice(1) : ui.transcribe.queue
@@ -50,7 +61,9 @@
       case 'oldest':
         return arr.sort((a, b) => new Date(a.date) - new Date(b.date));
       case 'longest':
-        return arr.sort((a, b) => (b.durationSeconds || 0) - (a.durationSeconds || 0));
+        return arr.sort(
+          (a, b) => (b.durationSeconds || 0) - (a.durationSeconds || 0)
+        );
       default:
         return arr.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
@@ -105,15 +118,26 @@
     });
     for (let off = 0; off < file.size; off += CHUNK) {
       const chunk = await file.slice(off, off + CHUNK).arrayBuffer();
-      send({ type: 'transcribeDropChunk', index: off / CHUNK, b64: bufToB64(chunk) });
-      uploading = { name: file.name, sent: Math.min(off + CHUNK, file.size), total: file.size };
+      send({
+        type: 'transcribeDropChunk',
+        index: off / CHUNK,
+        b64: bufToB64(chunk),
+      });
+      uploading = {
+        name: file.name,
+        sent: Math.min(off + CHUNK, file.size),
+        total: file.size,
+      };
     }
     send({ type: 'transcribeDropEnd' });
     uploading = null;
   }
 </script>
 
-<div class="wrap" class:embedded>
+<div
+  class="wrap"
+  class:embedded
+>
   {#if !embedded}
     <header class="head">
       <div>
@@ -131,15 +155,23 @@
   {#if ui.transcribe.model.state !== 'ready'}
     <div class="gate card">
       {#if ui.transcribe.model.state === 'notDownloaded'}
-        <p><b>one-time setup:</b> speaker models (~22 mb) are needed for diarization.</p>
-        <button class="btn btn-pink small" onclick={() => send({ type: 'startDiarizerDownload' })}
+        <p>
+          <b>one-time setup:</b> speaker models (~22 mb) are needed for diarization.
+        </p>
+        <button
+          class="btn btn-pink small"
+          onclick={() => send({ type: 'startDiarizerDownload' })}
           >download models</button
         >
       {:else if ui.transcribe.model.state === 'downloading'}
         <div class="progress">
-          <div style="width:{Math.max(3, ui.transcribe.model.fraction * 100)}%"></div>
+          <div
+            style="width:{Math.max(3, ui.transcribe.model.fraction * 100)}%"
+          ></div>
         </div>
-        <p class="mono-kicker">{Math.round(ui.transcribe.model.fraction * 100)}% downloading…</p>
+        <p class="mono-kicker">
+          {Math.round(ui.transcribe.model.fraction * 100)}% downloading…
+        </p>
       {:else}
         <p class="mono-kicker">preparing models…</p>
       {/if}
@@ -154,16 +186,23 @@
             <span class="fname">{uploading.name}</span>
             <div class="bar slim">
               <div
-                style="width:{Math.max(3, (uploading.sent / Math.max(1, uploading.total)) * 100)}%"
+                style="width:{Math.max(
+                  3,
+                  (uploading.sent / Math.max(1, uploading.total)) * 100
+                )}%"
               ></div>
             </div>
             <span class="eta mono-kicker"
-              >{Math.round((uploading.sent / Math.max(1, uploading.total)) * 100)}%</span
+              >{Math.round(
+                (uploading.sent / Math.max(1, uploading.total)) * 100
+              )}%</span
             >
           </div>
         {:else if activeQ}
           <div class="wrow card">
-            <span class="stg"><Loader2 size={14} /> {ui.transcribe.stage || 'processing'}</span>
+            <span class="stg"
+              ><Loader2 size={14} /> {ui.transcribe.stage || 'processing'}</span
+            >
             <span class="fname">{activeQ.name}</span>
             <div class="bar slim">
               <div
@@ -206,9 +245,16 @@
       onclick={pickFile}
       onkeydown={(e) => e.key === 'Enter' && pickFile()}
     >
-      <div class="bubble"><UploadCloud size={30} strokeWidth={1.8} /></div>
+      <div class="bubble">
+        <UploadCloud
+          size={30}
+          strokeWidth={1.8}
+        />
+      </div>
       <h3>
-        {hasWork ? 'add more files — they line up in the queue' : 'drop files, or click to browse'}
+        {hasWork
+          ? 'add more files — they line up in the queue'
+          : 'drop files, or click to browse'}
       </h3>
       <p class="mono-kicker">mp3 · m4a · wav · mp4 · several at once is fine</p>
       <span class="hand note-hand">nothing uploads anywhere — promise</span>
@@ -223,7 +269,10 @@
   <div class="lib-head">
     <h3>Your library <span class="count">{sorted.length}</span></h3>
     <div class="lib-tools">
-      <SortSeg options={SORTS} bind:value={sortBy} />
+      <SortSeg
+        options={SORTS}
+        bind:value={sortBy}
+      />
       <label class="input search">
         <Search size={14} />
         <input
@@ -247,10 +296,18 @@
   {:else}
     <div class="grid">
       {#each visible as item (item.id)}
-        <button class="tcard card" onclick={() => (local.selectedTranscriptId = item.id)}>
+        <button
+          class="tcard card"
+          onclick={() => (local.selectedTranscriptId = item.id)}
+        >
           <div class="top">
-            <span class="ico" class:meeting={item.isMeeting}
-              ><Glyph name="transcript" size={16} /></span
+            <span
+              class="ico"
+              class:meeting={item.isMeeting}
+              ><Glyph
+                name="transcript"
+                size={16}
+              /></span
             >
             {#if item.hasAudio}
               <span class="chip ok"><CheckCircle2 size={11} /> ready</span>
@@ -261,14 +318,15 @@
           <h4>
             <InlineEdit
               value={item.fileName}
-              onSave={(v) => send({ type: 'transcriptsRename', id: item.id, name: v })}
+              onSave={(v) =>
+                send({ type: 'transcriptsRename', id: item.id, name: v })}
             />
           </h4>
           <p class="meta">
-            {fmtDate(item.date)} · {fmtDur(item.durationSeconds)} · {item.speakerCount} speaker{item.speakerCount ===
-            1
-              ? ''
-              : 's'}{item.isMeeting ? ' · meeting' : ''}
+            {fmtDate(item.date)} · {fmtDur(item.durationSeconds)} · {item.speakerCount}
+            speaker{item.speakerCount === 1 ? '' : 's'}{item.isMeeting
+              ? ' · meeting'
+              : ''}
           </p>
           <p class="peek">{item.preview}</p>
           <span class="acts">
@@ -300,7 +358,11 @@
     </div>
 
     {#if visible.length < sorted.length}
-      <button class="more" use:infinite={() => (shown += PAGE)} onclick={() => (shown += PAGE)}>
+      <button
+        class="more"
+        use:infinite={() => (shown += PAGE)}
+        onclick={() => (shown += PAGE)}
+      >
         show more · {sorted.length - visible.length} left
       </button>
     {/if}

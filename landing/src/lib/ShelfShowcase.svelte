@@ -10,7 +10,8 @@
     {
       id: 'dictate',
       label: 'Dictating',
-      caption: 'Hold option anywhere. Words land in any app — Slack, Mail, whatever has a cursor.',
+      caption:
+        'Hold option anywhere. Words land in any app — Slack, Mail, whatever has a cursor.',
       chip: 'listening',
     },
     {
@@ -23,7 +24,8 @@
     {
       id: 'summarize',
       label: 'Summarizing',
-      caption: 'Apple Intelligence writes the title, summary and key points. Entirely on this Mac.',
+      caption:
+        'Apple Intelligence writes the title, summary and key points. Entirely on this Mac.',
       chip: 'thinking',
     },
     {
@@ -38,7 +40,8 @@
   let active = $state(0);
   let auto = $state(true);
   let reduced =
-    typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    typeof matchMedia !== 'undefined' &&
+    matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---- per-scene animation state ---- */
   const DICTATION_WORDS = [
@@ -119,23 +122,49 @@
   });
 </script>
 
-<section class="shelf field pop-a" id="notch">
+<section
+  class="shelf field pop-a"
+  id="notch"
+>
   <div class="container">
-    <p class="mono kicker" style="text-align:center">chapter 01 · watch it live</p>
-    <h2 class="subhead" use:reveal>
+    <p
+      class="mono kicker"
+      style="text-align:center"
+    >
+      chapter 01 · watch it live
+    </p>
+    <h2
+      class="subhead"
+      use:reveal
+    >
       It all lives in <span class="squiggle"
         >your notch
-        <svg viewBox="0 0 120 14" aria-hidden="true">
-          <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--periwinkle)" />
+        <svg
+          viewBox="0 0 120 14"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 9c22-6 44-6 56-3s34 4 56-2"
+            stroke="var(--periwinkle)"
+          />
         </svg>
       </span>
     </h2>
-    <p class="lede" use:reveal={{ delay: 60 }}>
-      No window hunting. The shelf waits at the top of your screen and does everything from there.
+    <p
+      class="lede"
+      use:reveal={{ delay: 60 }}
+    >
+      No window hunting. The shelf waits at the top of your screen and does
+      everything from there.
     </p>
 
     <!-- the tabs -->
-    <div class="tabs" role="tablist" aria-label="shelf scenarios" use:reveal={{ delay: 100 }}>
+    <div
+      class="tabs"
+      role="tablist"
+      aria-label="shelf scenarios"
+      use:reveal={{ delay: 100 }}
+    >
       {#each scenes as s, i}
         <button
           role="tab"
@@ -150,18 +179,29 @@
     </div>
 
     <!-- fake top-of-display -->
-    <div class="display s-{scenes[active].id}" use:reveal={{ delay: 160 }}>
-      <div class="wallpaper" aria-hidden="true"></div>
+    <div
+      class="display s-{scenes[active].id}"
+      use:reveal={{ delay: 160 }}
+    >
+      <div
+        class="wallpaper"
+        aria-hidden="true"
+      ></div>
 
       <!-- mock app window behind the notch -->
-      <div class="appwin" aria-hidden="true">
-        <div class="apptoolbar"><i></i><i></i><i></i><span class="apptitle">Messages</span></div>
+      <div
+        class="appwin"
+        aria-hidden="true"
+      >
+        <div class="apptoolbar">
+          <i></i><i></i><i></i><span class="apptitle">Messages</span>
+        </div>
         <div class="appbody">
           {#if scenes[active].id === 'dictate'}
             <p class="typing">
-              {#each DICTATION_WORDS.slice(0, words) as w}<span>{w} </span>{/each}<span
-                class="caret"
-              ></span>
+              {#each DICTATION_WORDS.slice(0, words) as w}<span
+                  >{w}
+                </span>{/each}<span class="caret"></span>
             </p>
           {:else if scenes[active].id === 'call'}
             <div class="calllines">
@@ -174,21 +214,36 @@
             </div>
           {:else if scenes[active].id === 'summarize'}
             <p class="ghost">
-              writing your meeting notes<span class="dots"><i>.</i><i>.</i><i>.</i></span>
+              writing your meeting notes<span class="dots"
+                ><i>.</i><i>.</i><i>.</i></span
+              >
             </p>
           {:else}
             <div class="notecard">
               <span class="ntitle">✦ Beta sync — Friday</span>
               <ul>
-                <li class:on={points >= 1} style="--d: 0ms">
+                <li
+                  class:on={points >= 1}
+                  style="--d: 0ms"
+                >
                   Ship blockers cleared, two items left
                 </li>
-                <li style="--d: 120ms" class:on={points >= 2}>
+                <li
+                  style="--d: 120ms"
+                  class:on={points >= 2}
+                >
                   Sam takes pricing page + demo video
                 </li>
-                <li style="--d: 240ms" class:on={points >= 3}>Launch moved up to Friday</li>
+                <li
+                  style="--d: 240ms"
+                  class:on={points >= 3}
+                >
+                  Launch moved up to Friday
+                </li>
               </ul>
-              <p class="nmeta mono">2 speakers · 12 min · summarized on-device</p>
+              <p class="nmeta mono">
+                2 speakers · 12 min · summarized on-device
+              </p>
             </div>
           {/if}
         </div>
@@ -197,9 +252,19 @@
       <!-- THE NOTCH -->
       <div class="notch">
         {#if scenes[active].id === 'dictate'}
-          <span class="nbot"><Robot size={22} mood="listening" /></span>
+          <span class="nbot"
+            ><Robot
+              size={22}
+              mood="listening"
+            /></span
+          >
           <span class="ncam"></span>
-          <span class="nwave"><TalkWave n={5} color="#fc5681" /></span>
+          <span class="nwave"
+            ><TalkWave
+              n={5}
+              color="#fc5681"
+            /></span
+          >
         {:else if scenes[active].id === 'call'}
           <span class="reddot"></span>
           <span class="ntime mono"
@@ -208,21 +273,39 @@
           <span class="ncam"></span>
           <span class="nlbl mono">recording · mic + call</span>
         {:else if scenes[active].id === 'summarize'}
-          <span class="nbot breathe"><Robot size={22} mood="thinking" /></span>
+          <span class="nbot breathe"
+            ><Robot
+              size={22}
+              mood="thinking"
+            /></span
+          >
           <span class="ncam"></span>
           <span class="nlbl purple mono">✦ summarizing on-device</span>
         {:else}
-          <span class="nbot"><Robot size={22} mood="done" /></span>
+          <span class="nbot"
+            ><Robot
+              size={22}
+              mood="done"
+            /></span
+          >
           <span class="ncam"></span>
           <span class="nok mono">✓ filed · 80ms</span>
         {/if}
       </div>
 
       <!-- glow matching the scene -->
-      <span class="glow" aria-hidden="true"></span>
+      <span
+        class="glow"
+        aria-hidden="true"
+      ></span>
     </div>
 
-    <p class="caption hand" use:reveal={{ delay: 200 }}>{scenes[active].caption}</p>
+    <p
+      class="caption hand"
+      use:reveal={{ delay: 200 }}
+    >
+      {scenes[active].caption}
+    </p>
   </div>
 </section>
 
@@ -307,8 +390,16 @@
     position: relative;
     overflow: hidden;
     background:
-      radial-gradient(120% 150% at 12% -10%, rgba(130, 237, 166, 0.75) 0%, transparent 50%),
-      radial-gradient(110% 140% at 92% -6%, rgba(252, 86, 129, 0.42) 0%, transparent 46%),
+      radial-gradient(
+        120% 150% at 12% -10%,
+        rgba(130, 237, 166, 0.75) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        110% 140% at 92% -6%,
+        rgba(252, 86, 129, 0.42) 0%,
+        transparent 46%
+      ),
       linear-gradient(118deg, #bcd6ff 0%, #ddd8ff 46%, #82eda6 100%);
   }
 
@@ -497,7 +588,12 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    background: radial-gradient(
+      circle at 35% 32%,
+      #4a5568 0 18%,
+      #151a22 42%,
+      #07080c 100%
+    );
     box-shadow:
       inset 0 0 0 1px rgba(120, 130, 150, 0.4),
       0 0 0 2px #000;
@@ -581,7 +677,11 @@
     width: min(60%, 420px);
     height: 90px;
     transform: translateX(-50%);
-    background: radial-gradient(50% 60% at 50% 50%, var(--glow), transparent 70%);
+    background: radial-gradient(
+      50% 60% at 50% 50%,
+      var(--glow),
+      transparent 70%
+    );
     filter: blur(14px);
     pointer-events: none;
     z-index: 2;

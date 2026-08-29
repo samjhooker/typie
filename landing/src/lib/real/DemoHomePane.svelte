@@ -35,10 +35,15 @@
   <div class="grid">
     <section class="feat card vnotes">
       <div class="feat-head">
-        <Glyph name="note" size={16} />
+        <Glyph
+          name="note"
+          size={16}
+        />
         <h4>quick note</h4>
       </div>
-      <p class="peek">"podcast idea — the voice is the interface, not the keyboard"</p>
+      <p class="peek">
+        "podcast idea — the voice is the interface, not the keyboard"
+      </p>
       <div class="acts">
         <button class="btn btn-pink small">new note</button>
         <button class="btn btn-ghost small">{notesCount} on the wall →</button>
@@ -47,7 +52,10 @@
 
     <section class="feat card xcripts">
       <div class="feat-head">
-        <Glyph name="transcript" size={16} />
+        <Glyph
+          name="transcript"
+          size={16}
+        />
         <h4>transcribe a file</h4>
       </div>
       <p>
@@ -61,7 +69,10 @@
 
     <section class="feat card recs">
       <div class="feat-head">
-        <Glyph name="record" size={16} />
+        <Glyph
+          name="record"
+          size={16}
+        />
         <h4>call capture</h4>
       </div>
       <p>{meetingCount} calls captured.</p>
@@ -74,12 +85,20 @@
 
   <div class="recent">
     <div class="bot">
-      <Robot size={40} mood="idle" />
+      <Robot
+        size={40}
+        mood="idle"
+      />
       <span class="hand botname">typie heard:</span>
     </div>
     <div class="bubbles">
       {#each history as text, i (i)}
-        <div class="bubble" class:alt={i % 2 === 1}>{text}</div>
+        <div
+          class="bubble"
+          class:alt={i % 2 === 1}
+        >
+          {text}
+        </div>
       {/each}
       <button class="more">3 things you've said →</button>
     </div>

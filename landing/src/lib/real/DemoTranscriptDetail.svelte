@@ -39,7 +39,12 @@
       time: '02:24',
       text: 'perfect. i can take the video this afternoon.',
     },
-    { speaker: 1, name: 'Sam', time: '02:31', text: "awesome. i'll handle the pricing page then." },
+    {
+      speaker: 1,
+      name: 'Sam',
+      time: '02:31',
+      text: "awesome. i'll handle the pricing page then.",
+    },
     {
       speaker: 0,
       name: 'Maya',
@@ -52,7 +57,12 @@
       time: '02:44',
       text: "sounds good. i'll also update the changelog.",
     },
-    { speaker: 0, name: 'Maya', time: '02:51', text: "great. anything else we're missing?" },
+    {
+      speaker: 0,
+      name: 'Maya',
+      time: '02:51',
+      text: "great. anything else we're missing?",
+    },
     {
       speaker: 1,
       name: 'Sam',
@@ -95,7 +105,12 @@
       time: '03:44',
       text: 'cool. i will have pricing live before the 4pm sync.',
     },
-    { speaker: 0, name: 'Maya', time: '03:51', text: "perfect. i think that's the whole list." },
+    {
+      speaker: 0,
+      name: 'Maya',
+      time: '03:51',
+      text: "perfect. i think that's the whole list.",
+    },
     { speaker: 1, name: 'Sam', time: '03:58', text: 'ship it.' },
   ];
 
@@ -113,7 +128,11 @@
       title: 'Task assignment',
       points: ['Sam handles pricing page', 'Maya records demo video'],
     },
-    { ts: '02:38', title: 'Alignment', points: ['sync at 4pm', 'update changelog'] },
+    {
+      ts: '02:38',
+      title: 'Alignment',
+      points: ['sync at 4pm', 'update changelog'],
+    },
     {
       ts: '03:08',
       title: 'Pricing',
@@ -128,7 +147,11 @@
 
   const aiQuotes = [
     { text: 'perfect. i can take the video', speaker: 'Maya', ts: '02:24' },
-    { text: 'the whole point is it just works on your mac', speaker: 'Sam', ts: '03:16' },
+    {
+      text: 'the whole point is it just works on your mac',
+      speaker: 'Sam',
+      ts: '03:16',
+    },
     { text: "i think that's the whole list", speaker: 'Maya', ts: '03:51' },
     { text: 'ship it', speaker: 'Sam', ts: '03:58' },
   ];
@@ -147,7 +170,9 @@
     return `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
   }
 
-  const playheadPct = $derived(Math.max(0, Math.min(100, (currentTime / durationSec) * 100)));
+  const playheadPct = $derived(
+    Math.max(0, Math.min(100, (currentTime / durationSec) * 100))
+  );
 
   const activeIdx = $derived.by(() => {
     let idx = -1;
@@ -212,11 +237,21 @@
     <div class="content-col">
       <header class="sticky-head">
         <div class="titlerow">
-          <button class="back-arrow" aria-label="back" onclick={onBack}>←</button>
+          <button
+            class="back-arrow"
+            aria-label="back"
+            onclick={onBack}>←</button
+          >
           <div class="titleblock">
-            <h2><InlineEdit value={title} size="lg" /></h2>
+            <h2>
+              <InlineEdit
+                value={title}
+                size="lg"
+              />
+            </h2>
             <p class="meta mono">
-              {date} · {fmtClock(durationSec)} · {speakerCount} speakers · {kind === 'file'
+              {date} · {fmtClock(durationSec)} · {speakerCount} speakers · {kind ===
+              'file'
                 ? 'file'
                 : 'call'}
             </p>
@@ -231,12 +266,19 @@
       <div class="filters">
         <label class="input search">
           <span class="search-icon">⌕</span>
-          <input bind:value={query} placeholder="search this transcript…" spellcheck="false" />
+          <input
+            bind:value={query}
+            placeholder="search this transcript…"
+            spellcheck="false"
+          />
         </label>
 
         <div class="legend">
           {#each speakerNames as name, i (name)}
-            <span class="speaker pill" style="--c:{spColor(i)}">
+            <span
+              class="speaker pill"
+              style="--c:{spColor(i)}"
+            >
               <i></i>{name}
             </span>
           {/each}
@@ -254,10 +296,15 @@
             }}
           >
             <div class="ohead">
-              <span class="avatar" style="background:{spColor(turn.speaker)}">{turn.name[0]}</span>
+              <span
+                class="avatar"
+                style="background:{spColor(turn.speaker)}">{turn.name[0]}</span
+              >
               <span class="oname">{turn.name}</span>
               <span class="ts mono">{turn.time}</span>
-              {#if idx === activeIdx}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span
+              {#if idx === activeIdx}<span
+                  class="eq"
+                  aria-hidden="true"><i></i><i></i><i></i></span
                 >{/if}
             </div>
             <p class="otext">{turn.text}</p>
@@ -344,20 +391,32 @@
     >
       {#each turns as seg, i}
         {@const left = (parseTs(seg.time) / durationSec) * 100}
-        {@const next = i < turns.length - 1 ? parseTs(turns[i + 1].time) : durationSec}
+        {@const next =
+          i < turns.length - 1 ? parseTs(turns[i + 1].time) : durationSec}
         {@const width = ((next - parseTs(seg.time)) / durationSec) * 100}
         <div
           class="seg"
-          style="left:{left}%; width:{width}%; background:{spColor(seg.speaker)}"
+          style="left:{left}%; width:{width}%; background:{spColor(
+            seg.speaker
+          )}"
         ></div>
       {/each}
-      <div class="head" style="left:{playheadPct}%"><i></i></div>
+      <div
+        class="head"
+        style="left:{playheadPct}%"
+      >
+        <i></i>
+      </div>
     </div>
 
     <span class="time mono dim">{fmtClock(durationSec)}</span>
     <div class="rates">
       {#each [0.75, 1, 1.5, 2] as r}
-        <button class="rate" class:on={rate === r} onclick={() => (rate = r)}>{r}×</button>
+        <button
+          class="rate"
+          class:on={rate === r}
+          onclick={() => (rate = r)}>{r}×</button
+        >
       {/each}
     </div>
   </div>

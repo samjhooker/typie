@@ -29,9 +29,17 @@
   });
 </script>
 
-<span class="slot" class:round style="width:{width}">
+<span
+  class="slot"
+  class:round
+  style="width:{width}"
+>
   {#if src}
-    <img {src} {alt} loading="lazy" />
+    <img
+      {src}
+      {alt}
+      loading="lazy"
+    />
   {:else}
     <span class="fallback">{@render fallback?.()}</span>
   {/if}

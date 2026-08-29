@@ -11,10 +11,13 @@
   let done = $state(false);
 
   const reduce =
-    typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    typeof matchMedia !== 'undefined' &&
+    matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const pressSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keypress.wav') : null;
-  const releaseSfx = typeof Audio !== 'undefined' ? new Audio('/sounds/keyrelease.wav') : null;
+  const pressSfx =
+    typeof Audio !== 'undefined' ? new Audio('/sounds/keypress.wav') : null;
+  const releaseSfx =
+    typeof Audio !== 'undefined' ? new Audio('/sounds/keyrelease.wav') : null;
   if (pressSfx) pressSfx.volume = 0.3;
   if (releaseSfx) releaseSfx.volume = 0.35;
 
@@ -70,13 +73,25 @@
   });
 </script>
 
-<section class="beat" id="dictate-beat" aria-label="how typie works">
+<section
+  class="beat"
+  id="dictate-beat"
+  aria-label="how typie works"
+>
   <div class="container">
-    <p class="line l1" class:set={typed.length > 0}>
-      {typed.slice(0, L1.length)}{#if typed.length < L1.length}<i class="caret" aria-hidden="true"
+    <p
+      class="line l1"
+      class:set={typed.length > 0}
+    >
+      {typed.slice(0, L1.length)}{#if typed.length < L1.length}<i
+          class="caret"
+          aria-hidden="true"
         ></i>{/if}
     </p>
-    <p class="line l2" class:set={typed.length > L1.length}>
+    <p
+      class="line l2"
+      class:set={typed.length > L1.length}
+    >
       {typed.slice(
         L1.length,
         L1.length + L2.length
@@ -85,8 +100,13 @@
           aria-hidden="true"
         ></i>{/if}
     </p>
-    <p class="line l3" class:set={typed.length > L1.length + L2.length}>
-      {typed.slice(L1.length + L2.length)}{#if typed.length >= L1.length + L2.length && !done}<i
+    <p
+      class="line l3"
+      class:set={typed.length > L1.length + L2.length}
+    >
+      {typed.slice(
+        L1.length + L2.length
+      )}{#if typed.length >= L1.length + L2.length && !done}<i
           class="caret"
           aria-hidden="true"
         ></i>{/if}
@@ -101,8 +121,16 @@
     display: grid;
     place-items: center;
     background:
-      radial-gradient(ellipse 52% 40% at 50% 58%, rgba(252, 86, 129, 0.09) 0%, transparent 62%),
-      radial-gradient(ellipse 40% 32% at 18% 8%, rgba(199, 215, 255, 0.05) 0%, transparent 60%),
+      radial-gradient(
+        ellipse 52% 40% at 50% 58%,
+        rgba(252, 86, 129, 0.09) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        ellipse 40% 32% at 18% 8%,
+        rgba(199, 215, 255, 0.05) 0%,
+        transparent 60%
+      ),
       var(--ink-deep);
   }
   .container {

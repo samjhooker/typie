@@ -20,7 +20,8 @@
     {#each modes as m}
       <button
         class:selected={ui.settings.triggerMode === m.id}
-        onclick={() => send({ type: 'setSetting', key: 'triggerMode', value: m.id })}
+        onclick={() =>
+          send({ type: 'setSetting', key: 'triggerMode', value: m.id })}
       >
         {m.label}
       </button>

@@ -21,7 +21,11 @@ function flush(entry) {
     send({ type: entry.kind === 'history' ? 'historyClear' : 'notesClear' });
     return;
   }
-  const types = { note: 'notesDelete', transcript: 'transcriptsDelete', history: 'historyDelete' };
+  const types = {
+    note: 'notesDelete',
+    transcript: 'transcriptsDelete',
+    history: 'historyDelete',
+  };
   const type = types[entry.kind];
   for (const id of entry.ids) send({ type, id });
 }
@@ -34,7 +38,14 @@ export const trash = {
   /** stage one item (or several ids sharing one preview label).
       bulk: true sends a single clear-everything command on flush. */
   add(kind, ids, preview, { bulk = false } = {}) {
-    const entry = { uid: ++seq, kind, ids, preview, bulk, expiresAt: Date.now() + TRASH_GRACE_MS };
+    const entry = {
+      uid: ++seq,
+      kind,
+      ids,
+      preview,
+      bulk,
+      expiresAt: Date.now() + TRASH_GRACE_MS,
+    };
     entries.push(entry);
     setTimeout(() => flush(entry), TRASH_GRACE_MS + 50);
     return entry;
@@ -46,7 +57,9 @@ export const trash = {
 
   /** ids staged for deletion of a kind — panes filter their lists by this */
   pendingIds(kind) {
-    return new Set(entries.filter((e) => e.kind === kind).flatMap((e) => e.ids));
+    return new Set(
+      entries.filter((e) => e.kind === kind).flatMap((e) => e.ids)
+    );
   },
 };
 
