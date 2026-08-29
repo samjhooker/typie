@@ -23,8 +23,12 @@
 
   const svgOf = (mod) =>
     typeof mod === 'string' ? mod : (mod.svg ?? String(mod));
-  const MAIL_SVG =
-    '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" fill="#3b82f6"/><path d="m4.5 7.5 7.5 6 7.5-6" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  // Apple Mail — white envelope glyph (outer shell provides bluish background)
+  const MAIL_GLYPH =
+    '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5.2" width="18" height="13.6" rx="2.6" fill="white"/><path d="M3.6 6.2 L12 12.1 L20.4 6.2" stroke="#d1d5db" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/></svg>';
+  // iMessage — white bubble glyph (outer shell provides green background)
+  const MSG_GLYPH =
+    '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.8A7.2 7.2 0 0 0 4.8 12c0 2.05 1.05 3.9 2.7 5.05L6.2 19.3l2.75-1.32A7.15 7.15 0 0 0 12 19.2A7.2 7.2 0 0 0 12 4.8Z" fill="white"/></svg>';
 
   let active = $state('dictate');
   let wifiOff = $state(false);
@@ -81,14 +85,14 @@
     {
       id: 'mail',
       label: 'Mail',
-      brand: MAIL_SVG,
+      brand: MAIL_GLYPH,
       title: 'Mail — Inbox',
       text: 'Hi Sarah, thanks for the intro — 3pm PST works perfectly for me.',
     },
     {
       id: 'imsg',
       label: 'Messages',
-      brand: svgOf(imessage),
+      brand: MSG_GLYPH,
       title: 'Messages — Team Sync',
       text: 'omw right now, grabbing coffee — want an oat latte?',
     },
@@ -983,7 +987,9 @@
                 aria-label={a.label}
                 title={a.label}
               >
-                <span class="dico">{@html nsSvg(a.brand, 'dk' + a.id)}</span>
+                <span class="dico" data-app={a.id}
+                  >{@html nsSvg(a.brand, 'dk' + a.id)}</span
+                >
                 <i
                   class="ddot"
                   aria-hidden="true"
@@ -997,7 +1003,7 @@
               aria-label="Typie App"
               title="Typie App"
             >
-              <span class="dico dtyp"
+              <span class="dico dtyp" data-app="typie"
                 ><Robot
                   size={22}
                   mood="idle"
@@ -2143,10 +2149,45 @@
       0 8px 20px rgba(0, 0, 0, 0.14);
   }
   .dico :global(svg) {
-    width: 40px;
-    height: 40px;
+    width: 22px;
+    height: 22px;
     display: block;
-    border-radius: 10px;
+  }
+  /* per-app outer shells — same 40×40, inner glyph 22×22 well-padded */
+  .dico[data-app='slack'] {
+    background: #611f69;
+  }
+  .dico[data-app='slack'] :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .dico[data-app='slack'] :global(path) {
+    fill: #ffffff !important;
+  }
+  .dico[data-app='docs'] {
+    background: #ffffff;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  .dico[data-app='docs'] :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .dico[data-app='mail'] {
+    background: linear-gradient(180deg, #0a84ff 0%, #0060df 100%);
+  }
+  .dico[data-app='mail'] :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .dico[data-app='imsg'] {
+    background: #30d158;
+  }
+  .dico[data-app='imsg'] :global(svg) {
+    width: 22px;
+    height: 22px;
   }
   .dico.dtyp {
     background: #ffffff;
@@ -2160,9 +2201,12 @@
     background: #1e1e22;
   }
   .dico.dtyp :global(svg) {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     border-radius: 0;
+  }
+  .dico[data-app='typie'] {
+    background: #ffffff;
   }
   .dtyp {
     color: var(--hotpink);
