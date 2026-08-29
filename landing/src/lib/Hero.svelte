@@ -270,7 +270,9 @@
   });
 
   function scrollToMac() {
-    const el = document.getElementById('demo');
+    const el =
+      document.getElementById('feature-tabs') ??
+      document.getElementById('demo');
     if (!el) return;
     const y = el.getBoundingClientRect().top + window.scrollY - 72;
     window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
@@ -417,6 +419,7 @@
     <!-- 4 Interactive Pillar Tabs -->
     <div
       class="vprops"
+      id="feature-tabs"
       role="tablist"
       aria-label="Typie features"
       use:reveal
@@ -1112,6 +1115,7 @@
     gap: 8px;
     margin: 32px auto 0;
     max-width: 860px;
+    scroll-margin-top: 72px;
   }
   .vprop {
     display: inline-flex;
@@ -1182,20 +1186,17 @@
   }
 
   .mac {
-    background: var(--mac-lid-bg);
-    border: 2px solid var(--line-strong);
-    border-radius: 24px 24px 0 0;
-    padding: 10px 10px 0;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
-    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    position: relative;
   }
   :root[data-theme='dark'] .mac {
-    background: linear-gradient(180deg, #262a3c 0%, #161822 100%);
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
-      0 36px 100px rgba(0, 0, 0, 0.85),
-      0 0 0 1px rgba(255, 255, 255, 0.1),
-      0 0 60px rgba(252, 86, 129, 0.12);
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   .lid {
@@ -1214,8 +1215,8 @@
     min-height: 530px;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(0, 0, 0, 0.25);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    border: none;
+    box-shadow: none;
     transition: background 0.3s ease;
   }
   :root[data-theme='dark'] .lid {
@@ -1227,8 +1228,8 @@
       #1e1b4b 80%,
       #090d16 100%
     );
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    border: none;
+    box-shadow: none;
   }
 
   /* Mac Menu Bar — frosted glass layer */
@@ -1440,10 +1441,10 @@
       0 0 0 1px rgba(252, 86, 129, 0.35);
   }
 
-  /* Cartoon ripples emanating from the notch */
+  /* White glow — taller, waveform-like pulsing (not uniform), contained inside screen */
   .notch-aura {
     position: absolute;
-    top: 14px;
+    top: 0;
     left: 50%;
     width: 0;
     height: 0;
@@ -1453,56 +1454,101 @@
   .notch-aura .ring,
   .notch-aura .wobble {
     position: absolute;
-    left: 0;
+    left: 50%;
     top: 0;
-    width: 28px;
-    height: 18px;
-    margin: -9px 0 0 -14px;
-    border: 2px solid var(--hotpink);
-    border-radius: 48% 52% 46% 54% / 52% 46% 54% 48%;
+    width: 268px;
+    height: 38px;
+    border: none;
+    border-radius: 0 0 14px 14px;
+    background: #ffffff;
+    box-shadow:
+      0 0 16px rgba(255, 255, 255, 0.38),
+      0 4px 18px rgba(255, 255, 255, 0.20);
     opacity: 0;
-    animation: nripple 2.4s ease-out infinite;
+    transform: translateX(-50%) scale(0.92);
+    transform-origin: 50% 0;
+    animation: pulseWave 1.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+    will-change: transform, opacity;
   }
   .notch-aura .ring:nth-child(2) {
-    animation-delay: 0.8s;
+    width: 284px;
+    height: 42px;
+    border-radius: 0 0 15px 15px;
+    animation-delay: 0.52s;
   }
   .notch-aura .ring:nth-child(3) {
-    animation-delay: 1.6s;
+    width: 302px;
+    height: 46px;
+    border-radius: 0 0 16px 16px;
+    animation-delay: 1.04s;
   }
   .notch-aura .wobble {
-    border-width: 1.5px;
-    animation-name: nwobble;
-    animation-duration: 1.6s;
-    animation-delay: 0.2s;
+    width: 252px;
+    height: 36px;
+    border-radius: 0 0 13px 13px;
+    animation-name: pulseWaveSoft;
+    animation-duration: 1.45s;
+    animation-delay: 0.18s;
   }
   .notch-aura.mint .ring,
-  .notch-aura.mint .wobble {
-    border-color: #4ade80;
-  }
+  .notch-aura.mint .wobble,
   .notch-aura.purple .ring,
   .notch-aura.purple .wobble {
-    border-color: #c88cfd;
+    background: #ffffff;
   }
-  @keyframes nripple {
+  @keyframes pulseWave {
     0% {
-      transform: scale(1) rotate(0deg);
-      opacity: 0.7;
+      transform: translateX(-50%) scale(0.88);
+      opacity: 0;
     }
-    70% {
+    10% {
+      transform: translateX(-50%) scale(0.96);
+      opacity: 0.86;
+    }
+    22% {
+      transform: translateX(-50%) scale(1.12);
+      opacity: 0.42;
+    }
+    34% {
+      transform: translateX(-50%) scale(1.04);
       opacity: 0.22;
     }
+    48% {
+      transform: translateX(-50%) scale(1.34);
+      opacity: 0.11;
+    }
+    62% {
+      transform: translateX(-50%) scale(1.22);
+      opacity: 0.05;
+    }
+    78% {
+      transform: translateX(-50%) scale(1.52);
+      opacity: 0.015;
+    }
     100% {
-      transform: scale(14) rotate(28deg);
+      transform: translateX(-50%) scale(1.62);
       opacity: 0;
     }
   }
-  @keyframes nwobble {
+  @keyframes pulseWaveSoft {
     0% {
-      transform: scale(1) rotate(-8deg);
-      opacity: 0.55;
+      transform: translateX(-50%) scale(0.90);
+      opacity: 0;
+    }
+    14% {
+      transform: translateX(-50%) scale(1.06);
+      opacity: 0.86;
+    }
+    30% {
+      transform: translateX(-50%) scale(0.98);
+      opacity: 0.32;
+    }
+    52% {
+      transform: translateX(-50%) scale(1.22);
+      opacity: 0.09;
     }
     100% {
-      transform: scale(9) rotate(18deg);
+      transform: translateX(-50%) scale(1.38);
       opacity: 0;
     }
   }

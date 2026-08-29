@@ -36,6 +36,11 @@
       const el = document.getElementById(id);
       if (el) io.observe(el);
     });
+
+    // set initial nav visibility based on Hero demo position
+    const demo = document.getElementById('demo');
+    if (demo) scrolled = demo.getBoundingClientRect().bottom < 80;
+
     return () => io.disconnect();
   });
 
@@ -49,7 +54,13 @@
 
 <svelte:window
   onscroll={() => {
-    scrolled = window.scrollY > 140;
+    const demo = document.getElementById('demo');
+    if (demo) {
+      const bottom = demo.getBoundingClientRect().bottom;
+      scrolled = bottom < 80;
+    } else {
+      scrolled = window.scrollY > 400;
+    }
     const max = document.documentElement.scrollHeight - innerHeight;
     progress = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
   }}
