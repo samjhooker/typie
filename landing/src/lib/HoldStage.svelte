@@ -822,7 +822,7 @@
   }
 
   .window.done {
-    animation: land 0.5s cubic-bezier(0.2, 1.4, 0.35, 1);
+    animation: land 0.5s cubic-bezier(0.2, 1, 0.35, 1);
   }
 
   @keyframes land {
@@ -980,9 +980,9 @@
     overflow: hidden;
     transform-origin: 50% 0;
     transition:
-      width 0.58s cubic-bezier(0.22, 1.28, 0.36, 1),
-      padding 0.5s cubic-bezier(0.22, 1.28, 0.36, 1),
-      column-gap 0.5s cubic-bezier(0.22, 1.28, 0.36, 1);
+      width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      column-gap 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .notch.open {
@@ -990,7 +990,7 @@
     height: 26px;
     padding: 0 14px;
     column-gap: 8px;
-    animation: islandpop 0.58s cubic-bezier(0.22, 1.28, 0.36, 1);
+    animation: islandpop 0.58s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @keyframes islandpop {
@@ -1032,7 +1032,7 @@
     transform: translateY(2px) scale(0.84);
     transition:
       opacity 0.28s ease 0.16s,
-      transform 0.4s cubic-bezier(0.22, 1.2, 0.36, 1) 0.12s;
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
   }
 
   .nleft {
@@ -1123,7 +1123,7 @@
   }
 
   .window.done {
-    animation: land 0.5s cubic-bezier(0.2, 1.4, 0.35, 1);
+    animation: land 0.5s cubic-bezier(0.2, 1, 0.35, 1);
   }
 
   @keyframes land {
@@ -1931,7 +1931,7 @@
 
   .popwrap {
     position: relative;
-    animation: pop 0.45s cubic-bezier(0.2, 1.4, 0.35, 1) both;
+    animation: pop 0.45s cubic-bezier(0.2, 1, 0.35, 1) both;
   }
 
   @keyframes pop {

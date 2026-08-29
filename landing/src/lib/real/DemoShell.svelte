@@ -167,7 +167,7 @@
     --sans: 'Inter', -apple-system, system-ui, sans-serif;
     --hand: 'Caveat', cursive;
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-    --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+    --spring: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
     --snap: cubic-bezier(0.22, 1, 0.36, 1);
     color: var(--text-2);

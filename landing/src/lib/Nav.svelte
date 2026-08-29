@@ -302,8 +302,8 @@
   .theme-btn {
     display: inline-grid;
     place-items: center;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: var(--surface-2);
     color: var(--ink);
@@ -318,8 +318,8 @@
     border-color: var(--hotpink);
   }
   .theme-btn.corner {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: var(--surface);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }

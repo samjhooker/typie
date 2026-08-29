@@ -177,9 +177,9 @@
     flex-direction: column;
     gap: 5px;
     padding: 10px 12px;
-    border-left: 3px solid #ffd3e0;
-    border-radius: 0 10px 10px 0;
+    border-radius: 10px;
     background: rgba(252, 86, 129, 0.05);
+    border: 1px solid rgba(252, 86, 129, 0.14);
   }
   .q-text {
     font-size: 12px;

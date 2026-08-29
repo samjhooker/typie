@@ -170,7 +170,7 @@
 
   /* done: springy pop */
   .done svg {
-    animation: yay 0.55s cubic-bezier(0.2, 1.6, 0.35, 1);
+    animation: yay 0.55s cubic-bezier(0.2, 1, 0.35, 1);
   }
 
   @keyframes yay {
@@ -188,7 +188,7 @@
   /* ears grow outward when typing */
   .ear {
     transform-box: fill-box;
-    transition: transform 0.35s cubic-bezier(0.2, 1.4, 0.35, 1);
+    transition: transform 0.35s cubic-bezier(0.2, 1, 0.35, 1);
   }
 
   .ear-l {

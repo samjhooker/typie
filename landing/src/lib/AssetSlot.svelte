@@ -7,7 +7,7 @@
    * Note: we verify the response actually decodes as an image, because dev
    * servers answer 200 with index.html for missing files (SPA fallback).
    */
-  let { id, alt = '', width = '100%', fallback, round = false } = $props();
+  let { id, alt = 'Typie interface illustration', width = '100%', fallback, round = false } = $props();
 
   const EXTS = ['webp', 'png', 'svg'];
   let src = $state(null);

@@ -197,7 +197,7 @@
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 30px 70px rgba(3, 43, 37, 0.3);
-    animation: pop-in 0.35s cubic-bezier(0.2, 1.4, 0.35, 1);
+    animation: pop-in 0.35s cubic-bezier(0.2, 1, 0.35, 1);
     text-align: left;
   }
 

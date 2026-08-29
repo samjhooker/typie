@@ -173,7 +173,7 @@
   }
 
   .fresh {
-    animation: landIn 0.55s var(--spring, cubic-bezier(0.22, 1.2, 0.36, 1)) both;
+    animation: landIn 0.55s var(--spring, cubic-bezier(0.22, 1, 0.36, 1)) both;
   }
   @keyframes landIn {
     0% {

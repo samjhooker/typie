@@ -253,7 +253,7 @@
     width: min(340px, calc(100vw - 32px));
     border-radius: 20px;
     overflow: hidden;
-    animation: pb-pop 0.35s cubic-bezier(0.2, 1.4, 0.35, 1);
+    animation: pb-pop 0.35s cubic-bezier(0.2, 1, 0.35, 1);
     text-align: left;
   }
 
@@ -472,6 +472,7 @@
 
   .pb-ent input:focus {
     border-color: rgba(52, 211, 153, 0.6);
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.18);
   }
 
   .pb-ent input::placeholder {
@@ -556,6 +557,7 @@
 
   .pb-edu input:focus {
     border-color: #fc5681;
+    box-shadow: 0 0 0 3px rgba(252, 86, 129, 0.18);
   }
 
   .pb-edu input::placeholder {
