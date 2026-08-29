@@ -29,7 +29,9 @@
   // thesvg's wordmark is blue (#0b5cff) on transparent — invert to white for dark bg
   const _zoomWordmarkRaw =
     zoom2025Mod?.variants?.wordmark ?? zoom2025Mod?.svg ?? '';
-  const zoomWordmarkDark = _zoomWordmarkRaw.replaceAll('#0b5cff', '#ffffff').replaceAll('#0B5CFF', '#ffffff');
+  const zoomWordmarkDark = _zoomWordmarkRaw
+    .replaceAll('#0b5cff', '#ffffff')
+    .replaceAll('#0B5CFF', '#ffffff');
 
   let active = $state('dictate');
   let wifiOff = $state(false);
@@ -56,7 +58,7 @@
       icon: StickyNote,
       label: 'Voice Notes',
       desc: 'Quick thoughts land on your sticky wall — pinned, searchable, local.',
-      color: '#0ea86b',
+      color: '#0f9d6a',
     },
     {
       id: 'summarize',
@@ -835,7 +837,10 @@
                       <span class="calltitle">Launch Sync — zoom.us</span>
                       <span class="cspace"></span>
                       <span class="zoom-rec">
-                        <i class="rec-dot"></i>REC <span class="zoom-timer mono">{capStep >= 1 ? '00:12' : '00:00'}</span>
+                        <i class="rec-dot"></i>REC
+                        <span class="zoom-timer mono"
+                          >{capStep >= 1 ? '00:12' : '00:00'}</span
+                        >
                       </span>
                     </header>
 
@@ -852,7 +857,9 @@
                             >
                             <figcaption class="cname">{p.n}</figcaption>
                             {#if liveSpeaker === i}
-                              <span class="cwave" aria-hidden="true"
+                              <span
+                                class="cwave"
+                                aria-hidden="true"
                                 ><i></i><i></i><i></i><i></i></span
                               >
                             {/if}
@@ -860,14 +867,96 @@
                         {/each}
                       </div>
                       <div class="zoom-controls">
-                        <button class="zc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-                        <button class="zc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/></svg></button>
-                        <button class="zc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
-                        <button class="zc rec on" title="Typie is recording system audio locally"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7"/></svg></button>
-                        <button class="zc end"><svg viewBox="0 0 24 24" width="18" height="18" fill="#fff" stroke="none"><path d="M3 9a13 13 0 0 1 18 0v6l-4 1-2-3a8 8 0 0 0-6 0l-2 3-4-1z"/></svg></button>
+                        <button class="zc"
+                          ><svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="#fff"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            ><rect
+                              x="9"
+                              y="3"
+                              width="6"
+                              height="11"
+                              rx="3"
+                            /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg
+                          ></button
+                        >
+                        <button class="zc"
+                          ><svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="#fff"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            ><rect
+                              x="3"
+                              y="6"
+                              width="13"
+                              height="12"
+                              rx="2"
+                            /><path d="m16 10 5-3v10l-5-3z" /></svg
+                          ></button
+                        >
+                        <button class="zc"
+                          ><svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="#fff"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            ><rect
+                              x="3"
+                              y="3"
+                              width="18"
+                              height="14"
+                              rx="2"
+                            /><path d="M8 21h8M12 17v4" /></svg
+                          ></button
+                        >
+                        <button
+                          class="zc rec on"
+                          title="Typie is recording system audio locally"
+                          ><svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="#4ade80"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            ><circle
+                              cx="12"
+                              cy="12"
+                              r="7"
+                            /></svg
+                          ></button
+                        >
+                        <button class="zc end"
+                          ><svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="#fff"
+                            stroke="none"
+                            ><path
+                              d="M3 9a13 13 0 0 1 18 0v6l-4 1-2-3a8 8 0 0 0-6 0l-2 3-4-1z"
+                            /></svg
+                          ></button
+                        >
                       </div>
                       <div class="zoom-typie-badge">
-                        <Robot size={16} mood="idle" />
+                        <Robot
+                          size={16}
+                          mood="idle"
+                        />
                         <span>Typie · recording locally · 0 bytes sent</span>
                       </div>
                     </div>
@@ -1013,8 +1102,7 @@
                 <span
                   class="dico"
                   data-app={a.id}
-                  data-shell={a.shell}
-                  >{@html nsSvg(a.brand, 'dk' + a.id)}</span
+                  data-shell={a.shell}>{@html nsSvg(a.brand, 'dk' + a.id)}</span
                 >
                 <i
                   class="ddot"
@@ -1047,7 +1135,9 @@
               aria-label="Typie App"
               title="Typie App"
             >
-              <span class="dico dtyp" data-app="typie"
+              <span
+                class="dico dtyp"
+                data-app="typie"
                 ><Robot
                   size={22}
                   mood="idle"
@@ -1477,7 +1567,7 @@
     height: 75%;
   }
   .nwave.process i {
-    background: #c88cfd;
+    background: var(--purple);
   }
   @keyframes nw {
     to {
@@ -1510,10 +1600,10 @@
     height: 38px;
     border: none;
     border-radius: 0 0 14px 14px;
-    background: #ffffff;
+    background: var(--surface);
     box-shadow:
       0 0 16px rgba(255, 255, 255, 0.38),
-      0 4px 18px rgba(255, 255, 255, 0.20);
+      0 4px 18px rgba(255, 255, 255, 0.2);
     opacity: 0;
     transform: translateX(-50%) scale(0.92);
     transform-origin: 50% 0;
@@ -1544,7 +1634,7 @@
   .notch-aura.mint .wobble,
   .notch-aura.purple .ring,
   .notch-aura.purple .wobble {
-    background: #ffffff;
+    background: var(--surface);
   }
   @keyframes pulseWave {
     0% {
@@ -1582,7 +1672,7 @@
   }
   @keyframes pulseWaveSoft {
     0% {
-      transform: translateX(-50%) scale(0.90);
+      transform: translateX(-50%) scale(0.9);
       opacity: 0;
     }
     14% {
@@ -1614,7 +1704,7 @@
     gap: 5px;
   }
   .nms {
-    color: #4ade80;
+    color: var(--mint-live);
     font-weight: 700;
     font-size: 11px;
   }
@@ -1724,7 +1814,7 @@
     background: #d1d5db;
   }
   .dots i:nth-child(1) {
-    background: #ef4444;
+    background: var(--error);
   }
   .dots i:nth-child(2) {
     background: #f59e0b;
@@ -1884,7 +1974,7 @@
     color: var(--hotpink);
   }
   .optstatus.done {
-    color: #4ade80;
+    color: var(--mint-live);
   }
   .optmeta strong {
     font-size: 15px;
@@ -2060,7 +2150,7 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #ef4444;
+    background: var(--error);
     margin-right: 4px;
     animation: recblink 1s steps(1) infinite;
   }
@@ -2098,7 +2188,7 @@
       box-shadow 0.2s ease;
   }
   .ctile.speaking {
-    border-color: #4ade80;
+    border-color: var(--mint-live);
     box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
   }
   .cini {
@@ -2131,7 +2221,7 @@
   .cwave i {
     width: 2px;
     border-radius: 2px;
-    background: #4ade80;
+    background: var(--mint-live);
     height: 40%;
     animation: cwave 0.6s ease-in-out infinite alternate;
   }
@@ -2181,7 +2271,7 @@
     box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.5);
   }
   .zc.end {
-    background: #ef4444;
+    background: var(--error);
   }
   .zoom-typie-badge {
     flex: none;
@@ -2225,7 +2315,7 @@
   .loadbar {
     width: 180px;
     height: 6px;
-    background: rgba(19, 23, 34, 0.08);
+    background: var(--wash-strong);
     border-radius: 999px;
     overflow: hidden;
   }
@@ -2296,7 +2386,7 @@
     transition: transform 0.18s var(--spring);
   }
   .ditem:hover {
-    transform: translateY(-5px) scale(1.10);
+    transform: translateY(-5px) scale(1.1);
   }
   .ditem:active {
     transform: translateY(-2px) scale(1.04);
@@ -2308,10 +2398,10 @@
     place-items: center;
     border-radius: 10px;
     overflow: hidden;
-    background: #ffffff;
+    background: var(--surface);
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.10),
+      0 4px 12px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.9);
     transition: box-shadow 0.18s ease;
   }
@@ -2327,7 +2417,7 @@
   }
   /* dock icons — real brand logos on solid Apple squircles (no transparency) */
   .dico[data-shell='pad'] {
-    background: #ffffff;
+    background: var(--surface);
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.12),
       0 4px 12px rgba(0, 0, 0, 0.1),
@@ -2343,10 +2433,10 @@
   }
   /* solid Apple-style backgrounds per brand — never transparent */
   .dico[data-app='slack'] {
-    background: #ffffff;
+    background: var(--surface);
   }
   .dico[data-app='safari'] {
-    background: #ffffff;
+    background: var(--surface);
   }
   .dico[data-app='safari'] :global(svg) {
     width: 26px;
@@ -2354,7 +2444,7 @@
     border-radius: 0;
   }
   .dico[data-app='outlook'] {
-    background: #ffffff;
+    background: var(--surface);
   }
   .dico[data-app='outlook'] :global(svg) {
     width: 26px;
@@ -2362,7 +2452,7 @@
     border-radius: 0;
   }
   .dico[data-app='whatsapp'] {
-    background: #ffffff;
+    background: var(--surface);
   }
   .dico[data-app='whatsapp'] :global(svg) {
     width: 26px;
@@ -2391,11 +2481,11 @@
     border-radius: 0;
   }
   .dico.dtyp {
-    background: #ffffff;
+    background: var(--surface);
     color: var(--hotpink);
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.10),
+      0 4px 12px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
   :root[data-theme='dark'] .dico.dtyp {
@@ -2407,7 +2497,7 @@
     border-radius: 0;
   }
   .dico[data-app='typie'] {
-    background: #ffffff;
+    background: var(--surface);
   }
   .dtyp {
     color: var(--hotpink);
@@ -2438,7 +2528,7 @@
     top: 50%;
     width: 1px;
     height: 22px;
-    background: rgba(0, 0, 0, 0.10);
+    background: rgba(0, 0, 0, 0.1);
     transform: translateY(-50%);
     border-radius: 1px;
   }

@@ -110,7 +110,7 @@
     margin: 22px auto 0;
     max-width: 44rem;
     text-align: center;
-    color: rgba(19, 23, 34, 0.68);
+    color: var(--text-2);
     line-height: 1.6;
     font-size: clamp(16px, 1.5vw, 18px);
   }
@@ -166,7 +166,7 @@
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
-    background: #fff;
+    background: var(--surface);
     border-radius: 999px;
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.06);
     padding: 10px 18px 11px;
@@ -197,7 +197,7 @@
   .name {
     font-size: 11.5px;
     font-weight: 500;
-    color: rgba(19, 23, 34, 0.52);
+    color: var(--text-3);
     text-align: center;
     line-height: 1.2;
     white-space: nowrap;

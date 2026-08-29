@@ -212,7 +212,7 @@
     color: #111b21;
   }
   .rail {
-    background: #fff;
+    background: var(--surface);
     border-right: 1px solid #e9edef;
     display: flex;
     flex-direction: column;
@@ -358,7 +358,7 @@
   }
   .daychip {
     align-self: center;
-    background: #fff;
+    background: var(--surface);
     color: #54656f;
     font-size: 10.5px;
     font-weight: 500;
@@ -370,7 +370,7 @@
   .bub {
     align-self: flex-start;
     max-width: 78%;
-    background: #fff;
+    background: var(--surface);
     border-radius: 8px 8px 8px 2px;
     padding: 6px 9px 7px;
     box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
@@ -436,7 +436,7 @@
     align-items: center;
     gap: 8px;
     margin: 0 16px 12px;
-    background: #fff;
+    background: var(--surface);
     border-radius: 10px;
     padding: 6px 12px;
     min-height: 44px;
@@ -476,7 +476,7 @@
     }
     100% {
       box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.16);
-      background: #fff;
+      background: var(--surface);
     }
   }
   .cico {
@@ -540,5 +540,62 @@
     .rail {
       display: none;
     }
+  }
+
+  /* ── WhatsApp dark mode (real WA dark: #0B141A chat, #202C33 chrome,
+     #005C4B outgoing bubbles, #E9EDEF text) ── */
+  :global([data-theme='dark']) .awhats {
+    background: #0b141a;
+    color: #e9edef;
+  }
+  :global([data-theme='dark']) .rail {
+    background: #111b21;
+    border-right-color: #222d34;
+  }
+  :global([data-theme='dark']) .railhead,
+  :global([data-theme='dark']) .phead {
+    background: #202c33;
+    border-bottom-color: #222d34;
+  }
+  :global([data-theme='dark']) .crow {
+    border-bottom-color: #1d282f;
+  }
+  :global([data-theme='dark']) .crow.on {
+    background: #202c33;
+  }
+  :global([data-theme='dark']) .top b {
+    color: #e9edef;
+  }
+  :global([data-theme='dark']) .t,
+  :global([data-theme='dark']) .last {
+    color: #8696a0;
+  }
+  :global([data-theme='dark']) .pane {
+    background: #0b141a;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 0
+    );
+  }
+  :global([data-theme='dark']) .daychip {
+    background: #182229;
+    color: #8696a0;
+    box-shadow: none;
+  }
+  :global([data-theme='dark']) .bub {
+    background: #202c33;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.3);
+  }
+  :global([data-theme='dark']) .bub.mine {
+    background: #005c4b;
+  }
+  :global([data-theme='dark']) .bub p {
+    color: #e9edef;
+  }
+  :global([data-theme='dark']) .tm {
+    color: #8696a0;
+  }
+  :global([data-theme='dark']) .composer {
+    background: #2a3942;
   }
 </style>

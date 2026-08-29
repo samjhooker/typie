@@ -82,7 +82,7 @@
     font-size: clamp(32px, 4.4vw, 54px);
     letter-spacing: -0.03em;
     line-height: 1.04;
-    color: #fffdf7;
+    color: var(--cream-50);
   }
 
   h2 .accent {
@@ -131,7 +131,7 @@
   .lbl {
     font-weight: 700;
     font-size: 15px;
-    color: #fffdf7;
+    color: var(--cream-50);
   }
 
   .note {

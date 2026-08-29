@@ -40,8 +40,8 @@
     padding: 9px 9px 9px 16px;
     border-radius: 999px;
     background: var(--ink);
-    color: #fffdf7;
-    box-shadow: 0 10px 28px rgba(19, 23, 34, 0.3);
+    color: var(--cream-50);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
     animation: toast-in 0.45s var(--spring-snappy, ease) both;
   }
   .msg {
@@ -54,7 +54,7 @@
   }
   .msg b {
     font-weight: 700;
-    color: #fffdf7;
+    color: var(--cream-50);
     max-width: 220px;
     overflow: hidden;
     text-overflow: ellipsis;

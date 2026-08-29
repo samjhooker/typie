@@ -328,7 +328,7 @@
   /* — realistic X tweet card — */
   .tweet {
     flex: 0 0 360px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid #e7e9ea;
     border-radius: 16px;
     padding: 14px 16px 12px;

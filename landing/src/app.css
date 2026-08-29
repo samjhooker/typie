@@ -1,4 +1,5 @@
 /* Typie Design System — Canva-inspired delight + Apple precision */
+@import './tokens.css'; /* shared ramps — single source with the Mac app webui */
 :root {
   /* Light Theme (Default: warm editorial canvas, crisp ink, radiant pink) */
   --bg: #fbf9f6;
@@ -11,6 +12,9 @@
   --line: rgba(19, 23, 34, 0.08);
   --line-strong: rgba(19, 23, 34, 0.16);
   --line-subtle: rgba(19, 23, 34, 0.04);
+  --wash: rgba(19, 23, 34, 0.06);
+  --wash-strong: rgba(19, 23, 34, 0.12);
+  --hover-row: rgba(253, 248, 238, 0.8);
 
   --ink: #111318;
   --text-1: #111318;
@@ -41,6 +45,19 @@
   --butter: #ffe79a;
   --sun: #fdc068;
   --card-cream: #fdf7eb;
+  /* app support colors (see DESIGN.md §5) — used by app-mock components */
+  --sky: #bcd6ff;
+  --lavender: #ddd8ff;
+  --lime: #d8e268;
+  --ink-app: #131722; /* the Mac app's ink, distinct from landing ink */
+  --gradient-sunset: linear-gradient(
+    165deg,
+    #f59e0b 0%,
+    #fb923c 18%,
+    #f472b6 48%,
+    #c084fc 78%,
+    #818cf8 100%
+  );
 
   /* Mac Window Simulation Tokens */
   --mac-lid-bg: #1e2029;
@@ -70,7 +87,12 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
   --spring: cubic-bezier(0.22, 1, 0.36, 1);
-  --spring-snappy: cubic-bezier(0.34, 1, 0.64, 1); /* ease-out-quart — was referenced but never defined */
+  --spring-snappy: cubic-bezier(
+    0.34,
+    1,
+    0.64,
+    1
+  ); /* ease-out-quart — was referenced but never defined */
   --snap: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -90,7 +112,7 @@
   --ink: #f7f6f4;
   --text-1: #f7f6f4;
   --text-2: #a2a6b5;
-  --text-3: #757989;
+  --text-3: #8a8e9a; /* was #757989 — 3.8:1 on dark cards, needed 4.5 */
   --muted: #545766;
 
   --hotpink: #fc5681;
@@ -114,6 +136,35 @@
   --butter: #ffd875;
   --sun: #fdc068;
   --card-cream: #292014;
+
+  /* ramp adjustments live in tokens.css (shared with the app webui);
+     only the warm-cream neutrals are landing-specific — and in dark they
+     unify to the neutral surface family (user: one dark card color) */
+  --cream-50: #14161f;
+  --cream-100: #1b1e2a;
+  --cream-200: #232633;
+  --sun-orange: #ff9124;
+  --amber: #e59e12;
+  --error: #ef4444;
+
+  /* dark card tints — unified to a single elevated surface (user call:
+     the dark blue/green/red tint variants looked muddy) */
+  --card-blue: #1b1e2a;
+  --card-lavender: #1b1e2a;
+  --card-cream: #1b1e2a;
+  --card-mint: #1b1e2a;
+  --pink-band: #1b1e2a;
+
+  /* row hover for demo transcripts etc */
+  --hover-row: rgba(255, 255, 255, 0.06);
+  --wash: rgba(255, 255, 255, 0.09);
+  --wash-strong: rgba(255, 255, 255, 0.16);
+  --info: #7a98fc;
+  /* app support colors — dark variants */
+  --sky: #1a2740;
+  --lavender: #251f3d;
+  --lime: #2a2f16;
+  --ink-app: #f7f6f4;
 
   --mac-lid-bg: #07080b;
   --mac-bezel: #000000;

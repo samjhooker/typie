@@ -18,6 +18,7 @@ export const ui = $state({
     notesKeepAudio: true,
     meetingMixMic: false,
     transcriptsKeepAudio: true,
+    appearance: 'system', // 'system' | 'light' | 'dark'
   },
   permissions: { mic: false, ax: false, screen: false },
   model: { status: 'notDownloaded', fraction: 0, error: '' },

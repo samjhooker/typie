@@ -141,7 +141,7 @@
     text-align: center;
     margin-top: 14px;
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.66);
+    color: var(--text-2);
   }
 
   .tablewrap {
@@ -155,7 +155,7 @@
     min-width: 720px;
     border-collapse: separate;
     border-spacing: 0;
-    background: #fff;
+    background: var(--surface);
     border: 2px solid rgba(19, 23, 34, 0.85);
     border-radius: var(--radius-card);
     overflow: hidden;
@@ -182,7 +182,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: lowercase;
-    color: rgba(19, 23, 34, 0.62);
+    color: var(--text-2);
     background: rgba(19, 23, 34, 0.03);
   }
 
@@ -268,7 +268,7 @@
 
   .mark.no {
     background: rgba(19, 23, 34, 0.1);
-    color: rgba(19, 23, 34, 0.55);
+    color: var(--text-3);
   }
 
   .mark.dim {
@@ -286,12 +286,12 @@
 
   .small {
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.6);
+    color: var(--text-2);
     white-space: nowrap;
   }
 
   .dash {
-    color: rgba(19, 23, 34, 0.3);
+    color: var(--text-3);
   }
 
   .fine {

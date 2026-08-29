@@ -45,7 +45,7 @@
   .bar {
     width: 3px;
     border-radius: 99px;
-    background: linear-gradient(to top, #fc5681, #6f8ffb);
+    background: linear-gradient(to top, var(--hotpink), var(--periwinkle));
     animation: wave 1.2s ease-in-out infinite;
   }
   .bar:nth-child(1),
@@ -87,13 +87,13 @@
     font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
     font-weight: 700;
     font-size: 14px;
-    color: #131722;
+    color: var(--ink-app);
   }
   .sublabel {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
     font-size: 10px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.4);
+    color: var(--text-3);
   }
 </style>

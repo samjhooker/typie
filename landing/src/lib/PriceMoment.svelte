@@ -119,7 +119,7 @@
   }
 
   .kicker {
-    color: rgba(19, 23, 34, 0.55);
+    color: var(--text-3);
   }
 
   .struck {
@@ -138,7 +138,7 @@
     text-decoration: line-through;
     text-decoration-color: var(--hotpink);
     text-decoration-thickness: 6px;
-    color: rgba(19, 23, 34, 0.55);
+    color: var(--text-3);
   }
 
   .per {
@@ -171,7 +171,7 @@
     display: block;
     margin-top: 12px;
     font-size: clamp(19px, 2vw, 25px);
-    color: rgba(19, 23, 34, 0.75);
+    color: var(--text-2);
   }
 
   .kickerline {
@@ -180,7 +180,7 @@
     margin-top: clamp(24px, 4vh, 36px);
     font-size: clamp(15px, 1.6vw, 18px);
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.72);
+    color: var(--text-2);
   }
 
   .bot {

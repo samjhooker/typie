@@ -645,7 +645,7 @@
     align-items: center;
     gap: 10px;
     font-size: 12px !important;
-    color: rgba(19, 23, 34, 0.5);
+    color: var(--text-3);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     order: 2;
@@ -882,7 +882,7 @@
     position: relative;
     z-index: 4;
     height: 26px;
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
@@ -897,7 +897,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    color: rgba(19, 23, 34, 0.65);
+    color: var(--text-2);
     font-size: 11px !important;
     letter-spacing: 0.02em;
     text-transform: none;
@@ -1173,7 +1173,7 @@
     font-family: var(--display);
     font-weight: 700;
     font-size: 13.5px;
-    color: rgba(19, 23, 34, 0.85);
+    color: var(--text-2);
   }
 
   .meta {
@@ -1231,7 +1231,7 @@
     border-radius: 7px;
     font-size: 12.5px;
     font-weight: 500;
-    color: rgba(19, 23, 34, 0.62);
+    color: var(--text-2);
   }
 
   .side li.on {
@@ -1347,14 +1347,14 @@
 
   .fields span {
     display: inline-block;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid #d1d1d1;
     border-radius: 4px;
     padding: 5px 9px;
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.04em;
-    color: rgba(19, 23, 34, 0.6);
+    color: var(--text-2);
   }
 
   .sendbtn {
@@ -1383,13 +1383,13 @@
   .mail-text {
     font-size: 15px;
     line-height: 1.55;
-    color: rgba(19, 23, 34, 0.85);
+    color: var(--text-2);
   }
 
   .note-text {
     font-size: 15px;
     line-height: 1.5;
-    color: rgba(19, 23, 34, 0.8);
+    color: var(--text-2);
   }
 
   .chan {
@@ -1505,7 +1505,7 @@
   }
 
   .window.theme-slack .paper {
-    background: #fff;
+    background: var(--surface);
     justify-content: flex-start;
   }
 
@@ -1544,7 +1544,7 @@
     padding: 5px 10px;
     border-radius: 7px 7px 0 0;
     font-size: 11px;
-    color: rgba(19, 23, 34, 0.5);
+    color: var(--text-3);
     max-width: 240px;
     white-space: nowrap;
     overflow: hidden;
@@ -1584,14 +1584,14 @@
   }
 
   .bnav {
-    color: rgba(19, 23, 34, 0.4);
+    color: var(--text-3);
     font-size: 11px;
     letter-spacing: 1px;
   }
 
   .baddr {
     flex: 1;
-    background: #fff;
+    background: var(--surface);
     border-radius: 999px;
     padding: 5px 12px;
     font-family: var(--mono);
@@ -1705,7 +1705,7 @@
   }
 
   .window.theme-docs .paper {
-    background: #fff;
+    background: var(--surface);
     max-width: 430px;
     margin: 12px auto 16px;
     min-height: 190px;
@@ -1795,7 +1795,7 @@
 
   /* Messenger */
   .window.theme-chat .titlebar {
-    background: #fff;
+    background: var(--surface);
   }
 
   .tavatar {
@@ -1812,7 +1812,7 @@
   }
 
   .window.theme-chat .paper {
-    background: #fff;
+    background: var(--surface);
   }
 
   .window.theme-chat .paper > :first-child {

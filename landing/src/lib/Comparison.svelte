@@ -289,7 +289,7 @@
 
   thead th.us-col {
     background: var(--mint);
-    color: #02453c;
+    color: var(--teal-900);
     border-radius: 12px 12px 0 0;
   }
 
@@ -299,7 +299,7 @@
     gap: 8px;
     font-size: 16px;
     font-weight: 800;
-    color: #02453c;
+    color: var(--teal-900);
   }
   .us-sub {
     font-family: var(--mono);
@@ -345,7 +345,7 @@
   }
 
   .cross {
-    color: #ef4444;
+    color: var(--error);
     font-weight: 800;
     font-size: 16px;
   }

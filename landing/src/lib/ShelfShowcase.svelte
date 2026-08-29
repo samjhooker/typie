@@ -318,7 +318,7 @@
     text-align: center;
     margin-top: 14px;
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.66);
+    color: var(--text-2);
   }
 
   .tabs {
@@ -333,7 +333,7 @@
     padding: 9px 20px;
     border-radius: 999px;
     border: 2px solid rgba(19, 23, 34, 0.8);
-    background: #fff;
+    background: var(--surface);
     font-weight: 700;
     font-size: 14.5px;
     color: var(--ink);
@@ -400,7 +400,7 @@
         rgba(252, 86, 129, 0.42) 0%,
         transparent 46%
       ),
-      linear-gradient(118deg, #bcd6ff 0%, #ddd8ff 46%, #82eda6 100%);
+      linear-gradient(118deg, var(--sky) 0%, var(--lavender) 46%, var(--mint) 100%);
   }
 
   .appwin {
@@ -421,7 +421,7 @@
     align-items: center;
     gap: 6px;
     padding: 9px 12px;
-    background: rgba(19, 23, 34, 0.05);
+    background: var(--wash);
     border-bottom: 1px solid rgba(19, 23, 34, 0.07);
   }
 
@@ -437,7 +437,7 @@
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.08em;
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--text-3);
   }
 
   .appbody {
@@ -506,7 +506,7 @@
 
   .ghost {
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.55);
+    color: var(--text-3);
   }
 
   .ghost .dots i {
@@ -562,7 +562,7 @@
   .nmeta {
     margin-top: 10px;
     font-size: 10.5px;
-    color: rgba(19, 23, 34, 0.5);
+    color: var(--text-3);
   }
 
   /* ---------- the notch itself ---------- */
@@ -579,7 +579,7 @@
     padding: 0 clamp(14px, 2vw, 22px) 4px;
     background: #000;
     border-radius: 0 0 15px 15px;
-    color: #fffdf7;
+    color: var(--cream-50);
     white-space: nowrap;
     transition: width 0.4s var(--spring);
   }
@@ -692,7 +692,7 @@
     text-align: center;
     margin-top: clamp(20px, 3vh, 28px);
     font-size: clamp(21px, 2.2vw, 27px);
-    color: rgba(19, 23, 34, 0.78);
+    color: var(--text-2);
     min-height: 1.6em;
   }
 

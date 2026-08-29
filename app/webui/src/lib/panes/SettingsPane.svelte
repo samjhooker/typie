@@ -17,6 +17,7 @@
     Lock,
     AudioLines,
     BarChart3,
+    SunMoon,
   } from 'lucide-svelte';
 
   function fmtBytes(b) {
@@ -95,6 +96,31 @@
         <span>how your key behaves when you press it</span>
       </div>
       <TriggerPicker />
+    </div>
+    <div class="row">
+      <div class="rowtxt">
+        <SunMoon size={14} />
+        <strong>appearance</strong>
+        <span>follows your mac by default</span>
+      </div>
+      <div
+        class="seg"
+        role="radiogroup"
+        aria-label="appearance"
+      >
+        {#each [['light', 'light'], ['dark', 'dark']] as [value, label]}
+          <!-- no explicit system option — until you pick, follows your Mac -->
+          <button
+            class:on={ui.settings.appearance === value}
+            role="radio"
+            aria-checked={ui.settings.appearance === value}
+            onclick={() =>
+              send({ type: 'setSetting', key: 'appearance', value })}
+          >
+            {label}
+          </button>
+        {/each}
+      </div>
     </div>
     <div class="row">
       <div class="rowtxt">
@@ -266,8 +292,7 @@
     <h3>
       <span
         class="ico"
-        style="background:var(--mint); color:var(--green-deep)"
-        ><Lock size={15} /></span
+        style="background:var(--mint); color:#02453C"><Lock size={15} /></span
       > privacy
     </h3>
     <p class="pledge">
@@ -361,6 +386,34 @@
     flex-shrink: 0;
   }
 
+  /* appearance segmented control — system | light | dark */
+  .seg {
+    display: inline-flex;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .seg button {
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+    transition:
+      background 0.18s var(--ease-out),
+      color 0.18s var(--ease-out);
+  }
+  .seg button:hover {
+    color: var(--ink);
+  }
+  .seg button.on {
+    background: var(--hotpink);
+    color: #fff;
+  }
+
   .privacy {
     background: var(--card-mint);
     border-color: transparent;
@@ -427,7 +480,7 @@
   }
   .stat p {
     font-size: 11.5px;
-    color: rgba(19, 23, 34, 0.6);
+    color: var(--text-3);
   }
   .doodle {
     position: absolute;
@@ -500,7 +553,7 @@
   .cell {
     aspect-ratio: 1;
     border-radius: 5px;
-    background: rgba(3, 89, 77, 0.07);
+    background: var(--wash);
   }
   .cell.on {
     background: color-mix(

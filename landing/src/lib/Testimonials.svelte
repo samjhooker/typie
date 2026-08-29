@@ -232,7 +232,7 @@
     position: absolute;
     top: 2px;
     left: 36px;
-    background: #fff;
+    background: var(--surface);
     border-radius: 14px;
     padding: 5px 11px 6px;
     font-size: 16px;

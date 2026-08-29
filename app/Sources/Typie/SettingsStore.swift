@@ -100,6 +100,22 @@ final class SettingsStore: ObservableObject {
     @Published var transcriptsKeepAudio: Bool {
         didSet { defaults.set(transcriptsKeepAudio, forKey: "transcriptsKeepAudio") }
     }
+    /// "system" (follows macOS) | "light" | "dark" — webui + window chrome
+    @Published var appearance: String {
+        didSet {
+            defaults.set(appearance, forKey: "appearance")
+            Self.applyAppearance(appearance)
+        }
+    }
+
+    /// NSApp.appearance nil = follow the system (default)
+    static func applyAppearance(_ pref: String) {
+        switch pref {
+        case "dark": NSApp?.appearance = NSAppearance(named: .darkAqua)
+        case "light": NSApp?.appearance = NSAppearance(named: .aqua)
+        default: NSApp?.appearance = nil
+        }
+    }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -113,6 +129,8 @@ final class SettingsStore: ObservableObject {
         // default ON — both sides of every call, out of the box
         meetingMixMic = defaults.object(forKey: "meetingMixMic") as? Bool ?? true
         transcriptsKeepAudio = defaults.object(forKey: "transcriptsKeepAudio") as? Bool ?? true
+        appearance = defaults.string(forKey: "appearance") ?? "system"
+        Self.applyAppearance(appearance)
     }
 
     /// Applies the current launch-at-login preference to the system.

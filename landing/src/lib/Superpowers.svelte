@@ -207,7 +207,7 @@
   .card p {
     font-size: clamp(15px, 1.5vw, 17px);
     line-height: 1.6;
-    color: rgba(19, 23, 34, 0.78);
+    color: var(--text-2);
     max-width: 44ch;
   }
 
@@ -280,7 +280,7 @@
     font-family: var(--hand);
     font-size: 17px;
     color: var(--ink);
-    background: #fffdf7;
+    background: var(--cream-50);
     box-shadow: 2px 3px 0 rgba(19, 23, 34, 0.2);
     white-space: nowrap;
   }
@@ -311,7 +311,7 @@
   }
 
   .s1 {
-    background: #fffdf7;
+    background: var(--cream-50);
     transform: rotate(-2deg);
   }
   .s2 {
@@ -334,7 +334,7 @@
   .pill {
     padding: 6px 14px;
     border-radius: 999px;
-    background: #fffdf7;
+    background: var(--cream-50);
     border: 1.5px solid rgba(19, 23, 34, 0.3);
     font-weight: 600;
     font-size: 13.5px;

@@ -218,7 +218,7 @@
   p {
     padding: 0 0 20px 38px;
     max-width: 54ch;
-    color: rgba(19, 23, 34, 0.72);
+    color: var(--text-2);
     font-size: 15px;
     line-height: 1.6;
     /* spring settle on expand — answers arrive, don't blink in */

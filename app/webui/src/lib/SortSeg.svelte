@@ -42,7 +42,7 @@
       box-shadow 0.2s var(--ease-out);
   }
   button:hover:not(.selected) {
-    background: rgba(19, 23, 34, 0.05);
+    background: var(--wash);
     color: var(--ink);
   }
   button.selected {

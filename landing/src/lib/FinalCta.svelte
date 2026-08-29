@@ -77,7 +77,7 @@
     max-width: 40ch;
     font-size: clamp(16px, 1.6vw, 19px);
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.72);
+    color: var(--text-2);
   }
 
   .ctarow {

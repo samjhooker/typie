@@ -170,7 +170,36 @@
     --spring: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
     --snap: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* the typie mock runs the REAL app's dark palette when the site is dark */
+    --shadow-card: rgba(19, 23, 34, 0.04);
     color: var(--text-2);
+  }
+
+  :global([data-theme='dark']) .shell {
+    --page: #0c0d11;
+    --cream: #0c0d11;
+    --paper: #171a23;
+    --ink: #f7f6f4;
+    --text-1: var(--ink);
+    --text-2: rgba(247, 246, 244, 0.76);
+    --text-3: rgba(247, 246, 244, 0.54);
+    --pink: #3d1c28;
+    --pink-band: #3d1c28;
+    --mint-live: #4ade80;
+    --card-cream: #1d2029;
+    --card-lavender: #251f3d;
+    --card-blue: #1a2438;
+    --card-mint: #11231c;
+    --peri-ink: #9db8f0;
+    --violet-ink: #c3b1f2;
+    --red-ink: #f08aa4;
+    --glow-pink: rgba(252, 86, 129, 0.32);
+    --glow-mint: rgba(130, 237, 166, 0.36);
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.16);
+    --cream-50: #0c0d11;
+    --shadow-card: rgba(0, 0, 0, 0.3);
   }
 
   .sidebar {
@@ -226,7 +255,7 @@
       box-shadow 0.18s var(--ease-out);
   }
   .nav-item:hover {
-    background: rgba(19, 23, 34, 0.05);
+    background: var(--wash);
     color: var(--ink);
   }
   .nav-item.active {
@@ -284,17 +313,25 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: var(--surface, #fff);
     --page: #fff;
     --cream: #fff;
     --paper: #fff;
     --card-cream: #fff;
   }
 
+  :global([data-theme='dark']) .main {
+    background: #14161f;
+    --page: #14161f;
+    --cream: #14161f;
+    --paper: #1b1e2a;
+    --card-cream: #1d2029;
+  }
+
   .content {
     flex: 1;
     overflow-y: auto;
-    background: #fff;
+    background: var(--surface);
     display: flex;
     flex-direction: column;
   }
@@ -332,7 +369,7 @@
   }
   .shell :global(::selection) {
     background: var(--hotpink);
-    color: #fffdf7;
+    color: var(--cream-50);
   }
   .shell :global(:focus-visible) {
     outline: 2.5px solid var(--hotpink);
@@ -402,7 +439,7 @@
   }
   .shell :global(.btn-ghost:hover) {
     border-color: var(--ink);
-    background: rgba(19, 23, 34, 0.05);
+    background: var(--wash);
   }
 
   .shell :global(.btn.small) {
@@ -433,7 +470,7 @@
       color 0.18s var(--ease-out);
   }
   .shell :global(.icon-btn:hover) {
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
     color: var(--ink);
   }
 

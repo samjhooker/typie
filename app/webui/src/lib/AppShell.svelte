@@ -217,7 +217,7 @@
       padding 0.42s var(--ease-out);
   }
   .nav-item:hover {
-    background: rgba(19, 23, 34, 0.05);
+    background: var(--wash);
     color: var(--ink);
   }
   .nav-item.active {
@@ -310,14 +310,10 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: var(--surface);
     /* follows the rail glide */
-    transition: margin-left 0.42s cubic-bezier(0.32, 0.9, 0.28, 1);
-    /* RHS cards/inputs were cream/paper (yellow) — force white inside main only */
-    --page: #fff;
-    --cream: #fff;
-    --paper: #fff;
-    --card-cream: #fff;
+    transition: margin-left 0.42s cubic-bezier(0.32, 0.9, 0.28, 1),
+      background-color 0.25s ease;
   }
 
   /* dictation status pill — sidebar, under the nav */
@@ -353,7 +349,7 @@
   .content {
     flex: 1;
     overflow-y: auto;
-    background: #fff;
+    background: var(--surface);
     display: flex;
     flex-direction: column;
   }

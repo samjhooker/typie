@@ -302,7 +302,7 @@
   p {
     font-size: 16px;
     line-height: 1.55;
-    color: rgba(19, 23, 34, 0.82);
+    color: var(--text-2);
     opacity: 1;
     max-width: 30ch;
     flex: 1 1 0;
@@ -514,12 +514,12 @@
 
   .chip {
     position: absolute;
-    background: #fff;
+    background: var(--surface);
     border-radius: 999px;
     padding: 7px 13px;
     font-size: 12.5px;
     font-weight: 500;
-    color: rgba(19, 23, 34, 0.66);
+    color: var(--text-2);
     white-space: nowrap;
     box-shadow: 0 6px 14px rgba(19, 23, 34, 0.12);
   }

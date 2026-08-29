@@ -70,7 +70,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 14px;
-    background: #fbfbfa;
+    background: var(--surface);
     border: 1px solid rgba(3, 89, 77, 0.12);
     border-radius: 12px;
   }
@@ -81,15 +81,15 @@
     font-size: 13px;
   }
   .search-icon {
-    color: rgba(19, 23, 34, 0.35);
+    color: var(--text-3);
   }
   .search-text {
-    color: rgba(19, 23, 34, 0.4);
+    color: var(--text-3);
   }
   .count {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
     font-size: 11px;
-    color: rgba(19, 23, 34, 0.4);
+    color: var(--text-3);
   }
 
   .rows {
@@ -105,7 +105,7 @@
     padding: 11px 14px;
     border: 1px solid rgba(3, 89, 77, 0.08);
     border-radius: 12px;
-    background: #fff;
+    background: var(--surface);
     transition:
       border-color 0.15s ease,
       transform 0.15s var(--spring, ease);
@@ -122,18 +122,18 @@
   .time {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
     font-size: 12px;
-    color: rgba(19, 23, 34, 0.5);
+    color: var(--text-3);
     min-width: 52px;
   }
   .text {
     flex: 1;
     font-size: 13.5px;
-    color: #131722;
+    color: var(--ink-app);
   }
   .text b {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
     font-size: 10px;
-    background: #f4f4f5;
+    background: var(--surface-2);
     padding: 2px 6px;
     border-radius: 999px;
   }
@@ -143,15 +143,22 @@
     font-size: 10px;
     padding: 4px 9px;
     border-radius: 999px;
-    background: #fff6d6;
-    border: 1px solid #e7e5e4;
+    background: var(--card-cream);
+    border: 1px solid var(--line);
   }
   .chip {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
     font-size: 10px;
     padding: 4px 9px;
     border-radius: 999px;
-    background: #e8f5ee;
+    background: var(--card-mint);
     border: 1px solid #d1e7d6;
+  }
+</style>
+
+<style>
+  /* dark — chips and meta on the library mock follow the theme */
+  :global([data-theme='dark']) .lib {
+    color: var(--text-2);
   }
 </style>

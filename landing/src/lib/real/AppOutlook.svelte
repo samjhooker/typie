@@ -98,7 +98,10 @@
         class:on={m.on}
         class:unread={m.unread}
       >
-        <span class="flag" class:on={!m.unread}></span>
+        <span
+          class="flag"
+          class:on={!m.unread}
+        ></span>
         <div class="mfrom">
           <b>{m.from}</b><span class="mtime">{m.time}</span>
         </div>
@@ -151,7 +154,7 @@
     display: grid;
     grid-template-columns: 168px 244px 1fr;
     height: 100%;
-    background: #fff;
+    background: var(--surface);
     font-family: 'Inter', system-ui, sans-serif;
     color: #323130;
   }
@@ -273,7 +276,7 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid #edebe9;
     border-radius: 4px;
     padding: 6px 10px;
@@ -346,7 +349,7 @@
   .reading {
     padding: 14px 18px 12px;
     overflow: hidden;
-    background: #fff;
+    background: var(--surface);
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -531,5 +534,67 @@
     .mlist {
       display: none;
     }
+  }
+
+  /* ── Outlook dark mode (Fluent dark: #1f1f1f surfaces, #f3f2f1 text) ──
+     real Outlook dark: everything near-black — blue is reserved for the
+     top bar, selected rows, and accents */
+  :global([data-theme='dark']) .aout {
+    background: #1f1f1f;
+    color: #f3f2f1;
+  }
+  :global([data-theme='dark']) .side {
+    background: #1b1a19;
+    color: #f3f2f1;
+    border-right: 1px solid #323130;
+  }
+  :global([data-theme='dark']) .frow.on {
+    background: #0f6cbd; /* selected folder = blue, like the real app */
+    color: #fff;
+  }
+  :global([data-theme='dark']) .mlist {
+    background: #1b1a19;
+    border-right-color: #323130;
+  }
+  :global([data-theme='dark']) .mlh-title,
+  :global([data-theme='dark']) .mfrom b,
+  :global([data-theme='dark']) .msubj,
+  :global([data-theme='dark']) .reading h4,
+  :global([data-theme='dark']) .rfrom,
+  :global([data-theme='dark']) .rbody {
+    color: #f3f2f1;
+  }
+  :global([data-theme='dark']) .filt,
+  :global([data-theme='dark']) .mtime,
+  :global([data-theme='dark']) .mprev,
+  :global([data-theme='dark']) .rto,
+  :global([data-theme='dark']) .rtime {
+    color: #a19f9d;
+  }
+  :global([data-theme='dark']) .search {
+    background: #323130;
+    border-color: #3b3a39;
+    color: #a19f9d;
+  }
+  :global([data-theme='dark']) .mrow {
+    border-bottom-color: #292827;
+  }
+  :global([data-theme='dark']) .mrow.on {
+    background: rgba(15, 108, 189, 0.18);
+  }
+  :global([data-theme='dark']) .flag:not(.on) {
+    border-color: #605e5c;
+  }
+  :global([data-theme='dark']) .reading {
+    background: #1f1f1f;
+  }
+  :global([data-theme='dark']) .tool {
+    background: #323130;
+    border-color: #3b3a39;
+    color: #f3f2f1;
+  }
+  :global([data-theme='dark']) .reply {
+    background: #292827;
+    border-color: #3b3a39;
   }
 </style>

@@ -24,7 +24,7 @@
     width: 42px;
     height: 26px;
     border-radius: 999px;
-    background: rgba(19, 23, 34, 0.16);
+    background: var(--wash-strong);
     transition: background 0.22s var(--ease-out);
     flex-shrink: 0;
   }
@@ -40,8 +40,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(19, 23, 34, 0.3);
+    background: var(--surface);
+    box-shadow: 0 1px 4px var(--shadow-knob);
     transition: transform 0.22s var(--spring);
   }
 

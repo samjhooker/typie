@@ -186,7 +186,7 @@
   .body p {
     font-size: clamp(16px, 1.5vw, 18px);
     line-height: 1.55;
-    color: rgba(19, 23, 34, 0.68);
+    color: var(--text-2);
     max-width: 28ch;
   }
 
@@ -239,7 +239,7 @@
         rgba(252, 86, 129, 0.28) 0%,
         transparent 48%
       ),
-      linear-gradient(118deg, #bcd6ff 0%, #ddd8ff 42%, #82eda6 100%);
+      linear-gradient(118deg, var(--sky) 0%, var(--lavender) 42%, var(--mint) 100%);
   }
 
   /* islands — shared spec with Hero: UnevenRoundedRectangle continuous, bottom 10 idle → 18 expanded, shadow radius 12 y6 */
@@ -249,7 +249,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: #000;
-    color: #fffdf7;
+    color: var(--cream-50);
     border-radius: 0 0 10px 10px;
     overflow: hidden;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);

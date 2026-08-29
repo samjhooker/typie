@@ -124,7 +124,7 @@
     display: grid;
     grid-template-columns: 220px 1fr;
     height: 100%;
-    background: #fff;
+    background: var(--surface);
     font-family: 'Inter', system-ui, sans-serif;
     color: #1d1c1d;
   }
@@ -144,7 +144,7 @@
     color: #fff;
   }
   .wsic {
-    background: #fff;
+    background: var(--surface);
     color: #3f0e40;
     width: 22px;
     height: 22px;
@@ -339,7 +339,7 @@
     }
     100% {
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
-      background: #fff;
+      background: transparent;
     }
   }
   .plus {
@@ -399,6 +399,46 @@
   }
   .mic {
     font-size: 12.5px;
+  }
+
+  /* ── Slack dark mode (real Slack dark theme values) ── */
+  :global([data-theme='dark']) .aslack {
+    background: #1a1d21;
+    color: #d1d2d3;
+  }
+  :global([data-theme='dark']) .rail {
+    background: #19171d;
+    color: #ab9ba9;
+  }
+  :global([data-theme='dark']) .ws {
+    border-bottom-color: #35373b;
+    color: #ffffff;
+  }
+  :global([data-theme='dark']) .ci {
+    color: #ababab;
+  }
+  :global([data-theme='dark']) .glabel {
+    color: #8e7d91;
+  }
+  :global([data-theme='dark']) .pane header {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
+  :global([data-theme='dark']) .chips {
+    color: #ababab;
+  }
+  :global([data-theme='dark']) .mtxt {
+    color: #d1d2d3;
+  }
+  :global([data-theme='dark']) .msginput {
+    background: #222529;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  :global([data-theme='dark']) .field.typed {
+    color: #d1d2d3;
+  }
+  :global([data-theme='dark']) .field.dim {
+    color: #6d6d6f;
   }
 
   @media (max-width: 640px) {

@@ -366,7 +366,7 @@
     width: 100%;
     height: 5px;
     border-radius: 99px;
-    background: rgba(3, 89, 77, 0.1);
+    background: var(--wash);
     overflow: hidden;
   }
   .meter > div {
@@ -396,7 +396,7 @@
   .more:hover {
     color: var(--hotpink);
     border-color: var(--hotpink);
-    background: #fffdf7;
+    background: var(--cream-50);
     transform: translateY(-2px);
     box-shadow: 0 7px 18px rgba(252, 86, 129, 0.18);
   }

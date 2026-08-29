@@ -2,27 +2,23 @@
   import Logo from './Logo.svelte';
   import { onMount } from 'svelte';
   import { Sun, Moon } from 'lucide-svelte';
+  import { appearance, setAppearance, initTheme } from './theme.svelte.js';
 
   let scrolled = $state(false);
   let progress = $state(0);
   let active = $state('');
-  let isDark = $state(false);
 
   const CHAPTERS = ['apps', 'compare', 'engine', 'privacy', 'faq'];
 
+  // single-icon toggle: shows the theme you'll GET when tapped
+  const isDark = $derived(appearance.pref === 'dark');
+
+  function toggleTheme() {
+    setAppearance(isDark ? 'light' : 'dark');
+  }
+
   onMount(() => {
-    // initialize theme
-    const saved = localStorage.getItem('typie-theme');
-    const prefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches;
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      isDark = true;
-      document.documentElement.dataset.theme = 'dark';
-    } else {
-      isDark = false;
-      document.documentElement.dataset.theme = 'light';
-    }
+    initTheme();
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -43,13 +39,6 @@
 
     return () => io.disconnect();
   });
-
-  function toggleTheme() {
-    isDark = !isDark;
-    const theme = isDark ? 'dark' : 'light';
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem('typie-theme', theme);
-  }
 </script>
 
 <svelte:window
@@ -80,10 +69,10 @@
       <Logo size={22} />
     </a>
     <button
-      class="theme-btn corner"
+      class="theme-toggle corner-pos"
       onclick={toggleTheme}
-      aria-label={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
-      title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {#if isDark}
         <Sun
@@ -142,10 +131,10 @@
 
     <div class="right">
       <button
-        class="theme-btn"
+        class="theme-toggle"
         onclick={toggleTheme}
-        aria-label={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
-        title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       >
         {#if isDark}
           <Sun
@@ -177,8 +166,6 @@
         Download
       </a>
     </div>
-
-
   </div>
 </header>
 
@@ -190,7 +177,7 @@
     left: 0;
     right: 0;
     z-index: 40;
-    padding: 24px 0;
+    padding: 24px 0 48px; /* extra room below the centered logo */
     transition:
       opacity 0.25s ease,
       transform 0.25s ease;
@@ -201,12 +188,18 @@
     transform: translateY(-8px);
   }
   .top-corner-inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
   }
   .corner-brand {
+    grid-column: 2; /* dead center of the page */
     line-height: 0;
+    justify-self: center;
+  }
+  .top-corner-inner .theme-toggle {
+    grid-column: 3;
+    justify-self: end;
   }
 
   /* Floating Glass Pill Navbar — appears on scroll */
@@ -298,26 +291,29 @@
     align-items: center;
     gap: 10px;
   }
-
-  .theme-btn {
-    display: inline-grid;
+  /* theme toggle — single sun/moon icon, tap to flip */
+  .theme-toggle {
+    display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
     background: var(--surface-2);
     color: var(--ink);
     border: 1px solid var(--line);
-    transition:
-      transform 0.15s var(--spring),
-      border-color 0.15s ease;
     cursor: pointer;
+    transition:
+      transform 0.18s var(--spring),
+      border-color 0.18s ease,
+      background 0.18s ease,
+      color 0.18s ease;
   }
-  .theme-btn:hover {
-    transform: rotate(15deg);
+  .theme-toggle:hover {
+    transform: rotate(15deg) scale(1.06);
     border-color: var(--hotpink);
+    color: var(--hotpink);
   }
-  .theme-btn.corner {
+  .theme-toggle.corner-pos {
     width: 44px;
     height: 44px;
     background: var(--surface);
@@ -329,8 +325,6 @@
     font-size: 12.5px;
     gap: 5px;
   }
-
-
 
   @media (max-width: 768px) {
     .links {

@@ -83,13 +83,13 @@
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.4);
+    color: var(--text-3);
   }
   .ai-dot {
     width: 7px;
     height: 7px;
     border-radius: 99px;
-    background: #6ee89a;
+    background: var(--mint);
     box-shadow: 0 0 6px rgba(110, 232, 154, 0.45);
     animation: pulse 2s ease-in-out infinite;
   }
@@ -119,7 +119,7 @@
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--text-3);
   }
 
   .pline {
@@ -128,7 +128,7 @@
     gap: 9px;
     font-size: 13px;
     line-height: 1.65;
-    color: rgba(19, 23, 34, 0.78);
+    color: var(--text-2);
     animation: fadeIn 0.3s ease both;
   }
   @keyframes fadeIn {
@@ -147,7 +147,7 @@
     height: 5px;
     margin-top: 7px;
     border-radius: 99px;
-    background: #131722;
+    background: var(--ink-app);
   }
 
   .action-chips {
@@ -160,8 +160,8 @@
     align-items: center;
     padding: 5px 12px;
     border-radius: 99px;
-    background: rgba(19, 23, 34, 0.06);
+    background: var(--wash);
     font-size: 11.5px;
-    color: rgba(19, 23, 34, 0.7);
+    color: var(--text-2);
   }
 </style>

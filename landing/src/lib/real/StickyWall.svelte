@@ -44,12 +44,13 @@
     },
   ];
 
+  /* note colors are CSS vars → dark mode swaps to the real app's dark tints */
   const tints = [
-    { bg: '#fdf3dc', pin: '#ffd230' },
-    { bg: '#efecfb', pin: '#c88cfd' },
-    { bg: '#dff0e4', pin: '#6ee89a' },
-    { bg: '#fbdae4', pin: '#fc5681' },
-    { bg: '#dde9fa', pin: '#6f8ffb' },
+    { bg: 'var(--note-cream)', pin: '#ffd230' },
+    { bg: 'var(--note-lavender)', pin: '#c88cfd' },
+    { bg: 'var(--note-mint)', pin: '#6ee89a' },
+    { bg: 'var(--note-pink)', pin: '#fc5681' },
+    { bg: 'var(--note-blue)', pin: '#6f8ffb' },
   ];
   const rots = ['-0.7deg', '0.5deg', '-0.4deg', '0.8deg', '-0.9deg', '0.3deg'];
 
@@ -65,7 +66,10 @@
   const shown = limit > 0 ? notes.slice(0, limit) : notes;
 </script>
 
-<div class="wall" data-cols={cols || null}>
+<div
+  class="wall"
+  data-cols={cols || null}
+>
   {#if extra}
     <article
       class="sticky fresh"
@@ -108,6 +112,24 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 14px;
     align-items: start;
+    /* note paper — light pastels; dark swaps to the real app's dark tints */
+    --note-cream: #fdf3dc;
+    --note-lavender: #efecfb;
+    --note-mint: #dff0e4;
+    --note-pink: #fbdae4;
+    --note-blue: #dde9fa;
+    --note-ink: #131722;
+    --note-meta: rgba(19, 23, 34, 0.45);
+  }
+  :global([data-theme='dark']) .wall {
+    /* matches app/webui dark NotesPane card tints */
+    --note-cream: #1d2029;
+    --note-lavender: #251f3d;
+    --note-mint: #11231c;
+    --note-pink: #3d1c28;
+    --note-blue: #1a2438;
+    --note-ink: #f7f6f4;
+    --note-meta: rgba(247, 246, 244, 0.5);
   }
   .wall[data-cols='2'] {
     grid-template-columns: repeat(2, 1fr);
@@ -154,7 +176,7 @@
     flex: 1;
     white-space: pre-wrap;
     word-break: break-word;
-    color: #131722;
+    color: var(--note-ink, #131722);
     font-size: 14px;
     line-height: 1.55;
   }
@@ -169,7 +191,7 @@
     font-size: 10px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--note-meta);
   }
 
   .fresh {

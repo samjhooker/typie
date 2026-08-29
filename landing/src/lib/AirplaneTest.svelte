@@ -190,7 +190,7 @@
     text-align: center;
     margin-top: 14px;
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.66);
+    color: var(--text-2);
   }
 
   /* ---- switch ---- */
@@ -208,7 +208,7 @@
     gap: 14px;
     padding: 8px 18px;
     border-radius: 999px;
-    background: #fffdf7;
+    background: var(--cream-50);
     border: 2px solid rgba(19, 23, 34, 0.85);
     box-shadow: 3px 3px 0 rgba(19, 23, 34, 0.85);
     transition: transform 0.2s var(--spring);
@@ -239,7 +239,7 @@
     width: 24px;
     height: 24px;
     border-radius: 999px;
-    background: #fffdf7;
+    background: var(--cream-50);
     border: 2px solid rgba(19, 23, 34, 0.85);
     transition: transform 0.28s var(--spring);
   }
@@ -279,7 +279,7 @@
     padding: clamp(18px, 2.4vw, 26px);
     border-radius: var(--radius-card);
     border: 2px solid rgba(19, 23, 34, 0.5);
-    background: #fffdf7;
+    background: var(--cream-50);
     filter: grayscale(0.2);
     transition:
       filter 0.45s var(--ease-out),
@@ -291,7 +291,7 @@
   /* typie: always loud, always colored */
   .appcard.local {
     background: var(--card-mint);
-    border-color: rgba(19, 23, 34, 0.85);
+    border-color: var(--text-2);
     box-shadow: 4px 4px 0 rgba(19, 23, 34, 0.85);
   }
 
@@ -372,7 +372,7 @@
   }
 
   .cloudline {
-    color: rgba(19, 23, 34, 0.6);
+    color: var(--text-2);
     font-family: var(--mono);
     font-size: 13px;
   }
@@ -402,8 +402,8 @@
     font-weight: 700;
     font-family: var(--mono);
     letter-spacing: 0.03em;
-    background: rgba(19, 23, 34, 0.06);
-    color: rgba(19, 23, 34, 0.55);
+    background: var(--wash);
+    color: var(--text-3);
     transition:
       background 0.3s var(--ease-out),
       color 0.3s var(--ease-out);
@@ -423,7 +423,7 @@
     text-align: center;
     margin-top: clamp(26px, 4vh, 38px);
     font-size: clamp(22px, 2.4vw, 29px);
-    color: rgba(19, 23, 34, 0.78);
+    color: var(--text-2);
     transform: rotate(-2deg);
   }
 

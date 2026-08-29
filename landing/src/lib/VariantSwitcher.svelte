@@ -240,7 +240,7 @@
   .vn-item b {
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--vn-item-fg, var(--ink, #131722));
+    color: var(--vn-item-fg, var(--ink, var(--ink-app)));
     transition: color 160ms var(--ease-snap, cubic-bezier(0.22, 1, 0.36, 1));
   }
 
@@ -250,14 +250,14 @@
   }
 
   .vn-item.current b {
-    color: var(--vn-accent, var(--hotpink, #fc5681));
+    color: var(--vn-accent, var(--hotpink, var(--hotpink)));
   }
 
   .vn-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--vn-accent, var(--hotpink, #fc5681));
+    background: var(--vn-accent, var(--hotpink, var(--hotpink)));
     opacity: 0;
     transform: scale(0.5);
     transition:

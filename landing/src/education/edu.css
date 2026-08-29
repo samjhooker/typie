@@ -1,6 +1,6 @@
 /* ============================================================
    typie.cc/education
-   Palette: paper #F9F4E8 + chalkboard ink #16382B + typie pink #FC5681.
+   Palette: paper #F9F4E8 + chalkboard ink #16382B + typie pink var(--hotpink).
    Three hues. Nothing else.
    Easing palette (SURGICAL, three-curve max):
      --ease-out    entries / reveals

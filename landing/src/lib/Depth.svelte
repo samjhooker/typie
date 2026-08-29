@@ -20,7 +20,7 @@
       n: '0',
       unit: 'bytes',
       label: 'Network Egress',
-      color: '#0ea86b',
+      color: '#0f9d6a',
       note: 'No server exists to receive your voice',
     },
     {

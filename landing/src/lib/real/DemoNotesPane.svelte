@@ -187,7 +187,7 @@
     font-size: 13px;
   }
   .search-icon {
-    color: rgba(19, 23, 34, 0.35);
+    color: var(--text-3);
     flex-shrink: 0;
   }
   .search input {
@@ -287,7 +287,7 @@
     font-size: 10px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--text-3);
   }
   .acts {
     display: flex;
@@ -310,7 +310,7 @@
     transition: background 0.15s var(--ease-out);
   }
   .icon-btn:hover {
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
   }
 
   .privacy {

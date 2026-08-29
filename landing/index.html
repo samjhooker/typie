@@ -20,6 +20,24 @@
       content="Typie — hold option and talk. Offline dictation, voice notes, call capture and on-device summaries for macOS. No cloud. No account. Free forever."
     />
     <title>Typie — Hold option and talk. It's typed.</title>
+    <script>
+      // pre-paint theme — same system as the Mac app: 'typie-appearance'
+      // is system|light|dark; migrates legacy binary 'typie-theme'
+      (function () {
+        try {
+          var a = localStorage.getItem('typie-appearance');
+          if (!a) {
+            var legacy = localStorage.getItem('typie-theme');
+            if (legacy === 'dark' || legacy === 'light') a = legacy;
+          }
+          var dark =
+            a === 'dark' ||
+            ((!a || a === 'system') &&
+              matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
     <link
       rel="preconnect"
       href="https://fonts.googleapis.com"

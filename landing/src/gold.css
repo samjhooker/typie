@@ -1,10 +1,12 @@
-/* gold.css neutralized — Interfere system now owns tokens.
-   Kept for import compatibility; all playful overrides removed. */
+/* gold.css neutralized — the design system in app.css owns tokens.
+   Kept for import compatibility; all playful overrides removed.
+   Focus + selection route through tokens (DESIGN.md: never pure #000,
+   ink is always tinted; selection is a "REC moment" → radiant pink). */
 :focus-visible {
-  outline: 2px solid #0a0a0a;
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 ::selection {
-  background: #0a0a0a;
-  color: #fff;
+  background: var(--hotpink);
+  color: #ffffff;
 }

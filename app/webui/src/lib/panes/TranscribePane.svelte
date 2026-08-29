@@ -490,7 +490,7 @@
     flex: 1;
     height: 8px;
     border-radius: 99px;
-    background: rgba(3, 89, 77, 0.1);
+    background: var(--wash);
     overflow: hidden;
   }
   .bar > div {
@@ -665,7 +665,7 @@
     color: var(--green-deep);
   }
   .chip.plain {
-    background: rgba(19, 23, 34, 0.06);
+    background: var(--wash);
     color: var(--text-3);
   }
   .tcard h4 {

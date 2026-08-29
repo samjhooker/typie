@@ -283,7 +283,7 @@
   }
 
   .msg.bot {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid rgba(3, 43, 37, 0.1);
     color: var(--green-deep);
     align-self: flex-start;
@@ -337,7 +337,7 @@
     font: inherit;
     font-size: 13.5px;
     color: var(--ink);
-    background: #fff;
+    background: var(--surface);
     outline: none;
     transition: border-color 0.2s var(--ease-out);
   }

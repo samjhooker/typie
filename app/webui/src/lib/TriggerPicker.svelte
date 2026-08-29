@@ -42,7 +42,7 @@
     gap: 4px;
     padding: 3px;
     border-radius: 12px;
-    border: 1px solid rgba(3, 89, 77, 0.18);
+    border: 1px solid var(--line-strong);
     align-self: flex-start;
   }
 
@@ -65,6 +65,6 @@
 
   p {
     font-size: 12.5px;
-    color: rgba(3, 89, 77, 0.6);
+    color: var(--text-3);
   }
 </style>

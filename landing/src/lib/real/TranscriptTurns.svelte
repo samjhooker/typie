@@ -74,7 +74,7 @@
     transition: background 0.2s ease;
   }
   .oturn:hover {
-    background: rgba(253, 248, 238, 0.8);
+    background: var(--hover-row);
   }
   .ohead {
     display: flex;
@@ -96,7 +96,7 @@
   .oname {
     font-size: 13px;
     font-weight: 700;
-    color: #131722;
+    color: var(--ink-app);
   }
   .ts {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
@@ -107,6 +107,6 @@
   .otext {
     font-size: 14px;
     line-height: 1.7;
-    color: rgba(19, 23, 34, 0.85);
+    color: var(--text-2);
   }
 </style>

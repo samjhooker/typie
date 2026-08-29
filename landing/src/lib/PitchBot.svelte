@@ -233,14 +233,14 @@
   }
 
   .pb-edu .fab {
-    background: #fffdf6;
+    background: var(--surface);
     border: 2px solid rgba(22, 56, 43, 0.85);
     box-shadow: 0 14px 34px rgba(22, 56, 43, 0.24);
     color: #16382b;
   }
 
   .pb-edu .fab :global(.robot) {
-    color: #fc5681;
+    color: var(--hotpink);
   }
 
   .fab:hover {
@@ -497,7 +497,7 @@
   /* ================= education (paper) ================= */
 
   .pb-edu .panel {
-    background: #fffdf6;
+    background: var(--surface);
     border: 1px solid rgba(22, 56, 43, 0.16);
     box-shadow: 0 30px 70px rgba(22, 56, 43, 0.28);
     color: #16382b;
@@ -508,7 +508,7 @@
   }
 
   .pb-edu .hbot :global(.robot) {
-    color: #fc5681;
+    color: var(--hotpink);
   }
 
   .pb-edu .ht strong {
@@ -525,13 +525,13 @@
   }
 
   .pb-edu .msg.bot {
-    background: #ffffff;
+    background: var(--surface);
     border: 1px solid rgba(22, 56, 43, 0.12);
     color: #16382b;
   }
 
   .pb-edu .msg.you {
-    background: #fc5681;
+    background: var(--hotpink);
     color: #fffdf6;
   }
 
@@ -551,12 +551,12 @@
 
   .pb-edu input {
     border: 1.5px solid rgba(22, 56, 43, 0.18);
-    background: #ffffff;
+    background: var(--surface);
     color: #16382b;
   }
 
   .pb-edu input:focus {
-    border-color: #fc5681;
+    border-color: var(--hotpink);
     box-shadow: 0 0 0 3px rgba(252, 86, 129, 0.18);
   }
 
@@ -571,7 +571,7 @@
   }
 
   .pb-edu .send:hover:not(:disabled) {
-    background: #fc5681;
+    background: var(--hotpink);
   }
 
   .pb-edu .gh {
@@ -580,6 +580,6 @@
   }
 
   .pb-edu .gh:hover {
-    background: #fc5681;
+    background: var(--hotpink);
   }
 </style>

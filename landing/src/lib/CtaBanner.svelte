@@ -365,7 +365,7 @@
   .sub {
     margin-top: 10px;
     font-weight: 600;
-    color: rgba(19, 23, 34, 0.72);
+    color: var(--text-2);
   }
 
   .plans {
@@ -380,7 +380,7 @@
   }
 
   .plan {
-    background: #fffdf7;
+    background: var(--cream-50);
     border-radius: var(--radius-card);
     padding: 28px 22px 24px;
     display: flex;
@@ -392,7 +392,7 @@
 
   .plan.popular {
     background: var(--ink);
-    color: #fffdf7;
+    color: var(--cream-50);
     transform: translateY(-10px);
   }
 
@@ -438,7 +438,7 @@
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0;
-    color: rgba(19, 23, 34, 0.5);
+    color: var(--text-3);
     vertical-align: 8px;
   }
 
@@ -450,7 +450,7 @@
     margin: 10px 0 18px;
     font-size: 14px;
     line-height: 1.45;
-    color: rgba(19, 23, 34, 0.68);
+    color: var(--text-2);
     min-height: 2.9em;
   }
 
@@ -488,7 +488,7 @@
   .specs {
     margin-top: 22px;
     text-align: center;
-    color: rgba(19, 23, 34, 0.55);
+    color: var(--text-3);
     position: relative;
     z-index: 1;
   }

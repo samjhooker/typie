@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>typie</title>
     <script>
       // surface JS errors in the native log instead of a silent blank window
@@ -10,21 +13,27 @@
         try {
           window.webkit?.messageHandlers.typie.postMessage({
             type: 'log',
-            message: 'error: ' + (e.message || e.error) + ' @ ' + (e.filename || '') + ':' + e.lineno,
-          })
+            message:
+              'error: ' +
+              (e.message || e.error) +
+              ' @ ' +
+              (e.filename || '') +
+              ':' +
+              e.lineno,
+          });
         } catch {}
-      })
+      });
       window.addEventListener('unhandledrejection', function (e) {
         try {
           window.webkit?.messageHandlers.typie.postMessage({
             type: 'log',
             message: 'rejection: ' + e.reason,
-          })
+          });
         } catch {}
-      })
+      });
     </script>
-    <script type="module" crossorigin src="./assets/index-DavVXowY.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-vXdsYRi1.css">
+    <script type="module" crossorigin src="./assets/index-RxIK3d2t.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-ZgdYqiuX.css">
   </head>
   <body>
     <div id="app"></div>

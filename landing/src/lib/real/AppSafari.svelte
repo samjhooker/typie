@@ -108,7 +108,7 @@
 <style>
   .asafari {
     height: 100%;
-    background: #fff;
+    background: var(--surface);
     font-family: 'Inter', system-ui, sans-serif;
     color: #202124;
     display: flex;
@@ -147,7 +147,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid rgba(0, 0, 0, 0.14);
     border-radius: 999px;
     padding: 6px 14px;
@@ -228,7 +228,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid #dfe1e5;
     border-radius: 999px;
     padding: 11px 18px;
@@ -300,7 +300,7 @@
     left: 0;
     right: 0;
     top: calc(100% + 6px);
-    background: #fff;
+    background: var(--surface);
     border: 1px solid #dfe1e5;
     border-radius: 14px;
     padding: 8px 0;
@@ -392,5 +392,76 @@
     100% {
       background: transparent;
     }
+  }
+
+  /* ── Safari + Google dark mode (Safari chrome #1E1E1E/#2B2B2D,
+     Google dark #202124 page, #E8EAED text, #303134 search) ── */
+  :global([data-theme='dark']) .asafari {
+    background: #202124;
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .tb {
+    background: #2b2b2d;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  :global([data-theme='dark']) .addr {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .url,
+  :global([data-theme='dark']) .sugg {
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .field,
+  :global([data-theme='dark']) .placeholder {
+    color: #9aa0a6;
+  }
+  :global([data-theme='dark']) .page {
+    background: #202124;
+  }
+  :global([data-theme='dark']) .gtitle {
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .gbtn {
+    background: #303134;
+    color: #e8eaed;
+  }
+
+  /* dark — round 2: searchbox, suggestions, results */
+  :global([data-theme='dark']) .searchbox {
+    background: #303134;
+    border-color: #5f6368;
+    box-shadow: none;
+  }
+  :global([data-theme='dark']) .sb-field.typed {
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .suggest {
+    background: #303134;
+  }
+  :global([data-theme='dark']) .sug-t {
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .res-count {
+    color: #9aa0a6;
+  }
+  :global([data-theme='dark']) .res-url {
+    color: #bdc1c6;
+  }
+  :global([data-theme='dark']) .res h4 {
+    color: #8ab4f8;
+  }
+  :global([data-theme='dark']) .res-snippet {
+    color: #bdc1c6;
+  }
+
+  /* dark — round 3: suggestion rows + result buttons */
+  :global([data-theme='dark']) .sug-row:first-child {
+    background: #3c4043;
+  }
+  :global([data-theme='dark']) .gbtn {
+    background: #303134;
+    border-color: #303134;
+    color: #e8eaed;
   }
 </style>

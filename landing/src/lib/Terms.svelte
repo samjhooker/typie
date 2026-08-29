@@ -92,7 +92,7 @@
   .intro {
     margin-top: 16px;
     max-width: 40rem;
-    color: rgba(19, 23, 34, 0.68);
+    color: var(--text-2);
     line-height: 1.6;
   }
 
@@ -104,7 +104,7 @@
   }
 
   section {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid rgba(19, 23, 34, 0.07);
     border-radius: var(--radius-card);
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.04);

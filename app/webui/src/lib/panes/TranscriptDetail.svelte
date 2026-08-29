@@ -956,7 +956,7 @@
       color 0.15s var(--ease-out);
   }
   .banner-x:hover {
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
     color: var(--ink);
   }
   @keyframes nudge-in {
@@ -1075,7 +1075,7 @@
       color 0.15s var(--ease-out);
   }
   .rail-close:hover {
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
     color: var(--ink);
   }
 
@@ -1091,9 +1091,9 @@
     border-radius: 6px;
     background: linear-gradient(
       90deg,
-      rgba(19, 23, 34, 0.07) 25%,
-      rgba(19, 23, 34, 0.13) 45%,
-      rgba(19, 23, 34, 0.07) 65%
+      var(--wash) 25%,
+      var(--wash-strong) 45%,
+      var(--wash) 65%
     );
     background-size: 220% 100%;
     animation: shimmer 1.5s linear infinite;
@@ -1225,7 +1225,7 @@
     transition: background 0.15s var(--ease-out);
   }
   .sec-points button:hover {
-    background: rgba(19, 23, 34, 0.05);
+    background: var(--wash);
   }
   .pt-ts {
     color: var(--text-3);
@@ -1277,7 +1277,7 @@
     z-index: 30;
     margin: -24px -32px 14px;
     padding: 16px 32px 12px;
-    background: #fff;
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
   }
@@ -1306,7 +1306,7 @@
       color 0.15s var(--ease-out);
   }
   .back-arrow:hover {
-    background: rgba(19, 23, 34, 0.06);
+    background: var(--wash);
     color: var(--ink);
   }
   .back-arrow:active {
@@ -1585,7 +1585,7 @@
     display: flex;
     align-items: center;
     gap: 13px;
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--line);
   }
   .wrap.split .dock {
@@ -1629,7 +1629,7 @@
     flex: 1;
     height: 14px;
     border-radius: 99px;
-    background: rgba(3, 89, 77, 0.09);
+    background: var(--wash);
     cursor: pointer;
     overflow: hidden;
   }
@@ -1683,7 +1683,7 @@
     padding: 18px 20px;
     margin: 14px 0 6px;
     background: linear-gradient(135deg, var(--cream) 40%, var(--card-mint));
-    border-color: rgba(3, 89, 77, 0.12);
+    border-color: var(--line);
   }
   .ai-head {
     display: flex;
@@ -1699,7 +1699,7 @@
     padding: 4px 10px;
     border-radius: 999px;
     background: var(--ink);
-    color: #fffdf7;
+    color: var(--cream-50);
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.08em;
@@ -1779,7 +1779,7 @@
   }
 
   .rate:hover {
-    background: rgba(19, 23, 34, 0.06);
+    background: var(--wash);
     color: var(--ink);
   }
   .rate.on {

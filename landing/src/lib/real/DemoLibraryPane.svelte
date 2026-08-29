@@ -317,7 +317,7 @@
 
   .btn-mint {
     background: var(--green-deep);
-    color: #fffdf7;
+    color: var(--cream-50);
     box-shadow: 0 4px 12px rgba(2, 69, 60, 0.3);
   }
   .btn-mint:hover {
@@ -359,7 +359,7 @@
     border-radius: 12px;
   }
   .search-icon {
-    color: rgba(19, 23, 34, 0.35);
+    color: var(--text-3);
     flex-shrink: 0;
   }
   .search input {
@@ -478,6 +478,6 @@
     transition: background 0.15s var(--ease-out);
   }
   .icon-btn:hover {
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
   }
 </style>

@@ -1,0 +1,68 @@
+/* ═══════════════════════════════════════════════════════════════
+   Typie shared tokens — SINGLE SOURCE for landing + Mac app webui.
+   Ramps and accent hues only. Neutrals (page/paper/cream) differ
+   per product — landing is warm cream, the app is cool grey — so
+   they stay in each product's app.css.
+   Synced from: /DESIGN.md
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Primary — Radiant Pink ── */
+  --pink-50: #fef1f4;
+  --pink-100: #ffd3e0;
+  --pink-200: #ffb7c9;
+  --pink-300: #fc5681; /* ★ primary */
+  --pink-400: #fa3c6f;
+  --pink-500: #e8285c;
+  --pink-600: #d12c58; /* accessible pink text on light */
+  --pink-700: #a62043;
+  --pink-900: #24141c;
+
+  /* ── Signal — Truth Mint ── */
+  --mint-50: #eef8f2;
+  --mint-300: #7be495;
+  --mint-400: #82eda6;
+  --mint-500: #4ade80; /* ★ recording / success */
+  --mint-600: #0f9d6a;
+  --mint-900: #11231c;
+
+  /* ── Structure — Deep Teal ── */
+  --teal-700: #03594d; /* ★ structural lines / focus */
+  --teal-900: #02453c;
+  --teal-950: #0b1f1b;
+
+  /* ── Feature accents / speaker quartet ── */
+  --butter: #ffe79a;
+  --sun: #fdc068;
+  --sun-orange: #ff9124;
+  --amber: #e59e12;
+  --purple: #c88cfd;
+  --periwinkle: #6f8ffb;
+  --info: #6f8ffb;
+  --error: #ef4444;
+}
+
+:root[data-theme='dark'] {
+  --pink-50: #2a161e;
+  --pink-100: #3d1c28;
+  --pink-200: #54222f;
+  --pink-300: #fc5681;
+  --pink-400: #ff6f95;
+  --pink-500: #e8285c;
+  --pink-600: #fb7c9c; /* lighter pink reads better as text on dark */
+  --pink-700: #ff9db6;
+  --pink-900: #24141c;
+
+  --mint-50: #11231c;
+  --mint-300: #7be495;
+  --mint-400: #6ee89a;
+  --mint-500: #4ade80;
+  --mint-600: #34d67a;
+  --mint-900: #11231c;
+
+  --teal-700: #4a9184;
+  --teal-900: #02453c;
+  --teal-950: #0b1f1b;
+
+  --info: #7a98fc;
+}

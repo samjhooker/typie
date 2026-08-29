@@ -124,7 +124,7 @@
     display: flex;
     align-items: baseline;
     gap: 12px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid rgba(19, 23, 34, 0.07);
     border-radius: 16px;
     box-shadow: 0 2px 10px rgba(19, 23, 34, 0.05);
@@ -140,7 +140,7 @@
   }
 
   .facts span {
-    color: rgba(19, 23, 34, 0.62);
+    color: var(--text-2);
     font-size: 14px;
   }
 

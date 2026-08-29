@@ -665,7 +665,7 @@
     padding: 4px 12px;
     border-radius: 999px;
     background: var(--ink);
-    color: #ffd3e0;
+    color: var(--pink-100);
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.08em;
@@ -680,7 +680,7 @@
   }
   .btn-mint {
     background: var(--green-deep);
-    color: #fffdf7;
+    color: var(--cream-50);
     box-shadow: 0 4px 12px rgba(2, 69, 60, 0.3);
   }
   .btn-mint:hover {
@@ -688,7 +688,7 @@
   }
   .btn-stop {
     background: var(--red-ink);
-    color: #fffdf7;
+    color: var(--cream-50);
     box-shadow: 0 4px 14px rgba(194, 46, 86, 0.4);
   }
   .btn-stop:hover {
@@ -758,7 +758,7 @@
     flex: 1;
     height: 8px;
     border-radius: 99px;
-    background: rgba(3, 89, 77, 0.1);
+    background: var(--wash);
     overflow: hidden;
   }
   .bar > div {

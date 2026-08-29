@@ -84,6 +84,6 @@
 
   span {
     font-size: 11.5px;
-    color: rgba(3, 89, 77, 0.6);
+    color: var(--text-3);
   }
 </style>

@@ -196,9 +196,9 @@ final class WebUIController: NSObject, NSWindowDelegate {
         config.setURLSchemeHandler(SchemeHandler(), forURLScheme: "typie")
 
         let view = WKWebView(frame: .zero, configuration: config)
-        // no white flash before the first paint of the cream page
+        // no white flash before the first paint of the page
         view.setValue(false, forKey: "drawsBackground")
-        view.underPageBackgroundColor = NSColor(red: 1, green: 0.992, blue: 0.968, alpha: 1)
+        view.underPageBackgroundColor = NSColor(Theme.cream)
         webView = view
 
         let win = NSWindow(
@@ -209,19 +209,23 @@ final class WebUIController: NSObject, NSWindowDelegate {
         )
         win.title = title
         win.isReleasedWhenClosed = false
-        win.backgroundColor = .white
-        win.appearance = NSAppearance(named: .aqua)
+        // near-white page color, so the title bar blends with the web UI
+        win.backgroundColor = NSColor(Theme.cream)
+        // appearance comes from NSApp (SettingsStore.appearance), not forced
         win.contentView = view
         win.center()
 
         // onboarding: seamless chrome — the web header IS the top bar, with
-        // the traffic lights floating over the cream page (web side pads
-        // its header to clear them)
+        // the traffic lights floating over the page (web side pads its header)
         if route == .onboarding {
             win.styleMask.insert(.fullSizeContentView)
             win.titlebarAppearsTransparent = true
             win.titleVisibility = .hidden
             win.isMovableByWindowBackground = true
+        } else {
+            // app route: title bar stays (title + traffic lights) but takes
+            // the window's near-white background so it matches the page
+            win.titlebarAppearsTransparent = true
         }
 
         window = win
@@ -373,6 +377,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                 "notesKeepAudio": settings.notesKeepAudio,
                 "meetingMixMic": settings.meetingMixMic,
                 "transcriptsKeepAudio": settings.transcriptsKeepAudio,
+                "appearance": settings.appearance,
             ],
             "permissions": [
                 "mic": AudioCapture.micPermissionGranted(),
@@ -747,6 +752,11 @@ extension WebUIController: WKNavigationDelegate {
             }
             pushState()
 
+        case "windowTheme":
+            // the web theme changed — window chrome + under-page follow
+            let dark = body["dark"] as? Bool ?? false
+            syncWindowChrome(dark: dark)
+
         case "requestMicPermission":
             AudioCapture.requestMicPermission { [weak self] _ in
                 self?.pushState()
@@ -925,6 +935,16 @@ extension WebUIController: WKNavigationDelegate {
         }
     }
 
+    /// Window chrome follows the web theme: title bar + under-page color.
+    /// JS sends `windowTheme {dark}` whenever data-theme flips.
+    private func syncWindowChrome(dark: Bool) {
+        let page = dark
+            ? NSColor(red: 0.047, green: 0.051, blue: 0.067, alpha: 1) // #0c0d11
+            : NSColor(Theme.cream)
+        webView.underPageBackgroundColor = page
+        window.backgroundColor = page
+    }
+
     private func applySetting(key: String?, value: Any?) {
         let settings = SettingsStore.shared
         switch key {
@@ -942,6 +962,10 @@ extension WebUIController: WKNavigationDelegate {
             if let bool = value as? Bool { settings.meetingMixMic = bool }
         case "transcriptsKeepAudio":
             if let bool = value as? Bool { settings.transcriptsKeepAudio = bool }
+        case "appearance":
+            if let str = value as? String, ["system", "light", "dark"].contains(str) {
+                settings.appearance = str
+            }
         default:
             AppLog.event("webui: unknown setting '\(key ?? "")'")
         }

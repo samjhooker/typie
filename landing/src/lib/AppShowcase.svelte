@@ -103,7 +103,7 @@
       system-ui,
       sans-serif;
     color: #52525b;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--line);
   }
 
@@ -179,8 +179,8 @@
     justify-content: space-between;
     gap: 8px;
     padding: 8px 12px;
-    background: #f6f6f5;
-    border-bottom: 1px solid #e7e5e4;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
     font-size: 11px;
   }
   .dots {
@@ -225,5 +225,12 @@
     .win {
       height: 420px;
     }
+  }
+</style>
+
+<style>
+  /* dark — mock window chrome follows the theme */
+  :global([data-theme='dark']) .dots {
+    color: #9aa0a6;
   }
 </style>

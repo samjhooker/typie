@@ -94,7 +94,7 @@
     align-items: center;
     gap: 14px;
     padding: 6px 16px;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     font-size: 12px;
     color: #444746;
@@ -111,7 +111,7 @@
   .page {
     width: min(420px, 84%);
     margin: 0 auto;
-    background: #fff;
+    background: var(--surface);
     min-height: auto;
     padding: 20px 28px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
@@ -193,5 +193,46 @@
     50% {
       opacity: 0;
     }
+  }
+
+  /* ── Google Docs dark mode (Material dark: #202124 chrome, #131314
+     canvas, #1E1E1E page, #E8EAED text, #8AB4F8 accents) ── */
+  :global([data-theme='dark']) .adocs {
+    background: #131314;
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .topbar {
+    background: #202124;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  :global([data-theme='dark']) .doctitle,
+  :global([data-theme='dark']) .star,
+  :global([data-theme='dark']) .comment {
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .share {
+    background: #8ab4f8;
+    color: #202124;
+  }
+  :global([data-theme='dark']) .toolbar {
+    background: #202124;
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .page {
+    background: #1e1e1e;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  :global([data-theme='dark']) .title {
+    color: #e8eaed;
+  }
+  :global([data-theme='dark']) .sub {
+    color: #9aa0a6;
+  }
+  :global([data-theme='dark']) .body {
+    color: #dadce0;
+  }
+  :global([data-theme='dark']) .listening {
+    color: #9aa0a6;
   }
 </style>

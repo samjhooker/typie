@@ -320,7 +320,7 @@ private struct PlusMenuView: View {
                     .fill(Color.white.opacity(0.12))
                     .frame(width: 1)
                     .padding(.vertical, 12)
-                PlusItem(icon: "glyph-transcript", tint: Color(hex: 0x9B7CFF), title: "upload file") {
+                PlusItem(icon: "glyph-transcript", tint: Theme.periwinkle, title: "upload file") {
                     ShelfController.shared.plusMenuVisible = false
                     ShelfController.shared.requestTranscribeFile()
                 }

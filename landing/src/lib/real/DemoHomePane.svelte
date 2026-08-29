@@ -156,14 +156,14 @@
     font-family: var(--display);
     font-weight: 800;
     font-size: 26px;
-    color: #fffdf7;
+    color: var(--cream-50);
     padding: 9px 22px;
     border-radius: 13px;
     background: var(--ink);
     box-shadow: 0 5px 0 rgba(11, 31, 27, 0.9);
   }
   .trig {
-    color: rgba(19, 23, 34, 0.55);
+    color: var(--text-3);
   }
 
   .grid {
@@ -234,7 +234,7 @@
 
   .btn-mint {
     background: var(--green-deep);
-    color: #fffdf7;
+    color: var(--cream-50);
     box-shadow: 0 4px 12px rgba(2, 69, 60, 0.3);
   }
   .btn-mint:hover {
@@ -276,7 +276,7 @@
     position: relative;
     max-width: 85%;
     padding: 7px 14px;
-    background: #fffdf7;
+    background: var(--cream-50);
     border: 1px solid var(--line-strong);
     border-radius: 14px 14px 14px 4px;
     box-shadow: 0 2px 6px rgba(19, 23, 34, 0.05);

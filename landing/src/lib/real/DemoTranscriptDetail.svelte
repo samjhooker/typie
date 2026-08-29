@@ -158,7 +158,11 @@
   ];
 
   const aiQuotes = [
-    { text: 'i can take the video this afternoon', speaker: 'Maya', ts: '00:55' },
+    {
+      text: 'i can take the video this afternoon',
+      speaker: 'Maya',
+      ts: '00:55',
+    },
     {
       text: 'the whole point is it just works on your mac',
       speaker: 'Sam',
@@ -456,7 +460,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: #fff;
+    background: var(--surface);
   }
 
   .cols {
@@ -482,7 +486,7 @@
     flex-shrink: 0;
     align-self: stretch;
     max-height: 100%;
-    background: var(--paper, #fdf8ee);
+    background: var(--paper, var(--cream-100));
     border-left: 1px solid var(--line, rgba(3, 89, 77, 0.12));
     padding: 18px 16px 24px;
     overflow-y: auto;
@@ -496,7 +500,7 @@
     z-index: 4;
     margin: -18px -22px 12px;
     padding: 14px 22px 10px;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--line, rgba(3, 89, 77, 0.12));
   }
 
@@ -519,7 +523,7 @@
       color 0.15s var(--ease-out);
   }
   .back-arrow:hover {
-    background: rgba(19, 23, 34, 0.06);
+    background: var(--wash);
     color: var(--ink);
   }
   .titleblock {
@@ -558,13 +562,13 @@
     gap: 7px;
     max-width: 420px;
     padding: 7px 14px;
-    background: var(--cream, #fffdf7);
+    background: var(--cream, var(--cream-50));
     border: 1px solid var(--line, rgba(3, 89, 77, 0.12));
     border-radius: 12px;
     font-size: 13px;
   }
   .search-icon {
-    color: rgba(19, 23, 34, 0.35);
+    color: var(--text-3);
     flex-shrink: 0;
   }
   .search input {
@@ -589,7 +593,7 @@
     gap: 6px;
     padding: 4px 12px;
     border-radius: 999px;
-    background: var(--paper, #fdf8ee);
+    background: var(--paper, var(--cream-100));
     border: 1px solid var(--line, rgba(3, 89, 77, 0.12));
     font-size: 12px;
     font-weight: 600;
@@ -625,7 +629,7 @@
       border-color 0.2s ease;
   }
   .oturn:hover {
-    background: var(--paper, #fdf8ee);
+    background: var(--paper, var(--cream-100));
   }
   .oturn.now {
     background: rgba(252, 86, 129, 0.07);
@@ -708,7 +712,7 @@
     padding: 4px 10px;
     border-radius: 999px;
     background: var(--ink);
-    color: #fffdf7;
+    color: var(--cream-50);
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.08em;
@@ -785,7 +789,7 @@
     gap: 5px;
     text-align: left;
     padding: 10px 12px;
-    border-left: 3px solid var(--pink, #ffd3e0);
+    border-left: 3px solid var(--pink, var(--pink-100));
     border-radius: 0 10px 10px 0;
     background: rgba(252, 86, 129, 0.05);
     cursor: pointer;
@@ -813,7 +817,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--line, rgba(3, 89, 77, 0.12));
     z-index: 6;
   }
@@ -903,7 +907,7 @@
       color 0.15s var(--ease-out);
   }
   .rate:hover {
-    background: rgba(19, 23, 34, 0.06);
+    background: var(--wash);
     color: var(--ink);
   }
   .rate.on {

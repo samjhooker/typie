@@ -52,14 +52,14 @@
     line-height: 1.02;
     letter-spacing: -0.04em;
     text-align: center;
-    color: #131722;
+    color: var(--ink-app);
   }
   .hold {
     font-size: clamp(28px, 5vw, 42px);
   }
   .talk {
     font-size: clamp(28px, 5vw, 42px);
-    color: #fc5681;
+    color: var(--hotpink);
   }
   .done {
     font-size: clamp(28px, 5vw, 42px);
@@ -80,7 +80,7 @@
     align-items: center;
     padding: 3px 9px;
     border-radius: 5px;
-    background: #131722;
+    background: var(--ink-app);
     color: #fff;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10px;
@@ -96,7 +96,7 @@
     font-size: 10px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.4);
+    color: var(--text-3);
   }
 
   .focus-ring {
@@ -150,7 +150,7 @@
     width: 9px;
     height: 9px;
     border-radius: 99px;
-    background: #131722;
+    background: var(--ink-app);
     opacity: 0.6;
   }
 </style>

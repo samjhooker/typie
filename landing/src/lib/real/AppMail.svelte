@@ -165,7 +165,7 @@
   }
 
   .mlist {
-    background: #fff;
+    background: var(--surface);
     border-right: 1px solid rgba(0, 0, 0, 0.08);
     overflow: hidden;
   }
@@ -227,7 +227,7 @@
   .tool {
     font-size: 12px;
     color: #0a84ff;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 7px;
     padding: 4px 10px;
@@ -262,7 +262,7 @@
     margin-top: 8px;
     border: 1px solid rgba(0, 0, 0, 0.13);
     border-radius: 8px;
-    background: #fff;
+    background: var(--surface);
     padding: 6px 10px;
     min-height: 28px;
     transition:
@@ -300,7 +300,7 @@
     }
     100% {
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
-      background: #fff;
+      background: var(--surface);
     }
   }
   .rtext {

@@ -226,7 +226,7 @@
   }
   .stat p {
     font-size: 12px;
-    color: rgba(19, 23, 34, 0.6);
+    color: var(--text-3);
   }
   .doodle {
     position: absolute;
@@ -300,7 +300,7 @@
   .cell {
     aspect-ratio: 1;
     border-radius: 6px;
-    background: rgba(3, 89, 77, 0.07);
+    background: var(--wash);
   }
   .cell.on {
     background: color-mix(

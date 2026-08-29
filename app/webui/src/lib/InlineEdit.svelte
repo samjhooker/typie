@@ -94,7 +94,7 @@
     opacity: 0.8;
   }
   .pencil:hover {
-    background: rgba(19, 23, 34, 0.07);
+    background: var(--wash);
     color: var(--ink);
     opacity: 1 !important;
   }

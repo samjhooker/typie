@@ -34,7 +34,11 @@
   ];
 
   const quotes = [
-    { text: 'i can take the video this afternoon', speaker: 'Maya', ts: '00:55' },
+    {
+      text: 'i can take the video this afternoon',
+      speaker: 'Maya',
+      ts: '00:55',
+    },
     {
       text: 'the whole point is it just works on your mac',
       speaker: 'Sam',
@@ -88,7 +92,7 @@
     display: flex;
     flex-direction: column;
     text-align: left;
-    background: #fdf8ee; /* the app's real cream paper */
+    background: var(--cream-100); /* the app's real cream paper */
     padding: 20px 20px 26px;
     height: 100%;
   }
@@ -105,8 +109,8 @@
     gap: 6px;
     padding: 4px 10px;
     border-radius: 999px;
-    background: #131722;
-    color: #fffdf7;
+    background: var(--ink-app);
+    color: var(--cream-50);
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.08em;
@@ -115,14 +119,14 @@
   .ai-title {
     font-size: 16px;
     margin: 6px 0 6px;
-    color: #131722;
+    color: var(--ink-app);
     font-weight: 800;
     letter-spacing: -0.01em;
   }
   .ai-summary {
     font-size: 13px;
     line-height: 1.55;
-    color: rgba(19, 23, 34, 0.82);
+    color: var(--text-2);
   }
 
   .rail-kicker {
@@ -130,7 +134,7 @@
     font-size: 9.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--text-3);
     margin: 16px 0 8px;
   }
 
@@ -145,7 +149,7 @@
     border-radius: 9px;
   }
   .sec-ts {
-    color: rgba(19, 23, 34, 0.5);
+    color: var(--text-3);
   }
   .sec-title {
     font-size: 13px;
@@ -156,7 +160,7 @@
     list-style: none;
     margin: 2px 0 0;
     padding: 0 0 0 10px;
-    border-left: 2px solid rgba(3, 89, 77, 0.12);
+    border-left: 2px solid var(--line);
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -164,7 +168,7 @@
   .pt-text {
     font-size: 12px;
     line-height: 1.5;
-    color: rgba(19, 23, 34, 0.66);
+    color: var(--text-2);
   }
 
   .ai-quotes {
@@ -184,11 +188,11 @@
   .q-text {
     font-size: 12px;
     line-height: 1.5;
-    color: #131722;
+    color: var(--ink-app);
     font-weight: 500;
   }
   .q-meta {
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--text-3);
     font-size: 10.5px;
   }
 </style>

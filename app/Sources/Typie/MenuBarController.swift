@@ -39,13 +39,14 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     func refreshMenuTitle() {
         guard let button = statusItem?.button else { return }
         // robot always stays put — he just changes colour with his mood
+        // tints come from Theme (DESIGN.md): hotpink, orange, mint-live
         switch DictationController.shared.phase {
         case .listening:
-            button.image = Self.robotImage(tint: NSColor(displayP3Red: 0.99, green: 0.34, blue: 0.51, alpha: 1)) // hotpink
+            button.image = Self.robotImage(tint: NSColor(displayP3Red: 0.99, green: 0.34, blue: 0.51, alpha: 1)) // ★ pink-300
         case .transcribing:
-            button.image = Self.robotImage(tint: NSColor(displayP3Red: 1.0, green: 0.57, blue: 0.14, alpha: 1)) // orange
+            button.image = Self.robotImage(tint: NSColor(Theme.orange))
         case .done(let ms):
-            button.image = Self.robotImage(tint: ms >= 0 ? NSColor(displayP3Red: 0.43, green: 0.91, blue: 0.60, alpha: 1) : nil)
+            button.image = Self.robotImage(tint: ms >= 0 ? NSColor(Theme.mintLive) : nil)
         case .idle:
             button.image = Self.robotImage()
         }

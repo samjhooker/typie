@@ -1,6 +1,9 @@
 /* typie web UI — same design system as typie.cc.
-   cream paper, ink text, hot pink + butter + mint + periwinkle accents,
+   cool near-white grey surfaces, radiant pink + butter + mint accents,
    IBM Plex Mono kickers, Caveat hand annotations. */
+
+/* shared ramps — single source with the landing (landing/src/tokens.css) */
+@import '../../../landing/src/tokens.css';
 
 /* local fonts (bundled, offline) */
 @font-face {
@@ -36,23 +39,39 @@
 }
 
 :root {
-  --page: #fffdf7;
-  --cream: #fffdf7;
-  --paper: #fdf8ee;
+  /* neutral cool greys, near-white (per user) — slightly navy-tinted
+     to match ink #131722. Accents keep their warmth. */
+  --page: #fafbfc;
+  --cream: #fafbfc;
+  --paper: #f2f4f7;
+  --surface: #ffffff;
 
   --ink: #131722;
   --text-1: var(--ink);
   --text-2: rgba(19, 23, 34, 0.76);
-  --text-3: rgba(19, 23, 34, 0.54);
+  --text-3: rgba(19, 23, 34, 0.62); /* bumped from .54 — was 3.94:1, needed 4.5 */
+
+  /* grey ramp (app-only — landing uses warm cream instead) */
+  --grey-50: #fafbfc;
+  --grey-100: #f2f4f7;
+  --grey-200: #e8ebef;
+  /* legacy aliases — warm cream names resolve to the grey ramp */
+  --cream-50: var(--grey-50);
+  --cream-100: var(--grey-100);
+  --cream-200: var(--grey-200);
+
+  --butter: #ffe79a;
+  --sun: #fdc068;
+  --sun-orange: #ff9124;
+  --amber: #e59e12;
+  /* gold-ink light was #E59E12 = 2.06:1 on paper — deepened for AA */
+  --gold-ink: #9c5f06;
 
   /* accents — never as body text */
   --mint: #82eda6;
-  --mint-live: #6ee89a;
+  --mint-live: #4ade80; /* canonical mint-500 (was #6ee89a — off-spec) */
   --green: #03594d;
   --green-deep: #02453c;
-  --butter: #ffda8a;
-  --sun: #fdc068;
-  --gold-ink: #e59e12;
   --sky: #bcd6ff;
   --pink: #ffd3e0;
   --hotpink: #fc5681;
@@ -66,7 +85,8 @@
   /* card tints */
   --card-lavender: #efecfb;
   --card-blue: #dde9fa;
-  --card-cream: #fdf3dc;
+  --card-grey: #f2f4f7; /* was card-cream (warm yellow) */
+  --card-cream: var(--card-grey);
   --card-mint: #dff0e4;
 
   /* speaker palette (diarized turns) */
@@ -86,9 +106,20 @@
   --glow-pink: rgba(252, 86, 129, 0.22);
   --glow-mint: rgba(130, 237, 166, 0.28);
 
-  /* soft hairlines tinted with the footer green, like the landing */
-  --line: rgba(3, 89, 77, 0.12);
-  --line-strong: rgba(3, 89, 77, 0.22);
+  /* soft hairlines — neutral ink-alpha greys (were teal-tinted) */
+  --line: rgba(19, 23, 34, 0.1);
+  --line-strong: rgba(19, 23, 34, 0.2);
+
+  /* shadows — tokenized so dark mode swaps them for black-alpha */
+  --shadow-card: rgba(19, 23, 34, 0.04);
+  --shadow-knob: rgba(19, 23, 34, 0.3);
+
+  /* washes — hover fills / soft wells; flip to white-alpha in dark */
+  --wash: rgba(19, 23, 34, 0.06);
+  --wash-strong: rgba(19, 23, 34, 0.12);
+  --switch-track: rgba(19, 23, 34, 0.16);
+  /* text on accent (hotpink) fills — dark ink passes AA on pink */
+  --on-accent: #ffffff;
 
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --display:
@@ -98,7 +129,8 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --snap: cubic-bezier(0.22, 1, 0.36, 1);
-  --spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+  /* no overshoot — DESIGN.md §8 (was cubic-bezier(0.22, 1.2, …)) */
+  --spring: cubic-bezier(0.34, 1, 0.64, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
 
   /* true spring physics via linear() — ported from the landing's gold.css.
@@ -151,6 +183,60 @@
   margin: 0;
   padding: 0;
 }
+
+/* ── dark theme — system default, toggleable in Settings.
+   Surfaces follow the landing's dark ramp; accents keep their hue. ── */
+:root[data-theme='dark'] {
+  --page: #0c0d11;
+  --cream: #0c0d11;
+  --paper: #171a23;
+  --surface: #14161f;
+  --ink: #f7f6f4;
+  --text-2: rgba(247, 246, 244, 0.76);
+  --text-3: rgba(247, 246, 244, 0.54);
+
+  --grey-50: #0c0d11;
+  --grey-100: #171a23;
+  --grey-200: #232733;
+
+  --card-lavender: #251f3d;
+  --card-blue: #1a2438;
+  --card-grey: #1d2029;
+  --card-mint: #11231c;
+  --pink-band: #3d1c28;
+  /* light pink fills flip to a dark pink wash so dark text/ink reads */
+  --pink: #3d1c28;
+
+  --peri-ink: #9db8f0;
+  --violet-ink: #c3b1f2;
+  --red-ink: #f08aa4;
+
+  /* deep teal ink is unreadable on dark card-mint — use light mint instead */
+  --green-deep: #7be495;
+  --green: #7be495;
+  --gold-ink: #e59e12; /* bright gold reads fine on dark */
+
+  --glow-pink: rgba(252, 86, 129, 0.32);
+  --glow-mint: rgba(130, 237, 166, 0.36);
+
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  --shadow-card: rgba(0, 0, 0, 0.3);
+  --shadow-knob: rgba(0, 0, 0, 0.5);
+
+  --wash: rgba(255, 255, 255, 0.09);
+  --wash-strong: rgba(255, 255, 255, 0.16);
+  --switch-track: rgba(255, 255, 255, 0.25);
+  /* white text on hotpink is 3.09:1 — too low for small text.
+     Ink-dark on pink is 5.6:1, so dark mode puts dark text on pink. */
+  --on-accent: #131722;
+}
+
+:root[data-theme='dark'] ::selection {
+  background: var(--hotpink);
+  color: #ffffff;
+}
 html {
   background: var(--page);
   color-scheme: light;
@@ -197,7 +283,7 @@ textarea {
 }
 ::selection {
   background: var(--hotpink);
-  color: #fffdf7;
+  color: #ffffff;
 }
 
 /* keyboard users deserve designed focus — same as the landing */
@@ -249,7 +335,7 @@ body::after {
   background: var(--cream);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  box-shadow: 0 2px 10px rgba(19, 23, 34, 0.04);
+  box-shadow: 0 2px 10px var(--shadow-card);
 }
 
 .btn {
@@ -284,7 +370,7 @@ body::after {
 
 .btn-pink {
   background: var(--hotpink);
-  color: #fff;
+  color: var(--on-accent);
   box-shadow: 0 4px 14px rgba(252, 86, 129, 0.35);
 }
 .btn-pink:hover {
@@ -292,8 +378,9 @@ body::after {
 }
 
 .btn-butter {
+  /* butter stays light in both themes — text stays dark, always legible */
   background: var(--butter);
-  color: var(--ink);
+  color: #131722;
   box-shadow: 0 4px 12px rgba(19, 23, 34, 0.12);
 }
 .btn-butter:hover {
@@ -301,9 +388,10 @@ body::after {
 }
 
 .btn-green {
+  /* "black" button = inverted ink pair: light bg + dark text in dark mode */
   background: var(--ink);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(19, 23, 34, 0.2);
+  color: var(--page);
+  box-shadow: 0 4px 12px var(--shadow-knob);
 }
 
 .btn-ghost {
@@ -313,7 +401,7 @@ body::after {
 }
 .btn-ghost:hover {
   border-color: var(--ink);
-  background: rgba(19, 23, 34, 0.05);
+  background: var(--wash);
 }
 
 .btn.small {
@@ -345,7 +433,7 @@ body::after {
     color 0.18s var(--ease-out);
 }
 .icon-btn:hover {
-  background: rgba(19, 23, 34, 0.07);
+  background: var(--wash);
   color: var(--ink);
 }
 
@@ -385,7 +473,7 @@ body::after {
 .progress {
   height: 13px;
   border-radius: 999px;
-  background: rgba(3, 89, 77, 0.1);
+  background: var(--wash-strong);
   overflow: hidden;
 }
 .progress > div {
@@ -401,7 +489,7 @@ body::after {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(3, 89, 77, 0.18);
+  background: var(--wash-strong);
   border-radius: 99px;
   border: 3px solid var(--page);
 }

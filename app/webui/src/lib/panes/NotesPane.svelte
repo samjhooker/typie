@@ -23,7 +23,7 @@
     { bg: 'var(--pink-band)', pin: 'var(--hotpink)' },
     { bg: 'var(--card-blue)', pin: 'var(--periwinkle)' },
     {
-      bg: 'color-mix(in srgb, var(--lime) 38%, #fffdf7)',
+      bg: 'color-mix(in srgb, var(--lime) 38%, var(--page))',
       pin: 'var(--gold-ink)',
     },
   ];
@@ -289,7 +289,7 @@
     box-shadow: 0 10px 22px rgba(19, 23, 34, 0.13);
   }
   .sticky.pinned {
-    outline: 2px solid rgba(19, 23, 34, 0.08);
+    outline: 2px solid var(--line);
   }
 
   .pin {
@@ -324,7 +324,7 @@
     font-size: 10px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: rgba(19, 23, 34, 0.45);
+    color: var(--text-3);
   }
   .acts {
     display: flex;

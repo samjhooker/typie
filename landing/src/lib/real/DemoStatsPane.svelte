@@ -185,7 +185,7 @@
   }
   .stat p {
     font-size: 12px;
-    color: rgba(19, 23, 34, 0.6);
+    color: var(--text-2);
   }
   .doodle {
     position: absolute;

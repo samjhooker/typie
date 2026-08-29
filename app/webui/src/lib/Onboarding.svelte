@@ -620,7 +620,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: rgba(3, 89, 77, 0.08);
+    background: var(--wash);
     z-index: 3;
   }
 
@@ -927,7 +927,7 @@
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.05em;
-    color: rgba(3, 89, 77, 0.6);
+    color: var(--text-3);
   }
 
   .note {
@@ -1043,7 +1043,7 @@
   }
 
   .result .state.think {
-    color: rgba(3, 89, 77, 0.6);
+    color: var(--text-3);
   }
 
   @keyframes breathe {
