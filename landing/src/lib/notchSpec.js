@@ -50,4 +50,4 @@ export const NOTCH = {
     camGradient: 'radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%)',
     camRing: 'inset 0 0 0 1px rgba(120,130,150,.35), 0 0 0 2px #000',
   },
-}
+};

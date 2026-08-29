@@ -5,38 +5,41 @@
   const sections = [
     {
       h: 'The deal',
-      p: 'Typie is free Mac dictation software. You can use it. We can keep making it. That is most of the contract.'
+      p: 'Typie is free Mac dictation software. You can use it. We can keep making it. That is most of the contract.',
     },
     {
       h: 'It is open source',
-      p: 'The code lives at github.com/samjhooker/typie. There is no license attached, on purpose. Fork it, copy it, sell it, learn from it, do whatever. Half of this was built out of other people’s open source anyway. Let’s be real.'
+      p: 'The code lives at github.com/samjhooker/typie. There is no license attached, on purpose. Fork it, copy it, sell it, learn from it, do whatever. Half of this was built out of other people’s open source anyway. Let’s be real.',
     },
     {
       h: 'Your words',
-      p: 'Anything you dictate is yours. Typie turns speech into text on your machine. We do not claim your emails, messages, or novels. We also cannot read them.'
+      p: 'Anything you dictate is yours. Typie turns speech into text on your machine. We do not claim your emails, messages, or novels. We also cannot read them.',
     },
     {
       h: 'No accounts. Ever.',
-      p: 'There is no sign-in. Not Apple, not Google, not us. Typie is a standalone app on your Mac: independent, unsigned, no account to create. You can kinda trust us. We have nowhere to log you in.'
+      p: 'There is no sign-in. Not Apple, not Google, not us. Typie is a standalone app on your Mac: independent, unsigned, no account to create. You can kinda trust us. We have nowhere to log you in.',
     },
     {
       h: 'As-is',
-      p: 'Typie is provided as-is, with no warranty that it will catch every mumble, survive every macOS update, or make your emails better. If it breaks, restart it. If it still breaks, tell the robot. No refunds, because it costs $0.'
+      p: 'Typie is provided as-is, with no warranty that it will catch every mumble, survive every macOS update, or make your emails better. If it breaks, restart it. If it still breaks, tell the robot. No refunds, because it costs $0.',
     },
     {
       h: 'Be decent',
-      p: 'Do not use Typie to break the law or to harass people. We will not host a courtroom. We will just stop wanting you as a user.'
+      p: 'Do not use Typie to break the law or to harass people. We will not host a courtroom. We will just stop wanting you as a user.',
     },
     {
       h: 'Changes',
-      p: 'We may update these terms. The current version lives on this page. Continued use after a change means you are fine with it, or at least not typing a complaint.'
-    }
+      p: 'We may update these terms. The current version lives on this page. Continued use after a change means you are fine with it, or at least not typing a complaint.',
+    },
   ];
 </script>
 
 <svelte:head>
   <title>Terms - Typie</title>
-  <meta name="description" content="Typie terms of use. Free Mac dictation, on-device, no account required." />
+  <meta
+    name="description"
+    content="Typie terms of use. Free Mac dictation, on-device, no account required."
+  />
 </svelte:head>
 
 <PageShell>

@@ -8,11 +8,16 @@
   <div class="container inner" use:reveal>
     <span class="bot" aria-hidden="true"><Robot size={72} mood="idle" /></span>
     <h2>Just talk.<br /><span class="accent">It’s typed.</span></h2>
-    <p class="sub">Dictate anywhere, keep voice notes, capture calls, get meeting summaries. All of it on your Mac.</p>
+    <p class="sub">
+      Dictate anywhere, keep voice notes, capture calls, get meeting summaries. All of it on your
+      Mac.
+    </p>
     <div class="ctarow">
       <DownloadCta kind="green" big label="Download Typie for free" />
     </div>
-    <p class="micro mono">macOS 14+ · Apple silicon · 25 languages · summaries need macOS 26 · nothing leaves your Mac</p>
+    <p class="micro mono">
+      macOS 14+ · Apple silicon · 25 languages · summaries need macOS 26 · nothing leaves your Mac
+    </p>
   </div>
 </section>
 
@@ -38,8 +43,13 @@
   }
 
   @keyframes botwave {
-    0%, 100% { transform: rotate(-6deg); }
-    50% { transform: rotate(5deg) translateY(-4px); }
+    0%,
+    100% {
+      transform: rotate(-6deg);
+    }
+    50% {
+      transform: rotate(5deg) translateY(-4px);
+    }
   }
 
   h2 {

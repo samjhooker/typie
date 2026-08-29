@@ -1,8 +1,8 @@
 <script>
-  import { ui } from './bridge.svelte.js'
+  import { ui } from './bridge.svelte.js';
 
   /** tiny pink DEV pill next to the logo on dev builds */
-  const isDev = $derived(ui.variant === 'dev')
+  const isDev = $derived(ui.variant === 'dev');
 </script>
 
 {#if isDev}

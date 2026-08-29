@@ -5,32 +5,32 @@
 </script>
 
 <section class="notchband">
-    <div class="panel">
-      <div class="copy" use:reveal>
-        <p class="hand kicker">It lives in your notch.</p>
-        <h2>Always there<br /><span class="nowrap">when you need it.</span></h2>
-        <div class="body">
-          <p>
-            One shortcut. That’s it.<br />
-            Hold <i class="keyhint mono">&#8997;</i>, speak, release.<br />
-            Your words appear.
-          </p>
-          <svg class="starburst" viewBox="0 0 60 60" aria-hidden="true">
-            <g stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round">
-              <line x1="30" y1="4" x2="30" y2="18" />
-              <line x1="30" y1="42" x2="30" y2="56" />
-              <line x1="4" y1="30" x2="18" y2="30" />
-              <line x1="42" y1="30" x2="56" y2="30" />
-              <line x1="11" y1="11" x2="21" y2="21" />
-              <line x1="39" y1="39" x2="49" y2="49" />
-              <line x1="49" y1="11" x2="39" y2="21" />
-              <line x1="21" y1="39" x2="11" y2="49" />
-            </g>
-          </svg>
-        </div>
+  <div class="panel">
+    <div class="copy" use:reveal>
+      <p class="hand kicker">It lives in your notch.</p>
+      <h2>Always there<br /><span class="nowrap">when you need it.</span></h2>
+      <div class="body">
+        <p>
+          One shortcut. That’s it.<br />
+          Hold <i class="keyhint mono">&#8997;</i>, speak, release.<br />
+          Your words appear.
+        </p>
+        <svg class="starburst" viewBox="0 0 60 60" aria-hidden="true">
+          <g stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round">
+            <line x1="30" y1="4" x2="30" y2="18" />
+            <line x1="30" y1="42" x2="30" y2="56" />
+            <line x1="4" y1="30" x2="18" y2="30" />
+            <line x1="42" y1="30" x2="56" y2="30" />
+            <line x1="11" y1="11" x2="21" y2="21" />
+            <line x1="39" y1="39" x2="49" y2="49" />
+            <line x1="49" y1="11" x2="39" y2="21" />
+            <line x1="21" y1="39" x2="11" y2="49" />
+          </g>
+        </svg>
       </div>
+    </div>
 
-      <div class="stack" use:reveal={{ delay: 80 }} aria-hidden="true">
+    <div class="stack" use:reveal={{ delay: 80 }} aria-hidden="true">
       <!-- idle: just the hardware camera notch -->
       <div class="lid">
         <div class="screen">
@@ -61,8 +61,8 @@
           </div>
         </div>
       </div>
-      </div>
     </div>
+  </div>
 </section>
 
 <style>
@@ -173,7 +173,7 @@
     color: #fffdf7;
     border-radius: 0 0 10px 10px;
     overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0,0,0,.28);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
   }
 
   .idle {
@@ -193,15 +193,14 @@
     align-items: center;
     padding: 0 16px 4px;
     border-radius: 0 0 18px 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.32);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
   }
 
   .cam {
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background:
-      radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
     box-shadow:
       inset 0 0 0 1px rgba(120, 130, 150, 0.4),
       0 0 0 2px #000;

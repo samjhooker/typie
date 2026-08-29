@@ -1,10 +1,10 @@
 <script>
   /** iOS-style switch bound to a bridge setting */
-  import { ui, send } from './bridge.svelte.js'
+  import { ui, send } from './bridge.svelte.js';
 
-  let { setting } = $props()
+  let { setting } = $props();
 
-  const checked = $derived(ui.settings[setting])
+  const checked = $derived(ui.settings[setting]);
 </script>
 
 <button

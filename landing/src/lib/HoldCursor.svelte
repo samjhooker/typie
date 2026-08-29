@@ -49,7 +49,9 @@
     background: rgba(19, 23, 34, 0.92);
     opacity: 0;
     scale: 0.7;
-    transition: opacity 0.18s var(--ease-out), scale 0.25s var(--spring);
+    transition:
+      opacity 0.18s var(--ease-out),
+      scale 0.25s var(--spring);
     will-change: transform;
   }
 
@@ -74,15 +76,35 @@
     animation: hbar 0.7s var(--ease-inout) infinite;
   }
 
-  .bars i:nth-child(1) { animation-delay: 0s; height: 60%; }
-  .bars i:nth-child(2) { animation-delay: 0.12s; height: 100%; }
-  .bars i:nth-child(3) { animation-delay: 0.24s; height: 75%; }
-  .bars i:nth-child(4) { animation-delay: 0.09s; height: 90%; }
-  .bars i:nth-child(5) { animation-delay: 0.18s; height: 55%; }
+  .bars i:nth-child(1) {
+    animation-delay: 0s;
+    height: 60%;
+  }
+  .bars i:nth-child(2) {
+    animation-delay: 0.12s;
+    height: 100%;
+  }
+  .bars i:nth-child(3) {
+    animation-delay: 0.24s;
+    height: 75%;
+  }
+  .bars i:nth-child(4) {
+    animation-delay: 0.09s;
+    height: 90%;
+  }
+  .bars i:nth-child(5) {
+    animation-delay: 0.18s;
+    height: 55%;
+  }
 
   @keyframes hbar {
-    0%, 100% { transform: scaleY(0.35); }
-    50% { transform: scaleY(1); }
+    0%,
+    100% {
+      transform: scaleY(0.35);
+    }
+    50% {
+      transform: scaleY(1);
+    }
   }
 
   .lbl {

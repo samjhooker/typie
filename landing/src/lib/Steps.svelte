@@ -68,8 +68,10 @@
 
   .key {
     flex: none;
-    width: 44px; height: 44px;
-    display: grid; place-items: center;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
     background: var(--surface-2);
     border: 1px solid var(--line-strong);
     border-bottom-width: 3px;
@@ -80,11 +82,13 @@
     color: var(--ink);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   }
-  
+
   .ic {
     flex: none;
-    width: 44px; height: 44px;
-    display: grid; place-items: center;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
     background: var(--pink);
     color: var(--hotpink);
     border-radius: 12px;
@@ -113,8 +117,19 @@
   }
 
   @media (max-width: 890px) {
-    .row { flex-direction: column; align-items: stretch; gap: 16px; padding: 20px; }
-    .arrow { transform: rotate(90deg); justify-content: center; display: flex; }
-    .steps-section { padding: 12px 0 20px; }
+    .row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+      padding: 20px;
+    }
+    .arrow {
+      transform: rotate(90deg);
+      justify-content: center;
+      display: flex;
+    }
+    .steps-section {
+      padding: 12px 0 20px;
+    }
   }
 </style>

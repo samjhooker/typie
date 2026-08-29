@@ -1,9 +1,9 @@
 <script>
-  import Onboarding from './lib/Onboarding.svelte'
-  import AppShell from './lib/AppShell.svelte'
-  import { ui } from './lib/bridge.svelte.js'
+  import Onboarding from './lib/Onboarding.svelte';
+  import AppShell from './lib/AppShell.svelte';
+  import { ui } from './lib/bridge.svelte.js';
 
-  const route = $derived(ui.ready ? ui.route : null)
+  const route = $derived(ui.ready ? ui.route : null);
 </script>
 
 {#if route === null}

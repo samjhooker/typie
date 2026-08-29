@@ -43,10 +43,10 @@ export const APPS = [
   { n: 'Notes', s: notes },
   { n: 'Notion', s: svg(notion) },
   { n: 'Figma', s: svg(figma) },
-  { n: 'Docs', s: svg(gdocs) }
+  { n: 'Docs', s: svg(gdocs) },
 ];
 
 export const APP_ROWS = [
   APPS.slice(0, Math.ceil(APPS.length / 2)),
-  APPS.slice(Math.ceil(APPS.length / 2))
+  APPS.slice(Math.ceil(APPS.length / 2)),
 ];

@@ -14,30 +14,32 @@
     NotebookPen,
     FileUp,
     Phone,
-  } from 'lucide-svelte'
-  import Robot from './Robot.svelte'
-  import DownloadGame from './DownloadGame.svelte'
-  import DevTag from './DevTag.svelte'
-  import { ui, local, send } from './bridge.svelte.js'
+  } from 'lucide-svelte';
+  import Robot from './Robot.svelte';
+  import DownloadGame from './DownloadGame.svelte';
+  import DevTag from './DevTag.svelte';
+  import { ui, local, send } from './bridge.svelte.js';
 
-  const STEP_COUNT = 4
+  const STEP_COUNT = 4;
 
   // ── model states ─────────────────────────────────────────────
-  const modelReady = $derived(ui.model.status === 'ready')
-  const downloadApproved = $derived(ui.model.status !== 'notDownloaded' || ui.modelsExist)
+  const modelReady = $derived(ui.model.status === 'ready');
+  const downloadApproved = $derived(ui.model.status !== 'notDownloaded' || ui.modelsExist);
 
   // speaker-label models (diarization) — downloaded alongside the main brain
-  const diarizerState = $derived(ui.transcribe.model.state)
-  const diarizerReady = $derived(diarizerState === 'ready')
+  const diarizerState = $derived(ui.transcribe.model.state);
+  const diarizerReady = $derived(diarizerState === 'ready');
   const diarizerBusy = $derived(
-    diarizerState === 'downloading' || diarizerState === 'compiling' || diarizerState === 'unknown',
-  )
-  const diarizerFraction = $derived(ui.transcribe.model.fraction || 0)
-  const allDownloadsReady = $derived(modelReady && diarizerReady)
-  const anythingFailed = $derived(ui.model.status === 'failed' || diarizerState === 'failed')
+    diarizerState === 'downloading' || diarizerState === 'compiling' || diarizerState === 'unknown'
+  );
+  const diarizerFraction = $derived(ui.transcribe.model.fraction || 0);
+  const allDownloadsReady = $derived(modelReady && diarizerReady);
+  const anythingFailed = $derived(ui.model.status === 'failed' || diarizerState === 'failed');
 
   // ── permissions — all three required ─────────────────────────
-  const allPermissionsDone = $derived(ui.permissions.mic && ui.permissions.ax && ui.permissions.screen)
+  const allPermissionsDone = $derived(
+    ui.permissions.mic && ui.permissions.ax && ui.permissions.screen
+  );
 
   const robotMood = $derived(
     local.step === 2
@@ -48,34 +50,34 @@
           : 'idle'
       : local.step === 3
         ? 'listening'
-        : 'idle',
-  )
+        : 'idle'
+  );
 
   // kick BOTH downloads off as soon as the user engages — by the time they
   // reach the downloads step the brain is usually already halfway home.
   // If files are already on disk we still need to send, so they load into
   // memory (modelsExist but model.status is still 'notDownloaded').
   function startDownloads() {
-    if (!modelReady) send({ type: 'startModelDownload' })
-    if (!diarizerReady) send({ type: 'startDiarizerDownload' })
+    if (!modelReady) send({ type: 'startModelDownload' });
+    if (!diarizerReady) send({ type: 'startDiarizerDownload' });
   }
 
-  let autoAdvancing = false
+  let autoAdvancing = false;
 
   /** single path for every step change so side effects stay consistent */
   function goTo(step) {
-    if (step <= local.step || step >= STEP_COUNT) return
+    if (step <= local.step || step >= STEP_COUNT) return;
     // re-check mode: permissions step is the only one needed
     if (local.recheck && local.step === 1 && step === 2) {
-      local.recheck = false
-      send({ type: 'completeOnboarding' })
-      return
+      local.recheck = false;
+      send({ type: 'completeOnboarding' });
+      return;
     }
-    if (step >= 1) startDownloads()
+    if (step >= 1) startDownloads();
     // hotkey must go live entering the practice step
-    if (step === 3) send({ type: 'onboardingReadyStep' })
-    autoAdvancing = false
-    local.step = step
+    if (step === 3) send({ type: 'onboardingReadyStep' });
+    autoAdvancing = false;
+    local.step = step;
   }
 
   // ── magic: the flow advances itself ──────────────────────────
@@ -86,35 +88,35 @@
         if (local.step === 1) {
           if (local.recheck) {
             // re-check mode: just permissions, skip downloads/practice
-            local.recheck = false
-            send({ type: 'completeOnboarding' })
+            local.recheck = false;
+            send({ type: 'completeOnboarding' });
           } else {
-            autoAdvancing = true
-            goTo(2)
+            autoAdvancing = true;
+            goTo(2);
           }
         }
-      }, 1100)
-      return () => clearTimeout(t)
+      }, 1100);
+      return () => clearTimeout(t);
     }
-  })
+  });
   $effect(() => {
     if (local.step === 2 && modelReady && (diarizerReady || diarizerState === 'failed')) {
       const t = setTimeout(() => {
         if (local.step === 2) {
-          autoAdvancing = true
-          goTo(3)
+          autoAdvancing = true;
+          goTo(3);
         }
-      }, 1800)
-      return () => clearTimeout(t)
+      }, 1800);
+      return () => clearTimeout(t);
     }
-  })
+  });
 
   const buttonLabel = $derived.by(() => {
     switch (local.step) {
       case 0:
-        return "let's go →"
+        return "let's go →";
       case 1:
-        return allPermissionsDone ? 'next' : 'waiting…'
+        return allPermissionsDone ? 'next' : 'waiting…';
       case 2:
         return allDownloadsReady
           ? 'continue'
@@ -122,17 +124,17 @@
             ? 'continue anyway'
             : modelReady
               ? 'finishing speaker labels…'
-              : 'downloading…'
+              : 'downloading…';
       default:
-        return ''
+        return '';
     }
-  })
+  });
 
   const nextEnabled = $derived(
     local.step === 0 ||
       (local.step === 1 && allPermissionsDone) ||
-      (local.step === 2 && modelReady && (diarizerReady || diarizerState === 'failed')),
-  )
+      (local.step === 2 && modelReady && (diarizerReady || diarizerState === 'failed'))
+  );
 
   const stepHint = $derived(
     [
@@ -140,10 +142,10 @@
       'one-time things — we’ll never ask again',
       autoAdvancing ? 'moving on its own…' : 'the whole brain + ears, onto this Mac',
       'try it — say something nice',
-    ][local.step],
-  )
+    ][local.step]
+  );
 
-  const progressPct = $derived(((local.step + 1) / STEP_COUNT) * 100)
+  const progressPct = $derived(((local.step + 1) / STEP_COUNT) * 100);
 </script>
 
 <div class="onboard">
@@ -203,14 +205,19 @@
               {#if ui.permissions.mic}
                 <span class="chip granted-chip"><Check size={12} />granted</span>
               {:else}
-                <button class="btn btn-pink small" onclick={() => send({ type: 'requestMicPermission' })}>
+                <button
+                  class="btn btn-pink small"
+                  onclick={() => send({ type: 'requestMicPermission' })}
+                >
                   allow
                 </button>
               {/if}
             </div>
 
             <div class="card perm" class:granted={ui.permissions.ax}>
-              <span class="tile" style="background:var(--lavender)"><Accessibility size={21} /></span>
+              <span class="tile" style="background:var(--lavender)"
+                ><Accessibility size={21} /></span
+              >
               <div class="body">
                 <strong>Accessibility</strong>
                 <p>watches for the hotkey and types where your cursor already is.</p>
@@ -218,14 +225,19 @@
               {#if ui.permissions.ax}
                 <span class="chip granted-chip"><Check size={12} />granted</span>
               {:else}
-                <button class="btn btn-pink small" onclick={() => send({ type: 'requestAccessibility' })}>
+                <button
+                  class="btn btn-pink small"
+                  onclick={() => send({ type: 'requestAccessibility' })}
+                >
                   allow
                 </button>
               {/if}
             </div>
 
             <div class="card perm" class:granted={ui.permissions.screen}>
-              <span class="tile" style="background:var(--card-blue)"><MonitorSpeaker size={21} /></span>
+              <span class="tile" style="background:var(--card-blue)"
+                ><MonitorSpeaker size={21} /></span
+              >
               <div class="body">
                 <strong>Screen recording</strong>
                 <p>captures call audio so meeting transcripts include everyone.</p>
@@ -236,7 +248,10 @@
               {#if ui.permissions.screen}
                 <span class="chip granted-chip"><Check size={12} />granted</span>
               {:else}
-                <button class="btn btn-pink small" onclick={() => send({ type: 'requestScreenPermission' })}>
+                <button
+                  class="btn btn-pink small"
+                  onclick={() => send({ type: 'requestScreenPermission' })}
+                >
                   allow
                 </button>
               {/if}
@@ -251,48 +266,78 @@
           <h1>{allDownloadsReady ? 'all set' : 'one-time downloads'}</h1>
 
           {#if modelReady && diarizerReady}
-            <p class="note"><WifiOff size={15} /> everything's installed — from here on, everything happens offline.</p>
+            <p class="note">
+              <WifiOff size={15} /> everything's installed — from here on, everything happens offline.
+            </p>
           {:else}
             <!-- main ASR model -->
-            <div class="card dlrow" class:done={modelReady} class:failed={ui.model.status === 'failed'}>
+            <div
+              class="card dlrow"
+              class:done={modelReady}
+              class:failed={ui.model.status === 'failed'}
+            >
               <span class="tile" style="background:var(--mint)"><Brain size={21} /></span>
               <div class="body">
-                <header class="rowhead"><strong>the brain</strong><span class="mono-kicker">dictation · ~470 mb</span></header>
+                <header class="rowhead">
+                  <strong>the brain</strong><span class="mono-kicker">dictation · ~470 mb</span>
+                </header>
                 {#if modelReady}
                   <p class="stat done"><Check size={12} /> ready</p>
                 {:else if ui.model.status === 'failed'}
                   <p class="error">{ui.model.error}</p>
-                  <button class="btn btn-pink small" onclick={() => send({ type: 'startModelDownload' })}>try again</button>
+                  <button
+                    class="btn btn-pink small"
+                    onclick={() => send({ type: 'startModelDownload' })}>try again</button
+                  >
                 {:else if ui.model.status === 'loading'}
                   <div class="progress"><div style="width:98%"></div></div>
                   <p class="stat">waking it up…</p>
                 {:else}
-                  <div class="progress"><div style="width:{Math.max(3, ui.model.fraction * 100)}%"></div></div>
-                  <p class="stat">{ui.model.fraction > 0.01
-                    ? `${Math.round(ui.model.fraction * 100)}% · ${Math.round(ui.model.fraction * 470)} / ~470 mb${ui.eta ? ` · ${ui.eta}` : ''}`
-                    : 'starting…'}</p>
+                  <div class="progress">
+                    <div style="width:{Math.max(3, ui.model.fraction * 100)}%"></div>
+                  </div>
+                  <p class="stat">
+                    {ui.model.fraction > 0.01
+                      ? `${Math.round(ui.model.fraction * 100)}% · ${Math.round(ui.model.fraction * 470)} / ~470 mb${ui.eta ? ` · ${ui.eta}` : ''}`
+                      : 'starting…'}
+                  </p>
                 {/if}
               </div>
             </div>
 
             <!-- speaker-label models -->
-            <div class="card dlrow" class:done={diarizerReady} class:failed={diarizerState === 'failed'}>
+            <div
+              class="card dlrow"
+              class:done={diarizerReady}
+              class:failed={diarizerState === 'failed'}
+            >
               <span class="tile" style="background:var(--lavender)"><Ear size={21} /></span>
               <div class="body">
-                <header class="rowhead"><strong>the ears</strong><span class="mono-kicker">speaker labels · ~{ui.transcribe.downloadMB || 22} mb</span></header>
+                <header class="rowhead">
+                  <strong>the ears</strong><span class="mono-kicker"
+                    >speaker labels · ~{ui.transcribe.downloadMB || 22} mb</span
+                  >
+                </header>
                 {#if diarizerReady}
                   <p class="stat done"><Check size={12} /> ready</p>
                 {:else if diarizerState === 'failed'}
                   <p class="error">{ui.transcribe.model.error}</p>
-                  <button class="btn btn-pink small" onclick={() => send({ type: 'startDiarizerDownload' })}>try again</button>
+                  <button
+                    class="btn btn-pink small"
+                    onclick={() => send({ type: 'startDiarizerDownload' })}>try again</button
+                  >
                 {:else if diarizerState === 'compiling'}
                   <div class="progress"><div style="width:96%"></div></div>
                   <p class="stat">waking them up…</p>
                 {:else}
-                  <div class="progress"><div style="width:{Math.max(3, diarizerFraction * 100)}%"></div></div>
-                  <p class="stat">{diarizerFraction > 0.01
-                    ? `${Math.round(diarizerFraction * 100)}% downloading${ui.transcribe.eta ? ` · ${ui.transcribe.eta}` : ''}`
-                    : 'starting…'}</p>
+                  <div class="progress">
+                    <div style="width:{Math.max(3, diarizerFraction * 100)}%"></div>
+                  </div>
+                  <p class="stat">
+                    {diarizerFraction > 0.01
+                      ? `${Math.round(diarizerFraction * 100)}% downloading${ui.transcribe.eta ? ` · ${ui.transcribe.eta}` : ''}`
+                      : 'starting…'}
+                  </p>
                 {/if}
               </div>
             </div>
@@ -335,16 +380,21 @@
             <span class="mono-kicker">more to explore inside</span>
             <div class="feat-row">
               <div class="card feat">
-                <span class="tile sm" style="background:var(--card-cream)"><NotebookPen size={18} /></span>
+                <span class="tile sm" style="background:var(--card-cream)"
+                  ><NotebookPen size={18} /></span
+                >
                 <div><strong>quick notes</strong><span>dictation kept with its audio</span></div>
               </div>
               <div class="card feat">
-                <span class="tile sm" style="background:var(--card-blue)"><FileUp size={18} /></span>
+                <span class="tile sm" style="background:var(--card-blue)"><FileUp size={18} /></span
+                >
                 <div><strong>upload audio</strong><span>transcripts with speaker labels</span></div>
               </div>
               <div class="card feat">
                 <span class="tile sm" style="background:var(--pink)"><Phone size={18} /></span>
-                <div><strong>meeting capture</strong><span>live transcripts of your calls</span></div>
+                <div>
+                  <strong>meeting capture</strong><span>live transcripts of your calls</span>
+                </div>
               </div>
             </div>
           </div>
@@ -405,13 +455,21 @@
   }
 
   @keyframes drift-a {
-    from { transform: translate(0, 0) scale(1); }
-    to { transform: translate(-90px, 70px) scale(1.15); }
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(-90px, 70px) scale(1.15);
+    }
   }
 
   @keyframes drift-b {
-    from { transform: translate(0, 0) scale(1); }
-    to { transform: translate(80px, -60px) scale(1.1); }
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(80px, -60px) scale(1.1);
+    }
   }
 
   /* ── overall progress rail ── */
@@ -658,8 +716,13 @@
   }
 
   @keyframes halo-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(130, 237, 166, 0.35); }
-    50% { box-shadow: 0 0 0 18px rgba(130, 237, 166, 0); }
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(130, 237, 166, 0.35);
+    }
+    50% {
+      box-shadow: 0 0 0 18px rgba(130, 237, 166, 0);
+    }
   }
 
   .dlrow {
@@ -843,7 +906,9 @@
   }
 
   @keyframes breathe {
-    50% { opacity: 0.35; }
+    50% {
+      opacity: 0.35;
+    }
   }
 
   .more {

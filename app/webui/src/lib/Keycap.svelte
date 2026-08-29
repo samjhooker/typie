@@ -1,8 +1,8 @@
 <script>
-  import { ui, send } from './bridge.svelte.js'
+  import { ui, send } from './bridge.svelte.js';
 
   /** click-to-record keybinding chooser, like the native KeyCap */
-  const name = $derived(ui.capturingHotkey ? '?' : ui.settings.hotkeyShort)
+  const name = $derived(ui.capturingHotkey ? '?' : ui.settings.hotkeyShort);
 </script>
 
 <div class="wrap">

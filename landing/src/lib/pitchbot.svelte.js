@@ -3,5 +3,5 @@
    open and gently explains that everything is free. */
 export const pitch = $state({
   open: false,
-  show() {}
+  show() {},
 });

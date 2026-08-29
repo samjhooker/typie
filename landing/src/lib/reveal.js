@@ -7,7 +7,9 @@ export function reveal(node, { delay = 0 } = {}) {
     if (done) return;
     done = true;
     node.classList.add('visible');
-    try { io.disconnect(); } catch {}
+    try {
+      io.disconnect();
+    } catch {}
   };
 
   const io = new IntersectionObserver(
@@ -24,8 +26,10 @@ export function reveal(node, { delay = 0 } = {}) {
   return {
     destroy() {
       clearTimeout(t);
-      try { io.disconnect(); } catch {}
-    }
+      try {
+        io.disconnect();
+      } catch {}
+    },
   };
 }
 
@@ -45,7 +49,11 @@ export function spoken(node, { ramble = '', delay = 0 } = {}) {
     );
     node.classList.add('reveal');
     io.observe(node);
-    return { destroy() { io.disconnect(); } };
+    return {
+      destroy() {
+        io.disconnect();
+      },
+    };
   }
 
   node.textContent = clean;
@@ -86,7 +94,7 @@ export function spoken(node, { ramble = '', delay = 0 } = {}) {
     destroy() {
       io.disconnect();
       clearTimeout(timer);
-    }
+    },
   };
 }
 
@@ -112,6 +120,6 @@ export function parallax(node, { speed = 0.12 } = {}) {
     destroy() {
       window.removeEventListener('scroll', onScroll);
       if (raf) cancelAnimationFrame(raf);
-    }
+    },
   };
 }

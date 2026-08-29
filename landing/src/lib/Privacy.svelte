@@ -5,41 +5,45 @@
   const sections = [
     {
       h: 'The short version',
-      p: 'We collect nothing about what you say. Dictation happens on your Mac. There are no accounts, so there is nothing to breach. The rest is just the same sentence in more words.'
+      p: 'We collect nothing about what you say. Dictation happens on your Mac. There are no accounts, so there is nothing to breach. The rest is just the same sentence in more words.',
     },
     {
       h: 'Audio',
-      p: 'Your speech is processed on-device and discarded as soon as it becomes text. It is never recorded, stored, uploaded, or listened to - including by us. There is no server for it to go to.'
+      p: 'Your speech is processed on-device and discarded as soon as it becomes text. It is never recorded, stored, uploaded, or listened to - including by us. There is no server for it to go to.',
     },
     {
       h: 'What stays on your Mac',
-      p: 'The speech model (downloaded once) and whatever you typed. Uninstall Typie and that goes with it.'
+      p: 'The speech model (downloaded once) and whatever you typed. Uninstall Typie and that goes with it.',
     },
     {
       h: 'No accounts. Ever.',
-      p: 'There is no sign-in. Not Apple, not Google, not us. Typie is a standalone app on your Mac: independent, unsigned. We do not know who you are. You can kinda trust us.'
+      p: 'There is no sign-in. Not Apple, not Google, not us. Typie is a standalone app on your Mac: independent, unsigned. We do not know who you are. You can kinda trust us.',
     },
     {
       h: 'Data we do not collect',
-      p: 'No analytics, no telemetry, no crash phoning-home, no cookies, no ad SDKs, no “partners”. The app has nowhere to call.'
+      p: 'No analytics, no telemetry, no crash phoning-home, no cookies, no ad SDKs, no “partners”. The app has nowhere to call.',
     },
     {
       h: 'Changes',
-      p: 'If this policy ever changes we will update this page. We cannot email you about it, because we do not know who you are. That is the point.'
-    }
+      p: 'If this policy ever changes we will update this page. We cannot email you about it, because we do not know who you are. That is the point.',
+    },
   ];
 </script>
 
 <svelte:head>
   <title>Privacy - Typie</title>
-  <meta name="description" content="Typie privacy policy: dictation is on-device. We do not collect your voice, documents, or a profile of you." />
+  <meta
+    name="description"
+    content="Typie privacy policy: dictation is on-device. We do not collect your voice, documents, or a profile of you."
+  />
 </svelte:head>
 
 <PageShell>
   <p class="hand kicker" use:reveal>the short one.</p>
   <h1 class="subhead" use:reveal>Privacy policy</h1>
   <p class="intro" use:reveal={{ delay: 60 }}>
-    Typie is built so your voice never leaves your computer. This page exists because people ask for one.
+    Typie is built so your voice never leaves your computer. This page exists because people ask for
+    one.
   </p>
 
   <div class="wrap">
@@ -51,7 +55,9 @@
     {/each}
   </div>
 
-  <p class="fine mono">Last updated: August 2026 · Questions: the robot on the home page knows as much as we do.</p>
+  <p class="fine mono">
+    Last updated: August 2026 · Questions: the robot on the home page knows as much as we do.
+  </p>
 </PageShell>
 
 <style>

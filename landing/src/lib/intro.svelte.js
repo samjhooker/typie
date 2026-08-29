@@ -4,5 +4,5 @@
  */
 export const intro = $state({
   active: true,
-  glow: null // { x, y } viewport coords
+  glow: null, // { x, y } viewport coords
 });

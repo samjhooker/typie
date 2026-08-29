@@ -196,10 +196,34 @@
   });
 
   const stats = [
-    { value: 0, prefix: '', suffix: '', unit: 'bytes', label: 'of audio ever transmitted. The architecture has no path out.' },
-    { value: 100, prefix: '<', suffix: '', unit: 'ms', label: 'release-to-keystroke latency. Inference is the only delay.' },
-    { value: 100, prefix: '', suffix: '%', unit: 'local', label: 'of inference on-device. The network is never in the loop.' },
-    { value: 1, prefix: '', suffix: '', unit: 'download', label: 'model fetched once at install. After day one, fully offline.' },
+    {
+      value: 0,
+      prefix: '',
+      suffix: '',
+      unit: 'bytes',
+      label: 'of audio ever transmitted. The architecture has no path out.',
+    },
+    {
+      value: 100,
+      prefix: '<',
+      suffix: '',
+      unit: 'ms',
+      label: 'release-to-keystroke latency. Inference is the only delay.',
+    },
+    {
+      value: 100,
+      prefix: '',
+      suffix: '%',
+      unit: 'local',
+      label: 'of inference on-device. The network is never in the loop.',
+    },
+    {
+      value: 1,
+      prefix: '',
+      suffix: '',
+      unit: 'download',
+      label: 'model fetched once at install. After day one, fully offline.',
+    },
   ];
 
   const faqs = [
@@ -230,7 +254,12 @@
   ];
 </script>
 
-<svelte:window onscroll={onScroll} onkeydown={heroKeydown} onkeyup={heroKeyup} onpointerup={hRelease} />
+<svelte:window
+  onscroll={onScroll}
+  onkeydown={heroKeydown}
+  onkeyup={heroKeyup}
+  onpointerup={hRelease}
+/>
 
 <div class="ent" id="top">
   <!-- ============ nav ============ -->
@@ -254,8 +283,11 @@
       <a
         href="mailto:sales@typie.cc?subject=Enterprise%20briefing"
         class="btn btn-solid btn-sm"
-        onclick={(e) => { e.preventDefault(); pitch.show(); }}
-      >Book a briefing</a>
+        onclick={(e) => {
+          e.preventDefault();
+          pitch.show();
+        }}>Book a briefing</a
+      >
     </div>
     <div class="progress" style="--p:{progress}" aria-hidden="true"></div>
   </header>
@@ -264,19 +296,24 @@
   <section class="ent-hero">
     <div class="container grid">
       <div>
-        <p class="eyebrow hero-eyebrow"><b>typie enterprise</b>&ensp;/&ensp;on-device voice input</p>
+        <p class="eyebrow hero-eyebrow">
+          <b>typie enterprise</b>&ensp;/&ensp;on-device voice input
+        </p>
         <h1><em>Zero</em> attack surface.</h1>
 
         <p class="sub">
-          Enterprise dictation at sub-100ms on every corporate Mac. Audio
-          never leaves the device, and there is nothing to breach.
+          Enterprise dictation at sub-100ms on every corporate Mac. Audio never leaves the device,
+          and there is nothing to breach.
         </p>
         <div class="cta">
           <a
             href="mailto:sales@typie.cc?subject=Enterprise%20briefing"
             class="btn btn-solid"
-            onclick={(e) => { e.preventDefault(); pitch.show(); }}
-          >Book a security briefing</a>
+            onclick={(e) => {
+              e.preventDefault();
+              pitch.show();
+            }}>Book a security briefing</a
+          >
         </div>
         <div class="meta">
           <span><b>&gt;</b> on-device speech infrastructure</span>
@@ -289,9 +326,19 @@
         <div
           class="hd-desktop"
           class:live={hphase === 'listening'}
-          onpointerdown={(e) => { if (e.target.closest?.('.dock-item')) return; e.preventDefault(); hPress(); }}
+          onpointerdown={(e) => {
+            if (e.target.closest?.('.dock-item')) return;
+            e.preventDefault();
+            hPress();
+          }}
         >
-          <div class="island" class:idle={hphase === 'idle' || hphase === 'switch'} class:live={hphase === 'listening'} class:done={hphase === 'done'} aria-hidden="true">
+          <div
+            class="island"
+            class:idle={hphase === 'idle' || hphase === 'switch'}
+            class:live={hphase === 'listening'}
+            class:done={hphase === 'done'}
+            aria-hidden="true"
+          >
             {#if hphase === 'listening'}
               <span class="ibot"><Robot size={15} mood="listening" /></span>
               <span class="icam"></span>
@@ -306,15 +353,48 @@
           </div>
 
           <div class="menubar" aria-hidden="true">
-            <svg class="apple" viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <svg class="apple" viewBox="0 0 384 512" aria-hidden="true"
+              ><path
+                fill="currentColor"
+                d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
+              /></svg
+            >
             <span class="mitem app">{SCENES[hscene].name}</span>
             <span class="mitem">File</span>
             <span class="mitem">Edit</span>
             <span class="mitem">View</span>
             <span class="mspace"></span>
             <span class="net">NET 0 B</span>
-            <svg class="sicn" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M1.5 4.4a10 10 0 0 1 13 0"/><path d="M3.9 7a6.4 6.4 0 0 1 8.2 0"/><circle cx="8" cy="9.9" r="1.15" fill="currentColor" stroke="none"/></svg>
-            <svg class="sicn" viewBox="0 0 25 12" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.6" fill="currentColor"/><path d="M23 4v4a2.2 2.2 0 0 0 0-4z" fill="currentColor"/></svg>
+            <svg
+              class="sicn"
+              viewBox="0 0 16 12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              aria-hidden="true"
+              ><path d="M1.5 4.4a10 10 0 0 1 13 0" /><path d="M3.9 7a6.4 6.4 0 0 1 8.2 0" /><circle
+                cx="8"
+                cy="9.9"
+                r="1.15"
+                fill="currentColor"
+                stroke="none"
+              /></svg
+            >
+            <svg class="sicn" viewBox="0 0 25 12" aria-hidden="true"
+              ><rect
+                x="0.5"
+                y="0.5"
+                width="21"
+                height="11"
+                rx="3.2"
+                fill="none"
+                stroke="currentColor"
+              /><rect x="2.5" y="2.5" width="14" height="7" rx="1.6" fill="currentColor" /><path
+                d="M23 4v4a2.2 2.2 0 0 0 0-4z"
+                fill="currentColor"
+              /></svg
+            >
             <span class="mitem">9:41 AM</span>
           </div>
 
@@ -334,12 +414,16 @@
               {#if SCENES[hscene].side.length}
                 <aside class="side">
                   <p class="side-h">
-                    <i class="bmark" aria-hidden="true">{@html nsSvg(SCENES[hscene].brand, 'hsh' + SCENES[hscene].id)}</i>
+                    <i class="bmark" aria-hidden="true"
+                      >{@html nsSvg(SCENES[hscene].brand, 'hsh' + SCENES[hscene].id)}</i
+                    >
                     {SCENES[hscene].name}
                   </p>
                   <ul>
                     {#each SCENES[hscene].side as [label, count], i}
-                      <li class:on={i === 0}><span>{label}</span>{#if count}<b>{count}</b>{/if}</li>
+                      <li class:on={i === 0}>
+                        <span>{label}</span>{#if count}<b>{count}</b>{/if}
+                      </li>
                     {/each}
                   </ul>
                 </aside>
@@ -355,12 +439,26 @@
                   <p class="term-line"><span class="prompt">$</span> ssh admin@prod-bastion</p>
                   <p class="term-line typed">
                     <span class="prompt">$</span>
-                    {SCENES[hscene].text.slice(0, hchars)}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span class="ghost">words land here, as real keystrokes</span>{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"></span>
+                    {SCENES[hscene].text.slice(
+                      0,
+                      hchars
+                    )}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span
+                        class="ghost">words land here, as real keystrokes</span
+                      >{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"
+                    ></span>
                   </p>
                 {:else if SCENES[hscene].id === 'outlook'}
-                  <div class="fields"><span>To: board@typie.cc</span><span>Subject: Q3 close</span></div>
+                  <div class="fields">
+                    <span>To: board@typie.cc</span><span>Subject: Q3 close</span>
+                  </div>
                   <p class="mail-text">
-                    {SCENES[hscene].text.slice(0, hchars)}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span class="ghost">words land here, as real keystrokes</span>{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"></span>
+                    {SCENES[hscene].text.slice(
+                      0,
+                      hchars
+                    )}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span
+                        class="ghost">words land here, as real keystrokes</span
+                      >{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"
+                    ></span>
                   </p>
                   <span class="sendbtn">Send</span>
                 {:else}
@@ -376,7 +474,16 @@
                     <div class="sbody">
                       <p class="shead"><b>you</b><span class="mono">now</span></p>
                       <p class="stext">
-                        {SCENES[hscene].text.slice(0, hchars)}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span class="ghost">words land here, as real keystrokes</span>{/if}<span class="caret" class:hidden={hphase === 'done'} aria-hidden="true"></span>
+                        {SCENES[hscene].text.slice(
+                          0,
+                          hchars
+                        )}{#if hchars === 0 && (hphase === 'idle' || hphase === 'switch')}<span
+                            class="ghost">words land here, as real keystrokes</span
+                          >{/if}<span
+                          class="caret"
+                          class:hidden={hphase === 'done'}
+                          aria-hidden="true"
+                        ></span>
                       </p>
                     </div>
                   </div>
@@ -390,8 +497,16 @@
 
           <nav class="dock">
             {#each SCENES as s, i}
-              <button class="dock-item" class:on={hscene === i} onclick={() => pick(i)} aria-label={s.name}>
-                <span class="dicon"><i class="dbmark" aria-hidden="true">{@html nsSvg(s.brand, 'dk' + s.id)}</i></span>
+              <button
+                class="dock-item"
+                class:on={hscene === i}
+                onclick={() => pick(i)}
+                aria-label={s.name}
+              >
+                <span class="dicon"
+                  ><i class="dbmark" aria-hidden="true">{@html nsSvg(s.brand, 'dk' + s.id)}</i
+                  ></span
+                >
                 <i class="dot"></i>
               </button>
             {/each}
@@ -402,11 +517,24 @@
           <button
             class="minikey"
             class:down={hphase === 'listening'}
-            onpointerdown={(e) => { e.preventDefault(); hPress(); }}
+            onpointerdown={(e) => {
+              e.preventDefault();
+              hPress();
+            }}
             onpointerup={hRelease}
             onpointerleave={hRelease}
-            onkeydown={(e) => { if ((e.code === 'Space' || e.code === 'Enter') && !e.repeat) { e.preventDefault(); hPress(); } }}
-            onkeyup={(e) => { if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); hRelease(); } }}
+            onkeydown={(e) => {
+              if ((e.code === 'Space' || e.code === 'Enter') && !e.repeat) {
+                e.preventDefault();
+                hPress();
+              }
+            }}
+            onkeyup={(e) => {
+              if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                hRelease();
+              }
+            }}
             aria-label="press and hold to try typie live"
           >
             <b>&#8997;</b>option
@@ -437,7 +565,8 @@
         {#each stats as s, i}
           <div class="stat" use:reveal={{ delay: i * 0.08 }}>
             <span class="num"
-              >{s.prefix}<span data-count={s.value} use:countup>{s.value}</span><sub>{s.unit}</sub></span
+              >{s.prefix}<span data-count={s.value} use:countup>{s.value}</span><sub>{s.unit}</sub
+              ></span
             >
             <span class="label">{s.label}</span>
           </div>
@@ -452,8 +581,8 @@
       <p class="eyebrow"><b>01</b> / platform</p>
       <h2 use:reveal>Built like infrastructure,<br />not like an app.</h2>
       <p class="lede" use:reveal={{ delay: 0.08 }}>
-        One native binary. One dependency. No browser runtime, no background
-        agents, no per-app integrations to maintain.
+        One native binary. One dependency. No browser runtime, no background agents, no per-app
+        integrations to maintain.
       </p>
 
       <div class="grid">
@@ -462,9 +591,8 @@
             <span class="tag">works everywhere</span>
             <h3>Dictation for every application</h3>
             <p>
-              Output lands as real keyboard events in whatever has focus.
-              Mail, Slack, EHR clients, mainframe terminals, Electron
-              abominations. If it accepts typing, typie works there.
+              Output lands as real keyboard events in whatever has focus. Mail, Slack, EHR clients,
+              mainframe terminals, Electron abominations. If it accepts typing, typie works there.
             </p>
             <pre>$ typie --trace
 mic        ▸ on-device ASR (nvidia parakeet, local)
@@ -472,8 +600,8 @@ network    ▸ bytes transmitted: <b>0</b>
 telemetry  ▸ endpoints configured: <b>none</b>
 output     ▸ CGEvent keystrokes ▸ active application</pre>
             <p>
-              This is the entire data flow. Three hops, all local. Your
-              auditors can verify it with a packet capture in ten minutes.
+              This is the entire data flow. Three hops, all local. Your auditors can verify it with
+              a packet capture in ten minutes.
             </p>
           </div>
         </div>
@@ -483,9 +611,8 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
             <span class="tag">your lexicon</span>
             <h3>Custom vocabulary</h3>
             <p>
-              Product names, internal codenames, clinical terminology,
-              regulatory acronyms. Domain language recognized correctly,
-              on hardware you control.
+              Product names, internal codenames, clinical terminology, regulatory acronyms. Domain
+              language recognized correctly, on hardware you control.
             </p>
           </div>
         </div>
@@ -495,8 +622,8 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
             <span class="tag">fleet-ready</span>
             <h3>MDM-native deployment</h3>
             <p>
-              Standard .app packaging for Jamf, Kandji, and Intune.
-              No daemons, no kernel extensions, no system services.
+              Standard .app packaging for Jamf, Kandji, and Intune. No daemons, no kernel
+              extensions, no system services.
             </p>
           </div>
         </div>
@@ -506,9 +633,8 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
             <span class="tag">accessibility</span>
             <h3>A conformance win</h3>
             <p>
-              Sub-100ms voice input supports WCAG 2.2 and Section 508 goals,
-              with remappable hold-to-talk hotkeys for every motor-preference
-              profile.
+              Sub-100ms voice input supports WCAG 2.2 and Section 508 goals, with remappable
+              hold-to-talk hotkeys for every motor-preference profile.
             </p>
           </div>
         </div>
@@ -530,30 +656,45 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
       <p class="eyebrow"><b>02</b> / security</p>
       <h2 use:reveal>Not a privacy policy.<br />An architecture.</h2>
       <p class="lede" use:reveal={{ delay: 0.08 }}>
-        Most vendors promise to handle your data carefully. Typie's promise is
-        simpler: it cannot exfiltrate what it never receives.
+        Most vendors promise to handle your data carefully. Typie's promise is simpler: it cannot
+        exfiltrate what it never receives.
       </p>
 
       <div class="flow" use:reveal>
         <div class="stage" use:reveal>
           <span class="idx">STAGE 1</span>
           <span class="name">Microphone</span>
-          <span class="desc">Audio captured only while the hotkey is held. Hold-to-talk means recording is <b>physically bounded</b> by the gesture.</span>
+          <span class="desc"
+            >Audio captured only while the hotkey is held. Hold-to-talk means recording is <b
+              >physically bounded</b
+            > by the gesture.</span
+          >
         </div>
         <div class="stage" use:reveal={{ delay: 0.08 }}>
           <span class="idx">STAGE 2</span>
           <span class="name">On-device model</span>
-          <span class="desc">Nvidia Parakeet TDT, ~500 MB, running locally on Apple Silicon. <b>No inference server exists</b> on our side, so none can be subpoenaed, breached, or misconfigured.</span>
+          <span class="desc"
+            >Nvidia Parakeet TDT, ~500 MB, running locally on Apple Silicon. <b
+              >No inference server exists</b
+            > on our side, so none can be subpoenaed, breached, or misconfigured.</span
+          >
         </div>
         <div class="stage" use:reveal={{ delay: 0.16 }}>
           <span class="idx">STAGE 3</span>
           <span class="name">Keystrokes</span>
-          <span class="desc">Text enters the target app as synthetic keyboard events. <b>No clipboard pollution,</b> no intermediate storage, no transcript file.</span>
+          <span class="desc"
+            >Text enters the target app as synthetic keyboard events. <b>No clipboard pollution,</b>
+            no intermediate storage, no transcript file.</span
+          >
         </div>
         <div class="stage" use:reveal={{ delay: 0.24 }}>
           <span class="idx">STAGE 4</span>
           <span class="name">Garbage collector</span>
-          <span class="desc">Audio buffers are freed the moment transcription completes. Delete the app and <b>nothing remains.</b></span>
+          <span class="desc"
+            >Audio buffers are freed the moment transcription completes. Delete the app and <b
+              >nothing remains.</b
+            ></span
+          >
         </div>
       </div>
     </div>
@@ -565,11 +706,13 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
       <hr class="line" use:reveal />
       <figure style="padding-top:56px">
         <blockquote use:reveal>
-          &ldquo;Our previous dictation vendor required a DPIA, four
-          subprocessors, and a standing exception. Typie required
+          &ldquo;Our previous dictation vendor required a DPIA, four subprocessors, and a standing
+          exception. Typie required
           <em>a packet capture and ten minutes.</em>&rdquo;
         </blockquote>
-        <figcaption use:reveal={{ delay: 0.1 }}>CISO &middot; global financial services firm &middot; 40,000 seats evaluated</figcaption>
+        <figcaption use:reveal={{ delay: 0.1 }}>
+          CISO &middot; global financial services firm &middot; 40,000 seats evaluated
+        </figcaption>
       </figure>
     </div>
   </section>
@@ -585,27 +728,25 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
           <span class="no">/ 01</span>
           <h3>Procure</h3>
           <p>
-            Volume licensing with a single agreement and a DPA sized to your
-            jurisdiction. Procurement packets available on request, including
-            the security whitepaper your reviewers will ask for anyway.
+            Volume licensing with a single agreement and a DPA sized to your jurisdiction.
+            Procurement packets available on request, including the security whitepaper your
+            reviewers will ask for anyway.
           </p>
         </div>
         <div class="ent-step" use:reveal={{ delay: 0.08 }}>
           <span class="no">/ 02</span>
           <h3>Deploy</h3>
           <p>
-            Push the package through your existing MDM. Licenses activate via
-            managed preferences. SSO-gated license portal and SCIM provisioning
-            for seat management on Enterprise plans.
+            Push the package through your existing MDM. Licenses activate via managed preferences.
+            SSO-gated license portal and SCIM provisioning for seat management on Enterprise plans.
           </p>
         </div>
         <div class="ent-step" use:reveal={{ delay: 0.16 }}>
           <span class="no">/ 03</span>
           <h3>Roll out</h3>
           <p>
-            No training required: hold a key, talk, release. Most users are
-            productive within ninety seconds, which keeps adoption curves steep
-            and helpdesk tickets near zero.
+            No training required: hold a key, talk, release. Most users are productive within ninety
+            seconds, which keeps adoption curves steep and helpdesk tickets near zero.
           </p>
         </div>
       </div>
@@ -625,8 +766,8 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
       <p class="eyebrow"><b>04</b> / pricing</p>
       <h2 use:reveal>Per seat. Flat.<br />No usage meters.</h2>
       <p class="lede" use:reveal={{ delay: 0.08 }}>
-        Inference runs on your hardware, so our costs do not scale with your
-        usage. Neither should your invoice.
+        Inference runs on your hardware, so our costs do not scale with your usage. Neither should
+        your invoice.
       </p>
 
       <div class="grid">
@@ -643,8 +784,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
             <a
               href="mailto:sales@typie.cc?subject=Pilot%20program"
               class="btn btn-ghost"
-              onclick={(e) => { e.preventDefault(); pitch.show(); }}
-            >Start a pilot</a>
+              onclick={(e) => {
+                e.preventDefault();
+                pitch.show();
+              }}>Start a pilot</a
+            >
           </div>
         </div>
 
@@ -665,8 +809,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
             <a
               href="mailto:sales@typie.cc?subject=Enterprise%20plan"
               class="btn btn-solid"
-              onclick={(e) => { e.preventDefault(); pitch.show(); }}
-            >Contact sales</a>
+              onclick={(e) => {
+                e.preventDefault();
+                pitch.show();
+              }}>Contact sales</a
+            >
           </div>
         </div>
 
@@ -683,8 +830,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
             <a
               href="mailto:sales@typie.cc?subject=Sovereign%20deployment"
               class="btn btn-ghost"
-              onclick={(e) => { e.preventDefault(); pitch.show(); }}
-            >Talk to us</a>
+              onclick={(e) => {
+                e.preventDefault();
+                pitch.show();
+              }}>Talk to us</a
+            >
           </div>
         </div>
       </div>
@@ -726,8 +876,11 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
         <a
           href="mailto:sales@typie.cc?subject=Enterprise%20briefing"
           class="btn btn-solid"
-          onclick={(e) => { e.preventDefault(); pitch.show(); }}
-        >Book a security briefing</a>
+          onclick={(e) => {
+            e.preventDefault();
+            pitch.show();
+          }}>Book a security briefing</a
+        >
       </div>
     </div>
   </section>
@@ -754,11 +907,16 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
           <h4>Company</h4>
           <ul>
             <li><a href="/about" use:reveal={{ delay: 0.18 }}>About</a></li>
-            <li><a
-              href="mailto:sales@typie.cc"
-              use:reveal={{ delay: 0.24 }}
-              onclick={(e) => { e.preventDefault(); pitch.show(); }}
-            >sales@typie.cc</a></li>
+            <li>
+              <a
+                href="mailto:sales@typie.cc"
+                use:reveal={{ delay: 0.24 }}
+                onclick={(e) => {
+                  e.preventDefault();
+                  pitch.show();
+                }}>sales@typie.cc</a
+              >
+            </li>
           </ul>
         </div>
         <div>

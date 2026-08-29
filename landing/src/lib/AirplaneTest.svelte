@@ -11,7 +11,7 @@
   const PHRASES = [
     '…and that wraps the retro. sending notes now.',
     'gate B22, boarding in ten — typing with no bars.',
-    'offline since JFK and it has not missed a word.'
+    'offline since JFK and it has not missed a word.',
   ];
   let phrase = $state(0);
 
@@ -24,7 +24,7 @@
   const apps = [
     { id: 'typie', label: 'typie', local: true },
     { id: 'wisprflow', label: 'wisprflow', local: false },
-    { id: 'otter', label: 'otter', local: false }
+    { id: 'otter', label: 'otter', local: false },
   ];
 </script>
 
@@ -32,7 +32,8 @@
   <div class="container">
     <p class="mono kicker" style="text-align:center">chapter 03 · the independence test</p>
     <h2 class="subhead" use:reveal>
-      The <span class="squiggle">airplane test
+      The <span class="squiggle"
+        >airplane test
         <svg viewBox="0 0 120 14" aria-hidden="true">
           <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--ink)" />
         </svg>
@@ -44,12 +45,7 @@
 
     <!-- the switch -->
     <div class="switchrow" use:reveal={{ delay: 100 }}>
-      <button
-        class="wifi"
-        role="switch"
-        aria-checked={!online}
-        onclick={() => (online = !online)}
-      >
+      <button class="wifi" role="switch" aria-checked={!online} onclick={() => (online = !online)}>
         <span class="track" class:off={!online}>
           <span class="knob"></span>
         </span>
@@ -90,9 +86,8 @@
             {:else}
               {#key online}
                 <p class="cloudline" class:sad={!online}>
-                  {online
-                    ? 'streaming audio to the data center…'
-                    : '✗ can’t reach their servers'}</p>
+                  {online ? 'streaming audio to the data center…' : '✗ can’t reach their servers'}
+                </p>
               {/key}
             {/if}
           </div>
@@ -247,10 +242,19 @@
   }
 
   @keyframes deadshake {
-    0%, 100% { translate: 0 0; }
-    25% { translate: -4px 0; }
-    50% { translate: 4px 0; }
-    75% { translate: -2px 0; }
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25% {
+      translate: -4px 0;
+    }
+    50% {
+      translate: 4px 0;
+    }
+    75% {
+      translate: -2px 0;
+    }
   }
 
   header {
@@ -313,8 +317,14 @@
   }
 
   @keyframes phrase-in {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   footer .pill {
@@ -328,7 +338,9 @@
     letter-spacing: 0.03em;
     background: rgba(19, 23, 34, 0.06);
     color: rgba(19, 23, 34, 0.55);
-    transition: background 0.3s var(--ease-out), color 0.3s var(--ease-out);
+    transition:
+      background 0.3s var(--ease-out),
+      color 0.3s var(--ease-out);
   }
 
   .pill.ok {

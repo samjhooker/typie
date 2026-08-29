@@ -5,18 +5,15 @@
 
 <img width="1643" height="1013" alt="Screenshot 2026-08-23 at 10 08 57 PM" src="https://github.com/user-attachments/assets/c2586213-7952-40d0-953a-7d73fe30c7dc" />
 
-
 yes, it's just another transcription app. Powered locally by [Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3)
 
 https://typie.cc/
 
 most existing transcription apps share a common design decision: your voice goes to their cloud, and you pay rent on your own voice. typie makes the opposite bet - **all inference local, zero backend, sub-100 ms end-to-end** - and turns that constraint into the product.
 
-
 <img width="1642" height="573" alt="Screenshot 2026-08-23 at 10 09 27 PM" src="https://github.com/user-attachments/assets/2d804240-1d7f-478e-b297-6fad40e1aeb2" />
 
 <img width="1623" height="581" alt="Screenshot 2026-08-23 at 10 09 15 PM" src="https://github.com/user-attachments/assets/2f4dcdc7-fd6e-4cdf-844d-df825420fc34" />
-
 
 ## what it actually is
 
@@ -33,11 +30,11 @@ you ──hold ⌥──> mic ──> on-device ASR model ──> CGEvent keystr
 **one dependency: [FluidAudio](https://github.com/FluidInference/FluidAudio).**
 the ASR engine runs entirely on-device on apple silicon. i evaluated the alternatives:
 
-| option | verdict |
-|---|---|
+| option                                    | verdict                                                                              |
+| ----------------------------------------- | ------------------------------------------------------------------------------------ |
 | cloud APIs (whisper api, assemblyai, ...) | adds 200-800 ms round trip, per-minute billing, a privacy policy, and an outage mode |
-| self-hosted whisper.cpp server | same latency problem, now i'm ops |
-| on-device via FluidAudio | no network after model download, no per-use cost, latency = inference time |
+| self-hosted whisper.cpp server            | same latency problem, now i'm ops                                                    |
+| on-device via FluidAudio                  | no network after model download, no per-use cost, latency = inference time           |
 
 the ~500 mb model -[ Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) - downloads once on first install. after that the app has no reason to ever see the internet again.
 
@@ -97,11 +94,10 @@ landing/   the website (svelte 5 + vite), featuring a support chatbot whose
 
 ## pricing
 
-| plan | price |
-|------|-------|
-| free | $0 |
-| pro | $0 |
+| plan       | price   |
+| ---------- | ------- |
+| free       | $0      |
+| pro        | $0      |
 | enterprise | $0/seat |
 
 payment infrastructure is expensive and i could not be bothered.
-

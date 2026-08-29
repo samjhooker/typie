@@ -12,7 +12,7 @@
     { txt: 'on-device AI summaries', c: '#ddd8ff' },
     { txt: '25 languages', c: '#bcd6ff' },
     { txt: 'your voice stays yours', c: '#fc5681' },
-    { txt: 'free. free. free.', c: '#82eda6' }
+    { txt: 'free. free. free.', c: '#82eda6' },
   ];
 </script>
 
@@ -45,7 +45,9 @@
   }
 
   @keyframes march {
-    to { transform: translateX(-25%); }
+    to {
+      transform: translateX(-25%);
+    }
   }
 
   .run {

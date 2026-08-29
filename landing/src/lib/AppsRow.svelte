@@ -14,7 +14,8 @@
         If your cursor <em>blinks</em> there,<br />Typie types there.
       </h2>
       <p class="sub">
-        Synthetic keyboard events straight into the active window. No per-app plugins or clipboard hacks.
+        Synthetic keyboard events straight into the active window. No per-app plugins or clipboard
+        hacks.
       </p>
     </div>
   </div>
@@ -84,8 +85,13 @@
   }
 
   @keyframes peeksneak {
-    0%, 100% { transform: rotate(10deg) translateY(0); }
-    50% { transform: rotate(6deg) translateY(6px); }
+    0%,
+    100% {
+      transform: rotate(10deg) translateY(0);
+    }
+    50% {
+      transform: rotate(6deg) translateY(6px);
+    }
   }
 
   .viewport {
@@ -106,7 +112,9 @@
   }
 
   @keyframes marquee {
-    to { transform: translateX(-25%); }
+    to {
+      transform: translateX(-25%);
+    }
   }
 
   .card {
@@ -127,7 +135,10 @@
     font-weight: 700;
     color: var(--ink);
     white-space: nowrap;
-    transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease-out), border-color 0.2s ease;
+    transition:
+      transform 0.25s var(--spring),
+      box-shadow 0.25s var(--ease-out),
+      border-color 0.2s ease;
   }
 
   .card:hover {
@@ -149,12 +160,21 @@
   }
 
   @media (max-width: 560px) {
-    .card { width: 106px; padding: 16px 8px 14px; }
-    .track { gap: 10px; }
+    .card {
+      width: 106px;
+      padding: 16px 8px 14px;
+    }
+    .track {
+      gap: 10px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .track { animation: none; }
-    .viewport { overflow-x: auto; }
+    .track {
+      animation: none;
+    }
+    .viewport {
+      overflow-x: auto;
+    }
   }
 </style>

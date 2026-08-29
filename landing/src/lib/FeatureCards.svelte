@@ -10,7 +10,10 @@
     <article class="card c-lavender" use:reveal>
       <h3>Talk like you think</h3>
       <div class="body">
-        <p>No commands, no robot voice. Mumble, ramble, talk too fast, it still comes out as the sentence you meant.</p>
+        <p>
+          No commands, no robot voice. Mumble, ramble, talk too fast, it still comes out as the
+          sentence you meant.
+        </p>
         <div class="art">
           <span class="botpair" aria-hidden="true">
             <span class="lift">
@@ -27,7 +30,9 @@
               <span class="tilt">
                 <span class="spark s1">✦</span>
                 <span class="spark s2">✧</span>
-                <span class="bot bot-purple"><Robot size={92} mood="listening" bg="var(--card-lavender)" /></span>
+                <span class="bot bot-purple"
+                  ><Robot size={92} mood="listening" bg="var(--card-lavender)" /></span
+                >
               </span>
               <i class="ground g-bot"></i>
             </span>
@@ -40,7 +45,10 @@
     <article class="card c-blue" use:reveal={{ delay: 80 }}>
       <h3>Your voice never leaves your Mac</h3>
       <div class="body">
-        <p>Transcribed on-device, then the audio is gone. No cloud, no uploads. We couldn’t hear you if we tried.</p>
+        <p>
+          Transcribed on-device, then the audio is gone. No cloud, no uploads. We couldn’t hear you
+          if we tried.
+        </p>
         <div class="art">
           <span class="lock-scene" aria-hidden="true">
             <img
@@ -54,7 +62,9 @@
               <span class="tilt">
                 <span class="spark s1">✦</span>
                 <span class="spark s2">✧</span>
-                <span class="bot bot-navy"><Robot size={64} mood="idle" bg="var(--card-blue)" /></span>
+                <span class="bot bot-navy"
+                  ><Robot size={64} mood="idle" bg="var(--card-blue)" /></span
+                >
               </span>
               <i class="ground g-bot"></i>
             </span>
@@ -67,13 +77,18 @@
     <article class="card c-cream" use:reveal>
       <h3>Ridiculously fast</h3>
       <div class="body">
-        <p>No server round trip. Words land in about 100 milliseconds, roughly the pause between your own sentences.</p>
+        <p>
+          No server round trip. Words land in about 100 milliseconds, roughly the pause between your
+          own sentences.
+        </p>
         <div class="art">
           <span class="speedscene" aria-hidden="true">
             <span class="hub mascot">
               <span class="tilt">
                 <span class="spark s1">✦</span>
-                <span class="bot bot-orange"><Robot size={78} mood="idle" bg="var(--card-cream)" /></span>
+                <span class="bot bot-orange"
+                  ><Robot size={78} mood="idle" bg="var(--card-cream)" /></span
+                >
               </span>
               <i class="ground g-bot"></i>
             </span>
@@ -90,7 +105,10 @@
       <h3>Hold. Speak. Release.</h3>
       <div class="body">
         <div class="copy">
-          <p>One shortcut. That’s the whole interface. Hold ⌥, say the thing, let go, and you’re back in the sentence.</p>
+          <p>
+            One shortcut. That’s the whole interface. Hold ⌥, say the thing, let go, and you’re back
+            in the sentence.
+          </p>
           <p>And if you wanna go real crazy, you can even remap the key.</p>
         </div>
         <div class="art flow-art">
@@ -115,8 +133,6 @@
   .features {
     padding-bottom: clamp(40px, 6vh, 72px);
   }
-
-
 
   .grid {
     display: grid;
@@ -213,10 +229,22 @@
     box-shadow: 0 14px 30px rgba(19, 23, 34, 0.1);
   }
 
-  .c-lavender { background: var(--card-lavender); color: var(--ink); }
-  .c-blue { background: var(--card-blue); color: var(--ink); }
-  .c-cream { background: var(--card-cream); color: var(--ink); }
-  .c-mint { background: var(--card-mint); color: var(--ink); }
+  .c-lavender {
+    background: var(--card-lavender);
+    color: var(--ink);
+  }
+  .c-blue {
+    background: var(--card-blue);
+    color: var(--ink);
+  }
+  .c-cream {
+    background: var(--card-cream);
+    color: var(--ink);
+  }
+  .c-mint {
+    background: var(--card-mint);
+    color: var(--ink);
+  }
 
   h3 {
     font-size: clamp(19px, 1.8vw, 23px);
@@ -317,8 +345,13 @@
   }
 
   @keyframes wavebob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
   }
 
   /* this card's robot should nod, not boogie */
@@ -332,8 +365,13 @@
   }
 
   @keyframes talksoft {
-    0%, 100% { transform: rotate(-1.6deg) translateY(0); }
-    50% { transform: rotate(1.6deg) translateY(-2px); }
+    0%,
+    100% {
+      transform: rotate(-1.6deg) translateY(0);
+    }
+    50% {
+      transform: rotate(1.6deg) translateY(-2px);
+    }
   }
 
   .bot-purple {
@@ -373,12 +411,28 @@
     animation: twinkle 2.4s var(--ease-inout) infinite;
   }
 
-  .s1 { top: -8px; right: -6px; transform: rotate(12deg); }
-  .s2 { left: -10px; bottom: 22px; font-size: 13px; animation-delay: 0.7s; }
+  .s1 {
+    top: -8px;
+    right: -6px;
+    transform: rotate(12deg);
+  }
+  .s2 {
+    left: -10px;
+    bottom: 22px;
+    font-size: 13px;
+    animation-delay: 0.7s;
+  }
 
   @keyframes twinkle {
-    0%, 100% { opacity: 0.35; transform: scale(0.85) rotate(12deg); }
-    50% { opacity: 1; transform: scale(1.1) rotate(18deg); }
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.85) rotate(12deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1) rotate(18deg);
+    }
   }
 
   /* speed scene: robot centred inside the dashed ring + floating proof chips */
@@ -393,7 +447,7 @@
   }
 
   .speedscene::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 6% 4% 10%;
     border: 1.6px dashed rgba(19, 23, 34, 0.26);
@@ -450,21 +504,42 @@
   }
 
   @keyframes drift-slack {
-    0%, 100% { transform: rotate(-12deg) translate(0, 0); }
-    33% { transform: rotate(-6deg) translate(5px, -6px); }
-    66% { transform: rotate(-16deg) translate(-4px, 3px); }
+    0%,
+    100% {
+      transform: rotate(-12deg) translate(0, 0);
+    }
+    33% {
+      transform: rotate(-6deg) translate(5px, -6px);
+    }
+    66% {
+      transform: rotate(-16deg) translate(-4px, 3px);
+    }
   }
 
   @keyframes drift-mail {
-    0%, 100% { transform: rotate(14deg) translate(0, 0); }
-    40% { transform: rotate(8deg) translate(-5px, 5px); }
-    70% { transform: rotate(18deg) translate(3px, -4px); }
+    0%,
+    100% {
+      transform: rotate(14deg) translate(0, 0);
+    }
+    40% {
+      transform: rotate(8deg) translate(-5px, 5px);
+    }
+    70% {
+      transform: rotate(18deg) translate(3px, -4px);
+    }
   }
 
   @keyframes drift-notion {
-    0%, 100% { transform: rotate(-8deg) translate(0, 0); }
-    30% { transform: rotate(-3deg) translate(4px, 5px); }
-    65% { transform: rotate(-13deg) translate(-5px, -3px); }
+    0%,
+    100% {
+      transform: rotate(-8deg) translate(0, 0);
+    }
+    30% {
+      transform: rotate(-3deg) translate(4px, 5px);
+    }
+    65% {
+      transform: rotate(-13deg) translate(-5px, -3px);
+    }
   }
 
   .lock-scene {

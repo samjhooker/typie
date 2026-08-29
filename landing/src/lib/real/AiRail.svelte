@@ -1,16 +1,18 @@
 <script>
-  import { onMount } from 'svelte'
+  import { onMount } from 'svelte';
 
   const summaryLines = [
     'Aligned on launch plan — pricing page and demo video are the two remaining items.',
     'Sam will handle the pricing page.',
     'Maya will take the demo video this afternoon.',
     'Team will sync at 4pm to align on deliverables.',
-  ]
+  ];
 
-  let { compact = false } = $props()
-  let visible = $state(false)
-  onMount(() => { visible = true })
+  let { compact = false } = $props();
+  let visible = $state(false);
+  onMount(() => {
+    visible = true;
+  });
 </script>
 
 <div class="rail" class:compact>
@@ -51,52 +53,109 @@
 </div>
 
 <style>
-  .rail{
-    display:flex; flex-direction:column; gap:18px;
-    padding:24px 20px 18px;
-    background:#f9f4ee; border-left:1px solid var(--line, rgba(3,89,77,.12));
-    overflow-y:auto;
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px 20px 18px;
+    background: #f9f4ee;
+    border-left: 1px solid var(--line, rgba(3, 89, 77, 0.12));
+    overflow-y: auto;
   }
-  .compact .divider, .compact .section:nth-child(n+3){ display:none }
-
-  .rail-head{ display:flex; align-items:center; gap:8px }
-  .mono{
-    font-family:'IBM Plex Mono', ui-monospace, monospace;
-    font-size:10px; letter-spacing:.14em; text-transform:uppercase;
-    color:rgba(19,23,34,.4);
-  }
-  .ai-dot{
-    width:7px; height:7px; border-radius:99px;
-    background:#6ee89a; box-shadow:0 0 6px rgba(110,232,154,.45);
-    animation:pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse{ 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
-
-  .divider{ height:1px; background:var(--line, rgba(3,89,77,.12)) }
-
-  .section{ display:flex; flex-direction:column; gap:7px }
-  .section-title{
-    font-family:'IBM Plex Mono', ui-monospace, monospace;
-    font-size:10px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
-    color:rgba(19,23,34,.45);
+  .compact .divider,
+  .compact .section:nth-child(n + 3) {
+    display: none;
   }
 
-  .pline{
-    display:flex; align-items:flex-start; gap:9px;
-    font-size:13px; line-height:1.65; color:rgba(19,23,34,.78);
-    animation:fadeIn .3s ease both;
+  .rail-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  @keyframes fadeIn{ from{ opacity:0; transform:translateY(4px) } to{ opacity:1; transform:none } }
-  .pbullet{
-    flex-shrink:0; width:5px; height:5px; margin-top:7px;
-    border-radius:99px; background:#131722;
+  .mono {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(19, 23, 34, 0.4);
+  }
+  .ai-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: #6ee89a;
+    box-shadow: 0 0 6px rgba(110, 232, 154, 0.45);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
   }
 
-  .action-chips{ display:flex; flex-wrap:wrap; gap:6px }
-  .achip{
-    display:inline-flex; align-items:center;
-    padding:5px 12px; border-radius:99px;
-    background:rgba(19,23,34,.06);
-    font-size:11.5px; color:rgba(19,23,34,.7);
+  .divider {
+    height: 1px;
+    background: var(--line, rgba(3, 89, 77, 0.12));
+  }
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .section-title {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(19, 23, 34, 0.45);
+  }
+
+  .pline {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: rgba(19, 23, 34, 0.78);
+    animation: fadeIn 0.3s ease both;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .pbullet {
+    flex-shrink: 0;
+    width: 5px;
+    height: 5px;
+    margin-top: 7px;
+    border-radius: 99px;
+    background: #131722;
+  }
+
+  .action-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .achip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 99px;
+    background: rgba(19, 23, 34, 0.06);
+    font-size: 11.5px;
+    color: rgba(19, 23, 34, 0.7);
   }
 </style>

@@ -7,7 +7,7 @@
     q: '“Dictated a gnarly investor update on the Northern line with no signal and it didn’t miss a comma. WisprFlow would’ve just stared at me. My keyboard is officially unemployed.”',
     who: '★★★★★  Maya · founder, London',
     tone: '#c5daff',
-    bg: '#eff4ff'
+    bg: '#eff4ff',
   };
 
   const quotes = [
@@ -15,14 +15,14 @@
       q: '“The first time it split me and my cofounder into two speakers without me asking, I actually laughed. Otter charges for that.”',
       who: '★★★★★  Sam · engineer, Berlin',
       tone: '#ffd0e6',
-      bg: '#fff0f6'
+      bg: '#fff0f6',
     },
     {
       q: '“I hold option and ramble. It gives me the sentence I meant, not the one I said. Spooky good.”',
       who: '★★★★★  Priya · product designer, NYC',
       tone: '#ffe0a8',
-      bg: '#fff8e9'
-    }
+      bg: '#fff8e9',
+    },
   ];
 </script>
 
@@ -30,7 +30,8 @@
   <div class="container">
     <h2 class="subhead" use:reveal>
       Loved by people who
-      <span class="squiggle">type all day
+      <span class="squiggle"
+        >type all day
         <svg viewBox="0 0 120 14" aria-hidden="true">
           <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" />
         </svg>
@@ -179,8 +180,13 @@
   }
 
   @keyframes camfloat {
-    0%, 100% { translate: 0 0; }
-    50% { translate: 0 -8px; }
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -8px;
+    }
   }
 
   .cam-bubble {

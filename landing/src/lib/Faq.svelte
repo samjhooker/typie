@@ -4,40 +4,40 @@
   const items = [
     {
       q: 'How is Typie different from built-in dictation?',
-      a: 'Speed and accuracy. Words land in under 100 milliseconds, right where your cursor is, in any app. No dictation mode to switch on and off.'
+      a: 'Speed and accuracy. Words land in under 100 milliseconds, right where your cursor is, in any app. No dictation mode to switch on and off.',
     },
     {
       q: 'Does my voice ever leave my Mac?',
-      a: 'No. Audio is processed on your Mac by the built-in model, then thrown away. We can’t hear you. We don’t want to. There is no server to send it to.'
+      a: 'No. Audio is processed on your Mac by the built-in model, then thrown away. We can’t hear you. We don’t want to. There is no server to send it to.',
     },
     {
       q: 'Can Typie record my Zoom or phone calls?',
-      a: 'Yes. Call capture records straight from your Mac’s system audio - so it works with Zoom, Meet, Slack huddles, FaceTime, whatever. It can mix in your mic too, so both sides of the call end up in one track, split by speaker.'
+      a: 'Yes. Call capture records straight from your Mac’s system audio - so it works with Zoom, Meet, Slack huddles, FaceTime, whatever. It can mix in your mic too, so both sides of the call end up in one track, split by speaker.',
     },
     {
       q: 'How do the meeting summaries work?',
-      a: 'Apple Intelligence runs entirely on your Mac (macOS 26+) and writes the title, executive summary, key points and verbatim quotes from your transcript. No cloud round-trip, no bot in your calendar invites. On older macOS you still get the full transcript, speaker labels and export.'
+      a: 'Apple Intelligence runs entirely on your Mac (macOS 26+) and writes the title, executive summary, key points and verbatim quotes from your transcript. No cloud round-trip, no bot in your calendar invites. On older macOS you still get the full transcript, speaker labels and export.',
     },
     {
       q: 'Does a bot join my meetings like Otter?',
-      a: 'Never. Nothing joins anything. The recording happens locally on your machine, so private calls stay private and nobody sees “notetaker” appear in the participant list.'
+      a: 'Never. Nothing joins anything. The recording happens locally on your machine, so private calls stay private and nobody sees “notetaker” appear in the participant list.',
     },
     {
       q: 'Does it work in any app?',
-      a: 'Anywhere text can go: Slack, Mail, browsers, editors, spreadsheets, that one ancient CRM. If there’s a cursor, Typie types there.'
+      a: 'Anywhere text can go: Slack, Mail, browsers, editors, spreadsheets, that one ancient CRM. If there’s a cursor, Typie types there.',
     },
     {
       q: 'Why is it free?',
-      a: 'Honestly? Payment infrastructure is expensive and I couldn’t be bothered. $0 means $0 - not a free tier, not a trial, not “free for now”.'
+      a: 'Honestly? Payment infrastructure is expensive and I couldn’t be bothered. $0 means $0 - not a free tier, not a trial, not “free for now”.',
     },
     {
       q: 'What do I have to download?',
-      a: '~500 MB on first install - that’s the model, not bloat. After that it runs offline forever. There is no server to miss.'
+      a: '~500 MB on first install - that’s the model, not bloat. After that it runs offline forever. There is no server to miss.',
     },
     {
       q: 'Are you supporting more languages?',
-      a: 'Not at this time. Typie uses NVIDIA’s Parakeet model for transcription, which is trained heavily on European languages. That’s the set we ship today.'
-    }
+      a: 'Not at this time. Typie uses NVIDIA’s Parakeet model for transcription, which is trained heavily on European languages. That’s the set we ship today.',
+    },
   ];
 
   let open = $state(0);
@@ -64,10 +64,7 @@
     <div class="list" use:reveal={{ delay: 60 }}>
       {#each items as item, i}
         <div class="row" class:open={open === i}>
-          <button
-            onclick={() => (open = open === i ? -1 : i)}
-            aria-expanded={open === i}
-          >
+          <button onclick={() => (open = open === i ? -1 : i)} aria-expanded={open === i}>
             <span class="plus">{open === i ? '−' : '+'}</span>
             <span class="q">{item.q}</span>
           </button>

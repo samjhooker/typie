@@ -1,6 +1,6 @@
 <script>
   /** cream section card with an icon chip and a chunky title */
-  let { icon = '', tint = 'var(--pink)', title = '', children } = $props()
+  let { icon = '', tint = 'var(--pink)', title = '', children } = $props();
 </script>
 
 <section class="card">

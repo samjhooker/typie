@@ -37,7 +37,9 @@
 
 <section class="priceband field-butter" id="pricing" bind:this={el}>
   <div class="container">
-    <p class="mono kicker" style="text-align:center;margin-bottom:clamp(24px,4vh,36px)">chapter 05 · the price</p>
+    <p class="mono kicker" style="text-align:center;margin-bottom:clamp(24px,4vh,36px)">
+      chapter 05 · the price
+    </p>
   </div>
   <div class="container inner">
     <p class="struck" use:reveal>

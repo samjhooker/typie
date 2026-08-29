@@ -6,7 +6,7 @@
   const rows = [
     { label: 'Works fully offline', typie: 'yes', them: ['no', 'yes', 'no'] },
     { label: 'Price', typie: '$0 forever', them: ['$12/mo', 'from free*', '$$$'] },
-    { label: 'Account required', typie: 'no', them: ['yes', 'no', 'yes'] }
+    { label: 'Account required', typie: 'no', them: ['yes', 'no', 'yes'] },
   ];
 </script>
 
@@ -15,15 +15,15 @@
     <p class="mono kicker" style="text-align:center">chapter 04 · the receipts</p>
     <h2 class="subhead" use:reveal>
       Go ahead,
-      <span class="squiggle">comparison-shop
+      <span class="squiggle"
+        >comparison-shop
         <svg viewBox="0 0 120 14" aria-hidden="true">
           <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" />
         </svg>
       </span>
     </h2>
     <p class="lede" use:reveal={{ delay: 60 }}>
-      Screenshot this table. Send it to the group chat deciding for you.
-      We'll wait.
+      Screenshot this table. Send it to the group chat deciding for you. We'll wait.
     </p>
 
     <div class="tablewrap" use:reveal={{ delay: 120 }}>
@@ -75,8 +75,8 @@
     </div>
 
     <p class="fine mono" use:reveal>
-      *superwhisper's free tier covers local models · competitor plans change,
-      check their sites · every ✓ in our column runs on your mac
+      *superwhisper's free tier covers local models · competitor plans change, check their sites ·
+      every ✓ in our column runs on your mac
     </p>
   </div>
 </section>

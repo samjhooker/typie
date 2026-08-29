@@ -11,8 +11,9 @@
     ent: {
       title: 'typie enterprise sales',
       meta: 'sales headcount · 1 (a robot)',
-      greeting: "hi. i handle enterprise sales. well. me and a download link.",
-      pitch: "so you'd like to book a briefing. before our legal team (also me) gets involved: typie is free and open source. every seat, every feature, $0. it's all on GitHub — go take it. meeting adjourned.",
+      greeting: 'hi. i handle enterprise sales. well. me and a download link.',
+      pitch:
+        "so you'd like to book a briefing. before our legal team (also me) gets involved: typie is free and open source. every seat, every feature, $0. it's all on GitHub — go take it. meeting adjourned.",
       quick: ['price?', 'security review?', 'pilot?'],
       replies: [
         '$0.00. that is my entire pricing strategy.',
@@ -21,15 +22,16 @@
         'escalating to the sales department. it is a hallway. it is empty.',
         'briefing agenda: item one — it\u2019s free. q&a — see item one.',
         'i am a very small robot. my whole enterprise offering lives at github.com/samjhooker/typie.',
-        'PO approved. total: nothing. procurement will barely notice.'
+        'PO approved. total: nothing. procurement will barely notice.',
       ],
-      fine: 'no sales team was harmed in the making of this chat'
+      fine: 'no sales team was harmed in the making of this chat',
     },
     edu: {
       title: 'typie campus sales',
       meta: 'district reps · 1 (small, plastic)',
       greeting: "hi! i handle campus licensing. by which i mean: there isn't any.",
-      pitch: "booking a pilot? great news — it's already free. teachers, students, ten-thousand-seat districts: same download, $0 forever. grab it on GitHub. no forms, no quotes, no me.",
+      pitch:
+        "booking a pilot? great news — it's already free. teachers, students, ten-thousand-seat districts: same download, $0 forever. grab it on GitHub. no forms, no quotes, no me.",
       quick: ['price?', 'FERPA?', 'quote?'],
       replies: [
         '$0 per seat. also per district. also per planet.',
@@ -38,10 +40,10 @@
         'purchase order generated. amount: one (1) smile.',
         'RFP received. answer to every line item: yes, free, offline.',
         'DPA status: no student data ever reaches us. case closed, confetti dropped.',
-        'i am a very small robot. my whole district program lives at github.com/samjhooker/typie.'
+        'i am a very small robot. my whole district program lives at github.com/samjhooker/typie.',
       ],
-      fine: 'this robot is not an accredited vendor (yet)'
-    }
+      fine: 'this robot is not an accredited vendor (yet)',
+    },
   };
 
   const c = COPY[variant];
@@ -65,11 +67,14 @@
     msgs = [...msgs, { who: 'you', text: t }];
     draft = '';
     thinking = true;
-    setTimeout(() => {
-      thinking = false;
-      msgs = [...msgs, { who: 'bot', text: reply() }];
-      scrollDown();
-    }, 650 + Math.random() * 500);
+    setTimeout(
+      () => {
+        thinking = false;
+        msgs = [...msgs, { who: 'bot', text: reply() }];
+        scrollDown();
+      },
+      650 + Math.random() * 500
+    );
     setTimeout(scrollDown);
   }
 
@@ -125,7 +130,11 @@
           send();
         }}
       >
-        <input bind:value={draft} placeholder="negotiate with the robot" aria-label="Message typie sales" />
+        <input
+          bind:value={draft}
+          placeholder="negotiate with the robot"
+          aria-label="Message typie sales"
+        />
         <button class="send" type="submit" disabled={thinking || !draft.trim()}>↑</button>
       </form>
 

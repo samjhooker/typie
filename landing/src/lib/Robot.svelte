@@ -46,8 +46,19 @@
 
 <!-- the one and only typie glyph - split into its own subpaths so
      pillars can be ears and key squares can be eyes. fill follows `color`. -->
-<div class="robot {mood}" bind:this={root} style="width:{size}px;--eye:{eye};--ex:{ex}px;--ey:{ey}px" aria-hidden="true">
-  <svg viewBox="-1 -0.5 26 25" fill="currentColor" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round">
+<div
+  class="robot {mood}"
+  bind:this={root}
+  style="width:{size}px;--eye:{eye};--ex:{ex}px;--ey:{ey}px"
+  aria-hidden="true"
+>
+  <svg
+    viewBox="-1 -0.5 26 25"
+    fill="currentColor"
+    stroke="currentColor"
+    stroke-width="1.3"
+    stroke-linejoin="round"
+  >
     {#if bg !== 'none'}
       <path fill={bg} stroke="none" d="M5 7h14v12H5z" />
     {/if}
@@ -94,8 +105,13 @@
   }
 
   @keyframes floaty {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4%); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4%);
+    }
   }
 
   /* listening / typing: excited wiggle */
@@ -104,8 +120,12 @@
   }
 
   @keyframes boogie {
-    from { transform: rotate(-5deg) scale(1); }
-    to { transform: rotate(5deg) scale(1.06); }
+    from {
+      transform: rotate(-5deg) scale(1);
+    }
+    to {
+      transform: rotate(5deg) scale(1.06);
+    }
   }
 
   /* thinking: slow sway */
@@ -114,8 +134,13 @@
   }
 
   @keyframes sway {
-    0%, 100% { transform: rotate(-6deg); }
-    50% { transform: rotate(6deg); }
+    0%,
+    100% {
+      transform: rotate(-6deg);
+    }
+    50% {
+      transform: rotate(6deg);
+    }
   }
 
   /* done: springy pop */
@@ -124,9 +149,15 @@
   }
 
   @keyframes yay {
-    0% { transform: scale(0.82) rotate(-6deg); }
-    55% { transform: scale(1.12) rotate(3deg); }
-    100% { transform: none; }
+    0% {
+      transform: scale(0.82) rotate(-6deg);
+    }
+    55% {
+      transform: scale(1.12) rotate(3deg);
+    }
+    100% {
+      transform: none;
+    }
   }
 
   /* ears grow outward when typing */
@@ -135,8 +166,12 @@
     transition: transform 0.35s cubic-bezier(0.2, 1.4, 0.35, 1);
   }
 
-  .ear-l { transform-origin: left center; }
-  .ear-r { transform-origin: right center; }
+  .ear-l {
+    transform-origin: left center;
+  }
+  .ear-r {
+    transform-origin: right center;
+  }
 
   .listening .ear-l {
     transform: translateX(-4%) scaleX(1.18) scaleY(1.08);
@@ -161,8 +196,16 @@
   }
 
   @keyframes blink {
-    0%, 91%, 100% { transform: scaleY(1); }
-    94% { transform: scaleY(0.12); }
-    97% { transform: scaleY(1); }
+    0%,
+    91%,
+    100% {
+      transform: scaleY(1);
+    }
+    94% {
+      transform: scaleY(0.12);
+    }
+    97% {
+      transform: scaleY(1);
+    }
   }
 </style>

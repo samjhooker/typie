@@ -2,27 +2,26 @@
   import Robot from './Robot.svelte';
   import { chat } from './chat.svelte.js';
 
-  const SALES_PITCH = "hi. i'm sales. everything is free and works fully offline. we don't do anything with your data - it doesn't leave your machine, so there's nothing to hand over. so... there's really nothing left to negotiate. welcome aboard.";
+  const SALES_PITCH =
+    "hi. i'm sales. everything is free and works fully offline. we don't do anything with your data - it doesn't leave your machine, so there's nothing to hand over. so... there's really nothing left to negotiate. welcome aboard.";
 
   let draft = $state('');
   let thinking = $state(false);
   let list = $state(null);
-  let msgs = $state([
-    { who: 'bot', text: 'hi. i handle support. well. me and one sentence.' }
-  ]);
+  let msgs = $state([{ who: 'bot', text: 'hi. i handle support. well. me and one sentence.' }]);
 
   const REPLIES = [
     "it's free and works fully offline.",
-    'error 418: i am a teapot. also: it\'s free and works fully offline.',
+    "error 418: i am a teapot. also: it's free and works fully offline.",
     "your question has been escalated to the cloud team. joke's on you - there is no cloud.",
     '$0.00. that is my answer to most things.',
     'have you tried holding the option key? that fixes most problems, including this one.',
-    'i am a very small robot. my entire knowledge base is: it\'s free and works fully offline.',
+    "i am a very small robot. my entire knowledge base is: it's free and works fully offline.",
     'ticket created. priority: low. price: still $0.',
     'works offline. works free. works on planes.',
-    'query not recognized. defaulting to: it\'s free and works fully offline.',
-    "we trained our model on zero of your data, because there was no training. it just knows things. locally.",
-    'beep boop. translation: it\'s free and works fully offline.'
+    "query not recognized. defaulting to: it's free and works fully offline.",
+    'we trained our model on zero of your data, because there was no training. it just knows things. locally.',
+    "beep boop. translation: it's free and works fully offline.",
   ];
 
   const QUICK = ['price?', 'privacy?', 'offline?'];
@@ -40,11 +39,14 @@
     msgs = [...msgs, { who: 'you', text: t }];
     draft = '';
     thinking = true;
-    setTimeout(() => {
-      thinking = false;
-      msgs = [...msgs, { who: 'bot', text: reply() }];
-      scrollDown();
-    }, 650 + Math.random() * 500);
+    setTimeout(
+      () => {
+        thinking = false;
+        msgs = [...msgs, { who: 'bot', text: reply() }];
+        scrollDown();
+      },
+      650 + Math.random() * 500
+    );
     setTimeout(scrollDown);
   }
 
@@ -112,7 +114,11 @@
     </div>
   {/if}
 
-  <button class="fab" onclick={() => (chat.open = !chat.open)} aria-label={chat.open ? 'Close support chat' : 'Open support chat'}>
+  <button
+    class="fab"
+    onclick={() => (chat.open = !chat.open)}
+    aria-label={chat.open ? 'Close support chat' : 'Open support chat'}
+  >
     {#if chat.open}
       ✕
     {:else}
@@ -144,7 +150,9 @@
     place-items: center;
     font-size: 18px;
     color: var(--green-deep);
-    transition: transform 0.3s var(--spring), box-shadow 0.3s var(--ease-out);
+    transition:
+      transform 0.3s var(--spring),
+      box-shadow 0.3s var(--ease-out);
     overflow: visible;
   }
 
@@ -321,7 +329,9 @@
     background: var(--green);
     color: var(--cream);
     font-size: 15px;
-    transition: background 0.2s var(--ease-out), transform 0.2s var(--spring);
+    transition:
+      background 0.2s var(--ease-out),
+      transform 0.2s var(--spring);
   }
 
   .send:hover:not(:disabled) {

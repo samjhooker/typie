@@ -10,18 +10,19 @@
         try {
           window.webkit?.messageHandlers.typie.postMessage({
             type: 'log',
-            message: 'error: ' + (e.message || e.error) + ' @ ' + (e.filename || '') + ':' + e.lineno,
-          })
+            message:
+              'error: ' + (e.message || e.error) + ' @ ' + (e.filename || '') + ':' + e.lineno,
+          });
         } catch {}
-      })
+      });
       window.addEventListener('unhandledrejection', function (e) {
         try {
           window.webkit?.messageHandlers.typie.postMessage({
             type: 'log',
             message: 'rejection: ' + e.reason,
-          })
+          });
         } catch {}
-      })
+      });
     </script>
   </head>
   <body>

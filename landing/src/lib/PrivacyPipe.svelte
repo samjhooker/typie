@@ -6,7 +6,7 @@
     { icon: '🎙️', label: 'your mic' },
     { icon: '🧠', label: 'the model', note: '~500 MB, lives on your disk' },
     { icon: '🗑️', label: 'garbage collector' },
-    { icon: '🚫', label: 'no server', note: 'there is no server' }
+    { icon: '🚫', label: 'no server', note: 'there is no server' },
   ];
 </script>
 
@@ -15,7 +15,11 @@
     <p class="mono kicker">the entire privacy policy</p>
     <h2>Your voice goes<br /><span class="accent">here → here → gone.</span></h2>
 
-    <div class="pipe" role="img" aria-label="audio flows from your microphone through the on-device model to the garbage collector. no server exists.">
+    <div
+      class="pipe"
+      role="img"
+      aria-label="audio flows from your microphone through the on-device model to the garbage collector. no server exists."
+    >
       {#each stops as s, i}
         <div class="stop" style="--i:{i}">
           <span class="ico">{s.icon}</span>
@@ -36,9 +40,7 @@
       <li>no way for us to hear you</li>
     </ul>
 
-    <p class="pledge hand">
-      not a policy — it's the architecture.
-    </p>
+    <p class="pledge hand">not a policy — it's the architecture.</p>
   </div>
 </section>
 
@@ -97,8 +99,14 @@
   }
 
   @keyframes stop-in {
-    from { opacity: 0; transform: translateY(14px) scale(0.94); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   .ico {
@@ -135,12 +143,23 @@
     animation-delay: calc(var(--i, 0) * 0s + 0.12s);
   }
 
-  .flow i:nth-child(2) { animation-delay: 0.24s; }
-  .flow i:nth-child(3) { animation-delay: 0.36s; }
+  .flow i:nth-child(2) {
+    animation-delay: 0.24s;
+  }
+  .flow i:nth-child(3) {
+    animation-delay: 0.36s;
+  }
 
   @keyframes dotflow {
-    0%, 100% { opacity: 0.2; transform: scale(0.7); }
-    45% { opacity: 1; transform: scale(1.15); }
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: scale(0.7);
+    }
+    45% {
+      opacity: 1;
+      transform: scale(1.15);
+    }
   }
 
   .nevers {
@@ -160,7 +179,9 @@
     font-weight: 600;
     font-size: 14.5px;
     color: rgba(234, 255, 242, 0.85);
-    transition: border-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
+    transition:
+      border-color 0.25s var(--ease-out),
+      color 0.25s var(--ease-out);
   }
 
   .nevers li:hover {

@@ -24,7 +24,6 @@
     } catch {}
   }
 
-
   const scenes = [
     {
       id: 'mail',
@@ -35,7 +34,7 @@
       title: 'New Message',
       meta: 'To: chad@',
       side: [['Inbox', '3'], ['Drafts'], ['Sent'], ['Junk'], ['Bin']],
-      text: "hey I'll be about thirty minutes late the train is delayed again"
+      text: "hey I'll be about thirty minutes late the train is delayed again",
     },
     {
       id: 'notes',
@@ -46,7 +45,7 @@
       title: 'Notes',
       meta: 'iCloud',
       side: [['All iCloud'], ['Notes', '12'], ['Shopping', '2'], ['Work', '4'], ['Ideas', '7']],
-      text: 'oat milk, candles, call mum, ship the changelog'
+      text: 'oat milk, candles, call mum, ship the changelog',
     },
     {
       id: 'chat',
@@ -57,7 +56,7 @@
       title: 'Alex, Sam +1',
       meta: 'active now',
       side: [['Alex'], ['Sam'], ['Mum'], ['Chad'], ['Design group']],
-      text: 'the deck is in the drive slides four through nine are yours'
+      text: 'the deck is in the drive slides four through nine are yours',
     },
     {
       id: 'slack',
@@ -68,7 +67,7 @@
       title: '#launch-week',
       meta: '4 members',
       side: [['# launch-week'], ['# general'], ['# design'], ['# random'], ['# marketing']],
-      text: 'just shipped the new build - feedback welcome!'
+      text: 'just shipped the new build - feedback welcome!',
     },
     {
       id: 'docs',
@@ -78,8 +77,13 @@
       icon: '📄',
       title: 'launch notes',
       meta: 'saved to Drive',
-      side: [['launch notes', 'you'], ['roadmap', 'sam'], ['okrs q4', 'alex'], ['snack rota', 'mum']],
-      text: 'launch is thursday - bring the good snacks'
+      side: [
+        ['launch notes', 'you'],
+        ['roadmap', 'sam'],
+        ['okrs q4', 'alex'],
+        ['snack rota', 'mum'],
+      ],
+      text: 'launch is thursday - bring the good snacks',
     },
     {
       id: 'code',
@@ -90,15 +94,15 @@
       title: 'main.ts · typie',
       meta: 'Visual Studio Code',
       side: [['main.ts'], ['index.ts'], ['styles.css'], ['README.md']],
-      text: 'ship it, ship it now'
-    }
+      text: 'ship it, ship it now',
+    },
   ];
 
   const KEYS = [
     { char: '⌥', name: 'option', code: 'Alt' },
     { char: '⌘', name: 'command', code: 'Meta' },
     { char: '⇧', name: 'shift', code: 'Shift' },
-    { char: '^', name: 'control', code: 'Control' }
+    { char: '^', name: 'control', code: 'Control' },
   ];
 
   let step = $state(0);
@@ -161,7 +165,9 @@
     app.lastMs = lastMs;
     mode = 'done';
     app.mood = 'done';
-    later(() => { notchOpen = false; }, 200);
+    later(() => {
+      notchOpen = false;
+    }, 200);
     later(() => {
       step = (step + 1) % scenes.length;
       mode = 'idle';
@@ -258,120 +264,200 @@
   });
 </script>
 
-<svelte:window onkeydown={onKey} onkeyup={onKeyUp} onpointerup={onPointerUp} onpointercancel={onPointerUp} onblur={() => release()} />
+<svelte:window
+  onkeydown={onKey}
+  onkeyup={onKeyUp}
+  onpointerup={onPointerUp}
+  onpointercancel={onPointerUp}
+  onblur={() => release()}
+/>
 
 <div class="stage" bind:this={root}>
   {#key scene.id}
-  <p class="tryhint mono">
-    <button
-      class="minikey"
-      class:down={mode === 'listening'}
-      onpointerdown={(e) => { e.preventDefault(); press(true); }}
-      aria-label="Press to try Typie live"
-    >
-      <b>{key.char}</b>{key.name}
-    </button>
-    press & <b>hold</b> to try it live
-  </p>
+    <p class="tryhint mono">
+      <button
+        class="minikey"
+        class:down={mode === 'listening'}
+        onpointerdown={(e) => {
+          e.preventDefault();
+          press(true);
+        }}
+        aria-label="Press to try Typie live"
+      >
+        <b>{key.char}</b>{key.name}
+      </button>
+      press & <b>hold</b> to try it live
+    </p>
 
-  <div class="mac" class:listening={mode === 'listening'} class:done={mode === 'done'}>
-    <div class="smenubar">
-      <span class="mbleft mono">
-        <b class="apple"></b>
-        <b>{scene.name}</b>
-        <span>File</span><span>Edit</span><span>View</span><span>Help</span>
-      </span>
-      <div class="notchwrap">
-        <div class="notch" class:open={notchOpen}>
-          <span class="nleft" class:show={notchOpen} aria-hidden="true">
-            <Robot size={22} mood={mode === 'listening' ? 'listening' : mode === 'done' ? 'done' : 'idle'} />
-          </span>
-          <span class="cam" aria-hidden="true"></span>
-          <span class="nright" class:show={notchOpen} aria-hidden="true">
-            {#if mode === 'listening'}
-              <span class="wave"><TalkWave n={5} color="#fc5681" /></span>
-            {:else if mode === 'done'}
-              <span class="nok mono">✓ {lastMs} ms</span>
-            {/if}
-          </span>
+    <div class="mac" class:listening={mode === 'listening'} class:done={mode === 'done'}>
+      <div class="smenubar">
+        <span class="mbleft mono">
+          <b class="apple"></b>
+          <b>{scene.name}</b>
+          <span>File</span><span>Edit</span><span>View</span><span>Help</span>
+        </span>
+        <div class="notchwrap">
+          <div class="notch" class:open={notchOpen}>
+            <span class="nleft" class:show={notchOpen} aria-hidden="true">
+              <Robot
+                size={22}
+                mood={mode === 'listening' ? 'listening' : mode === 'done' ? 'done' : 'idle'}
+              />
+            </span>
+            <span class="cam" aria-hidden="true"></span>
+            <span class="nright" class:show={notchOpen} aria-hidden="true">
+              {#if mode === 'listening'}
+                <span class="wave"><TalkWave n={5} color="#fc5681" /></span>
+              {:else if mode === 'done'}
+                <span class="nok mono">✓ {lastMs} ms</span>
+              {/if}
+            </span>
+          </div>
         </div>
+        <span class="mbright mono">
+          <svg
+            class="wifi"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M4.5 12.5a11 11 0 0 1 15 0" />
+            <path d="M8.3 16.3a6 6 0 0 1 7.4 0" />
+            <circle cx="12" cy="19.6" r="1.4" fill="currentColor" stroke="none" />
+          </svg>
+          <i class="bat"></i>
+        </span>
       </div>
-      <span class="mbright mono">
-        <svg class="wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
-          <path d="M4.5 12.5a11 11 0 0 1 15 0" />
-          <path d="M8.3 16.3a6 6 0 0 1 7.4 0" />
-          <circle cx="12" cy="19.6" r="1.4" fill="currentColor" stroke="none" />
-        </svg>
-        <i class="bat"></i>
-      </span>
-    </div>
 
-    <div class="desk">
-      <div class="chromewrap">
-        {#if scene.id === 'docs'}
-          <div class="browser" aria-hidden="true">
-            <div class="btabs">
-              <span class="btab on"><i class="bfav">{@html nsSvg(chrome, 'cfav')}</i>launch notes - Google Docs<i class="bx">✕</i></span>
-              <span class="btab new">+</span>
-            </div>
-            <div class="burl">
-              <span class="bnav">‹ › ⟳</span>
-              <span class="baddr">docs.google.com/document/d/launch-notes</span>
-              <span class="bprof">S</span>
-            </div>
-          </div>
-        {/if}
-        <div class="window theme-{scene.id}" class:done={mode === 'done'}>
-        {#if scene.id === 'docs'}
-          <div class="docsbar">
-            <i class="dlogo" aria-hidden="true">{@html nsSvg(gdocs.svg, 'dlog')}</i>
-            <div class="dmeta">
-              <p class="dn"><b>launch notes</b><span aria-hidden="true">☆</span></p>
-              <p class="dmenu mono">File  Edit  View  Insert  Format  Tools  Help</p>
-            </div>
-            <span class="dshare">Share</span>
-          </div>
-        {/if}
-        <div class="titlebar">
-          <span class="tl" aria-hidden="true"><i class="r"></i><i class="y"></i><i class="g"></i></span>
-          {#if scene.id === 'chat'}<span class="tavatar" aria-hidden="true">A</span>{/if}
-          <span class="wtitle">{scene.title}</span>
-          <span class="meta mono">{scene.meta}</span>
-        </div>
-        <div class="winbody">
-          <aside class="side">
-            <p class="side-h">
-              {#if scene.brand}<i class="bmark" aria-hidden="true">{@html nsSvg(scene.brand, 'sh' + scene.id)}</i>{/if}
-              {scene.name}
-            </p>
-            <ul>
-              {#each scene.side as [label, count], i}
-                <li class:on={i === 0}><i class="av" aria-hidden="true">{label[0]}</i>{label}{#if count}<b>{count}</b>{/if}</li>
-              {/each}
-            </ul>
-          </aside>
-          <div class="paper">
-            {#if mode === 'listening'}
-              <div class="talking" aria-hidden="true">
-                <TalkWave n={17} color={scene.wave} />
-                <p class="hint2 hand">say anything…</p>
+      <div class="desk">
+        <div class="chromewrap">
+          {#if scene.id === 'docs'}
+            <div class="browser" aria-hidden="true">
+              <div class="btabs">
+                <span class="btab on"
+                  ><i class="bfav">{@html nsSvg(chrome, 'cfav')}</i>launch notes - Google Docs<i
+                    class="bx">✕</i
+                  ></span
+                >
+                <span class="btab new">+</span>
               </div>
-            {:else if mode === 'done'}
-              {#key step}
-                <div class="popwrap">
-                  <div class="sparkles" aria-hidden="true">
-                    {#each Array(10) as _, i}
-                      <span style="--a:{i * 36}deg; animation-delay:{i * 30}ms">✦</span>
-                    {/each}
+              <div class="burl">
+                <span class="bnav">‹ › ⟳</span>
+                <span class="baddr">docs.google.com/document/d/launch-notes</span>
+                <span class="bprof">S</span>
+              </div>
+            </div>
+          {/if}
+          <div class="window theme-{scene.id}" class:done={mode === 'done'}>
+            {#if scene.id === 'docs'}
+              <div class="docsbar">
+                <i class="dlogo" aria-hidden="true">{@html nsSvg(gdocs.svg, 'dlog')}</i>
+                <div class="dmeta">
+                  <p class="dn"><b>launch notes</b><span aria-hidden="true">☆</span></p>
+                  <p class="dmenu mono">File Edit View Insert Format Tools Help</p>
+                </div>
+                <span class="dshare">Share</span>
+              </div>
+            {/if}
+            <div class="titlebar">
+              <span class="tl" aria-hidden="true"
+                ><i class="r"></i><i class="y"></i><i class="g"></i></span
+              >
+              {#if scene.id === 'chat'}<span class="tavatar" aria-hidden="true">A</span>{/if}
+              <span class="wtitle">{scene.title}</span>
+              <span class="meta mono">{scene.meta}</span>
+            </div>
+            <div class="winbody">
+              <aside class="side">
+                <p class="side-h">
+                  {#if scene.brand}<i class="bmark" aria-hidden="true"
+                      >{@html nsSvg(scene.brand, 'sh' + scene.id)}</i
+                    >{/if}
+                  {scene.name}
+                </p>
+                <ul>
+                  {#each scene.side as [label, count], i}
+                    <li class:on={i === 0}>
+                      <i class="av" aria-hidden="true">{label[0]}</i>{label}{#if count}<b>{count}</b
+                        >{/if}
+                    </li>
+                  {/each}
+                </ul>
+              </aside>
+              <div class="paper">
+                {#if mode === 'listening'}
+                  <div class="talking" aria-hidden="true">
+                    <TalkWave n={17} color={scene.wave} />
+                    <p class="hint2 hand">say anything…</p>
                   </div>
-                  {#if scene.id === 'notes'}
+                {:else if mode === 'done'}
+                  {#key step}
+                    <div class="popwrap">
+                      <div class="sparkles" aria-hidden="true">
+                        {#each Array(10) as _, i}
+                          <span style="--a:{i * 36}deg; animation-delay:{i * 30}ms">✦</span>
+                        {/each}
+                      </div>
+                      {#if scene.id === 'notes'}
+                        <p class="note-title">Today</p>
+                        <p class="note-date mono">just now</p>
+                      {/if}
+                      {#if scene.id === 'chat'}
+                        <div class="bubble-in">did you send the deck?</div>
+                        <div class="bubble-out">{scene.text}</div>
+                      {:else if scene.id === 'slack'}
+                        <div class="slack-msg">
+                          <i class="sava sa" aria-hidden="true">A</i>
+                          <div class="sbody">
+                            <p class="shead"><b>alex</b><span class="mono">2h ago</span></p>
+                            <p class="stext">ok who wants to present tomorrow?</p>
+                          </div>
+                        </div>
+                        <div class="slack-msg">
+                          <i class="sava ss" aria-hidden="true">S</i>
+                          <div class="sbody">
+                            <p class="shead"><b>sam</b><span class="mono">45m ago</span></p>
+                            <p class="stext">i've got slides four to nine</p>
+                          </div>
+                        </div>
+                        <div class="slack-msg">
+                          <i class="sava" aria-hidden="true">Y</i>
+                          <div class="sbody">
+                            <p class="shead"><b>you</b><span class="mono">now</span></p>
+                            <p class="stext">{scene.text}</p>
+                          </div>
+                        </div>
+                      {:else if scene.id === 'docs'}
+                        <p class="doc-title">launch notes</p>
+                        <p class="doc-text">{scene.text}</p>
+                      {:else if scene.id === 'notes'}
+                        <p class="note-title">Today</p>
+                        <p class="note-date mono">just now</p>
+                        <p class="note-text">{scene.text}</p>
+                      {:else if scene.id === 'code'}
+                        <p class="code">
+                          <span class="ckw">const</span> <span class="cvar">note</span> =
+                          <span class="cstr">'{scene.text}'</span>
+                        </p>
+                      {:else}
+                        <p class="mail-text">{scene.text}</p>
+                      {/if}
+                      <span class="badge mono">✓ typed in {lastMs} ms</span>
+                    </div>
+                  {/key}
+                {:else}
+                  {#if scene.id === 'mail'}
+                    <div class="fields"><span>To: chad@</span><span>Subject: tonight</span></div>
+                  {:else if scene.id === 'notes'}
                     <p class="note-title">Today</p>
                     <p class="note-date mono">just now</p>
-                  {/if}
-                  {#if scene.id === 'chat'}
+                  {:else if scene.id === 'chat'}
                     <div class="bubble-in">did you send the deck?</div>
-                    <div class="bubble-out">{scene.text}</div>
                   {:else if scene.id === 'slack'}
+                    <p class="chan"># launch-week</p>
                     <div class="slack-msg">
                       <i class="sava sa" aria-hidden="true">A</i>
                       <div class="sbody">
@@ -386,77 +472,40 @@
                         <p class="stext">i've got slides four to nine</p>
                       </div>
                     </div>
-                    <div class="slack-msg">
-                      <i class="sava" aria-hidden="true">Y</i>
-                      <div class="sbody">
-                        <p class="shead"><b>you</b><span class="mono">now</span></p>
-                        <p class="stext">{scene.text}</p>
-                      </div>
-                    </div>
                   {:else if scene.id === 'docs'}
                     <p class="doc-title">launch notes</p>
-                    <p class="doc-text">{scene.text}</p>
-                  {:else if scene.id === 'notes'}
-                    <p class="note-title">Today</p>
-                    <p class="note-date mono">just now</p>
-                    <p class="note-text">{scene.text}</p>
-                  {:else if scene.id === 'code'}
-                    <p class="code"><span class="ckw">const</span> <span class="cvar">note</span> = <span class="cstr">'{scene.text}'</span></p>
-                  {:else}
-                    <p class="mail-text">{scene.text}</p>
                   {/if}
-                  <span class="badge mono">✓ typed in {lastMs} ms</span>
-                </div>
-              {/key}
-            {:else}
-              {#if scene.id === 'mail'}
-                <div class="fields"><span>To: chad@</span><span>Subject: tonight</span></div>
-              {:else if scene.id === 'notes'}
-                <p class="note-title">Today</p>
-                <p class="note-date mono">just now</p>
-              {:else if scene.id === 'chat'}
-                <div class="bubble-in">did you send the deck?</div>
-              {:else if scene.id === 'slack'}
-                <p class="chan"># launch-week</p>
-                <div class="slack-msg">
-                  <i class="sava sa" aria-hidden="true">A</i>
-                  <div class="sbody">
-                    <p class="shead"><b>alex</b><span class="mono">2h ago</span></p>
-                    <p class="stext">ok who wants to present tomorrow?</p>
-                  </div>
-                </div>
-                <div class="slack-msg">
-                  <i class="sava ss" aria-hidden="true">S</i>
-                  <div class="sbody">
-                    <p class="shead"><b>sam</b><span class="mono">45m ago</span></p>
-                    <p class="stext">i've got slides four to nine</p>
-                  </div>
-                </div>
-              {:else if scene.id === 'docs'}
-                <p class="doc-title">launch notes</p>
-              {/if}
-              <p class="ghost mono">press {key.name} and speak - your words land here, whole, instantly.</p>
-            {/if}
-            {#if scene.id === 'mail' && mode !== 'listening'}
-              <span class="sendbtn">Send</span>
-            {/if}
+                  <p class="ghost mono">
+                    press {key.name} and speak - your words land here, whole, instantly.
+                  </p>
+                {/if}
+                {#if scene.id === 'mail' && mode !== 'listening'}
+                  <span class="sendbtn">Send</span>
+                {/if}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      </div>
 
-      <nav class="dock">
-        {#each scenes as s, i}
-          <button class="dock-item" class:on={step === i} onclick={() => pick(i)} aria-label={s.name}>
-            <span class="dicon">
-              {#if s.id === 'docs'}<i class="dbmark">{@html nsSvg(chrome, 'dkdocs')}</i>{:else if s.brand}<i class="dbmark">{@html nsSvg(s.brand, 'dk' + s.id)}</i>{:else}{s.icon}{/if}
-            </span>
-            <i class="dot"></i>
-          </button>
-        {/each}
-      </nav>
+        <nav class="dock">
+          {#each scenes as s, i}
+            <button
+              class="dock-item"
+              class:on={step === i}
+              onclick={() => pick(i)}
+              aria-label={s.name}
+            >
+              <span class="dicon">
+                {#if s.id === 'docs'}<i class="dbmark">{@html nsSvg(chrome, 'dkdocs')}</i
+                  >{:else if s.brand}<i class="dbmark">{@html nsSvg(s.brand, 'dk' + s.id)}</i
+                  >{:else}{s.icon}{/if}
+              </span>
+              <i class="dot"></i>
+            </button>
+          {/each}
+        </nav>
+      </div>
     </div>
-  </div>
   {/key}
 </div>
 
@@ -502,7 +551,10 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
       0 4px 0 #1a0a32;
-    transition: transform 0.1s var(--snap), box-shadow 0.1s var(--snap), background 0.12s var(--ease-out);
+    transition:
+      transform 0.1s var(--snap),
+      box-shadow 0.1s var(--snap),
+      background 0.12s var(--ease-out);
     user-select: none;
     -webkit-user-select: none;
   }
@@ -528,8 +580,20 @@
   }
 
   @keyframes nudge {
-    0%, 10%, 100% { transform: translateY(0); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 4px 0 #1a0a32; }
-    5% { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 0 #1a0a32; }
+    0%,
+    10%,
+    100% {
+      transform: translateY(0);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 4px 0 #1a0a32;
+    }
+    5% {
+      transform: translateY(3px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 1px 0 #1a0a32;
+    }
   }
 
   .minikey.down {
@@ -553,7 +617,10 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
       0 5px 0 #1a0a32;
-    transition: transform 0.1s var(--snap), box-shadow 0.1s var(--snap), background 0.12s var(--ease-out);
+    transition:
+      transform 0.1s var(--snap),
+      box-shadow 0.1s var(--snap),
+      background 0.12s var(--ease-out);
     cursor: pointer;
   }
 
@@ -591,8 +658,14 @@
   }
 
   @keyframes ring {
-    0% { opacity: 0.9; transform: scale(0.85); }
-    100% { opacity: 0; transform: scale(1.35); }
+    0% {
+      opacity: 0.9;
+      transform: scale(0.85);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.35);
+    }
   }
 
   .br {
@@ -619,7 +692,9 @@
     box-shadow:
       0 40px 90px rgba(3, 43, 37, 0.22),
       0 4px 14px rgba(3, 43, 37, 0.08);
-    transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--spring);
+    transition:
+      box-shadow 0.3s var(--ease-out),
+      transform 0.3s var(--spring);
   }
 
   .window.listening {
@@ -633,9 +708,15 @@
   }
 
   @keyframes land {
-    0% { transform: scale(0.985); }
-    55% { transform: scale(1.008); }
-    100% { transform: none; }
+    0% {
+      transform: scale(0.985);
+    }
+    55% {
+      transform: scale(1.008);
+    }
+    100% {
+      transform: none;
+    }
   }
 
   /* mac screen frame */
@@ -783,9 +864,15 @@
   }
 
   @keyframes islandpop {
-    0% { transform: scale(1, 1); }
-    42% { transform: scale(1.045, 1.1); }
-    100% { transform: scale(1, 1); }
+    0% {
+      transform: scale(1, 1);
+    }
+    42% {
+      transform: scale(1.045, 1.1);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
   }
 
   .cam {
@@ -793,8 +880,7 @@
     height: 10px;
     border-radius: 50%;
     justify-self: center;
-    background:
-      radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
     box-shadow:
       inset 0 0 0 1px rgba(120, 130, 150, 0.35),
       0 0 0 2px #000;
@@ -814,8 +900,14 @@
       transform 0.4s cubic-bezier(0.22, 1.2, 0.36, 1) 0.12s;
   }
 
-  .nleft { justify-content: flex-start; justify-self: start; }
-  .nright { justify-content: flex-end; justify-self: end; }
+  .nleft {
+    justify-content: flex-start;
+    justify-self: start;
+  }
+  .nright {
+    justify-content: flex-end;
+    justify-self: end;
+  }
 
   .notch.open .nleft,
   .notch.open .nright {
@@ -878,7 +970,9 @@
     box-shadow:
       0 30px 60px rgba(19, 23, 34, 0.22),
       0 2px 8px rgba(19, 23, 34, 0.1);
-    transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--spring);
+    transition:
+      box-shadow 0.3s var(--ease-out),
+      transform 0.3s var(--spring);
   }
 
   .window.done {
@@ -886,9 +980,15 @@
   }
 
   @keyframes land {
-    0% { transform: scale(0.985); }
-    55% { transform: scale(1.008); }
-    100% { transform: none; }
+    0% {
+      transform: scale(0.985);
+    }
+    55% {
+      transform: scale(1.008);
+    }
+    100% {
+      transform: none;
+    }
   }
 
   /* window chrome */
@@ -912,9 +1012,15 @@
     border-radius: 50%;
   }
 
-  .tl .r { background: #ff5f57; }
-  .tl .y { background: #febc2e; }
-  .tl .g { background: #28c840; }
+  .tl .r {
+    background: #ff5f57;
+  }
+  .tl .y {
+    background: #febc2e;
+  }
+  .tl .g {
+    background: #28c840;
+  }
 
   .wtitle {
     font-family: var(--display);
@@ -939,8 +1045,14 @@
   }
 
   @keyframes viewin {
-    from { opacity: 0; transform: translateY(8px) scale(0.995); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.995);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   .side {
@@ -1026,12 +1138,24 @@
     font-family: var(--display);
   }
 
-  .side li:nth-child(1) .av { background: #f7b500; }
-  .side li:nth-child(2) .av { background: #ff5e51; }
-  .side li:nth-child(3) .av { background: #35c759; }
-  .side li:nth-child(4) .av { background: #a97fff; }
-  .side li:nth-child(5) .av { background: #5b7cfa; }
-  .side li:nth-child(n + 6) .av { background: #9aa0a6; }
+  .side li:nth-child(1) .av {
+    background: #f7b500;
+  }
+  .side li:nth-child(2) .av {
+    background: #ff5e51;
+  }
+  .side li:nth-child(3) .av {
+    background: #35c759;
+  }
+  .side li:nth-child(4) .av {
+    background: #a97fff;
+  }
+  .side li:nth-child(5) .av {
+    background: #5b7cfa;
+  }
+  .side li:nth-child(n + 6) .av {
+    background: #9aa0a6;
+  }
 
   /* Outlook */
   .window.theme-mail .titlebar {
@@ -1148,8 +1272,12 @@
     flex-shrink: 0;
   }
 
-  .sava.sa { background: #36c5f0; }
-  .sava.ss { background: #2eb67d; }
+  .sava.sa {
+    background: #36c5f0;
+  }
+  .sava.ss {
+    background: #2eb67d;
+  }
 
   .shead {
     display: flex;
@@ -1445,8 +1573,6 @@
     color: rgba(60, 64, 67, 0.45);
   }
 
-
-
   /* VS Code: dark editor */
   .window.theme-code .titlebar {
     background: #323233;
@@ -1499,16 +1625,22 @@
     line-height: 1.8;
   }
 
-  .ckw { color: #569cd6; }
-  .cstr { color: #ce9178; }
-  .cvar { color: #9cdcfe; }
-  .cdim { color: #6a9955; }
+  .ckw {
+    color: #569cd6;
+  }
+  .cstr {
+    color: #ce9178;
+  }
+  .cvar {
+    color: #9cdcfe;
+  }
+  .cdim {
+    color: #6a9955;
+  }
 
   .window.theme-code .ghost {
     color: rgba(255, 255, 255, 0.35);
   }
-
-
 
   .window.theme-code .badge {
     background: #0e639c;
@@ -1563,19 +1695,29 @@
     animation: tdot 1.1s var(--ease-inout) infinite;
   }
 
-  .typing i:nth-child(2) { animation-delay: 0.15s; }
-  .typing i:nth-child(3) { animation-delay: 0.3s; }
+  .typing i:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .typing i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
 
   @keyframes tdot {
-    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-    30% { transform: translateY(-5px); opacity: 1; }
+    0%,
+    60%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.5;
+    }
+    30% {
+      transform: translateY(-5px);
+      opacity: 1;
+    }
   }
 
   .window.theme-chat .side {
     background: #f5f6fa;
   }
-
-
 
   .bubble-in {
     align-self: flex-start;
@@ -1632,8 +1774,12 @@
   }
 
   @keyframes fadein {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .popwrap {
@@ -1674,15 +1820,21 @@
     animation: burst 0.7s ease-out forwards;
   }
 
-  .sparkles span:nth-child(even) { color: var(--purple); }
-  .sparkles span:nth-child(3n) { color: var(--sun); }
+  .sparkles span:nth-child(even) {
+    color: var(--purple);
+  }
+  .sparkles span:nth-child(3n) {
+    color: var(--sun);
+  }
 
   @keyframes burst {
     0% {
       opacity: 0;
       transform: rotate(calc(var(--a) * 1deg)) translateX(24px) scale(0.3);
     }
-    25% { opacity: 1; }
+    25% {
+      opacity: 1;
+    }
     100% {
       opacity: 0;
       transform: rotate(calc(var(--a) * 1deg)) translateX(120px) scale(1);
@@ -1768,15 +1920,38 @@
   }
 
   @media (max-width: 640px) {
-    .lbl { font-size: 13px; }
-    .key { width: 60px; height: 42px; font-size: 18px; }
-    .winbody { grid-template-columns: 1fr; }
-    .side { display: none; }
-    .mbleft span:not(.apple) { display: none; }
-    .meta { display: none; }
-    .talking { gap: 6px; }
-    .talking :global(.talkwave) { height: 28px; gap: 3px; }
-    .talking :global(.talkwave i) { width: 4px; }
-    .hint2 { font-size: 13px; }
+    .lbl {
+      font-size: 13px;
+    }
+    .key {
+      width: 60px;
+      height: 42px;
+      font-size: 18px;
+    }
+    .winbody {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      display: none;
+    }
+    .mbleft span:not(.apple) {
+      display: none;
+    }
+    .meta {
+      display: none;
+    }
+    .talking {
+      gap: 6px;
+    }
+    .talking :global(.talkwave) {
+      height: 28px;
+      gap: 3px;
+    }
+    .talking :global(.talkwave i) {
+      width: 4px;
+    }
+    .hint2 {
+      font-size: 13px;
+    }
   }
 </style>

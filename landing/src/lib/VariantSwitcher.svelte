@@ -4,7 +4,12 @@
   let { variant = 'personal', logoSize = 24, logoColor = null, personalHref = '/' } = $props();
 
   const VARIANTS = [
-    { id: 'personal', href: personalHref, label: 'Personal', desc: 'Everyday dictation, free forever' },
+    {
+      id: 'personal',
+      href: personalHref,
+      label: 'Personal',
+      desc: 'Everyday dictation, free forever',
+    },
     { id: 'education', href: '/education', label: 'Education', desc: 'K-12 & higher ed' },
     { id: 'enterprise', href: '/enterprise', label: 'Enterprise', desc: 'Fleet deployments' },
   ];
@@ -56,14 +61,27 @@
   >
     {current.id}
     <svg class="chev" viewBox="0 0 10 6" aria-hidden="true">
-      <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <path
+        d="M1 1l4 4 4-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
     </svg>
   </button>
 
   {#if open}
     <div class="vn-menu" role="menu">
       {#each VARIANTS as v (v.id)}
-        <a role="menuitem" href={v.href} class="vn-item" class:current={v.id === variant} onclick={close}>
+        <a
+          role="menuitem"
+          href={v.href}
+          class="vn-item"
+          class:current={v.id === variant}
+          onclick={close}
+        >
           <span class="vn-item-txt">
             <b>{v.label}</b>
             <span>{v.desc}</span>

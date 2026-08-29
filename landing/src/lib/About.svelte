@@ -6,7 +6,10 @@
 
 <svelte:head>
   <title>About - Typie</title>
-  <meta name="description" content="Typie is voice dictation for Mac. Hold a key, talk, and your words appear - on-device, free, no cloud." />
+  <meta
+    name="description"
+    content="Typie is voice dictation for Mac. Hold a key, talk, and your words appear - on-device, free, no cloud."
+  />
 </svelte:head>
 
 <PageShell>
@@ -16,13 +19,17 @@
   <div class="grid">
     <div class="col" use:reveal={{ delay: 80 }}>
       <p class="lede">
-        Saying a sentence is fast. Typing it is slow. Every other dictation tool wanted to ship your voice to a server first.
+        Saying a sentence is fast. Typing it is slow. Every other dictation tool wanted to ship your
+        voice to a server first.
       </p>
       <p>
-        Typie doesn’t. It runs on your Mac, in the notch, and nowhere else. Hold option, speak, release. Your words land in whatever you were already typing - Mail, Slack, Notes, the cursed CRM.
+        Typie doesn’t. It runs on your Mac, in the notch, and nowhere else. Hold option, speak,
+        release. Your words land in whatever you were already typing - Mail, Slack, Notes, the
+        cursed CRM.
       </p>
       <p>
-        It’s free because charging for a key you already own felt rude. It’s private because the audio never leaves the machine. That’s the whole company.
+        It’s free because charging for a key you already own felt rude. It’s private because the
+        audio never leaves the machine. That’s the whole company.
       </p>
     </div>
 

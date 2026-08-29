@@ -11,40 +11,52 @@
       id: 'dictate',
       label: 'Dictating',
       caption: 'Hold option anywhere. Words land in any app — Slack, Mail, whatever has a cursor.',
-      chip: 'listening'
+      chip: 'listening',
     },
     {
       id: 'call',
       label: 'On a call',
-      caption: 'Hit record. Typie captures the whole call from system audio and splits it by speaker.',
-      chip: 'recording'
+      caption:
+        'Hit record. Typie captures the whole call from system audio and splits it by speaker.',
+      chip: 'recording',
     },
     {
       id: 'summarize',
       label: 'Summarizing',
       caption: 'Apple Intelligence writes the title, summary and key points. Entirely on this Mac.',
-      chip: 'thinking'
+      chip: 'thinking',
     },
     {
       id: 'done',
       label: 'Filed',
-      caption: 'Notes land in your library with timestamps and speaker labels. Audio never left the building.',
-      chip: 'done'
-    }
+      caption:
+        'Notes land in your library with timestamps and speaker labels. Audio never left the building.',
+      chip: 'done',
+    },
   ];
 
   let active = $state(0);
   let auto = $state(true);
   let reduced =
-    typeof matchMedia !== 'undefined' &&
-    matchMedia('(prefers-reduced-motion: reduce)').matches;
+    typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---- per-scene animation state ---- */
-  const DICTATION_WORDS = ['okay', 'so', 'the', 'plan', 'is', 'we', 'ship', 'the', 'beta', 'friday'];
+  const DICTATION_WORDS = [
+    'okay',
+    'so',
+    'the',
+    'plan',
+    'is',
+    'we',
+    'ship',
+    'the',
+    'beta',
+    'friday',
+  ];
   const CALL_LINES = [
     { who: 'maya', txt: '…and the launch checklist is basically done?' },
     { who: 'sam', txt: 'two items left. pricing page and the demo video.' },
-    { who: 'maya', txt: 'perfect. i can take the video this afternoon.' }
+    { who: 'maya', txt: 'perfect. i can take the video this afternoon.' },
   ];
 
   let words = $state(0);
@@ -111,15 +123,15 @@
   <div class="container">
     <p class="mono kicker" style="text-align:center">chapter 01 · watch it live</p>
     <h2 class="subhead" use:reveal>
-      It all lives in <span class="squiggle">your notch
+      It all lives in <span class="squiggle"
+        >your notch
         <svg viewBox="0 0 120 14" aria-hidden="true">
           <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--periwinkle)" />
         </svg>
       </span>
     </h2>
     <p class="lede" use:reveal={{ delay: 60 }}>
-      No window hunting. The shelf waits at the top of your screen and does
-      everything from there.
+      No window hunting. The shelf waits at the top of your screen and does everything from there.
     </p>
 
     <!-- the tabs -->
@@ -147,24 +159,33 @@
         <div class="appbody">
           {#if scenes[active].id === 'dictate'}
             <p class="typing">
-              {#each DICTATION_WORDS.slice(0, words) as w}<span>{w} </span>{/each}<span class="caret"></span>
+              {#each DICTATION_WORDS.slice(0, words) as w}<span>{w} </span>{/each}<span
+                class="caret"
+              ></span>
             </p>
           {:else if scenes[active].id === 'call'}
             <div class="calllines">
               {#each CALL_LINES.slice(0, lines) as l}
                 <p class="line {l.who}">
-                  <b>{l.who}</b> {l.txt}
+                  <b>{l.who}</b>
+                  {l.txt}
                 </p>
               {/each}
             </div>
           {:else if scenes[active].id === 'summarize'}
-            <p class="ghost">writing your meeting notes<span class="dots"><i>.</i><i>.</i><i>.</i></span></p>
+            <p class="ghost">
+              writing your meeting notes<span class="dots"><i>.</i><i>.</i><i>.</i></span>
+            </p>
           {:else}
             <div class="notecard">
               <span class="ntitle">✦ Beta sync — Friday</span>
               <ul>
-                <li class:on={points >= 1} style="--d: 0ms">Ship blockers cleared, two items left</li>
-                <li style="--d: 120ms" class:on={points >= 2}>Sam takes pricing page + demo video</li>
+                <li class:on={points >= 1} style="--d: 0ms">
+                  Ship blockers cleared, two items left
+                </li>
+                <li style="--d: 120ms" class:on={points >= 2}>
+                  Sam takes pricing page + demo video
+                </li>
                 <li style="--d: 240ms" class:on={points >= 3}>Launch moved up to Friday</li>
               </ul>
               <p class="nmeta mono">2 speakers · 12 min · summarized on-device</p>
@@ -181,7 +202,9 @@
           <span class="nwave"><TalkWave n={5} color="#fc5681" /></span>
         {:else if scenes[active].id === 'call'}
           <span class="reddot"></span>
-          <span class="ntime mono">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, '0')}</span>
+          <span class="ntime mono"
+            >{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, '0')}</span
+          >
           <span class="ncam"></span>
           <span class="nlbl mono">recording · mic + call</span>
         {:else if scenes[active].id === 'summarize'}
@@ -268,9 +291,15 @@
     overflow: hidden;
   }
 
-  .display.s-call { --glow: rgba(252, 86, 129, 0.5); }
-  .display.s-summarize { --glow: rgba(200, 140, 253, 0.45); }
-  .display.s-done { --glow: rgba(130, 237, 166, 0.45); }
+  .display.s-call {
+    --glow: rgba(252, 86, 129, 0.5);
+  }
+  .display.s-summarize {
+    --glow: rgba(200, 140, 253, 0.45);
+  }
+  .display.s-done {
+    --glow: rgba(130, 237, 166, 0.45);
+  }
 
   .wallpaper {
     height: clamp(300px, 44vw, 480px);
@@ -342,12 +371,20 @@
   }
 
   @keyframes caret {
-    50% { opacity: 0; }
+    50% {
+      opacity: 0;
+    }
   }
 
   @keyframes word-in {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   .calllines .line {
@@ -367,8 +404,14 @@
     margin-right: 6px;
   }
 
-  .line.maya b { background: var(--card-lavender); color: #5a48c8; }
-  .line.sam b { background: var(--card-mint); color: var(--green-deep); }
+  .line.maya b {
+    background: var(--card-lavender);
+    color: #5a48c8;
+  }
+  .line.sam b {
+    background: var(--card-mint);
+    color: var(--green-deep);
+  }
 
   .ghost {
     font-weight: 600;
@@ -379,12 +422,21 @@
     font-style: normal;
     animation: dotpulse 1.2s ease-in-out infinite;
   }
-  .ghost .dots i:nth-child(2) { animation-delay: 0.2s; }
-  .ghost .dots i:nth-child(3) { animation-delay: 0.4s; }
+  .ghost .dots i:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .ghost .dots i:nth-child(3) {
+    animation-delay: 0.4s;
+  }
 
   @keyframes dotpulse {
-    0%, 100% { opacity: 0.25; }
-    40% { opacity: 1; }
+    0%,
+    100% {
+      opacity: 0.25;
+    }
+    40% {
+      opacity: 1;
+    }
   }
 
   .notecard ul {
@@ -395,7 +447,9 @@
   .notecard li {
     opacity: 0;
     transform: translateY(6px);
-    transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+    transition:
+      opacity 0.45s var(--ease-out),
+      transform 0.45s var(--ease-out);
   }
 
   .notecard li.on {
@@ -443,8 +497,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background:
-      radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
+    background: radial-gradient(circle at 35% 32%, #4a5568 0 18%, #151a22 42%, #07080c 100%);
     box-shadow:
       inset 0 0 0 1px rgba(120, 130, 150, 0.4),
       0 0 0 2px #000;
@@ -456,15 +509,24 @@
     color: var(--hotpink);
   }
 
-  .s-summarize .nbot { color: var(--purple); }
+  .s-summarize .nbot {
+    color: var(--purple);
+  }
 
   .breathe {
     animation: breathe 1.6s var(--ease-inout) infinite;
   }
 
   @keyframes breathe {
-    0%, 100% { transform: scale(1); opacity: 0.85; }
-    50% { transform: scale(1.12); opacity: 1; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    50% {
+      transform: scale(1.12);
+      opacity: 1;
+    }
   }
 
   .nwave {
@@ -489,7 +551,9 @@
   }
 
   @keyframes blinkdot {
-    50% { opacity: 0.25; }
+    50% {
+      opacity: 0.25;
+    }
   }
 
   .ntime {
@@ -502,8 +566,12 @@
     letter-spacing: 0.04em;
   }
 
-  .nlbl.purple { color: var(--purple); }
-  .nok { color: var(--mint); }
+  .nlbl.purple {
+    color: var(--purple);
+  }
+  .nok {
+    color: var(--mint);
+  }
 
   /* scene-colored halo bleeding out of the notch */
   .glow {
@@ -529,6 +597,8 @@
   }
 
   @media (max-width: 720px) {
-    .nlbl { display: none; }
+    .nlbl {
+      display: none;
+    }
   }
 </style>

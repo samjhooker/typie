@@ -27,7 +27,7 @@
     { n: 'Spanish', native: 'Español' },
     { n: 'Swedish', native: 'Svenska' },
     { n: 'Russian', native: 'Русский' },
-    { n: 'Ukrainian', native: 'Українська' }
+    { n: 'Ukrainian', native: 'Українська' },
   ];
 </script>
 
@@ -35,7 +35,8 @@
   <div class="container">
     <h2 class="subhead" use:reveal>
       25 languages.
-      <span class="squiggle">No cloud.
+      <span class="squiggle"
+        >No cloud.
         <svg viewBox="0 0 120 14" aria-hidden="true">
           <path d="M4 9c22-6 44-6 56-3s34 4 56-2" stroke="var(--hotpink)" />
         </svg>
@@ -120,8 +121,13 @@
   }
 
   @keyframes peeksneak {
-    0%, 100% { transform: rotate(10deg) translateY(0); }
-    50% { transform: rotate(6deg) translateY(6px); }
+    0%,
+    100% {
+      transform: rotate(10deg) translateY(0);
+    }
+    50% {
+      transform: rotate(6deg) translateY(6px);
+    }
   }
 
   .card {

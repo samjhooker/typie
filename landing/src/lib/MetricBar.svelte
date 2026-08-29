@@ -107,10 +107,18 @@
     vertical-align: 0.28em;
   }
 
-  .pink { color: var(--hotpink); }
-  .peri { color: var(--periwinkle); }
-  .sun { color: var(--gold-ink); }
-  .green { color: var(--green); }
+  .pink {
+    color: var(--hotpink);
+  }
+  .peri {
+    color: var(--periwinkle);
+  }
+  .sun {
+    color: var(--gold-ink);
+  }
+  .green {
+    color: var(--green);
+  }
 
   li .mono {
     font-size: 11.5px;

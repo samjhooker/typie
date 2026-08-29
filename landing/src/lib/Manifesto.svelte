@@ -6,16 +6,16 @@
   const LINES = [
     {
       html: 'Your voice is the most <em>personal</em> thing your devices hear.',
-      tone: 'ink'
+      tone: 'ink',
     },
     {
       html: 'Most voice apps take it <em>upstairs</em> — to someone else’s computer.',
-      tone: 'pink'
+      tone: 'pink',
     },
     {
       html: 'Typie can’t hear you.<br /><em>There is no wire.</em>',
-      tone: 'mint'
-    }
+      tone: 'mint',
+    },
   ];
 
   let el = $state(null);
@@ -62,7 +62,7 @@
   const washes = [
     { c: 'rgba(255, 253, 247, 1)' },
     { c: 'rgba(252, 86, 129, 0.09)' },
-    { c: 'rgba(130, 237, 166, 0.16)' }
+    { c: 'rgba(130, 237, 166, 0.16)' },
   ];
 </script>
 
@@ -81,7 +81,8 @@
       {@const v = visibility(i)}
       <h2
         class="line {line.tone}"
-        style="opacity:{v}; transform: translateY({(1 - v) * 46}px); filter: blur({(1 - v) * 8}px); visibility:{v < 0.05 ? 'hidden' : 'visible'}"
+        style="opacity:{v}; transform: translateY({(1 - v) * 46}px); filter: blur({(1 - v) *
+          8}px); visibility:{v < 0.05 ? 'hidden' : 'visible'}"
       >
         <!-- eslint-disable-next-line svelte/no-at-html-tags -- static copy above -->
         {@html line.html}
@@ -143,20 +144,30 @@
     font-style: normal;
   }
 
-  .line.ink { color: var(--ink); }
-  .line.ink :global(em) { color: var(--hotpink); }
+  .line.ink {
+    color: var(--ink);
+  }
+  .line.ink :global(em) {
+    color: var(--hotpink);
+  }
 
-  .line.pink { color: var(--ink); }
+  .line.pink {
+    color: var(--ink);
+  }
   .line.pink :global(em) {
     color: #d61f4c;
     box-shadow: inset 0 -0.18em 0 rgba(252, 86, 129, 0.35);
   }
 
-  .line.mint { color: var(--green-deep); }
+  .line.mint {
+    color: var(--green-deep);
+  }
   .line.mint :global(em) {
     color: var(--green-deep);
     background: var(--mint);
-    box-shadow: 0.08em 0 0 var(--mint), -0.08em 0 0 var(--mint);
+    box-shadow:
+      0.08em 0 0 var(--mint),
+      -0.08em 0 0 var(--mint);
     border-radius: 0.1em;
   }
 

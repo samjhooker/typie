@@ -3,14 +3,62 @@
   import Robot from './Robot.svelte';
 
   const rows = [
-    { cap: 'Dictate into any active Mac app', typie: '✓', builtIn: '✓', superwhisper: '✓', cloud: '✓' },
-    { cap: 'Quick voice notes & sticky wall', typie: '✓', builtIn: '—', superwhisper: '—', cloud: '—' },
-    { cap: 'Meeting capture without joining bots', typie: '✓', builtIn: '—', superwhisper: '—', cloud: '—' },
-    { cap: 'Audio file transcription & AI summary', typie: '✓', builtIn: '—', superwhisper: '✓', cloud: '✓' },
-    { cap: '100% on-device (zero network egress)', typie: '✓', builtIn: '✓', superwhisper: '✓', cloud: '✗' },
-    { cap: 'Sub-100ms keystroke response', typie: '✓', builtIn: '—', superwhisper: '✓', cloud: '—' },
-    { cap: 'Price', typie: '$0 forever', builtIn: '$0', superwhisper: '$12/mo*', cloud: '$10–20/mo' },
-    { cap: 'Open source (MIT, auditable)', typie: '✓', builtIn: '—', superwhisper: '—', cloud: '—' },
+    {
+      cap: 'Dictate into any active Mac app',
+      typie: '✓',
+      builtIn: '✓',
+      superwhisper: '✓',
+      cloud: '✓',
+    },
+    {
+      cap: 'Quick voice notes & sticky wall',
+      typie: '✓',
+      builtIn: '—',
+      superwhisper: '—',
+      cloud: '—',
+    },
+    {
+      cap: 'Meeting capture without joining bots',
+      typie: '✓',
+      builtIn: '—',
+      superwhisper: '—',
+      cloud: '—',
+    },
+    {
+      cap: 'Audio file transcription & AI summary',
+      typie: '✓',
+      builtIn: '—',
+      superwhisper: '✓',
+      cloud: '✓',
+    },
+    {
+      cap: '100% on-device (zero network egress)',
+      typie: '✓',
+      builtIn: '✓',
+      superwhisper: '✓',
+      cloud: '✗',
+    },
+    {
+      cap: 'Sub-100ms keystroke response',
+      typie: '✓',
+      builtIn: '—',
+      superwhisper: '✓',
+      cloud: '—',
+    },
+    {
+      cap: 'Price',
+      typie: '$0 forever',
+      builtIn: '$0',
+      superwhisper: '$12/mo*',
+      cloud: '$10–20/mo',
+    },
+    {
+      cap: 'Open source (MIT, auditable)',
+      typie: '✓',
+      builtIn: '—',
+      superwhisper: '—',
+      cloud: '—',
+    },
   ];
 </script>
 
@@ -86,7 +134,8 @@
     </div>
 
     <p class="footnote mono" use:reveal={{ delay: 120 }}>
-      *Superwhisper offers a basic local tier with paid pro features · All Typie features run on your Apple Silicon hardware at $0.
+      *Superwhisper offers a basic local tier with paid pro features · All Typie features run on
+      your Apple Silicon hardware at $0.
     </p>
   </div>
 </section>
@@ -139,7 +188,8 @@
     font-size: 14.5px;
   }
 
-  th, td {
+  th,
+  td {
     padding: 16px 20px;
     text-align: center;
     border-bottom: 1px solid var(--line);
@@ -189,7 +239,8 @@
   .chk-us {
     display: inline-grid;
     place-items: center;
-    width: 26px; height: 26px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: #059669;
     color: #fff;
@@ -235,4 +286,3 @@
     color: var(--text-3);
   }
 </style>
-

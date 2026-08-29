@@ -28,6 +28,6 @@ export function ripple(node) {
   return {
     destroy() {
       node.removeEventListener('pointerdown', spawn);
-    }
+    },
   };
 }

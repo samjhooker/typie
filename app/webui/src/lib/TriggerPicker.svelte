@@ -1,18 +1,18 @@
 <script>
-  import { ui, send } from './bridge.svelte.js'
+  import { ui, send } from './bridge.svelte.js';
 
   /** hold / tap / both selector with the friendly hint underneath */
   const modes = [
     { id: 'both', label: 'Hold or tap' },
     { id: 'hold', label: 'Hold to talk' },
     { id: 'toggle', label: 'Tap to toggle' },
-  ]
+  ];
 
   const hints = {
     both: 'hold it and speak, or tap to start and tap again to stop',
     hold: 'hold the key while you speak, let go to transcribe',
     toggle: 'press once to start, press again to stop',
-  }
+  };
 </script>
 
 <div class="wrap">

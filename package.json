@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "repository": {
     "type": "git",
@@ -20,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/samjhooker/typie/issues"
   },
-  "homepage": "https://github.com/samjhooker/typie#readme"
+  "homepage": "https://github.com/samjhooker/typie#readme",
+  "devDependencies": {
+    "prettier": "3.6.2",
+    "prettier-plugin-svelte": "3.4.0"
+  }
 }

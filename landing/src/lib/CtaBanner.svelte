@@ -3,11 +3,7 @@
   import AssetSlot from './AssetSlot.svelte';
   import DownloadCta from './DownloadCta.svelte';
 
-  const SAME = [
-    'Fully offline',
-    'Unlimited usage',
-    'No account, no card'
-  ];
+  const SAME = ['Fully offline', 'Unlimited usage', 'No account, no card'];
 
   const plans = [
     {
@@ -17,7 +13,7 @@
       blurb: 'Everything Typie can do. Forever.',
       popular: false,
       cta: 'download',
-      label: 'Get Typie'
+      label: 'Get Typie',
     },
     {
       name: 'Pro',
@@ -26,8 +22,8 @@
       blurb: 'The exact same as Free. We added a badge.',
       popular: true,
       cta: 'download',
-      label: 'Get Pro'
-    }
+      label: 'Get Pro',
+    },
   ];
 </script>
 
@@ -83,7 +79,13 @@
 
               <!-- left tree -->
               <g transform="translate(248 86)">
-                <path d="M1 86V38M1 50l-11-20M1 46l12-18" fill="none" stroke="#8a5a32" stroke-width="3.4" stroke-linecap="round" />
+                <path
+                  d="M1 86V38M1 50l-11-20M1 46l12-18"
+                  fill="none"
+                  stroke="#8a5a32"
+                  stroke-width="3.4"
+                  stroke-linecap="round"
+                />
                 <g>
                   <ellipse cx="-8" cy="10" rx="20" ry="18" fill="#8fc86e" />
                   <ellipse cx="10" cy="8" rx="18" ry="17" fill="#8fc86e" />
@@ -100,7 +102,13 @@
 
               <!-- right tree -->
               <g transform="translate(968 100)">
-                <path d="M0 72V32M0 44l-10-18M0 40l11-16" fill="none" stroke="#8a5a32" stroke-width="3" stroke-linecap="round" />
+                <path
+                  d="M0 72V32M0 44l-10-18M0 40l11-16"
+                  fill="none"
+                  stroke="#8a5a32"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
                 <g>
                   <ellipse cx="-7" cy="8" rx="17" ry="16" fill="#9ed48a" />
                   <ellipse cx="9" cy="7" rx="16" ry="15" fill="#9ed48a" />

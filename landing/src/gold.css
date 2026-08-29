@@ -1,4 +1,10 @@
 /* gold.css neutralized — Interfere system now owns tokens.
    Kept for import compatibility; all playful overrides removed. */
-:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
-::selection { background: #0a0a0a; color: #fff; }
+:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 2px;
+}
+::selection {
+  background: #0a0a0a;
+  color: #fff;
+}

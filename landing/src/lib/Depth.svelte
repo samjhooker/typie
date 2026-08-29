@@ -2,10 +2,34 @@
   import { reveal } from './reveal.js';
 
   const STATS = [
-    { n: '80', unit: 'ms', label: 'Keystroke Latency', color: '#fc5681', note: 'Faster than your finger lifts off the key' },
-    { n: '25', unit: 'langs', label: 'European Languages', color: '#6f8ffb', note: 'Nvidia Parakeet running locally' },
-    { n: '0', unit: 'bytes', label: 'Network Egress', color: '#0ea86b', note: 'No server exists to receive your voice' },
-    { n: '100', unit: '%', label: 'Free & Open Source', color: '#c88cfd', note: 'MIT license, no credit card or account' },
+    {
+      n: '80',
+      unit: 'ms',
+      label: 'Keystroke Latency',
+      color: '#fc5681',
+      note: 'Faster than your finger lifts off the key',
+    },
+    {
+      n: '25',
+      unit: 'langs',
+      label: 'European Languages',
+      color: '#6f8ffb',
+      note: 'Nvidia Parakeet running locally',
+    },
+    {
+      n: '0',
+      unit: 'bytes',
+      label: 'Network Egress',
+      color: '#0ea86b',
+      note: 'No server exists to receive your voice',
+    },
+    {
+      n: '100',
+      unit: '%',
+      label: 'Free & Open Source',
+      color: '#c88cfd',
+      note: 'MIT license, no credit card or account',
+    },
   ];
 </script>
 
@@ -13,7 +37,9 @@
   <div class="container">
     <div class="head" use:reveal>
       <h2>Engineered for physics, not <em>promises.</em></h2>
-      <p class="sub">Local execution eliminates network round-trips, subscriptions, and privacy risk.</p>
+      <p class="sub">
+        Local execution eliminates network round-trips, subscriptions, and privacy risk.
+      </p>
     </div>
 
     <div class="stats">
@@ -83,7 +109,9 @@
     padding: 12px 20px;
     border-left: 1px solid var(--line);
   }
-  .stat:first-child { border-left: none; }
+  .stat:first-child {
+    border-left: none;
+  }
 
   .num {
     font-family: var(--display);
@@ -128,11 +156,21 @@
   }
 
   @media (max-width: 900px) {
-    .stats { grid-template-columns: 1fr 1fr; gap: 36px 0; }
-    .stat:nth-child(3) { border-left: none; }
+    .stats {
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 0;
+    }
+    .stat:nth-child(3) {
+      border-left: none;
+    }
   }
   @media (max-width: 540px) {
-    .stats { grid-template-columns: 1fr; gap: 40px; }
-    .stat { border-left: none; }
+    .stats {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .stat {
+      border-left: none;
+    }
   }
 </style>

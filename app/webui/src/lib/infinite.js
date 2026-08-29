@@ -7,14 +7,20 @@
  * AppShell's `.content` pane.
  */
 export function infinite(node, cb) {
-  let fire = cb
+  let fire = cb;
   const io = new IntersectionObserver(
-    (entries) => { if (entries.some(e => e.isIntersecting)) fire() },
-    { rootMargin: '600px' }, // start loading well before the bottom is reached
-  )
-  io.observe(node)
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) fire();
+    },
+    { rootMargin: '600px' } // start loading well before the bottom is reached
+  );
+  io.observe(node);
   return {
-    update(next) { fire = next },
-    destroy() { io.disconnect() },
-  }
+    update(next) {
+      fire = next;
+    },
+    destroy() {
+      io.disconnect();
+    },
+  };
 }

@@ -7,8 +7,10 @@ export function magnetic(node, { strength = 0.32, radius = 56 } = {}) {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
   let raf = null;
-  let tx = 0, ty = 0;   // target offset
-  let cx = 0, cy = 0;   // current offset
+  let tx = 0,
+    ty = 0; // target offset
+  let cx = 0,
+    cy = 0; // current offset
   let engaged = false;
 
   function loop() {
@@ -52,6 +54,6 @@ export function magnetic(node, { strength = 0.32, radius = 56 } = {}) {
       window.removeEventListener('pointermove', onMove);
       if (raf) cancelAnimationFrame(raf);
       node.style.transform = '';
-    }
+    },
   };
 }
