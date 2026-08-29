@@ -2069,50 +2069,100 @@
     }
   }
 
-  /* Dock */
+  /* Dock — macOS Tahoe liquid glass */
   .dock {
     position: absolute;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 18px;
-    padding: 6px 12px;
     display: flex;
-    gap: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.42) 100%
+    );
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.22),
+      0 8px 32px rgba(0, 0, 0, 0.16),
+      0 1px 3px rgba(0, 0, 0, 0.08);
     z-index: 25;
   }
   :root[data-theme='dark'] .dock {
-    background: rgba(24, 26, 36, 0.88);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: linear-gradient(
+      180deg,
+      rgba(38, 40, 52, 0.72) 0%,
+      rgba(22, 24, 34, 0.58) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 12px 36px rgba(0, 0, 0, 0.38),
+      0 1px 3px rgba(0, 0, 0, 0.24);
   }
   .ditem {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    padding: 4px;
-    border-radius: 8px;
+    padding: 3px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.15s var(--spring);
+    transition: transform 0.18s var(--spring);
   }
   .ditem:hover {
-    transform: translateY(-4px) scale(1.12);
+    transform: translateY(-5px) scale(1.10);
+  }
+  .ditem:active {
+    transform: translateY(-2px) scale(1.04);
   }
   .dico {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
-    border-radius: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: transparent;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.10);
+    transition: box-shadow 0.18s ease;
+  }
+  .ditem:hover .dico {
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.14),
+      0 8px 20px rgba(0, 0, 0, 0.14);
   }
   .dico :global(svg) {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    display: block;
+    border-radius: 10px;
+  }
+  .dico.dtyp {
+    background: #ffffff;
+    color: var(--hotpink);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  :root[data-theme='dark'] .dico.dtyp {
+    background: #1e1e22;
+  }
+  .dico.dtyp :global(svg) {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
   }
   .dtyp {
     color: var(--hotpink);
@@ -2122,9 +2172,33 @@
     height: 4px;
     border-radius: 50%;
     background: transparent;
+    transition: background 0.18s ease;
   }
   .ditem.on .ddot {
-    background: var(--hotpink);
+    background: rgba(0, 0, 0, 0.72);
+  }
+  :root[data-theme='dark'] .ditem.on .ddot {
+    background: rgba(255, 255, 255, 0.88);
+  }
+  /* separator before Typie icon — like macOS */
+  .ditem:last-child {
+    margin-left: 2px;
+    padding-left: 9px;
+    position: relative;
+  }
+  .ditem:last-child::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1px;
+    height: 22px;
+    background: rgba(0, 0, 0, 0.10);
+    transform: translateY(-50%);
+    border-radius: 1px;
+  }
+  :root[data-theme='dark'] .ditem:last-child::before {
+    background: rgba(255, 255, 255, 0.14);
   }
 
   @media (max-width: 900px) {
