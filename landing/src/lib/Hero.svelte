@@ -281,6 +281,30 @@
     return () => clearInterval(id);
   });
 
+  /* ── scale-to-fit for the Mac stage graphic ──
+     the graphic is designed at a fixed 1100px; on narrower viewports the
+     whole thing is transform-scaled proportionally instead of reflowing,
+     so mobile shows the identical composition, just smaller */
+  const DESIGN_W = 1100;
+  let outerEl = $state(null);
+  let macEl = $state(null);
+  let stageScale = $state(1);
+  let stageH = $state(null);
+  $effect(() => {
+    if (!outerEl || !macEl) return;
+    const measure = () => {
+      const w = macEl.offsetWidth;
+      const h = macEl.offsetHeight;
+      stageScale = Math.min(1, outerEl.clientWidth / w);
+      stageH = Math.round(h * stageScale);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(outerEl);
+    ro.observe(macEl);
+    return () => ro.disconnect();
+  });
+
   function scrollToMac() {
     const el =
       document.getElementById('feature-tabs') ??
@@ -471,11 +495,20 @@
       id="demo"
       use:reveal={{ delay: 120 }}
     >
-      <div class="mac">
-        <i
-          class="mac-glow"
-          aria-hidden="true"
-        ></i>
+      <div
+        class="mac-outer"
+        bind:this={outerEl}
+        style:height={stageH != null ? `${stageH}px` : 'auto'}
+      >
+        <div
+          class="mac"
+          bind:this={macEl}
+          style:transform={stageScale < 1 ? `scale(${stageScale})` : undefined}
+        >
+          <i
+            class="mac-glow"
+            aria-hidden="true"
+          ></i>
         <div class="lid">
           <!-- Mac Menu Bar -->
           <div class="menubar">
@@ -1190,6 +1223,7 @@
           {/if}
           <i class="chin"></i>
         </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1329,8 +1363,17 @@
     margin-inline: auto;
     scroll-margin-top: 96px;
   }
+  /* scale-to-fit: the mac graphic renders at its 1100px design width and is
+     transform-scaled down to the viewport; outer div reserves the scaled
+     height so layout stays correct */
+  .mac-outer {
+    position: relative;
+    width: 100%;
+  }
 
   .mac {
+    width: 1100px;
+    transform-origin: top left;
     background: transparent;
     border: none;
     border-radius: 0;
@@ -2570,17 +2613,6 @@
   @media (max-width: 600px) {
     .vlabel {
       font-size: 12.5px;
-    }
-    .dock {
-      display: none;
-    }
-    .mac-deck.dictate {
-      height: 64px;
-    }
-    .optcap {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
     }
   }
 </style>

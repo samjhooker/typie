@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { Sun, Moon } from 'lucide-svelte';
   import { appearance, setAppearance, initTheme } from './theme.svelte.js';
+  import { openDownloadDialog } from './download.svelte.js';
 
   let scrolled = $state(false);
   let progress = $state(0);

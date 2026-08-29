@@ -63,61 +63,32 @@
         </button>
       </header>
 
-      <!-- option 1: terminal one-liner -->
-      <div class="opt primary">
-        <div class="opt-head">
-          <span class="opt-ic"><Terminal size={16} /></span>
-          <div class="opt-titles">
-            <b>Easiest: paste one line in Terminal</b>
-            <span class="opt-badge">no Gatekeeper prompt</span>
-          </div>
-        </div>
-        <div class="cmdbox">
-          <code class="mono">{CMD}</code>
-          <button
-            class="copybtn"
-            type="button"
-            onclick={copy}
-            aria-label="Copy install command"
-          >
-            {#if copied}<Check
-                size={14}
-                color="#10b981"
-              />{:else}<Copy size={14} />{/if}
-            {copied ? 'copied' : 'copy'}
-          </button>
-        </div>
-        <p class="opt-note">
-          Downloads the latest build, installs it to /Applications and skips
-          the security prompt entirely. Then just open typie.
-        </p>
-      </div>
-
-      <div class="or mono">or</div>
-
-      <!-- option 2: github download -->
-      <div class="opt">
-        <div class="opt-head">
-          <span class="opt-ic gh"><ArrowUpRight size={16} /></span>
-          <div class="opt-titles">
-            <b>Download from GitHub</b>
-            <span class="opt-badge dim">typie.dmg</span>
-          </div>
-        </div>
-        <a
-          class="ghbtn"
-          href={RELEASES}
-          target="_blank"
-          rel="noopener"
+      <div class="cmdbox">
+        <code class="mono">{CMD}</code>
+        <button
+          class="copybtn"
+          type="button"
+          onclick={copy}
+          aria-label="Copy install command"
         >
-          Open GitHub releases
-          <ArrowUpRight size={14} />
-        </a>
-        <p class="opt-note">
-          Drag typie into Applications. First launch only: right-click the app
-          and choose Open, or use “Open Anyway” in Privacy &amp; Security.
-        </p>
+          {#if copied}<Check
+              size={14}
+              color="#10b981"
+            />{:else}<Copy size={14} />{/if}
+          {copied ? 'copied' : 'copy'}
+        </button>
       </div>
+      <p class="easylead">Easiest way: paste that one line in Terminal.</p>
+
+      <a
+        class="ghlink"
+        href={RELEASES}
+        target="_blank"
+        rel="noopener"
+      >
+        or download from GitHub
+        <ArrowUpRight size={13} />
+      </a>
 
       <p class="dl-foot mono">free · MIT · Apple Silicon · macOS 14+</p>
     </div>
@@ -147,15 +118,13 @@
   }
 
   .dl-card {
-    width: min(460px, 100%);
+    width: min(440px, 100%);
     background: var(--surface);
     border: 1px solid var(--line-strong);
     border-radius: 20px;
     padding: 22px;
     box-shadow: 0 32px 80px -12px rgba(0, 0, 0, 0.5);
     animation: popIn 0.28s var(--spring) both;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
   }
   @keyframes popIn {
     from {
@@ -181,7 +150,8 @@
     height: 34px;
     border-radius: 10px;
     background: var(--pink);
-    color: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--hotpink);
     flex: none;
   }
   .dl-head h3 {
@@ -209,82 +179,19 @@
     color: var(--hotpink);
   }
 
-  .opt {
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: var(--surface-2);
-  }
-  .opt.primary {
-    border-color: rgba(252, 86, 129, 0.4);
-    box-shadow: 0 0 0 3px rgba(252, 86, 129, 0.08);
-  }
-  .opt-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .opt-ic {
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
-    background: var(--ink-app);
-    color: #fff;
-    flex: none;
-  }
-  .opt-ic.gh {
-    background: #111827;
-  }
-  .opt-titles {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-  }
-  .opt-titles b {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .opt-badge {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--hotpink);
-    background: rgba(252, 86, 129, 0.1);
-    border: 1px solid rgba(252, 86, 129, 0.25);
-    padding: 2px 7px;
-    border-radius: 99px;
-    white-space: nowrap;
-  }
-  .opt-badge.dim {
-    color: var(--text-3);
-    background: var(--surface);
-    border-color: var(--line);
-  }
-
   .cmdbox {
     display: flex;
     align-items: center;
     gap: 8px;
     background: #0f1115;
     border-radius: 10px;
-    padding: 10px 12px;
+    padding: 12px 14px;
   }
   .cmdbox code {
     flex: 1;
     min-width: 0;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 12.5px;
     color: #e5e7eb;
     white-space: nowrap;
     overflow: hidden;
@@ -309,41 +216,31 @@
   .copybtn:hover {
     background: rgba(255, 255, 255, 0.14);
   }
-  .opt-note {
-    font-size: 12.5px;
-    line-height: 1.55;
-    color: var(--text-2);
+
+  .easylead {
+    margin: 12px 0 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
   }
 
-  .or {
-    text-align: center;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin: 2px 0;
-  }
-
-  .ghbtn {
+  .ghlink {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 10px 16px;
-    border-radius: var(--radius-pill);
-    background: var(--ink);
-    color: #f8fafc;
-    font-size: 13.5px;
-    font-weight: 700;
+    gap: 4px;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-3);
     text-decoration: none;
-    transition: transform 0.18s var(--spring);
+    transition: color 0.15s ease;
   }
-  .ghbtn:hover {
-    transform: translateY(-1px);
+  .ghlink:hover {
+    color: var(--hotpink);
   }
 
   .dl-foot {
-    margin: 14px 0 0;
+    margin: 18px 0 0;
     text-align: center;
     font-size: 10px;
     letter-spacing: 0.08em;
@@ -353,12 +250,5 @@
   :global([data-theme='dark']) .dl-card {
     background: #14161f;
     border-color: rgba(255, 255, 255, 0.12);
-  }
-  :global([data-theme='dark']) .opt {
-    background: rgba(255, 255, 255, 0.03);
-  }
-  :global([data-theme='dark']) .ghbtn {
-    background: #f8fafc;
-    color: var(--ink);
   }
 </style>
