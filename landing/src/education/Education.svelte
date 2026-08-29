@@ -733,7 +733,7 @@
               exam browsers. If it accepts typing, typie works there.
             </p>
             <pre>$ typie --trace
-mic        ▸ on-device ASR (nvidia parakeet, local)
+mic        ▸ on-device ASR (local model)
 network    ▸ bytes transmitted: <b>0</b>
 telemetry  ▸ endpoints configured: <b>none</b>
 output     ▸ CGEvent keystrokes ▸ active application</pre>

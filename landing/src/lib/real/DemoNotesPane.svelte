@@ -42,7 +42,7 @@
     },
     {
       id: '5',
-      text: "start notes from the notch or new note, ⌥ is only for dictating",
+      text: "start notes from the notch or the new note button",
       pinned: false,
       date: 'today',
       dur: '5s',

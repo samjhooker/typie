@@ -102,7 +102,7 @@
             <div>
               <h3>Zero network egress</h3>
               <p>
-                Mic → Nvidia Parakeet in RAM → CGEvent keystrokes. Audio is
+                Mic → on-device model in RAM → CGEvent keystrokes. Audio is
                 discarded immediately after transcription.
               </p>
             </div>
@@ -199,7 +199,7 @@
               >How is this different from built-in macOS dictation?</summary
             >
             <p>
-              Speed (80 ms), higher accuracy with Nvidia Parakeet, continuous
+              Speed (80 ms), higher accuracy from the on-device model, continuous
               dictation without timeout interruptions, and a full workspace for
               voice notes and bot-free meeting recording.
             </p>
@@ -215,7 +215,7 @@
           <details>
             <summary>Which languages are supported?</summary>
             <p>
-              25 European languages via Nvidia Parakeet. Transcripts can be
+              25 European languages, transcribed on-device. Transcripts can be
               exported with speaker diarization, timestamps, and AI-structured
               summaries.
             </p>

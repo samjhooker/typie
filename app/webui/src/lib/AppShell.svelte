@@ -297,10 +297,12 @@
       opacity: 0.35;
     }
   }
+  /* green-deep flips to light mint in dark mode, so a color-mix over it
+     keeps the body copy legible in both themes (was hardcoded dark teal) */
   .local-card p {
     font-size: 10.5px;
     line-height: 1.45;
-    color: rgba(2, 69, 60, 0.62);
+    color: color-mix(in srgb, var(--green-deep) 68%, transparent);
   }
 
   /* ── main ── */

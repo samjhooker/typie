@@ -60,8 +60,7 @@
     >
       Fast, accurate transcription that runs <strong
         >entirely on your Mac</strong
-      >. Your audio is processed locally and never uploaded. Powered by NVIDIA’s
-      Parakeet model.
+      >. Your audio is processed locally and never uploaded.
     </p>
 
     <div

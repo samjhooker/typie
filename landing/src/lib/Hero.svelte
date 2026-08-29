@@ -470,6 +470,10 @@
       use:reveal={{ delay: 120 }}
     >
       <div class="mac">
+        <i
+          class="mac-glow"
+          aria-hidden="true"
+        ></i>
         <div class="lid">
           <!-- Mac Menu Bar -->
           <div class="menubar">
@@ -1332,6 +1336,24 @@
     box-shadow: none;
     position: relative;
   }
+  /* ambient glow bleeding out from behind the screen, interfere-style */
+  .mac-glow {
+    position: absolute;
+    inset: -24px -48px -72px;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(40% 55% at 18% 25%, rgba(252, 86, 129, 0.5), transparent 68%),
+      radial-gradient(40% 55% at 82% 25%, rgba(132, 102, 252, 0.46), transparent 68%),
+      radial-gradient(72% 50% at 50% 106%, rgba(252, 86, 129, 0.22), transparent 70%);
+    filter: blur(40px);
+  }
+  :root[data-theme='dark'] .mac-glow {
+    background:
+      radial-gradient(40% 55% at 18% 25%, rgba(252, 86, 129, 0.6), transparent 68%),
+      radial-gradient(40% 55% at 82% 25%, rgba(132, 102, 252, 0.55), transparent 68%),
+      radial-gradient(72% 50% at 50% 106%, rgba(252, 86, 129, 0.28), transparent 70%);
+  }
   :root[data-theme='dark'] .mac {
     background: transparent;
     border: none;
@@ -1357,6 +1379,8 @@
     border: none;
     box-shadow: none;
     transition: background 0.3s ease;
+    position: relative;
+    z-index: 1; /* sits above the ambient glow */
   }
   :root[data-theme='dark'] .lid {
     background: linear-gradient(
@@ -1766,7 +1790,7 @@
   .screen-viewport {
     flex: 1;
     position: relative;
-    padding: 14px 18px 56px;
+    padding: 14px 18px 88px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1846,6 +1870,7 @@
   /* ══ KEYBOARD DECK, Option key lives off the screen ══ */
   .mac-deck {
     position: relative;
+    z-index: 1; /* above the ambient glow */
     height: 16px;
     background: #2b2e38;
     border-radius: 0 0 20px 20px;

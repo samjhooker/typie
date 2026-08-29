@@ -297,12 +297,12 @@
   .msginput {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     margin: 8px 12px 8px;
     border: 1px solid rgba(29, 28, 29, 0.28);
-    border-radius: 7px;
-    padding: 3px 10px;
-    min-height: 30px;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-height: 42px;
     transition:
       border-color 0.25s ease,
       box-shadow 0.25s ease;
@@ -344,12 +344,12 @@
   }
   .plus {
     color: #9d9d9f;
-    font-size: 13px;
+    font-size: 15px;
   }
   .field {
     flex: 1;
     min-width: 0;
-    font-size: 11.5px;
+    font-size: 13.5px;
     color: #9d9d9f;
     white-space: nowrap;
     overflow: hidden;
@@ -358,7 +358,7 @@
   }
   .field.typed {
     color: #1d1c1d;
-    font-size: 11.5px;
+    font-size: 13.5px;
   }
   .field.typed::after {
     content: '';
@@ -398,7 +398,7 @@
     }
   }
   .mic {
-    font-size: 12.5px;
+    font-size: 14px;
   }
 
   /* ── Slack dark mode (real Slack dark theme values) ── */

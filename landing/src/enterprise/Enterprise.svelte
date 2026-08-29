@@ -722,7 +722,7 @@
               it accepts typing, typie works there.
             </p>
             <pre>$ typie --trace
-mic        ▸ on-device ASR (nvidia parakeet, local)
+mic        ▸ on-device ASR (local model)
 network    ▸ bytes transmitted: <b>0</b>
 telemetry  ▸ endpoints configured: <b>none</b>
 output     ▸ CGEvent keystrokes ▸ active application</pre>
@@ -834,7 +834,7 @@ output     ▸ CGEvent keystrokes ▸ active application</pre>
           <span class="idx">STAGE 2</span>
           <span class="name">On-device model</span>
           <span class="desc"
-            >Nvidia Parakeet TDT, ~500 MB, running locally on Apple Silicon. <b
+            >A ~500 MB speech model, running entirely locally on Apple Silicon. <b
               >No inference server exists</b
             > on our side, so none can be subpoenaed, breached, or misconfigured.</span
           >

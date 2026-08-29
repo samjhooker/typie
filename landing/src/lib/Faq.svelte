@@ -36,7 +36,7 @@
     },
     {
       q: 'Are you supporting more languages?',
-      a: 'Not at this time. Typie uses NVIDIA’s Parakeet model for transcription, which is trained heavily on European languages. That’s the set we ship today.',
+      a: 'Not at this time. The transcription model is trained heavily on European languages. That’s the set we ship today.',
     },
   ];
 

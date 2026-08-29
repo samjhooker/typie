@@ -103,8 +103,11 @@ final class DiarizeStore: ObservableObject {
     /// `OfflineDiarizerModels.load` also probes a few fallback locations.
     static func modelsPresent() -> Bool {
         let repoDir = MLModelConfigurationUtils.defaultModelsDirectory(for: .diarizer)
-            .appendingPathComponent(Repo.diarizer.folderName, isDirectory: true)
-        // 4 CoreML bundles must be exactly where ModelCache puts them
+        // NB: defaultModelsDirectory(for:) ALREADY appends the repo's
+        // folderName, so this is <Models>/speaker-diarization. Appending
+        // folderName again checked <repo>/<repo>, a path that never exists,
+        // and the UI demanded a re-download on every launch (the actual
+        // loader does the single append, found the warm cache instantly).
         let coreFiles = requiredModels.filter { $0 != ModelNames.OfflineDiarizer.pldaParameters }
         guard coreFiles.allSatisfy({
             FileManager.default.fileExists(atPath: repoDir.appendingPathComponent($0).path)
@@ -125,15 +128,30 @@ final class DiarizeStore: ObservableObject {
     /// Resolve `.unknown` (and heal a stale `.notDownloaded`) from disk.
     /// Called on every UI push, the file check is cheap and fixes the
     /// "download again" flash when models were added after the first probe.
+    /// Healing to .ready also warms the manager from cache in the background
+    /// (~1s, no network) so meetings work straight after a relaunch.
     func refreshModelState() {
         switch modelState {
         case .unknown:
-            modelState = Self.modelsPresent() ? .ready : .notDownloaded
+            if Self.modelsPresent() {
+                modelState = .ready
+                ensureLoaded()
+            } else {
+                modelState = .notDownloaded
+            }
         case .notDownloaded where Self.modelsPresent():
             modelState = .ready
+            ensureLoaded()
         default:
             break
         }
+    }
+
+    /// models are on disk but the manager isn't built yet (fresh launch):
+    /// load them from the local cache. No network, no UI dance.
+    private func ensureLoaded() {
+        guard manager == nil else { return }
+        Task { await downloadAndLoad() }
     }
 
     /// One-time download + CoreML compile of the offline diarizer bundle.
@@ -142,7 +160,9 @@ final class DiarizeStore: ObservableObject {
         switch modelState {
         case .downloading, .compiling:
             return // already running
-        case .ready:
+        // .ready with no manager = healed by refreshModelState before the
+        // first load ran; fall through and build it from the local cache
+        case .ready where manager != nil:
             return
         default:
             break

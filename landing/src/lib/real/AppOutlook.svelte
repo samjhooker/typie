@@ -437,8 +437,8 @@
     border-top: 2px solid #0f6cbd;
     border-radius: 6px 6px 4px 4px;
     background: #faf9f8;
-    padding: 10px 12px;
-    min-height: 50px;
+    padding: 12px 14px;
+    min-height: 58px;
     transition:
       border-color 0.25s ease,
       box-shadow 0.25s ease;
@@ -477,7 +477,7 @@
     }
   }
   .rtext {
-    font-size: 13px;
+    font-size: 14.5px;
     line-height: 1.5;
     color: #201f1e;
   }
@@ -500,7 +500,7 @@
     }
   }
   .rph {
-    font-size: 13px;
+    font-size: 13.5px;
     color: #605e5c;
     font-style: italic;
   }
@@ -596,5 +596,14 @@
   :global([data-theme='dark']) .reply {
     background: #292827;
     border-color: #3b3a39;
+  }
+  :global([data-theme='dark']) .rtext {
+    color: #f3f2f1;
+  }
+  :global([data-theme='dark']) .rph {
+    color: #a19f9d;
+  }
+  :global([data-theme='dark']) .caret {
+    background: #4ba3e3;
   }
 </style>

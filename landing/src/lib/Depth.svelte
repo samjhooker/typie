@@ -14,7 +14,7 @@
       unit: 'langs',
       label: 'European Languages',
       color: '#6f8ffb',
-      note: 'Nvidia Parakeet running locally',
+      note: 'Speech model running locally',
     },
     {
       n: '0',
@@ -67,7 +67,7 @@
       class="meta foot mono"
       use:reveal={{ delay: 120 }}
     >
-      Nvidia Parakeet · Apple Silicon FluidAudio · MIT License · Local Inference
+      On-device ASR · Apple Silicon FluidAudio · MIT License · Local Inference
     </p>
   </div>
 </section>

@@ -126,7 +126,7 @@
                   <span class="stars us">
                     <span class="starRow" aria-label="{s.label} out of 5">
                       {#each Array(s.full) as _}<span class="star full">★</span>{/each}
-                      {#if s.half}<span class="star half">★</span>{/if}
+                      {#if s.half}<span class="star half"><span class="halfBase">★</span><span class="halfFill">★</span></span>{/if}
                       {#each Array(s.empty) as _}<span class="star empty">★</span>{/each}
                     </span>
                     <span class="starNum">{s.label}★</span>
@@ -145,7 +145,7 @@
                   <span class="stars">
                     <span class="starRow" aria-label="{s.label} out of 5">
                       {#each Array(s.full) as _}<span class="star full">★</span>{/each}
-                      {#if s.half}<span class="star half">★</span>{/if}
+                      {#if s.half}<span class="star half"><span class="halfBase">★</span><span class="halfFill">★</span></span>{/if}
                       {#each Array(s.empty) as _}<span class="star empty">★</span>{/each}
                     </span>
                     <span class="starNum dim">{s.label}★</span>
@@ -166,7 +166,7 @@
                   <span class="stars">
                     <span class="starRow" aria-label="{s.label} out of 5">
                       {#each Array(s.full) as _}<span class="star full">★</span>{/each}
-                      {#if s.half}<span class="star half">★</span>{/if}
+                      {#if s.half}<span class="star half"><span class="halfBase">★</span><span class="halfFill">★</span></span>{/if}
                       {#each Array(s.empty) as _}<span class="star empty">★</span>{/each}
                     </span>
                     <span class="starNum">{s.label}★</span>
@@ -374,14 +374,25 @@
     line-height: 1;
   }
   .star.full { color: #f59e0b; }
+  /* true half star: empty glyph base + left half clipped fill */
   .star.half {
-    color: #f59e0b;
-    opacity: 0.55;
     position: relative;
+    color: #e5e7eb;
+  }
+  .star.half :global(.halfFill) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #f59e0b;
   }
   .star.empty { color: #e5e7eb; }
   :root[data-theme='dark'] .star.empty { color: #3f3f46; }
+  :root[data-theme='dark'] .star.half { color: #3f3f46; }
   .stars.us .star.empty { color: rgba(2, 69, 60, 0.14); }
+  .stars.us .star.half { color: rgba(2, 69, 60, 0.14); }
   .starNum {
     font-family: var(--mono);
     font-size: 10.5px;

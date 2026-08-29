@@ -47,7 +47,7 @@
       >
       <div class="txt">
         <h3>Speak naturally</h3>
-        <p>Talk at your pace. Nvidia Parakeet transcribes in RAM.</p>
+        <p>Talk at your pace. The on-device model transcribes in RAM.</p>
       </div>
     </div>
 

@@ -434,12 +434,12 @@
   .composer {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     margin: 0 16px 12px;
     background: var(--surface);
-    border-radius: 10px;
-    padding: 6px 12px;
-    min-height: 44px;
+    border-radius: 12px;
+    padding: 9px 14px;
+    min-height: 50px;
     border: 1px solid transparent;
     transition:
       border-color 0.25s ease,
@@ -491,7 +491,7 @@
   .field {
     flex: 1;
     min-width: 0;
-    font-size: 13.5px;
+    font-size: 14.5px;
     color: #8696a0;
     white-space: nowrap;
     overflow: hidden;
@@ -597,5 +597,11 @@
   }
   :global([data-theme='dark']) .composer {
     background: #2a3942;
+  }
+  :global([data-theme='dark']) .field.typed {
+    color: #e9edef;
+  }
+  :global([data-theme='dark']) .field.dim {
+    color: #8696a0;
   }
 </style>
