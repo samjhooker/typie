@@ -422,7 +422,6 @@
 {:else}
   <div
     class="wrap"
-    class:docked={t.audioUrl}
     class:split={aiAvailable}
     class:rail-open={aiAvailable && railOpen}
     class:resizing
@@ -881,45 +880,20 @@
 
 <style>
   .wrap {
-    padding: 24px 32px 80px;
     max-width: 880px;
     margin: 0 auto;
-    flex: 1;
-    min-height: 100%;
+    /* fixed app frame: header pinned to the top, audio dock pinned to the
+       bottom, only the conversation scrolls — even when the transcript is
+       short. The outer .content container never scrolls here. */
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
   }
   /* with the rail open the conversation splits into two independent scroll panes */
   .wrap.split {
     max-width: none;
-    padding: 0;
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
     transition: none;
-  }
-  .wrap.split:not(.rail-open) {
-    padding: 24px 32px 80px;
-    height: auto;
-    max-height: none;
-    overflow: visible;
-    display: flex;
-    max-width: 880px;
-    margin: 0 auto;
-  }
-  .wrap.split:not(.rail-open) .dock {
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
-    margin-top: auto;
-    margin-left: -32px;
-    margin-right: -32px;
-    margin-bottom: -80px;
-  }
-  .wrap.docked {
-    padding-bottom: 80px;
   }
 
   /* ── availability hint, reuses the shared .card component ── */
@@ -990,7 +964,12 @@
     flex: 1;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 24px 32px 80px;
+    /* NO top padding: the sticky header must be the first pixel of the
+       scroll container. WebKit constrains sticky to the padding box, so a
+       padding-top here left a gap above the pinned header. The header's own
+       padding provides the spacing; 32px bottom = breathing room above the
+       dock (the dock sits below .cols, not over the text) */
+    padding: 0 32px 32px;
   }
   .ai-rail {
     position: relative;
@@ -1270,19 +1249,18 @@
   .q-meta {
     color: var(--text-3);
   }
-  /* ── sticky header, pinned to top of viewport ── */
+  /* ── sticky header, pinned to top of viewport ──
+     first child of .content-col (which has no top padding), so top: 0 pins
+     it truly flush — no negative-margin trick to fight the scroll container */
   header {
     position: sticky;
     top: 0;
     z-index: 30;
-    margin: -24px -32px 14px;
+    margin: 0 -32px 14px;
     padding: 16px 32px 12px;
     background: var(--surface);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
-  }
-  .wrap.docked header {
-    margin-top: -24px;
   }
   .missing {
     padding: 60px;
@@ -1574,25 +1552,15 @@
   }
 
   .dock {
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
-    margin-top: auto;
-    margin-left: -32px;
-    margin-right: -32px;
-    margin-bottom: -80px;
+    /* in-flow at the bottom of the fixed-height wrap: .cols (flex: 1) fills
+       the space above, so the dock sits pinned at the bottom edge even when
+       the transcript is shorter than the viewport */
+    flex-shrink: 0;
     padding: 11px 32px;
     display: flex;
     align-items: center;
     gap: 13px;
     background: var(--surface);
-    border-top: 1px solid var(--line);
-  }
-  .wrap.split .dock {
-    position: relative;
-    bottom: auto;
-    margin: 0;
-    flex-shrink: 0;
     border-top: 1px solid var(--line);
   }
   .play {
