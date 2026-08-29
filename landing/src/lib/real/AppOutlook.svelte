@@ -473,7 +473,6 @@
     }
     100% {
       box-shadow: 0 0 0 3px rgba(15, 108, 189, 0.16);
-      background: #faf9f8;
     }
   }
   .rtext {

@@ -476,7 +476,6 @@
     }
     100% {
       box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.16);
-      background: var(--surface);
     }
   }
   .cico {

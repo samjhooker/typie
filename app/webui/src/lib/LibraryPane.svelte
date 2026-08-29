@@ -178,7 +178,10 @@
   }
 </script>
 
-<div class="wrap">
+<div
+  class="wrap"
+  class:detail={!!local.selectedTranscriptId}
+>
   <!-- detail slides in from the right; the library glides back when it leaves.
        both views share one grid cell so the crossfade never reflows. -->
   <div class="pane-host">
@@ -533,6 +536,13 @@
     padding: 28px 32px 40px;
     max-width: 1200px;
     margin: 0 auto;
+  }
+  /* the detail pane owns its layout: the split transcript view is exactly
+     100vh with its own padding, so the library page padding + max-width
+     around it only added ~68px of dead outer scroll and side gutters */
+  .wrap.detail {
+    padding: 0;
+    max-width: none;
   }
 
   /* stacked panes: outgoing fades in place while the incoming one flies */

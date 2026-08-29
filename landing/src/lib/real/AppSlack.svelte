@@ -339,7 +339,6 @@
     }
     100% {
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
-      background: transparent;
     }
   }
   .plus {
