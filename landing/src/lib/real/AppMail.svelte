@@ -1,6 +1,6 @@
 <script>
   /* full Mail UI — used inside the hero Mac; the reply composer receives the dictation */
-  let { typed = '', listening = false } = $props()
+  let { typed = '', listening = false, pasted = false } = $props()
 
   const mailboxes = [
     { name: 'Inbox', count: 3, on: true, icon: '▣' },
@@ -64,9 +64,9 @@
         <p>{para}</p>
       {/each}
     </div>
-    <div class="reply" class:armed={listening || typed}>
+    <div class="reply" class:armed={listening || typed} class:pasted>
       {#if typed}
-        <p class="rtext">{typed}<span class="caret"></span></p>
+        <p class="rtext pop">{typed}<span class="caret"></span></p>
       {:else}
         <p class="rph">{listening ? 'listening…' : 'click here to reply'}</p>
       {/if}
@@ -116,12 +116,27 @@
     border-color:#0a84ff; box-shadow:0 0 0 3px rgba(10,132,255,.18);
     animation:flashIn .4s ease-out both;
   }
+  .reply.pasted{
+    border-color:#10b981;
+    animation:pasteField .7s cubic-bezier(.22,1,.36,1) both;
+  }
   @keyframes flashIn{
     0%{ box-shadow:0 0 0 0 rgba(10,132,255,.5) }
     60%{ box-shadow:0 0 0 4px rgba(10,132,255,.24) }
     100%{ box-shadow:0 0 0 3px rgba(10,132,255,.14) }
   }
+  @keyframes pasteField{
+    0%{ box-shadow:0 0 0 0 rgba(16,185,129,.55); background:rgba(16,185,129,.2) }
+    40%{ box-shadow:0 0 0 6px rgba(16,185,129,.22); background:rgba(16,185,129,.08) }
+    100%{ box-shadow:0 0 0 3px rgba(16,185,129,.16); background:#fff }
+  }
   .rtext{ font-size:11.5px; line-height:1.4; color:#1c1c1e }
+  .rtext.pop{ animation:pastePop .7s cubic-bezier(.22,1,.36,1) both; border-radius:4px }
+  @keyframes pastePop{
+    0%{ background:rgba(16,185,129,.5); transform:scale(.96) }
+    45%{ background:rgba(16,185,129,.2); transform:scale(1.02) }
+    100%{ background:transparent; transform:none }
+  }
   .rph{ font-size:11.5px; color:#8e8e93; font-style:italic }
   .caret{ display:inline-block; width:2px; height:1em; margin-left:2px; vertical-align:-0.15em; background:#0a84ff; animation:blink .9s steps(1) infinite }
   @keyframes blink{ 50%{opacity:0} }

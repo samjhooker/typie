@@ -1,6 +1,6 @@
 <script>
   /* full Messages UI — used inside the hero Mac; the conversation receives the dictation */
-  let { typed = '', listening = false } = $props()
+  let { typed = '', listening = false, pasted = false } = $props()
 
   const convos = [
     { id: 1, name: 'Maya Chen', color: '#34c759', av: 'MC', time: '9:41', last: 'see you at the demo' },
@@ -46,17 +46,17 @@
         </div>
       {/each}
       {#if typed}
-        <div class="bub mine fresh">
+        <div class="bub mine fresh" class:pop={pasted}>
           <p>{typed}</p>
           <span class="tm">9:41<i>✓✓</i></span>
         </div>
       {/if}
     </div>
 
-    <div class="composer" class:armed={listening || typed}>
+    <div class="composer" class:armed={listening || typed} class:pasted>
       <span class="plus">+</span>
       {#if typed}
-        <span class="field typed">{typed}<span class="caret"></span></span>
+        <span class="field typed" class:pop={pasted}>{typed}<span class="caret"></span></span>
       {:else}
         <span class="field" class:dim={listening}>{listening ? 'listening…' : 'iMessage'}</span>
       {/if}
@@ -106,10 +106,16 @@
   .tm{ display:block; text-align:right; font-size:9px; opacity:.65; margin-top:2px }
   .tm i{ font-style:normal; margin-left:3px }
   .fresh{ animation: msgIn .45s var(--spring, ease) both }
+  .pop{ animation: pastePop .7s cubic-bezier(.22,1,.36,1) both }
   @keyframes msgIn{
     0%{ opacity:0; transform:translateY(10px) scale(.92); filter:blur(1px) }
     40%{ opacity:1; transform:translateY(-2px) scale(1.02); filter:blur(0) }
     100%{ opacity:1; transform:none; filter:blur(0) }
+  }
+  @keyframes pastePop{
+    0%{ filter:brightness(1.35); transform:scale(.94) }
+    45%{ filter:brightness(1.12); transform:scale(1.04) }
+    100%{ filter:none; transform:none }
   }
 
   .composer{
@@ -122,10 +128,19 @@
     border-color:#0b84fe; box-shadow:0 0 0 3px rgba(11,132,254,.18);
     animation:flashIn .4s ease-out both;
   }
+  .composer.pasted{
+    border-color:#10b981;
+    animation:pasteField .7s cubic-bezier(.22,1,.36,1) both;
+  }
   @keyframes flashIn{
     0%{ box-shadow:0 0 0 0 rgba(11,132,254,.5) }
     60%{ box-shadow:0 0 0 4px rgba(11,132,254,.24) }
     100%{ box-shadow:0 0 0 3px rgba(11,132,254,.14) }
+  }
+  @keyframes pasteField{
+    0%{ box-shadow:0 0 0 0 rgba(16,185,129,.55); background:rgba(16,185,129,.2) }
+    40%{ box-shadow:0 0 0 6px rgba(16,185,129,.22) }
+    100%{ box-shadow:0 0 0 3px rgba(16,185,129,.16); background:rgba(255,255,255,.95) }
   }
   .plus{ color:#007aff; font-size:13px; font-weight:700 }
   .field{ flex:1; min-width:0; font-size:11px; color:#8e8e93; white-space:nowrap; overflow:hidden; position:relative; line-height:1.3 }

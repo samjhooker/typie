@@ -1,6 +1,6 @@
 <script>
   /* full Google Docs UI — used inside the hero Mac; the doc receives the dictation */
-  let { typed = '', listening = false } = $props()
+  let { typed = '', listening = false, pasted = false } = $props()
 
   const paras = [
     { cls: 'title', text: 'Launch plan' },
@@ -29,7 +29,7 @@
         <p class="{p.cls}">{p.text}</p>
       {/each}
       {#if typed}
-        <p class="body fresh">{typed}<span class="caret"></span></p>
+        <p class="body fresh" class:pop={pasted}>{typed}<span class="caret"></span></p>
       {:else if listening}
         <p class="body listening">listening…</p>
       {/if}
@@ -64,10 +64,16 @@
   .body{ font-size:12.5px; line-height:1.6; color:#202124 }
   .listening{ color:#9aa0a6; font-style:italic }
   .fresh{ animation:fadeup .45s var(--spring, ease) both }
+  .pop{ animation:pastePop .7s cubic-bezier(.22,1,.36,1) both; border-radius:4px; box-decoration-break:clone; -webkit-box-decoration-break:clone }
   @keyframes fadeup{
     0%{ opacity:0; transform:translateY(10px) scale(.92); filter:blur(1px) }
     40%{ opacity:1; transform:translateY(-2px) scale(1.02); filter:blur(0) }
     100%{ opacity:1; transform:none; filter:blur(0) }
+  }
+  @keyframes pastePop{
+    0%{ background:rgba(16,185,129,.5); transform:scale(.97) }
+    45%{ background:rgba(16,185,129,.2); transform:scale(1.015) }
+    100%{ background:transparent; transform:none }
   }
   .caret{ display:inline-block; width:2px; height:1em; margin-left:2px; vertical-align:-0.15em; background:#1a73e8; animation:blink .9s steps(1) infinite }
   @keyframes blink{ 50%{opacity:0} }

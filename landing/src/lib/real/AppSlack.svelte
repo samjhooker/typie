@@ -1,6 +1,6 @@
 <script>
   /* full Slack UI — used inside the hero Mac; receives the dictation replay */
-  let { typed = '', listening = false } = $props()
+  let { typed = '', listening = false, pasted = false } = $props()
 
   const channels = ['# general', '# launch', '# design', '# eng', '# deal-review']
   const dms = [
@@ -49,15 +49,15 @@
           <span class="av" style="background:#e01e5a">y</span>
           <div class="mbody">
             <p class="mhead"><b>you</b><span class="t">now</span></p>
-            <p class="mtxt fresh">{typed}</p>
+            <p class="mtxt fresh" class:pop={pasted}>{typed}</p>
           </div>
         </div>
       {/if}
     </div>
-    <div class="msginput" class:armed={listening || typed}>
+    <div class="msginput" class:armed={listening || typed} class:pasted>
       <span class="plus">+</span>
       {#if typed}
-        <span class="field typed">{typed}<span class="caret"></span></span>
+        <span class="field typed" class:pop={pasted}>{typed}<span class="caret"></span></span>
       {:else}
         <span class="field" class:dim={listening}>{listening ? 'listening…' : 'Message #launch'}</span>
       {/if}
@@ -95,11 +95,17 @@
   .mhead b{ font-size:13px }
   .t{ font-size:11px; color:#9d9d9f }
   .mtxt{ font-size:13.5px; line-height:1.5; color:#1d1c1d }
-  .fresh{ animation: msgIn .45s var(--spring, ease) both }
+  .fresh{ animation: msgIn .5s var(--spring, ease) both }
+  .pop{ animation: pastePop .7s cubic-bezier(.22,1,.36,1) both }
   @keyframes msgIn{
     0%{ opacity:0; transform:translateY(10px) scale(.92); filter:blur(1px) }
     40%{ opacity:1; transform:translateY(-2px) scale(1.02); filter:blur(0) }
     100%{ opacity:1; transform:none; filter:blur(0) }
+  }
+  @keyframes pastePop{
+    0%{ background:rgba(16,185,129,.5); box-shadow:0 0 0 4px rgba(16,185,129,.28); transform:scale(.96); border-radius:4px }
+    45%{ background:rgba(16,185,129,.22); box-shadow:0 0 0 6px rgba(16,185,129,.12); transform:scale(1.03) }
+    100%{ background:transparent; box-shadow:none; transform:none }
   }
 
   .msginput{
@@ -111,10 +117,20 @@
     border-color:#007a5a; box-shadow:0 0 0 3px rgba(0,122,90,.18);
     animation:flashIn .4s ease-out both;
   }
+  .msginput.pasted{
+    border-color:#10b981;
+    box-shadow:0 0 0 4px rgba(16,185,129,.28);
+    animation:pasteField .7s cubic-bezier(.22,1,.36,1) both;
+  }
   @keyframes flashIn{
     0%{ box-shadow:0 0 0 0 rgba(0,122,90,.45) }
     60%{ box-shadow:0 0 0 4px rgba(0,122,90,.24) }
     100%{ box-shadow:0 0 0 3px rgba(0,122,90,.14) }
+  }
+  @keyframes pasteField{
+    0%{ box-shadow:0 0 0 0 rgba(16,185,129,.55); background:rgba(16,185,129,.18) }
+    40%{ box-shadow:0 0 0 6px rgba(16,185,129,.22); background:rgba(16,185,129,.08) }
+    100%{ box-shadow:0 0 0 3px rgba(16,185,129,.16); background:#fff }
   }
   .plus{ color:#9d9d9f; font-size:13px }
   .field{ flex:1; min-width:0; font-size:11.5px; color:#9d9d9f; white-space:nowrap; overflow:hidden; position:relative; line-height:1.3 }

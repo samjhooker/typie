@@ -154,8 +154,8 @@
     background:var(--pink); color:var(--ink);
     box-shadow:0 2px 8px rgba(252,86,129,.16);
   }
-  .nav-item.disabled{ opacity:.38; pointer-events:none; }
-  nav.locked .nav-item:not(.active){ opacity:.32; pointer-events:none; }
+  .nav-item.disabled{ opacity:.42; pointer-events:none; cursor:default; }
+  nav.locked .nav-item:not(.active){ opacity:.4; pointer-events:none; cursor:default; }
   .nav-ico{ display:inline-grid; place-items:center; color:inherit; opacity:.85 }
 
   .spacer{ flex:1 }
