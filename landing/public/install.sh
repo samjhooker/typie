@@ -32,32 +32,26 @@ say()  { printf '%s\n' "$1"; }
 step() { printf '%s\n' "${DIM}→${OFF} $1"; }
 die()  { printf '%s✗ %s%s\n' "${PINK}" "$1" "${OFF}" >&2; exit 1; }
 
-# ── the robot, straight off the SVG glyph: flag, antenna, screen bar,
-#    pillar ears with their steps, the two key-square eyes, chin ──
+# ── the robot, hand-tuned block art ──
 art() {
-  local B="${PINK}█${OFF}"   # body
-  local E="${WHITE}█${OFF}"   # eyes
-  cat <<EOF
-
-${B}       ████${B}
-${B}       ████${B}
-${B}           ██${B}
-${B}           ██${B}
-${B}     ██████████████${B}
-${B}     ██████████████${B}
-${B}  ██${B}              ${B}██${B}
-${B}  ██${B}              ${B}██${B}
-${B}  ██${B}              ${B}██${B}
-${B}  ██${B}   ${E}██${B}    ${E}██${B}   ${B}██${B}
-${B}████${B}   ${E}██${B}    ${E}██${B}   ${B}████${B}
-${B}████${B}   ${E}██${B}    ${E}██${B}   ${B}████${B}
-${B}  ██${B}   ${E}██${B}    ${E}██${B}   ${B}██${B}
-${B}  ██${B}              ${B}██${B}
-${B}  ██${B}              ${B}██${B}
-${B}  ██${B}              ${B}██${B}
-${B}    ██████████████${B}
-${B}    ██████████████${B}
-EOF
+  local P="$PINK" W="$WHITE"
+  say ""
+  printf '%s                 ███████\n' "$P"
+  printf '%s                 ███████\n' "$P"
+  printf '%s                       ████\n' "$P"
+  printf '%s              ██████████████████████\n' "$P"
+  printf '%s              ██████████████████████\n' "$P"
+  printf '%s           █████                  █████\n' "$P"
+  printf '%s           ████                    ████\n' "$P"
+  printf '%s           ████    %s███%s      %s███%s    ████\n' "$P" "$W" "$P" "$W" "$P"
+  printf '%s        ███████    %s███%s      %s███%s    ███████\n' "$P" "$W" "$P" "$W" "$P"
+  printf '%s        ███████    %s███%s      %s███%s    ███████\n' "$P" "$W" "$P" "$W" "$P"
+  printf '%s           ████    %s███%s      %s███%s    ████\n' "$P" "$W" "$P" "$W" "$P"
+  printf '%s           ████                    ████\n' "$P"
+  printf '%s           ████                    ████\n' "$P"
+  printf '%s           ████                    ████\n' "$P"
+  printf '%s              ██████████████████████\n' "$P"
+  printf '%s              ██████████████████████\n' "$P"
 }
 
 say ""
