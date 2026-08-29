@@ -1,5 +1,6 @@
 <script>
   import { reveal } from './reveal.js';
+  import { openDownloadDialog } from './download.svelte.js';
   import { nsSvg } from './svgid.js';
   import Robot from './Robot.svelte';
   import {
@@ -387,13 +388,14 @@
       </h1>
       <p class="sub">
         Hold ⌥, speak naturally, and let go. Typie types into any app in 80
-        milliseconds, records meetings without bots, and organizes voice notes,         100% offline on Apple Silicon.
+        milliseconds, records meetings without bots, and organizes voice notes, 100% offline on Apple Silicon.
       </p>
 
       <div class="actions">
-        <a
-          href="https://github.com/samjhooker/typie/releases/latest"
+        <button
+          type="button"
           class="btn btn-primary bigcta"
+          onclick={openDownloadDialog}
         >
           <svg
             viewBox="0 0 384 512"
@@ -406,7 +408,7 @@
             /></svg
           >
           Download for Mac, Free
-        </a>
+        </button>
         <a
           href="https://github.com/samjhooker/typie"
           class="btn btn-ghost"

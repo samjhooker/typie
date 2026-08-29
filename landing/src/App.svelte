@@ -14,6 +14,8 @@
   import Enterprise from './enterprise/Enterprise.svelte';
   import Education from './education/Education.svelte';
   import { reveal } from './lib/reveal.js';
+  import DownloadDialog from './lib/DownloadDialog.svelte';
+  import { openDownloadDialog } from './lib/download.svelte.js';
 
   const path = $state(window.location.pathname);
 </script>
@@ -232,9 +234,10 @@
       >
         <h2>Just talk.<br /><em>It's typed.</em></h2>
         <div class="actions">
-          <a
-            href="https://github.com/samjhooker/typie/releases/latest"
+          <button
+            type="button"
             class="btn btn-primary bigcta"
+            onclick={openDownloadDialog}
           >
             <svg
               viewBox="0 0 384 512"
@@ -247,7 +250,7 @@
               /></svg
             >
             Download for Mac, Free
-          </a>
+          </button>
           <a
             href="https://github.com/samjhooker/typie"
             class="btn btn-ghost"
@@ -266,6 +269,7 @@
       </div>
     </section>
   </main>
+  <DownloadDialog />
   <Footer />
 {/if}
 

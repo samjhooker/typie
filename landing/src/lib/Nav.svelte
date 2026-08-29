@@ -131,9 +131,10 @@
         {/if}
       </button>
 
-      <a
-        href="https://github.com/samjhooker/typie/releases/latest"
+      <button
+        type="button"
         class="btn btn-primary navcta"
+        onclick={openDownloadDialog}
       >
         <svg
           viewBox="0 0 384 512"
@@ -146,7 +147,7 @@
           /></svg
         >
         Download
-      </a>
+      </button>
     </div>
   </div>
 </header>

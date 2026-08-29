@@ -1,20 +1,21 @@
 <script>
-  // Link to the Releases page (not the raw asset) so first-time users see
-  // the install/Gatekeeper instructions in the release notes.
+  // Opens the download dialog (terminal one-liner or GitHub dmg) instead of
+  // linking straight out, so users see the no-prompt install option first.
   import { ripple } from './ripple.js';
+  import { openDownloadDialog } from './download.svelte.js';
   let {
     label = 'Download free for Mac',
-    href = 'https://github.com/samjhooker/typie/releases/latest',
     kind = 'green',
     big = false,
     class: cls = '',
   } = $props();
 </script>
 
-<a
-  {href}
+<button
+  type="button"
   class="btn btn-{kind} dl {cls}"
   class:big
+  onclick={openDownloadDialog}
   use:ripple
 >
   <svg
@@ -27,7 +28,7 @@
     /></svg
   >
   {label}
-</a>
+</button>
 
 <style>
   .dl {
