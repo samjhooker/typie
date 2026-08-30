@@ -2,8 +2,9 @@
    Typie shared tokens, SINGLE SOURCE for landing + Mac app webui.
    Ramps and accent hues only. Neutrals (page/paper/cream) differ
    per product, landing is warm cream, the app is cool grey, so
-   they stay in each product's app.css.
-   Synced from: /DESIGN.md
+   they stay in each product's app.css. app.css owns the focus +
+   selection rules. The native side mirrors everything in
+   app/Sources/Typie/Theme.swift — update it alongside tokens.
    ═══════════════════════════════════════════════════════════════ */
 
 :root {

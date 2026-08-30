@@ -12,7 +12,7 @@ cd "$(dirname "$0")/.."
 export APP_VERSION="${APP_VERSION:-1.0.0}"
 ./scripts/make_app.sh
 
-VERSION="${DMG_VERSION:-1.0.0}"
+VERSION="${DMG_VERSION:-$APP_VERSION}"
 STAGING="build/dmg-staging"
 TEMPLATE="scripts/dmg-template"
 DMG="build/typie-$VERSION.dmg"

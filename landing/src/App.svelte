@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import Nav from './lib/Nav.svelte';
   import Hero from './lib/Hero.svelte';
   import Steps from './lib/Steps.svelte';
@@ -18,6 +19,14 @@
   import { openDownloadDialog } from './lib/download.svelte.js';
 
   const path = $state(window.location.pathname);
+
+  onMount(() => {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView();
+    });
+  });
 </script>
 
 {#if path === '/about'}

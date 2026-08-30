@@ -14,7 +14,7 @@ enum Theme {
     static let paper = Color(hex: 0xF2F4F7)       // inset surfaces / sidebar
     static let butter = Color(hex: 0xFFDA8A)
     static let sun = Color(hex: 0xFDC068)
-    static let goldInk = Color(hex: 0xE59E12)
+    static let goldInk = Color(hex: 0x9C5F06)  // amber ink on tint, AA (was #e59e12)
     static let sky = Color(hex: 0xBCD6FF)
     static let pink = Color(hex: 0xFFD3E0)         // pink-100
     static let hotpink = Color(hex: 0xFC5681)     // ★ pink-300 primary
@@ -26,6 +26,9 @@ enum Theme {
     static let orange = Color(hex: 0xFF9124)
     static let purple = Color(hex: 0xC88CFD)
     static let periwinkle = Color(hex: 0x6F8FFB)
+    static let periwinkleInk = Color(hex: 0x3A5A9A) // ink on periwinkle tint, AA
+    static let violetInk = Color(hex: 0x6A52C9)     // ink on violet tint, AA
+    static let redInk = Color(hex: 0xC22E56)        // ink on red tint, AA
     static let ink = Color(hex: 0x131722)          // near-black navy
     static let slate = Color(hex: 0x2C3342)        // body copy on light fields
     static let barBlack = Color(hex: 0x101413)
@@ -38,7 +41,7 @@ enum Theme {
     static let cardMint = Color(hex: 0xDFF0E4)
     static let pinkBand = Color(hex: 0xFBDAE4)
 
-    /// Landing's --radius: 36px, scaled for window-sized surfaces
+    /// Landing's --radius-card (20px), scaled up for window-sized surfaces.
     static let radiusL: CGFloat = 28
     static let radiusM: CGFloat = 20
 

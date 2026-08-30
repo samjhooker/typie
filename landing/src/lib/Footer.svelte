@@ -19,14 +19,14 @@
     >
       <div class="col">
         <div class="col-title mono">Product</div>
-        <a href="#demo">The Mac Experience</a>
-        <a href="#apps">Everywhere</a>
-        <a href="#compare">Comparison</a>
-        <a href="#engine">Engine</a>
+        <a href="/#demo">The Mac Experience</a>
+        <a href="/#apps">Everywhere</a>
+        <a href="/#compare">Comparison</a>
+        <a href="/#engine">Engine</a>
       </div>
       <div class="col">
         <div class="col-title mono">Privacy</div>
-        <a href="#privacy">Zero Cloud Architecture</a>
+        <a href="/#privacy">Zero Cloud Architecture</a>
         <a href="/privacy">Privacy Policy</a>
         <a href="/terms">Terms of Use</a>
       </div>
@@ -42,7 +42,11 @@
           target="_blank"
           rel="noopener">GitHub (MIT)</a
         >
-        <a href="mailto:hello@typie.cc">Contact</a>
+        <a
+          href="https://github.com/samjhooker/typie/issues"
+          target="_blank"
+          rel="noopener">Contact</a
+        >
       </div>
     </nav>
   </div>

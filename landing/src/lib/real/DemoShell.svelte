@@ -134,7 +134,7 @@
     --green-deep: #02453c;
     --butter: #ffda8a;
     --sun: #fdc068;
-    --gold-ink: #e59e12;
+    --gold-ink: #9c5f06; /* AA-deepened amber ink on tint (was #e59e12 = 2.06:1) */
     --sky: #bcd6ff;
     --lavender: #ddd8ff;
     --periwinkle: #6f8ffb;
@@ -191,6 +191,7 @@
     --card-lavender: #251f3d;
     --card-blue: #1a2438;
     --card-mint: #11231c;
+    --green-deep: #7be495; /* flips to light mint so color-mixed copy stays legible on dark */
     --peri-ink: #9db8f0;
     --violet-ink: #c3b1f2;
     --red-ink: #f08aa4;
@@ -305,7 +306,9 @@
   .local-card p {
     font-size: 10.5px;
     line-height: 1.45;
-    color: rgba(2, 69, 60, 0.62);
+    /* same as the real app: green-deep flips in dark, so a color-mix over
+       it keeps the body copy legible in both themes (was hardcoded 62% teal) */
+    color: color-mix(in srgb, var(--green-deep) 68%, transparent);
   }
 
   .main {

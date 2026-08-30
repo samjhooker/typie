@@ -1741,6 +1741,31 @@
     .c3 .cardCopy {
       max-width: none;
     }
+    /* phones: no scrollable-inside-scrollable — panes grow with the
+       page, the outer document owns all scrolling */
+    .shellPreview,
+    .transcriptPreview.shellPreview,
+    .aiPreview.shellPreview {
+      height: auto;
+      min-height: 0;
+    }
+    .wallScroll,
+    .tpTurns,
+    .aiPreview :global(.ai) {
+      height: auto;
+      max-height: none;
+      overflow: visible;
+    }
+    .aiPreview :global(.ai) {
+      position: static;
+      inset: auto;
+    }
+    .aiPreview {
+      min-height: 0;
+    }
+    .tpTurns::after {
+      display: none;
+    }
   }
   @media (max-width: 640px) {
     .grid {

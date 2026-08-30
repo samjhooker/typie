@@ -9,7 +9,7 @@
     },
     {
       h: 'It is open source',
-      p: 'The code lives at github.com/samjhooker/typie. There is no license attached, on purpose. Fork it, copy it, sell it, learn from it, do whatever. Half of this was built out of other people’s open source anyway. Let’s be real.',
+      p: 'The code lives at github.com/samjhooker/typie, licensed under MIT. Fork it, copy it, sell it, learn from it, do whatever. Half of this was built out of other people’s open source anyway. Let’s be real.',
     },
     {
       h: 'Your words',
