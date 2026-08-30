@@ -32,6 +32,24 @@ you ──hold ⌥──> mic ──> on-device ASR model ──> CGEvent keystr
 <img width="1632" height="774" alt="Screenshot 2026-08-30 at 5 15 46 PM" src="https://github.com/user-attachments/assets/1604ba28-6595-4e98-af3b-c80eab1f7cf9" />
 
 
+## the whole suite
+
+it's a dictation engine that kept adding jobs. one app, four tricks, zero cloud:
+
+- **talk to your mac.** hold the hotkey, speak, text lands at the cursor in under 100 ms. every app with a cursor, no per-app integrations.
+- **notes that file themselves.** quick thoughts become searchable voice notes. pin the good ones, export as markdown, find anything later.
+- **capture any call.** zoom, meet, phone calls, recorded straight off your mac's audio, then transcribed and split by speaker. no bot crashes the party.
+- **summaries written on your mac.** when a call (or any transcript) ends, the app writes the title, executive summary, key points and verbatim quotes — on-device via apple intelligence (macOS 26+), with a local heuristic fallback on older macOS.
+
+beyond the four:
+
+- **transcript library.** every recording, searchable and sortable, with click-a-word-to-seek playback and editable, persisted speaker labels. rename, export (md / txt / srt / vtt / json), delete.
+- **drop in a file.** drag any audio or video — mp3, m4a, wav, mp4 — and it's transcribed and diarized on-device straight into the library. several at once is fine.
+- **history.** the last 200 dictations, grouped by day, searchable, cleanly staged for deletion.
+- **stats.** lifetime words, dictations, audio seconds and time saved (counted at 35 wpm), plus a per-hour heatmap. all on this mac only.
+
+everything stays on-device: the dictation brain (~470 mb), the speaker-label "ears" (~22 mb, downloaded from transcripts), then the app never touches the internet again. no accounts, no bot in your calendar, no cloud round-trip.
+
 ## design decisions
 
 **one dependency: [FluidAudio](https://github.com/FluidInference/FluidAudio).**
