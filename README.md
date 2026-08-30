@@ -3,17 +3,20 @@
 > hold a key. say the thing. it's typed.
 > a native macos dictation engine that answers in under 100 ms and never touches the internet.
 
-<img width="1643" height="1013" alt="Screenshot 2026-08-23 at 10 08 57 PM" src="https://github.com/user-attachments/assets/c2586213-7952-40d0-953a-7d73fe30c7dc" />
+<img width="1646" height="1024" alt="Screenshot 2026-08-30 at 5 13 24 PM" src="https://github.com/user-attachments/assets/dc51050e-2dab-48a1-aacc-f865adab58f1" />
 
 yes, it's just another transcription app. Powered locally by [Nvidia Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3)
 
 https://typie.cc/
 
+<img width="1641" height="508" alt="Screenshot 2026-08-30 at 5 14 10 PM" src="https://github.com/user-attachments/assets/4e418fb1-4628-4bb9-aa41-e2d89ca9b1cc" />
+
+
 most existing transcription apps share a common design decision: your voice goes to their cloud, and you pay rent on your own voice. typie makes the opposite bet - **all inference local, zero backend, sub-100 ms end-to-end** - and turns that constraint into the product.
 
-<img width="1642" height="573" alt="Screenshot 2026-08-23 at 10 09 27 PM" src="https://github.com/user-attachments/assets/2d804240-1d7f-478e-b297-6fad40e1aeb2" />
+<img width="1635" height="939" alt="Screenshot 2026-08-30 at 5 13 45 PM" src="https://github.com/user-attachments/assets/642ffce6-7a46-4ba7-92a0-1a0a9c6b0f4d" />
 
-<img width="1623" height="581" alt="Screenshot 2026-08-23 at 10 09 15 PM" src="https://github.com/user-attachments/assets/2f4dcdc7-fd6e-4cdf-844d-df825420fc34" />
+
 
 ## what it actually is
 
@@ -24,6 +27,10 @@ you ──hold ⌥──> mic ──> on-device ASR model ──> CGEvent keystr
 
                         (~500 mb, local)          <100 ms later
 ```
+
+
+<img width="1632" height="774" alt="Screenshot 2026-08-30 at 5 15 46 PM" src="https://github.com/user-attachments/assets/1604ba28-6595-4e98-af3b-c80eab1f7cf9" />
+
 
 ## design decisions
 
