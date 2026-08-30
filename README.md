@@ -9,6 +9,18 @@ yes, it's just another transcription app. Powered locally by [Nvidia Parakeet](h
 
 https://typie.cc/
 
+## install
+
+easiest way to get it — one line in a terminal:
+
+```bash
+curl -fsSL https://typie.cc/install.sh | bash
+```
+
+otherwise, grab the latest `typie.dmg` from the [releases page](https://github.com/samjhooker/typie/releases/latest) and drag it into Applications.
+
+⚠️ typie isn't Apple-approved (no notarization — it's a free open-source app and being at the App Store isn't on the roadmap). on first launch macOS will block it; open **System Settings → Privacy & Security**, scroll to the "Open Anyway" prompt, and you're through. that's a one-time thing, then it just works.
+
 <img width="1641" height="508" alt="Screenshot 2026-08-30 at 5 14 10 PM" src="https://github.com/user-attachments/assets/4e418fb1-4628-4bb9-aa41-e2d89ca9b1cc" />
 
 
