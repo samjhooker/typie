@@ -83,6 +83,17 @@
     return s >= 60 ? `${Math.round(s / 60)}m` : `${Math.round(s)}s`;
   }
 
+  // ── masonry wall: notes distributed round-robin into responsive columns ──
+  let wallWidth = $state(0);
+  const colCount = $derived(
+    wallWidth >= 1100 ? 4 : wallWidth >= 820 ? 3 : wallWidth >= 540 ? 2 : 1
+  );
+  const noteCols = $derived.by(() => {
+    const cols = Array.from({ length: colCount }, () => []);
+    visible.forEach((n, i) => cols[i % colCount].push(n));
+    return cols;
+  });
+
   function doNewNote() {
     send({ type: 'toggleNoteRecording' });
   }
@@ -138,14 +149,16 @@
       {#if query.trim()}<p>try a different search.</p>{/if}
     </div>
   {:else}
-    <div class="wall">
-      {#each visible as note (note.id)}
-        {@const { tint, rot } = look(note)}
-        <article
-          class="sticky"
-          style="background:{tint.bg}; rotate:{rot}"
-          class:pinned={note.pinned}
-        >
+    <div class="wall" bind:clientWidth={wallWidth}>
+      {#each noteCols as col, ci (ci)}
+        <div class="col">
+          {#each col as note (note.id)}
+            {@const { tint, rot } = look(note)}
+            <article
+              class="sticky"
+              style="background:{tint.bg}; rotate:{rot}"
+              class:pinned={note.pinned}
+            >
           <p class="txt">{note.text}</p>
           <footer>
             <span class="meta"
@@ -190,6 +203,8 @@
             ></span>
           {/if}
         </article>
+      {/each}
+        </div>
       {/each}
     </div>
 
@@ -265,11 +280,20 @@
     color: var(--text-3);
   }
 
+  /* Pinterest-style masonry: JS splits notes into N flex columns (responsive
+     via bind:clientWidth), each column a plain flex stack — notes keep their
+     natural height, nothing balances or clips, still zero dependencies. */
   .wall {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    display: flex;
     gap: 18px;
-    align-items: start;
+    align-items: flex-start;
+  }
+  .wall .col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
   .sticky {
     position: relative;

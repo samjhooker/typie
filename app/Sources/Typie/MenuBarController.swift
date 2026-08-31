@@ -59,9 +59,32 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let settings = SettingsStore.shared
         let phase = DictationController.shared.phase
 
-        // version header (variant-tagged so dev/prod robots are tellable apart)
+        // ── app stuff first ──
+        menu.addItem(iconItem("Open Typie…", symbol: "house",
+            action: #selector(AppDelegate.openHome), key: "o", target: appDelegate))
+        menu.addItem(iconItem("Settings…", symbol: "gearshape",
+            action: #selector(AppDelegate.openSettings), key: ",", target: appDelegate))
+
+        if (DictationController.shared.lastGoodText ?? HistoryStore.shared.entries.first?.text) != nil {
+            menu.addItem(iconItem("Paste previous", symbol: "doc.on.doc",
+                action: #selector(AppDelegate.pasteLastTranscription), key: "p", target: appDelegate))
+        }
+
+        menu.addItem(.separator())
+
+        // ── the capture features ──
+        menu.addItem(iconItem("Start call recording", symbol: "record.circle",
+            action: #selector(AppDelegate.toggleMeetingRecording), key: "r", target: appDelegate))
+        menu.addItem(iconItem("Upload transcript…", symbol: "square.and.arrow.up",
+            action: #selector(AppDelegate.openTranscribe), key: "u", target: appDelegate))
+        menu.addItem(iconItem("Record a note", symbol: "mic",
+            action: #selector(AppDelegate.toggleNoteRecording), key: "n", target: appDelegate))
+
+        menu.addItem(.separator())
+
+        // ── the passive footer: version, readiness, stats, warnings ──
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
-        let versionItem = NSMenuItem(title: "\(AppVariant.displayName) v\(version)", action: nil, keyEquivalent: "")
+        let versionItem = iconItem("\(AppVariant.displayName) v\(version)", symbol: "info.circle", action: nil)
         versionItem.isEnabled = false
         menu.addItem(versionItem)
 
@@ -80,60 +103,49 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         case .done(let ms):
             statusText = ms >= 0 ? "typed in \(Int(ms))ms" : "nothing heard"
         }
-        let status = NSMenuItem(title: statusText, action: nil, keyEquivalent: "")
+        let status = iconItem(statusText, symbol: "waveform", action: nil)
         status.isEnabled = false
         menu.addItem(status)
 
         // a quiet little brag line from the stats vault
         let stats = StatsStore.shared
         if stats.totalWords > 0 {
-            let brag = NSMenuItem(
-                title: "\(stats.totalWords.formatted()) words dictated · \(StatsStore.formatDuration(stats.timeSavedSeconds)) saved",
-                action: #selector(AppDelegate.openStats), keyEquivalent: "")
-            brag.target = appDelegate
+            let brag = iconItem("\(stats.totalWords.formatted()) words dictated · \(StatsStore.formatDuration(stats.timeSavedSeconds)) saved",
+                symbol: "chart.bar", action: #selector(AppDelegate.openStats), target: appDelegate)
             menu.addItem(brag)
         }
 
         // loud, visible warning when the hotkey can never fire
         if !HotkeyMonitor.accessibilityGranted(prompt: false) {
-            let warn = NSMenuItem(
-                title: "⚠︎ accessibility permission missing, needed to paste text",
-                action: #selector(AppDelegate.openAccessibilitySettings), keyEquivalent: "")
-            warn.target = appDelegate
+            let warn = iconItem("accessibility permission missing, needed to paste text",
+                symbol: "exclamationmark.triangle",
+                action: #selector(AppDelegate.openAccessibilitySettings), target: appDelegate)
             menu.addItem(warn)
         }
 
         menu.addItem(.separator())
 
-        // quick re-paste of the last thing typie heard
-        if (DictationController.shared.lastGoodText ?? HistoryStore.shared.entries.first?.text) != nil {
-            let repaste = NSMenuItem(
-                title: "Paste previous",
-                action: #selector(AppDelegate.pasteLastTranscription), keyEquivalent: "p")
-            repaste.target = appDelegate
-            menu.addItem(repaste)
+        menu.addItem(iconItem("Run Setup Again…", symbol: "arrow.counterclockwise",
+            action: #selector(AppDelegate.showOnboarding), target: appDelegate))
+        menu.addItem(iconItem("Quit typie", symbol: "power",
+            action: #selector(NSApplication.terminate(_:)), key: "q"))
+    }
+
+    /// menu row with an SF Symbol icon — every row gets one so the menu
+    /// reads consistently (SF Symbols render as templates, matching the
+    /// menu's light/dark appearance automatically)
+    private func iconItem(
+        _ title: String, symbol: String,
+        action: Selector?, key: String = "", target: AnyObject? = nil
+    ) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        if let target, action != nil { item.target = target }
+        if let img = NSImage(systemSymbolName: symbol, accessibilityDescription: title)?
+            .withSymbolConfiguration(.init(pointSize: 12, weight: .regular)) {
+            img.isTemplate = true
+            item.image = img
         }
-
-        let openItem = NSMenuItem(
-            title: "Open Typie…", action: #selector(AppDelegate.openHome), keyEquivalent: "o")
-        openItem.target = appDelegate
-        openItem.keyEquivalentModifierMask = [.command]
-        menu.addItem(openItem)
-
-        let settingsItem = NSMenuItem(
-            title: "Settings…", action: #selector(AppDelegate.openSettings), keyEquivalent: ",")
-        settingsItem.target = appDelegate
-        menu.addItem(settingsItem)
-
-        let welcome = NSMenuItem(
-            title: "Run Setup Again…", action: #selector(AppDelegate.showOnboarding), keyEquivalent: "")
-        welcome.target = appDelegate
-        menu.addItem(welcome)
-
-        menu.addItem(.separator())
-
-        let quit = NSMenuItem(title: "Quit typie", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        menu.addItem(quit)
+        return item
     }
 
     /// Draws the robot glyph for the menu bar. Tint nil = black template

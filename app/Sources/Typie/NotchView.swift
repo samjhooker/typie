@@ -15,6 +15,11 @@ struct NotchView: View {
     @State private var pulse = false
     @State private var loadTick = 0
     @State private var barPhase = false
+    // triple-click robot easter egg: backflip
+    @State private var robotFlips: Double = 0
+    @State private var robotHop: CGFloat = 0
+    @State private var robotTaps: [Date] = []
+    @State private var robotOpenTask: Task<Void, Never>?
 
     var body: some View {
         GeometryReader { geo in
@@ -91,31 +96,104 @@ struct NotchView: View {
 
     private var robotButton: some View {
         Button {
-            ShelfController.shared.onOpenApp?()
-            ShelfController.shared.plusMenuVisible = false
-            AppLog.event("notch: robot clicked, open app")
+            handleRobotTap()
         } label: {
             RobotIcon(mood: robotMood)
                 .frame(width: 24, height: 23)
                 .scaleEffect(pulse && phase == .listening ? 1.08 : 1.0)
+                .rotation3DEffect(
+                    .degrees(robotFlips),
+                    axis: (x: 1, y: 0, z: 0),
+                    perspective: 0.6
+                )
+                .offset(y: robotHop)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
-        .help("Typie, click to open")
+        .help("Typie, click to open · triple-click for flair")
         // right-click still offers the quick menu
         .contextMenu { robotMenuContent }
     }
 
+    /// single click opens the app (delayed just long enough to notice a
+    /// triple-click), three quick taps send the robot into a backflip
+    private func handleRobotTap() {
+        let now = Date()
+        robotTaps.append(now)
+        robotTaps = robotTaps.filter { now.timeIntervalSince($0) < 0.5 }
+        robotOpenTask?.cancel()
+        if robotTaps.count >= 3 {
+            robotTaps = []
+            backflip()
+            return
+        }
+        robotOpenTask = Task {
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            guard !Task.isCancelled else { return }
+            ShelfController.shared.onOpenApp?()
+            ShelfController.shared.plusMenuVisible = false
+            AppLog.event("notch: robot clicked, open app")
+        }
+    }
+
+    /// tuck-and-rotate up over the first half, land the second half
+    private func backflip() {
+        AppLog.event("notch: robot backflip 🤸")
+        withAnimation(.easeIn(duration: 0.22)) {
+            robotFlips -= 180
+            robotHop = -9
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
+            withAnimation(.spring(response: 0.38, dampingFraction: 0.5)) {
+                robotFlips -= 180
+                robotHop = 0
+            }
+        }
+    }
+
+    /// natural order: app stuff first, then the capture features,
+    /// then the passive info block — everything else is decoration
     @ViewBuilder private var robotMenuContent: some View {
         Button("Open Typie") { ShelfController.shared.onOpenApp?() }
-        Divider()
-        Button("Quick note") { NoteStore.shared.startRecording() }
-        Button("Screen recording") { MeetingController.shared.start() }
-        Button("Upload transcript…") { ShelfController.shared.requestTranscribeFile() }
-        Divider()
         Button("Settings…") { ShelfController.shared.onOpenAppPane?("settings") }
+        Button("Paste previous") { pastePrevious() }
+        Divider()
+        Button("Start call recording") { MeetingController.shared.start() }
+        Button("Upload transcript…") { ShelfController.shared.requestTranscribeFile() }
+        Button("Record a note") { NoteStore.shared.startRecording() }
+        Divider()
+        ForEach(menuInfoLines(), id: \.self) { line in
+            Button(line) {}
+                .disabled(true)
+        }
+        Divider()
         Button("Quit Typie") { NSApplication.shared.terminate(nil) }
+    }
+
+    /// re-paste whatever typie heard last, at the cursor
+    private func pastePrevious() {
+        if let text = DictationController.shared.lastGoodText
+            ?? HistoryStore.shared.entries.first?.text {
+            TextInserter.paste(text)
+            AppLog.event("menu: re-pasting previous transcription")
+        }
+    }
+
+    /// the quiet footer: version, readiness, lifetime stats
+    private func menuInfoLines() -> [String] {
+        let version = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.0.0"
+        var lines = ["typie \(version)"]
+        switch ModelManager.shared.status {
+        case .ready: lines.append("ready to go")
+        case .loading: lines.append("warming up…")
+        case .downloading: lines.append("downloading model…")
+        case .notDownloaded: lines.append("model not downloaded")
+        case .failed: lines.append("model error")
+        }
+        let stats = StatsStore.shared.snapshot
+        lines.append("\(stats.totalWords.formatted()) words · \(stats.totalDictations) dictations")
+        return lines
     }
 
     private func showRobotMenu() {
@@ -180,16 +258,15 @@ struct NotchView: View {
                 case .transcribing:
                     LoadingDots(tick: loadTick)
                 case .done(let ms):
+                    // icons only: the latency readout lives in the app's
+                    // history pane, the notch stays quiet
                     if ms >= 0 {
                         Image(systemName: "checkmark")
                             .font(.system(size: 11, weight: .black))
                             .foregroundStyle(Theme.mintLive)
-                        Text("\(Int(ms))ms")
-                            .font(Theme.mono(11))
-                            .foregroundStyle(Theme.mintLive)
                     } else {
-                        Text("…hmm")
-                            .font(Theme.hand(16))
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 11, weight: .black))
                             .foregroundStyle(Theme.pink)
                     }
                 default:
@@ -211,21 +288,15 @@ struct NotchView: View {
                 onPauseToggle: { meeting.togglePause() },
                 onStop: { meeting.stopAndProcess() }
             )
-        } else if meeting.processing || noteStore.processing {
-            HStack(spacing: 10) {
-                LoadingDots(tick: loadTick)
-                Text(meeting.lastError ?? noteStore.lastError ?? "writing it down…")
-                    .font(Theme.mono(10))
-                    .foregroundStyle(
-                        (meeting.lastError ?? noteStore.lastError) != nil
-                            ? Theme.pink : Color.white.opacity(0.75)
-                    )
-            }
         } else {
             // idle shelf: single + button at right end, matches mock (robot left, + right)
+            // NB: post-stop processing (sealing/mixing the wav, transcribing a
+            // note) deliberately shows NOTHING here — it's usually sub-second
+            // and a yellow flash reads as glitchy. The notch quietly collapses
+            // and the result lands in the library.
             if shelf.activeTool == .transcribeFile || DiarizeStore.shared.busy {
                 HStack(spacing: 8) {
-                    TranscribeStatus()
+                    TranscribeStatus(tick: loadTick)
                 }
             } else {
                 PlusButton(active: shelf.plusMenuVisible)
@@ -254,7 +325,6 @@ struct NotchView: View {
     private var isVisible: Bool {
         isDictating || shelf.hoverExpanded || shelf.isPinnedOpen
             || noteStore.isRecording || meeting.isCapturing
-            || meeting.processing || noteStore.processing
     }
 
     private var robotMood: RobotMood {
@@ -433,6 +503,10 @@ private struct MeetingRecordButton: View {
             .scaleEffect(hovering ? 1 : 0.4)
         }
         .frame(width: 42, height: 24)
+        // whole footprint is the target: without this, hit-testing covers
+        // only the ring stroke + dot, so hovering the hollow center or the
+        // gaps silently fails to trigger the morph
+        .contentShape(Rectangle())
         .onHover { h in
             withAnimation(Theme.springy) { hovering = h }
         }
@@ -553,32 +627,45 @@ struct ToolButton: View {
 }
 
 /// Compact live status for a running F3 job, shown in the shelf's slot.
+/// ICONS ONLY by design: stage names and percentages live in the app
+/// window's transcribe pane, the notch just glows while it works.
 struct TranscribeStatus: View {
     @ObservedObject private var store = DiarizeStore.shared
+    /// parent's 0.16s clock, keeps the dots animating
+    let tick: Int
 
     var body: some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(Theme.mintLive)
-                .frame(width: 5, height: 5)
-            Text(shortStage)
-                .font(Theme.mono(9))
-                .foregroundStyle(.white.opacity(0.75))
-                .lineLimit(1)
+        HStack(spacing: 7) {
+            Image(nsImage: Lucide.image("file-text", pointSize: 24))
+                .renderingMode(.template)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 12, height: 12)
+                .foregroundStyle(.white.opacity(0.85))
             if let progress = store.progress {
-                Text("\(Int(progress * 100))%")
-                    .font(Theme.mono(9))
-                    .foregroundStyle(Theme.mintLive)
+                ProgressRing(fraction: progress)
+            } else {
+                LoadingDots(tick: tick)
             }
         }
         .fixedSize()
     }
+}
 
-    private var shortStage: String {
-        if store.errorText != nil { return "failed" }
-        switch store.stage {
-        case "": return "working"
-        default: return store.stage
+/// Tiny circular progress indicator, reads as an icon not a readout.
+struct ProgressRing: View {
+    let fraction: Double
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.white.opacity(0.18), lineWidth: 2)
+            Circle()
+                .trim(from: 0, to: max(0.02, min(1, fraction)))
+                .stroke(Theme.mintLive, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .rotationEffect(.degrees(-90))
         }
+        .frame(width: 12, height: 12)
+        .animation(.easeInOut(duration: 0.3), value: fraction)
     }
 }

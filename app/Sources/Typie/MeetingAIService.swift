@@ -161,6 +161,10 @@ final class MeetingAIService: ObservableObject {
     /// produced it ("foundationmodels" | "heuristic") so callers can label
     /// output honestly instead of passing heuristics off as AI.
     func generate(for transcript: StoredTranscript, progress: ((Int, Int) -> Void)? = nil) async -> (result: AIResult, engine: String)? {
+        guard SettingsStore.shared.aiEnabled else {
+            AppLog.event("ai: skipped for \"\(transcript.fileName)\", disabled in settings")
+            return nil
+        }
         let text = formattedTranscript(transcript)
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             AppLog.event("ai: empty transcript, skipping")
@@ -507,9 +511,15 @@ final class MeetingAIService: ObservableObject {
                 if abs(hit.startSeconds - snapped) > 60 { snapped = hit.startSeconds }
             }
             var points: [AIPoint] = []
+            var seenPoints = Set<String>()
             if let pts = d["points"] as? [[String: Any]] {
                 for p in pts {
                     guard let text = p["text"] as? String else { continue }
+                    // models occasionally echo prompt fragments as duplicate
+                    // points; the UI keys points by text+start, so a dupe
+                    // crashes the svelte each-block. drop exact repeats here.
+                    let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !normalized.isEmpty, seenPoints.insert(normalized).inserted else { continue }
                     // try verbatim locate for point text first
                     if let hit = locateTurn(forText: text, speakerHint: nil, transcript: transcript) {
                         pointAnchors.append(hit.startSeconds)

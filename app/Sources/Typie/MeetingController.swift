@@ -61,6 +61,10 @@ final class MeetingController: ObservableObject {
         guard !isCapturing else { return }
         guard !processing else { fail("still filing the previous meeting") ; return }
         guard ModelManager.modelsExist() else { return fail("model not downloaded yet") }
+        // self-heal: state may still be .unknown on a fresh launch if no app
+        // window has pushed state yet; models on disk flip it to .ready
+        // (the manager itself warms in the background) instead of failing
+        DiarizeStore.shared.refreshModelState()
         guard DiarizeStore.shared.isReady else { return fail("diarizer model not ready, download it from transcripts") }
         guard AudioCapture.micPermissionGranted() else { return fail("microphone permission missing") }
 
@@ -126,6 +130,14 @@ final class MeetingController: ObservableObject {
         startedAt = nil
         removeEscToStop()
         SoundPlayer.playRelease()
+        // release the shelf pin NOW so the notch collapses right away,
+        // like a voice note does. transcription continues in the
+        // background and the result lands in the library — the notch has
+        // no business showing a spinner for the whole pipeline run.
+        clearShelfPin()
+        // take the user straight to the library, where the meeting lands
+        // (and where the queue shows its progress meanwhile)
+        ShelfController.shared.onOpenAppPane?("transcripts")
 
         let wantMic = SettingsStore.shared.meetingMixMic
         let micSamples = wantMic ? micCapture.stop() : []

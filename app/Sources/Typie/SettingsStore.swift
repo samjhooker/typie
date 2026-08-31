@@ -100,6 +100,12 @@ final class SettingsStore: ObservableObject {
     @Published var transcriptsKeepAudio: Bool {
         didSet { defaults.set(transcriptsKeepAudio, forKey: "transcriptsKeepAudio") }
     }
+    /// Apple Intelligence features (AI summaries, breakdowns, fix-with-AI).
+    /// Default ON — it's on-device, free, and only runs when the OS offers
+    /// it; the toggle just lets people opt out of the wait times.
+    @Published var aiEnabled: Bool {
+        didSet { defaults.set(aiEnabled, forKey: "aiEnabled") }
+    }
     /// "system" (follows macOS) | "light" | "dark", webui + window chrome
     @Published var appearance: String {
         didSet {
@@ -129,6 +135,7 @@ final class SettingsStore: ObservableObject {
         // default ON, both sides of every call, out of the box
         meetingMixMic = defaults.object(forKey: "meetingMixMic") as? Bool ?? true
         transcriptsKeepAudio = defaults.object(forKey: "transcriptsKeepAudio") as? Bool ?? true
+        aiEnabled = defaults.object(forKey: "aiEnabled") as? Bool ?? true
         appearance = defaults.string(forKey: "appearance") ?? "system"
         Self.applyAppearance(appearance)
     }

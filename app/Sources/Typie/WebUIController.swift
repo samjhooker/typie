@@ -198,19 +198,23 @@ final class WebUIController: NSObject, NSWindowDelegate {
         let view = WKWebView(frame: .zero, configuration: config)
         // no white flash before the first paint of the page
         view.setValue(false, forKey: "drawsBackground")
-        view.underPageBackgroundColor = NSColor(Theme.cream)
+        // paper = sidebar grey, the darkest chrome in light mode
+        view.underPageBackgroundColor = NSColor(Theme.paper)
         webView = view
 
         let win = NSWindow(
             contentRect: NSRect(origin: .zero, size: size),
-            styleMask: [.titled, .closable],
+            styleMask: [.titled, .closable, .resizable],
             backing: .buffered,
             defer: false
         )
+        // the default opening size is effectively the floor — the layout
+        // gets cramped fast below it, so don't let users go tiny
+        win.minSize = NSSize(width: min(1180, size.width), height: min(740, size.height))
         win.title = title
         win.isReleasedWhenClosed = false
-        // near-white page color, so the title bar blends with the web UI
-        win.backgroundColor = NSColor(Theme.cream)
+        // sidebar grey = darkest chrome in light mode, matches the theme sync
+        win.backgroundColor = NSColor(Theme.paper)
         // appearance comes from NSApp (SettingsStore.appearance), not forced
         win.contentView = view
         win.center()
@@ -376,6 +380,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                 "launchAtLogin": settings.launchAtLogin,
                 "notesKeepAudio": settings.notesKeepAudio,
                 "meetingMixMic": settings.meetingMixMic,
+                "aiEnabled": settings.aiEnabled,
                 "transcriptsKeepAudio": settings.transcriptsKeepAudio,
                 "appearance": settings.appearance,
             ],
@@ -442,6 +447,9 @@ final class WebUIController: NSObject, NSWindowDelegate {
                     "aiSections": (transcript.aiSections ?? []).map { s in ["title": s.title, "start": s.startSeconds, "ts": s.timestampLabel, "points": s.points.map { p in ["text": p.text, "start": p.startSeconds] as [String: Any] }] as [String: Any] },
                     "aiQuotes": (transcript.aiQuotes ?? []).map { q in ["text": q.text, "speaker": q.speaker, "start": q.startSeconds, "ts": q.timestampLabel] as [String: Any] },
                     "aiActions": (transcript.aiActions ?? []).map { a in ["speaker": a.speaker, "text": a.text, "start": a.startSeconds, "ts": a.timestampLabel] as [String: Any] },
+                    "annotations": (transcript.annotations ?? []).map { a in
+                        ["id": a.id.uuidString, "kind": a.kind, "text": a.text, "note": a.note, "color": a.color ?? "", "start": a.startSeconds, "end": a.endSeconds] as [String: Any]
+                    },
                     "aiProgress": transcript.aiProgress ?? -1,
                 ] as [String: Any]
             },
@@ -622,8 +630,8 @@ final class WebUIController: NSObject, NSWindowDelegate {
     // MARK: transcribe job queue (multiple uploads processed back-to-back)
     // the queue itself lives in DiarizeStore so meetings + uploads share it
 
-    private static func uuid(from body: [String: Any]) -> UUID? {
-        (body["id"] as? String).flatMap(UUID.init(uuidString:))
+    private static func uuid(from body: [String: Any], key: String = "id") -> UUID? {
+        (body[key] as? String).flatMap(UUID.init(uuidString:))
     }
 
     private func phaseString(_ phase: DictationPhase) -> String {
@@ -887,6 +895,9 @@ extension WebUIController: WKNavigationDelegate {
                     "aiSections": (t.aiSections ?? []).map { s in ["title": s.title, "start": s.startSeconds, "ts": s.timestampLabel, "points": s.points.map { p in ["text": p.text, "start": p.startSeconds] as [String: Any] }] as [String: Any] },
                     "aiQuotes": (t.aiQuotes ?? []).map { q in ["text": q.text, "speaker": q.speaker, "start": q.startSeconds, "ts": q.timestampLabel] as [String: Any] },
                     "aiActions": (t.aiActions ?? []).map { a in ["speaker": a.speaker, "text": a.text, "start": a.startSeconds, "ts": a.timestampLabel] as [String: Any] },
+                    "annotations": (t.annotations ?? []).map { a in
+                        ["id": a.id.uuidString, "kind": a.kind, "text": a.text, "note": a.note, "color": a.color ?? "", "start": a.startSeconds, "end": a.endSeconds] as [String: Any]
+                    },
                     "aiProgress": t.aiProgress ?? -1,
                     "turns": t.turns.map { turn in
                         [
@@ -915,6 +926,25 @@ extension WebUIController: WKNavigationDelegate {
                 }
             }
 
+        case "transcriptAnnotate":
+            if let id = Self.uuid(from: body),
+               let kind = body["kind"] as? String,
+               let text = body["text"] as? String {
+                let note = body["note"] as? String ?? ""
+                let color = body["color"] as? String
+                let start = body["start"] as? Double ?? 0
+                let end = body["end"] as? Double ?? start
+                TranscriptStore.shared.annotate(
+                    id, kind: kind, text: text, note: note,
+                    start: start, end: end, color: color)
+            }
+
+        case "transcriptUnannotate":
+            if let id = Self.uuid(from: body),
+               let annotationId = Self.uuid(from: body, key: "annotationId") {
+                TranscriptStore.shared.removeAnnotation(id, annotationId: annotationId)
+            }
+
         case "transcriptGenerateAI":
             // explicit user action, heuristics allowed when the real model
             // is unavailable, because they asked for it
@@ -937,10 +967,12 @@ extension WebUIController: WKNavigationDelegate {
 
     /// Window chrome follows the web theme: title bar + under-page color.
     /// JS sends `windowTheme {dark}` whenever data-theme flips.
+    /// Light mode uses the SIDEBAR grey (Theme.paper) — Sam wants the top
+    /// bar to read as the darkest chrome on the page, not the page colour.
     private func syncWindowChrome(dark: Bool) {
         let page = dark
             ? NSColor(red: 0.047, green: 0.051, blue: 0.067, alpha: 1) // #0c0d11
-            : NSColor(Theme.cream)
+            : NSColor(Theme.paper)
         webView.underPageBackgroundColor = page
         window.backgroundColor = page
     }
@@ -958,6 +990,11 @@ extension WebUIController: WKNavigationDelegate {
             if let bool = value as? Bool { settings.launchAtLogin = bool }
         case "notesKeepAudio":
             if let bool = value as? Bool { settings.notesKeepAudio = bool }
+        case "aiEnabled":
+            if let bool = value as? Bool {
+                settings.aiEnabled = bool
+                AppLog.event("settings: apple intelligence \(bool ? "enabled" : "disabled")")
+            }
         case "meetingMixMic":
             if let bool = value as? Bool { settings.meetingMixMic = bool }
         case "transcriptsKeepAudio":

@@ -64,6 +64,36 @@
     }
   });
   const visible = $derived(sorted.slice(0, shown));
+
+  // ── day-grouped compact rows (today / yesterday / this week / earlier) ──
+  const DAY_ORDER = ['today', 'yesterday', 'this week', 'earlier'];
+  function dayBucket(dateStr) {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const day = 86400000;
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const age = startOfToday - new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if (age <= 0) return 'today';
+    if (age <= day) return 'yesterday';
+    if (age <= 6 * day) return 'this week';
+    return 'earlier';
+  }
+  const groups = $derived.by(() => {
+    const map = new Map();
+    for (const item of visible) {
+      // duration sort ignores day buckets — a single ranked list there
+      const key = sortBy === 'longest' ? 'all' : dayBucket(item.date);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(item);
+    }
+    return [...map.entries()]
+      .sort(
+        (a, b) =>
+          (DAY_ORDER.indexOf(a[0]) + 99) % 99 -
+          ((DAY_ORDER.indexOf(b[0]) + 99) % 99)
+      )
+      .map(([label, items]) => ({ label, items }));
+  });
   // any change to search/order resets paging back to the first page
   $effect(() => {
     query;
@@ -96,7 +126,10 @@
     }
     if (waitList.some((q) => q.name === item.fileName))
       return { cls: 'wait', label: 'in queue' };
-    return { cls: 'wait', label: 'warming up…' };
+    // not queued and still no words: the job finished but captured nothing
+    // transcribable (e.g. a call recorded against silence) — an honest
+    // dead-end, not "warming up" forever
+    return { cls: 'wait', label: 'no speech captured' };
   }
 
   function fmtDur(s) {
@@ -434,84 +467,95 @@
             >
           </div>
         {:else}
-          <div class="grid">
-            {#each visible as item (item.id)}
-              {@const st = item.turnCount > 0 ? null : statusOf(item)}
-              <button
-                class="tcard card"
-                onclick={() => (local.selectedTranscriptId = item.id)}
+          {#each groups as g (g.label)}
+            <div class="daygroup">
+              <h5 class="day-kicker mono-kicker"
+                >{g.label} · {g.items.length}</h5
               >
-                <div class="top">
-                  <span
-                    class="ico"
-                    class:meeting={item.isMeeting}
+              <div class="rows">
+                {#each g.items as item (item.id)}
+                  {@const st = item.turnCount > 0 ? null : statusOf(item)}
+                  <button
+                    class="trow card"
+                    onclick={() => (local.selectedTranscriptId = item.id)}
                   >
-                    <Glyph
-                      name={item.isMeeting ? 'record' : 'transcript'}
-                      size={15}
-                    />
-                  </span>
-                  <span class="chips">
-                    {#if st}
-                      <span class="chip st {st.cls}"
-                        ><Loader2 size={11} /> {st.label}</span
+                    <span
+                      class="ico"
+                      class:meeting={item.isMeeting}
+                    >
+                      <Glyph
+                        name={item.isMeeting ? 'record' : 'transcript'}
+                        size={15}
+                      />
+                    </span>
+                    <div class="tmain">
+                      <h4>
+                        <InlineEdit
+                          value={item.fileName}
+                          onSave={(v) =>
+                            send({
+                              type: 'transcriptsRename',
+                              id: item.id,
+                              name: v,
+                            })}
+                        />
+                      </h4>
+                      <p class="meta">
+                        {fmtDateSmart(item.date)}{item.durationSeconds > 1
+                          ? ` · ${fmtDur(item.durationSeconds)}`
+                          : ''}{item.speakerCount > 0
+                          ? ` · ${item.speakerCount} spk`
+                          : ''}
+                      </p>
+                    </div>
+                    <p class="peek">{item.preview}</p>
+                    <span class="chips">
+                      {#if st}
+                        <span class="chip st {st.cls}"
+                          ><Loader2 size={11} /> {st.label}</span
+                        >
+                      {:else if !local.openedIds[item.id]}
+                        <span class="chip new">new</span>
+                      {/if}
+                    </span>
+                    <span class="acts">
+                      <span
+                        class="icon-btn"
+                        role="button"
+                        tabindex="0"
+                        title="export markdown"
+                        onkeydown={(e) =>
+                          e.key === 'Enter' &&
+                          (e.stopPropagation(),
+                          send({
+                            type: 'transcriptExport',
+                            id: item.id,
+                            format: 'md',
+                          }))}
+                        onclick={(e) => {
+                          e.stopPropagation();
+                          send({
+                            type: 'transcriptExport',
+                            id: item.id,
+                            format: 'md',
+                          });
+                        }}><Download size={13} /></span
                       >
-                    {:else if !local.openedIds[item.id]}
-                      <span class="chip new">new</span>
-                    {/if}
-                  </span>
-                </div>
-                <h4>
-                  <InlineEdit
-                    value={item.fileName}
-                    onSave={(v) =>
-                      send({ type: 'transcriptsRename', id: item.id, name: v })}
-                  />
-                </h4>
-                <p class="meta">
-                  {fmtDateSmart(item.date)}{item.durationSeconds > 1
-                    ? ` · ${fmtDur(item.durationSeconds)}`
-                    : ''}{item.speakerCount > 0
-                    ? ` · ${item.speakerCount} spk`
-                    : ''}
-                </p>
-                <p class="peek">{item.preview}</p>
-                <span class="acts">
-                  <span
-                    class="icon-btn"
-                    role="button"
-                    tabindex="0"
-                    title="export markdown"
-                    onkeydown={(e) =>
-                      e.key === 'Enter' &&
-                      (e.stopPropagation(),
-                      send({
-                        type: 'transcriptExport',
-                        id: item.id,
-                        format: 'md',
-                      }))}
-                    onclick={(e) => {
-                      e.stopPropagation();
-                      send({
-                        type: 'transcriptExport',
-                        id: item.id,
-                        format: 'md',
-                      });
-                    }}><Download size={13} /></span
-                  >
-                  <span
-                    class="icon-btn"
-                    role="button"
-                    tabindex="0"
-                    title="delete"
-                    onkeydown={(e) => e.key === 'Enter' && onDelete(e, item)}
-                    onclick={(e) => onDelete(e, item)}
-                    ><Trash2 size={13} /></span
-                  >
-                </span>
-              </button>
-            {/each}
-          </div>
+                      <span
+                        class="icon-btn"
+                        role="button"
+                        tabindex="0"
+                        title="delete"
+                        onkeydown={(e) => e.key === 'Enter' && onDelete(e, item)}
+                        onclick={(e) => onDelete(e, item)}
+                        ><Trash2 size={13} /></span
+                      >
+                    </span>
+                  </button>
+                {/each}
+              </div>
+            </div>
+          {/each}
 
           {#if visible.length < sorted.length}
             <button
@@ -866,6 +910,73 @@
   .big {
     font-size: 26px;
     color: var(--ink);
+  }
+
+  /* day-grouped compact rows — scannable like a table */
+  .daygroup {
+    margin-bottom: 22px;
+  }
+  .day-kicker {
+    margin: 0 0 8px 2px;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .trow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .trow .ico {
+    flex-shrink: 0;
+  }
+  .trow .tmain {
+    flex: none;
+    width: 220px;
+    min-width: 0;
+  }
+  .trow h4 {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .trow .meta {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: var(--text-3);
+  }
+  .trow .peek {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .trow .chips {
+    flex-shrink: 0;
+  }
+  .trow .acts {
+    flex-shrink: 0;
+    display: inline-flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s var(--ease-out);
+  }
+  .trow:hover .acts {
+    opacity: 1;
   }
 
   .grid {

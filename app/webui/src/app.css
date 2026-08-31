@@ -90,12 +90,12 @@
   --card-mint: #dff0e4;
 
   /* speaker palette (diarized turns) */
-  --sp1: #fc5681;
-  --sp2: #6f8ffb;
-  --sp3: #c88cfd;
-  --sp4: #ff9124;
-  --sp5: #03594d;
-  --sp6: #e59e12;
+  --sp1: #ffb1c9;
+  --sp2: #9ec5ff;
+  --sp3: #d4bfff;
+  --sp4: #ffd6a5;
+  --sp5: #b5ead7;
+  --sp6: #fff1b8;
 
   /* dark "ink" variants of the accents, for text/icons ON a tint of
      the same hue (sky chip needs a deeper blue than periwinkle) */

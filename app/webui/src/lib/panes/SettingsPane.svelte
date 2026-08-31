@@ -2,13 +2,12 @@
   import {
     ui,
     send,
-    timeSavedSeconds,
     formatDuration,
-    formatLatency,
   } from '../bridge.svelte.js';
   import Keycap from '../Keycap.svelte';
   import TriggerPicker from '../TriggerPicker.svelte';
   import Toggle from '../Toggle.svelte';
+  import { ToggleGroup } from 'bits-ui';
   import {
     FolderOpen,
     Mic,
@@ -16,8 +15,8 @@
     Rocket,
     Lock,
     AudioLines,
-    BarChart3,
     SunMoon,
+    Sparkles,
   } from 'lucide-svelte';
 
   function fmtBytes(b) {
@@ -26,37 +25,6 @@
     return gb >= 1 ? `${gb.toFixed(1)} gb` : `${Math.round(b / 1024 ** 2)} mb`;
   }
 
-  // ── stats, re-implanted from StatsPane so Settings owns the receipts ──
-  const stats = $derived(ui.stats);
-  const timeSaved = $derived(timeSavedSeconds(stats));
-  const dictations = $derived(stats.totalDictations);
-  const words = $derived(stats.totalWords);
-
-  const days = $derived.by(() => {
-    const out = [];
-    const now = new Date();
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-      out.push({
-        date: d,
-        label: d.toLocaleDateString(undefined, { weekday: 'narrow' }),
-        count: 0,
-      });
-    }
-    for (const h of ui.history) {
-      const d = new Date(h.date);
-      const slot = out.find(
-        (o) =>
-          o.date.getFullYear() === d.getFullYear() &&
-          o.date.getMonth() === d.getMonth() &&
-          o.date.getDate() === d.getDate()
-      );
-      if (slot) slot.count++;
-    }
-    return out;
-  });
-  const maxCount = $derived(Math.max(1, ...days.map((d) => d.count)));
-  const activeDays = $derived(days.filter((d) => d.count > 0).length);
 
   const hours = $derived.by(() => {
     const buckets = Array(24).fill(0);
@@ -103,24 +71,26 @@
         <strong>appearance</strong>
         <span>follows your mac by default</span>
       </div>
-      <div
-        class="seg"
-        role="radiogroup"
+      <ToggleGroup.Root
+        type="single"
+        value={ui.settings.appearance}
+        onValueChange={(v) => {
+          if (v) send({ type: 'setSetting', key: 'appearance', value: v });
+        }}
+        class="ap-seg"
         aria-label="appearance"
       >
         {#each [['light', 'light'], ['dark', 'dark']] as [value, label]}
           <!-- no explicit system option, until you pick, follows your Mac -->
-          <button
-            class:on={ui.settings.appearance === value}
-            role="radio"
-            aria-checked={ui.settings.appearance === value}
-            onclick={() =>
-              send({ type: 'setSetting', key: 'appearance', value })}
+          <ToggleGroup.Item
+            value={value}
+            class="ap-segitem {ui.settings.appearance === value ? 'on' : ''}"
+            aria-label={label}
           >
             {label}
-          </button>
+          </ToggleGroup.Item>
         {/each}
-      </div>
+      </ToggleGroup.Root>
     </div>
     <div class="row">
       <div class="rowtxt">
@@ -172,6 +142,38 @@
     </div>
   </section>
 
+  <!-- apple intelligence -->
+  <section class="card">
+    <h3>
+      <span
+        class="ico"
+        style="background:var(--card-lavender, var(--card-grey)); color:#6d28d9"
+        ><Sparkles size={15} /></span
+      > apple intelligence
+    </h3>
+    <div class="row">
+      <div class="rowtxt">
+        <strong>ai summaries & fix</strong>
+        <span>
+          on-device Apple Intelligence adds AI titles, summaries, breakdowns
+          and fix-with-AI to your transcripts. pretty slow, but pretty smart —
+          and nothing ever leaves your Mac.
+        </span>
+        <span class="ai-note">
+          {#if ui.aiSettingSupported}
+            needs macOS 26 or newer, with Apple Intelligence enabled in
+            System Settings. if it's off there, the toggle has no effect.
+          {:else}
+            this Mac doesn't offer Apple Intelligence right now — it needs
+            macOS 26 or newer with Apple Intelligence enabled in System
+            Settings — so this toggle has no effect.
+          {/if}
+        </span>
+      </div>
+      <Toggle setting="aiEnabled" />
+    </div>
+  </section>
+
   <!-- storage -->
   <section class="card">
     <h3>
@@ -196,97 +198,6 @@
   </section>
 
   <!-- stats, formerly its own pane, now lives in Settings -->
-  <section class="card stats-sec">
-    <h3>
-      <span
-        class="ico"
-        style="background:var(--card-blue); color:var(--peri-ink)"
-        ><BarChart3 size={15} /></span
-      > stats
-    </h3>
-    {#if dictations === 0}
-      <div class="stats-empty">
-        <span class="hand big">no stats yet, start dictating!</span>
-        <p>this page fills itself in as you talk.</p>
-      </div>
-    {:else}
-      <div class="stats-cards">
-        <div class="stat pink">
-          <span class="mono-kicker">time saved</span>
-          <strong>{formatDuration(timeSaved)}</strong>
-          <p>vs typing it all by hand at 35 wpm</p>
-        </div>
-        <div class="stat blue">
-          <span class="mono-kicker">words dictated</span>
-          <strong>{words.toLocaleString()}</strong>
-          <p>across {dictations.toLocaleString()} dictations</p>
-        </div>
-        <div class="stat mint">
-          <span class="mono-kicker">time on mic</span>
-          <strong>{formatDuration(stats.totalAudioSeconds)}</strong>
-          <p>of pure talking</p>
-        </div>
-        <div class="stat butter">
-          <span class="mono-kicker">avg latency</span>
-          <strong>{formatLatency(stats.avgLatencyMs)}</strong>
-          <p>key release → text on screen</p>
-        </div>
-      </div>
-      <div class="stats-grid2">
-        <div class="panel">
-          <h4>last two weeks</h4>
-          <div class="bars">
-            {#each days as d, i (i)}
-              <div
-                class="barcol"
-                title="{d.date.toLocaleDateString()} · {d.count} dictation{d.count ===
-                1
-                  ? ''
-                  : 's'}"
-              >
-                <div
-                  class="bar"
-                  class:hot={d.count === maxCount && d.count > 0}
-                  style="height:{Math.max(3, (d.count / maxCount) * 100)}%"
-                ></div>
-                <span class="lbl mono-kicker">{d.label}</span>
-              </div>
-            {/each}
-          </div>
-          <p class="foot mono-kicker">
-            {activeDays} active day{activeDays === 1 ? '' : 's'} · peak {maxCount}
-            in a day
-          </p>
-        </div>
-        <div class="panel">
-          <h4>your rhythm</h4>
-          <div class="clockrow">
-            {#each hours as v, h (h)}
-              <div
-                class="cell"
-                title="{h}:00 · {v} dictations"
-                style="--a:{v
-                  ? Math.min(1, v / Math.max(1, Math.max(...hours)))
-                  : 0}"
-                class:on={v > 0}
-              ></div>
-            {/each}
-          </div>
-          <p class="foot mono-kicker">
-            {hours.some((v) => v > 0)
-              ? `you're loudest around ${peakHour}:00`
-              : 'no pattern yet'}
-          </p>
-        </div>
-      </div>
-      <p class="hand closer">
-        {words > 0
-          ? `that's roughly ${Math.max(1, Math.round(words / 500))} page${words >= 1000 ? 's' : ''} of text you didn't have to type.`
-          : ''}
-      </p>
-    {/if}
-  </section>
-
   <!-- privacy -->
   <section class="card privacy">
     <h3>
@@ -387,7 +298,8 @@
   }
 
   /* appearance segmented control, system | light | dark */
-  .seg {
+  /* :global — bits-ui renders the root + items (scoped CSS can't reach them) */
+  :global(.ap-seg) {
     display: inline-flex;
     background: var(--paper);
     border: 1px solid var(--line);
@@ -396,7 +308,7 @@
     gap: 2px;
     flex-shrink: 0;
   }
-  .seg button {
+  :global(.ap-seg .ap-segitem) {
     padding: 5px 14px;
     border-radius: 999px;
     font-size: 12px;
@@ -406,12 +318,12 @@
       background 0.18s var(--ease-out),
       color 0.18s var(--ease-out);
   }
-  .seg button:hover {
+  :global(.ap-seg .ap-segitem:hover) {
     color: var(--ink);
   }
-  .seg button.on {
+  :global(.ap-seg .ap-segitem.on) {
     background: var(--hotpink);
-    color: #fff;
+    color: var(--on-accent, #fff);
   }
 
   .privacy {
@@ -425,26 +337,10 @@
   }
 
   /* stats, transplanted from StatsPane */
-  .stats-sec {
-    gap: 16px;
-  }
   .alltime {
     background: var(--card-blue);
     color: var(--peri-ink);
     margin-left: 4px;
-  }
-  .stats-empty {
-    padding: 24px 8px;
-    text-align: center;
-  }
-  .stats-empty .big {
-    font-size: 22px;
-    color: var(--ink);
-  }
-  .stats-empty p {
-    margin-top: 6px;
-    font-size: 13px;
-    color: var(--text-3);
   }
   .stats-cards {
     display: grid;

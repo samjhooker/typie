@@ -5,8 +5,15 @@
     transcriptCache,
     local,
     dismissAiNudge,
+    markOpened,
+    markCopied,
   } from '../bridge.svelte.js';
+  import ClaudeIcon from '../ClaudeIcon.svelte';
+  import GptIcon from '../GptIcon.svelte';
+  import { Tabs } from 'bits-ui';
   import InlineEdit from '../InlineEdit.svelte';
+  import { Avatar, Style } from '@dicebear/core';
+  import blobsJson from '../dicebear/blobs.json';
   import {
     ArrowLeft,
     Search,
@@ -21,6 +28,9 @@
     Wand2,
     X,
     PanelRightClose,
+    PanelRight,
+    Copy,
+    MessageSquarePlus,
   } from 'lucide-svelte';
   import { infinite } from '../infinite.js';
   import { fly } from 'svelte/transition';
@@ -44,9 +54,10 @@
   let shown = $state(TURN_PAGE);
 
   const meta = $derived(ui.transcripts.find((x) => x.id === id));
-  // once a transcript has been opened it's no longer "new"
+  // once a transcript has been opened it's no longer "new" (persisted —
+  // the chip must not resurrect on every relaunch)
   $effect(() => {
-    if (id) local.openedIds[id] = true;
+    markOpened(id);
   });
   const cached = $derived(transcriptCache[id]);
   // metadata arrives via the global push; turns/words arrive on demand,
@@ -72,6 +83,14 @@
       ? {
           ...meta,
           ...(cached ?? {}),
+          // annotations live in the push metadata (always fresh) — cached
+          // full-transcript fetches would otherwise shadow them
+          annotations: meta.annotations ?? cached?.annotations ?? [],
+          // same for audio: the cache may have been fetched while the file
+          // was still processing (audioFile not adopted yet) — the fresh
+          // push metadata must win, or the player never appears
+          audioUrl: meta.audioUrl || cached?.audioUrl || '',
+          hasAudio: !!(meta.hasAudio ?? cached?.hasAudio),
           speakerNames: {
             ...(meta.speakerNames ?? {}),
             ...(cached?.speakerNames ?? {}),
@@ -99,6 +118,32 @@
   );
   // turns arrive via the on-demand fetch; metadata alone has none yet
   const turns = $derived(t ? (t.turns ?? []) : []);
+  // user highlights & comments — merged from BOTH sources (push metadata
+  // and the full-transcript fetch) so a stale cache can never drop them
+  const annotations = $derived.by(() => {
+    const byId = new Map();
+    for (const a of meta?.annotations ?? []) byId.set(a.id, a);
+    for (const a of cached?.annotations ?? []) if (!byId.has(a.id)) byId.set(a.id, a);
+    return [...byId.values()];
+  });
+  const sortedAnnotations = $derived(
+    [...annotations].sort((a, b) => a.start - b.start)
+  );
+  const railVisible = $derived(
+    // close must always win — with annotations in the library the old
+    // condition forced the rail back open, so the close button did nothing
+    railOpen && (aiAvailable || annotations.length > 0)
+  );
+  // the rail shows one section at a time — AI or the user's own marks —
+  // so the panel doesn't stack summary + highlights into a wall
+  let railTab = $state('ai');
+  let seenAnnotationCount = 0;
+  $effect(() => {
+    // a fresh highlight/comment flips the rail to the yours tab
+    const n = annotations.length;
+    if (n > seenAnnotationCount && n > 0) railTab = 'yours';
+    seenAnnotationCount = n;
+  });
   const filtered = $derived(
     !t || query.trim() === ''
       ? turns
@@ -131,6 +176,31 @@
   }
   function spInitial(i) {
     return (spName(i).trim()[0] ?? '?').toUpperCase();
+  }
+
+  // ── default avatars: deterministic DiceBear pixel-art, generated on-device
+  // (no network calls — the privacy promise holds). Seeded by the speaker's
+  // display name, so a rename gives that speaker a fresh bot.
+  // dicebear needs literal hexes (css vars won't work) — pastel mirrors of --sp1..6
+  const SP_HEX = ['#ffb1c9', '#9ec5ff', '#d4bfff', '#ffd6a5', '#b5ead7', '#fff1b8'];
+
+  const avatarCache = new Map();
+  const blobsStyle = new Style(blobsJson);
+  function avatarUri(i) {
+    const name = spName(i);
+    if (!avatarCache.has(name)) {
+      avatarCache.set(
+        name,
+        new Avatar(blobsStyle, {
+          seed: name,
+          size: 48,
+          // speaker's brand colour as the backdrop — radical per-speaker
+          // variety (the blobs style's own palette is blue-dominant)
+          backgroundColor: [SP_HEX[i % SP_HEX.length]],
+        }).toDataUri()
+      );
+    }
+    return avatarCache.get(name);
   }
 
   function startRename(i) {
@@ -239,11 +309,374 @@
 
   // follow playback: keep the spoken block in view (paging in more if needed)
   let turnEls = {};
+
+  // ── continuous selection highlight ─────────────────────────────
+  // The native ::selection paints each inline word span as a separate
+  // chip with gaps at the whitespace between them. Instead we draw ONE
+  // rounded band per line behind the text, driven by the real selection
+  // (which stays intact for copy/paste — its own paint is disabled).
+  // CSS transitions on the band rects make selection growth glide.
+  let turnsEl = $state(null);
+
+  // word indexes matching the current search query, per turn (cached)
+  // — used to paint yellow search hits inside the filtered turns
+  let hitCache = new WeakMap();
+  let hitCacheQuery = '';
+  function hitSet(turn) {
+    const q = query.trim().toLowerCase();
+    if (!q) return null;
+    if (hitCacheQuery !== q) {
+      hitCache = new WeakMap();
+      hitCacheQuery = q;
+    }
+    if (hitCache.has(turn)) return hitCache.get(turn);
+    const words = wordsOf(turn);
+    const hits = new Set();
+    const text = words.map((w) => w.text).join(' ').toLowerCase();
+    let idx = text.indexOf(q);
+    while (idx !== -1) {
+      let at = 0;
+      for (let wi = 0; wi < words.length; wi++) {
+        const s = at;
+        const e = at + words[wi].text.length;
+        if (s < idx + q.length && e > idx) hits.add(wi);
+        at = e + 1;
+      }
+      idx = text.indexOf(q, idx + q.length);
+    }
+    hitCache.set(turn, hits);
+    return hits;
+  }
+  let selBands = $state([]);
+
+  function updateSelBands() {
+    const sel = document.getSelection();
+    if (!turnsEl || !sel || sel.isCollapsed || sel.rangeCount === 0) {
+      selBands = [];
+      selMenu = null;
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    const node = range.commonAncestorContainer;
+    const host = node.nodeType === 1 ? node : node.parentElement;
+    if (!host || !turnsEl.contains(host)) {
+      selBands = [];
+      return;
+    }
+    const base = turnsEl.getBoundingClientRect();
+    // getClientRects yields one box per inline element; merge fragments
+    // that share a line into a single band. Grouping is by VERTICAL
+    // OVERLAP, not exact top: trailing fragments at a line end come back
+    // with the full line-box height (different top than glyph rects) and
+    // used to stack a second band on top of the first ("double highlight").
+    const lines = [];
+    const sorted = [...range.getClientRects()].sort((a, b) => a.top - b.top);
+    for (const r of sorted) {
+      if (r.width < 1 || r.height < 1) continue;
+      const last = lines[lines.length - 1];
+      if (
+        last &&
+        r.top < last.top + last.height &&
+        r.top + r.height > last.top
+      ) {
+        const right = Math.max(last.left + last.width, r.left + r.width);
+        last.left = Math.min(last.left, r.left);
+        last.width = right - last.left;
+        const top = Math.min(last.top, r.top);
+        const bottom = Math.max(last.top + last.height, r.top + r.height);
+        last.top = top;
+        last.height = bottom - top;
+      } else {
+        lines.push({ top: r.top, left: r.left, width: r.width, height: r.height });
+      }
+    }
+    selBands = lines.map((b) => ({
+      top: b.top - base.top - 1,
+      left: b.left - base.left - 4,
+      width: b.width + 8,
+      height: b.height + 2,
+    }));
+  }
+
+  $effect(() => {
+    document.addEventListener('selectionchange', updateSelBands);
+    return () => {
+      document.removeEventListener('selectionchange', updateSelBands);
+      selBands = [];
+    };
+  });
+
+  // ── selection actions: highlight colours / comment / copy ──────
+  const HL_COLORS = ['#ffd43b', '#69db7c', '#4dabf7', '#ff8787', '#b197fc'];
+
+  let selMenu = $state(null); // {x,y,text,start,end}
+  let commentDraft = $state(null); // {x,y,text,start,end,note}
+
+  /** first/last selected word spans give the audio-time anchor */
+  function selectionAnchor() {
+    const sel = document.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0 || !turnsEl)
+      return null;
+    const range = sel.getRangeAt(0);
+    if (!turnsEl.contains(range.commonAncestorContainer)) return null;
+    const spans = [...turnsEl.querySelectorAll('.w')].filter((el) =>
+      range.intersectsNode(el)
+    );
+    if (!spans.length) return null;
+    // build the quote from the words themselves — range.toString() leaks
+    // speaker headers ("Speaker 1 00:42") and newlines when the drag
+    // crosses turn boundaries
+    const text = spans
+      .map((el) => el.textContent.trim())
+      .filter(Boolean)
+      .join(' ');
+    if (!text) return null;
+    return {
+      text,
+      start: parseFloat(spans[0].dataset.s) || 0,
+      end: parseFloat(spans[spans.length - 1].dataset.e) || 0,
+    };
+  }
+
+  function onTurnsMouseUp() {
+    if (commentDraft) return;
+    const sel = document.getSelection();
+    if (!sel || sel.isCollapsed) {
+      selMenu = null;
+      return;
+    }
+    const range = sel.rangeCount ? sel.getRangeAt(0) : null;
+    if (!range || !turnsEl || !turnsEl.contains(range.commonAncestorContainer)) {
+      selMenu = null;
+      return;
+    }
+    // smart highlight: snap partial-word edges to whole words so saved
+    // highlights always start and end cleanly
+    const spans = [...turnsEl.querySelectorAll('.w')].filter((el) =>
+      range.intersectsNode(el)
+    );
+    if (spans.length > 1) {
+      const snapped = document.createRange();
+      snapped.setStart(spans[0], 0);
+      const lastNode = spans[spans.length - 1];
+      snapped.setEnd(lastNode, lastNode.childNodes.length);
+      sel.removeAllRanges();
+      sel.addRange(snapped);
+    }
+    const anchor = selectionAnchor();
+    if (!anchor) {
+      selMenu = null;
+      return;
+    }
+    const b = selBands[selBands.length - 1];
+    selMenu = {
+      x: Math.max(
+        4,
+        Math.min((b?.left ?? 0) + (b?.width ?? 0) - 44, (turnsEl?.clientWidth ?? 640) - 218)
+      ),
+      y: (b ? b.top + b.height : 0) + 8,
+      ...anchor,
+    };
+  }
+
+  function menuCopy() {
+    if (selMenu) send({ type: 'copy', text: selMenu.text });
+    selMenu = null;
+  }
+
+  function doHighlight(color) {
+    if (!selMenu || !id) return;
+    send({
+      type: 'transcriptAnnotate',
+      id,
+      kind: 'highlight',
+      text: selMenu.text,
+      note: '',
+      color,
+      start: selMenu.start,
+      end: selMenu.end,
+    });
+    selMenu = null;
+    document.getSelection()?.removeAllRanges();
+  }
+
+  function startComment() {
+    if (!selMenu) return;
+    commentDraft = { ...selMenu, note: '' };
+    selMenu = null;
+  }
+
+  function cancelComment() {
+    commentDraft = null;
+    document.getSelection()?.removeAllRanges();
+  }
+
+  function saveComment() {
+    if (!commentDraft || !id) return;
+    send({
+      type: 'transcriptAnnotate',
+      id,
+      kind: 'comment',
+      text: commentDraft.text,
+      note: commentDraft.note,
+      start: commentDraft.start,
+      end: commentDraft.end,
+    });
+    commentDraft = null;
+    document.getSelection()?.removeAllRanges();
+  }
+
+  function unannotate(annotationId) {
+    if (id) send({ type: 'transcriptUnannotate', id, annotationId });
+  }
+
+  /** comment border-box click → jump to the note AND play from there */
+  function openComment(a) {
+    if (!a) return;
+    if (t?.audioUrl) seekTo(a.start, true);
+    jumpToComment(a);
+  }
+
+  /** comment margin marker → open the yours tab and reveal the note */
+  let flashComment = $state(null);
+  function jumpToComment(a) {
+    if (!railOpen) setRailOpen(true);
+    railTab = 'yours';
+    flashComment = a.id;
+    setTimeout(() => {
+      document
+        .getElementById('mine-' + a.id)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 480); // after the rail's fly-in transition
+    setTimeout(() => {
+      if (flashComment === a.id) flashComment = null;
+    }, 2200);
+  }
+
+
+  /** the annotation overlapping a word, for painting highlights.
+      comments paint as a NEUTRAL GREY highlight (not colourful) —
+      highlights keep their saved colour. */
+  function markFor(w) {
+    const a = annotations.find((x) => w.start < x.end && w.end > x.start);
+    if (a) return a.kind === 'comment' ? { ...a, color: '#9aa0a6' } : a;
+    // live preview: the selected area greys out the moment the comment
+    // draft opens, and reverts if the draft is cancelled
+    if (commentDraft && w.start < commentDraft.end && w.end > commentDraft.start)
+      return { color: '#9aa0a6' };
+    return null;
+  }
+
+  function focusOnMount(node) {
+    node.focus();
+  }
+
+  // ── copy for LLM: inline-tag annotated transcript ──────────────
+  // per Claude's format advice: plain-text turns with speaker+timestamp
+  // prefix, annotations as inline <highlight>/<comment> tags wrapped
+  // around the EXACT spans (nested when overlapping), <>& escaped.
+  const HL_COLOR_NAMES = {
+    '#ffd43b': 'yellow',
+    '#69db7c': 'green',
+    '#4dabf7': 'blue',
+    '#ff8787': 'coral',
+    '#b197fc': 'purple',
+  };
+
+  function escapeXml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /** insert open/close tags around the marked char ranges, nesting
+      overlapping marks instead of colliding */
+  function applyMarks(text, marks) {
+    if (!marks.length) return escapeXml(text);
+    const sorted = [...marks].sort((a, b) => a.from - b.from || b.to - a.to);
+    let out = '';
+    let pos = 0;
+    const open = [];
+    const closeUpTo = (upto) => {
+      while (open.length && open[open.length - 1].to <= upto) {
+        const m = open.pop();
+        out += escapeXml(text.slice(pos, m.to)) + m.close;
+        pos = m.to;
+      }
+    };
+    for (const m of sorted) {
+      closeUpTo(m.from);
+      if (m.from > pos) {
+        out += escapeXml(text.slice(pos, m.from));
+        pos = m.from;
+      }
+      out += m.open;
+      open.push(m);
+    }
+    closeUpTo(Infinity);
+    out += escapeXml(text.slice(pos));
+    return out;
+  }
+
+  function turnToLLM(turn) {
+    const words = wordsOf(turn);
+    let text = '';
+    const spans = [];
+    for (const w of words) {
+      const s = text.length;
+      text += w.text + ' ';
+      spans.push({ ws: w.start, we: w.end, s, e: s + w.text.length });
+    }
+    text = text.trimEnd();
+    const marks = [];
+    for (const a of annotations) {
+      // NB: annotation payloads carry .start/.end (seconds), NOT .startSeconds
+      if (a.end <= turn.start || a.start >= turn.end) continue;
+      const inside = spans.filter(
+        (sp) => sp.ws < a.end && sp.we > a.start
+      );
+      if (!inside.length) continue;
+      const from = inside[0].s;
+      const to = Math.min(inside[inside.length - 1].e, text.length);
+      if (a.kind === 'comment') {
+        const note = escapeXml(a.note || '').replace(/"/g, '&quot;');
+        marks.push({
+          from,
+          to,
+          open: `<comment${note ? ` note="${note}"` : ''}>`,
+          close: '</comment>',
+        });
+      } else {
+        const color = HL_COLOR_NAMES[(a.color || '').toLowerCase()] || 'yellow';
+        marks.push({ from, to, open: `<highlight color="${color}">`, close: '</highlight>' });
+      }
+    }
+    return `[${fmtDur(turn.start)}] ${spName(turn.speaker)}: ${applyMarks(text, marks)}`;
+  }
+
+  function copyForLLM() {
+    if (!t || !turns.length) return;
+    const name = (t.fileName || 'transcript').replace(/"/g, '&quot;');
+    const text =
+      `<transcript name="${name}" speakers="${speakers.length}">\n\n` +
+      turns.map(turnToLLM).join('\n\n') +
+      `\n</transcript>`;
+    send({ type: 'copy', text });
+    markCopied(t.id);
+  }
   $effect(() => {
     if (!playing || activeTurnIdx < 0) return;
+    // never yank the view mid-selection: smooth-scrolling back to the
+    // active turn while the user drags a highlight elsewhere destroys
+    // their selection ("only the playing clip can be highlighted")
+    if (document.getSelection()?.type === 'Range') return;
     if (activeTurnIdx >= shown)
       shown = Math.min(filtered.length, activeTurnIdx + 25);
-    turnEls[activeTurnIdx]?.scrollIntoView({
+    const el = turnEls[activeTurnIdx];
+    if (!el) return;
+    // and don't scroll at all when the active turn is already on screen
+    const col = contentColEl?.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
+    if (col && rect.top >= col.top && rect.bottom <= col.bottom) return;
+    el.scrollIntoView({
       block: 'center',
       behavior: 'smooth',
     });
@@ -423,7 +856,7 @@
   <div
     class="wrap"
     class:split={aiAvailable}
-    class:rail-open={aiAvailable && railOpen}
+    class:rail-open={railVisible}
     class:resizing
   >
     <div class="cols">
@@ -456,14 +889,6 @@
               </p>
             </div>
             <div class="exports">
-              {#if aiAvailable && !railOpen}
-                <button
-                  class="btn btn-ghost small"
-                  onclick={() => setRailOpen(true)}
-                  title="AI summary, breakdown & quotes"
-                  ><Sparkles size={13} /> details</button
-                >
-              {/if}
               <button
                 class="btn btn-ghost small"
                 onclick={() =>
@@ -476,6 +901,24 @@
                   send({ type: 'transcriptExport', id: t.id, format: 'txt' })}
                 ><Download size={13} /> .txt</button
               >
+              <button
+                class="btn btn-ghost small"
+                onclick={copyForLLM}
+                title="copy for LLM — transcript with your highlights & comments inline"
+                aria-label="copy for LLM"
+                ><ClaudeIcon size={14} /><GptIcon size={13} /> copy for LLM</button
+              >
+              {#if aiAvailable || annotations.length > 0}
+                <button
+                  class="rail-toggle"
+                  onclick={() => setRailOpen(!railOpen)}
+                  title={railOpen
+                    ? 'hide panel'
+                    : 'show panel · AI summary, highlights & comments'}
+                  aria-label="toggle panel"
+                  ><PanelRight size={14} /></button
+                >
+              {/if}
             </div>
           </div>
         </header>
@@ -556,8 +999,79 @@
             </p>
           </div>
         {:else}
-          <div class="turns">
+          <div
+            class="turns"
+            bind:this={turnsEl}
+            onmouseup={onTurnsMouseUp}
+          >
+            {#if !commentDraft}<div class="selband-wrap" aria-hidden="true">
+              {#each selBands as b, i (i)}
+                <div
+                  class="selband"
+                  style="top:{b.top}px;left:{b.left}px;width:{b.width}px;height:{b.height}px"
+                ></div>
+              {/each}
+            </div>{/if}
+            {#if selMenu}
+              <!-- mousedown prevented so picking a colour doesn't collapse
+                   the selection before the click lands -->
+              <div
+                class="selmenu"
+                style="left:{selMenu.x}px;top:{selMenu.y}px"
+                onmousedown={(e) => e.preventDefault()}
+                role="toolbar"
+                aria-label="selection actions"
+              >
+                <button
+                  class="sm-act"
+                  onclick={menuCopy}
+                  title="copy"
+                  ><Copy size={13} /></button
+                >
+                {#each HL_COLORS as c (c)}
+                  <button
+                    class="sm-swatch"
+                    style="background:{c}"
+                    title="highlight"
+                    onclick={() => doHighlight(c)}
+                  ></button>
+                {/each}
+                <button
+                  class="sm-act"
+                  onclick={startComment}
+                  title="comment"
+                  ><MessageSquarePlus size={13} /></button
+                >
+              </div>
+            {:else if commentDraft}
+              <div
+                class="selmenu draft"
+                style="left:{commentDraft.x}px;top:{commentDraft.y}px"
+              >
+                <textarea
+                  rows="3"
+                  placeholder="add a note…"
+                  bind:value={commentDraft.note}
+                  use:focusOnMount
+                  onkeydown={(e) => {
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveComment();
+                    if (e.key === 'Escape') cancelComment();
+                  }}
+                ></textarea>
+                <div class="draft-row">
+                  <span class="draft-hint mono-kicker">⌘↵ save</span>
+                  <button class="btn btn-ghost small" onclick={cancelComment}
+                    >cancel</button
+                  >
+                  <button class="btn small" onclick={saveComment}>save</button>
+                </div>
+              </div>
+            {/if}
             {#each visibleTurns as turn, idx (idx)}
+              {@const turnHits = hitSet(turn)}
+              {@const turnComments = annotations.filter(
+                (a) => a.kind === 'comment' && a.start < turn.end && a.end > turn.start
+              )}
               {@const isNow = t.audioUrl && turn === activeTurn}
               <div
                 class="oturn"
@@ -565,12 +1079,23 @@
                 bind:this={turnEls[idx]}
               >
                 <div class="ohead">
-                  <span
+                  <img
                     class="avatar"
-                    style="background:{spColor(turn.speaker)}"
-                    >{spInitial(turn.speaker)}</span
-                  >
-                  <span class="oname">{spName(turn.speaker)}</span>
+                    src={avatarUri(turn.speaker)}
+                    alt={spName(turn.speaker)}
+                  />
+                  <!-- renameable right here, not just from the top legend -->
+                  <InlineEdit
+                    value={spName(turn.speaker)}
+                    onSave={(name) =>
+                      t &&
+                      send({
+                        type: 'transcriptsRenameSpeaker',
+                        id: t.id,
+                        index: turn.speaker,
+                        name,
+                      })}
+                  />
                   <button
                     class="ts mono-kicker"
                     title={t.audioUrl ? 'play from here' : undefined}
@@ -578,19 +1103,23 @@
                   >
                     {fmtDur(turn.start)}
                   </button>
+                  {#if turnComments.length}
+                    <button
+                      class="cmark"
+                      onclick={() => openComment(turnComments[0])}
+                      title={turnComments[0].note || 'comment — see yours tab'}
+                      aria-label="jump to comment"
+                    >
+                      <MessageSquarePlus size={11} />
+                      {#if turnComments.length > 1}
+                        <span class="cmark-n mono-kicker">{turnComments.length}</span>
+                      {/if}
+                    </button>
+                  {/if}
                   {#if isNow}<span class="eq"><i></i><i></i><i></i></span>{/if}
                 </div>
                 <p class="otext">
-                  {#each wordsOf(turn) as w, wi (wi)}
-                    <span
-                      class="w"
-                      class:on={t.audioUrl &&
-                        currentTime >= w.start &&
-                        currentTime < w.end}
-                      onclick={() => t.audioUrl && seekTo(w.start, true)}
-                      >{w.text}</span
-                    >
-                  {/each}
+                  {#each wordsOf(turn) as w, wi (wi)}{@const mk = markFor(w)}<span class="w" class:hit={!mk && turnHits?.has(wi)} class:marked={!!mk} style={mk ? `--mk:${mk.color || '#ffd43b'}` : undefined} class:on={t.audioUrl && currentTime >= w.start && currentTime < w.end} data-s={w.start} data-e={w.end} onclick={() => t.audioUrl && seekTo(w.start, true)}>{w.text}{' '}</span>{/each}
                 </p>
               </div>
             {/each}
@@ -612,7 +1141,7 @@
       </div>
       <!-- /.content-col -->
 
-      {#if aiAvailable && railOpen}
+      {#if railVisible}
         <!-- drag divider, grab to resize the AI panel -->
         <div
           class="rail-resize"
@@ -634,9 +1163,95 @@
         ></div>
         <aside
           class="ai-rail"
+          class:yours-tab={railTab === 'yours' || !aiAvailable}
           style="width:{railWidth}px"
           transition:fly={{ x: 380, duration: 420, easing: cubicOut }}
         >
+          <!-- one section at a time: AI or the user's own marks.
+               bits-ui Tabs primitive — accessible, keyboard-navigable,
+               styles carried by our own classes (headless pattern) -->
+          <Tabs.Root value={railTab} onValueChange={(v) => { if (v) railTab = v; }}>
+            <Tabs.List class="rail-tabs">
+              {#if aiAvailable}
+                <Tabs.Trigger
+                  value="ai"
+                  class="rail-tab {railTab === 'ai' ? 'active' : ''}"
+                >
+                  <Sparkles size={12} /> AI
+                </Tabs.Trigger>
+              {/if}
+              <Tabs.Trigger
+                value="yours"
+                class="rail-tab {railTab === 'yours' || !aiAvailable ? 'active' : ''}"
+              >
+                yours
+                {#if sortedAnnotations.length > 0}
+                  <span class="tab-count mono-kicker"
+                    >{sortedAnnotations.length}</span
+                  >
+                {/if}
+              </Tabs.Trigger>
+            </Tabs.List>
+          </Tabs.Root>
+
+          {#if railTab === 'yours' || !aiAvailable}
+          <div class="mine card">
+            <div class="mine-head">
+              <h4 class="rail-kicker">yours</h4>
+            </div>
+            {#if sortedAnnotations.length === 0}
+              <p class="mine-empty">
+                select text in the transcript to highlight it in one of five
+                colours or leave a comment
+              </p>
+            {:else}
+              <div class="mine-list">
+                {#each sortedAnnotations as a (a.id)}
+                  <div
+                    id="mine-{a.id}"
+                    class="mine-item"
+                    class:comment={a.kind === 'comment'}
+                    class:flash={flashComment === a.id}
+                  >
+                    {#if a.kind === 'comment'}
+                      <span class="mine-tag mono-kicker" title="your comment"
+                        >comment</span
+                      >
+                    {:else}
+                      <span
+                        class="mine-dot"
+                        style="background:{a.color || '#ffd43b'}"
+                      ></span>
+                    {/if}
+                    <div class="mine-body">
+                      <button
+                        class="mine-ts mono-kicker"
+                        onclick={() => seekTo(a.start, true)}
+                        title="play from here"
+                      >
+                        {fmtDur(a.start)}
+                      </button>
+                      {#if a.text && a.kind !== 'comment'}
+                        <p class="mine-quote">“{a.text}”</p>
+                      {/if}
+                      {#if a.note}
+                        <p class="mine-note">{a.note}</p>
+                      {/if}
+                    </div>
+                    <button
+                      class="mine-del"
+                      onclick={() => unannotate(a.id)}
+                      title="remove"
+                      ><X size={11} /></button
+                    >
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
+          {/if}
+
+          {#if aiAvailable && railTab === 'ai'}
           <div class="ai card">
             <div class="ai-head">
               {#if aiEngine === 'heuristic'}
@@ -666,13 +1281,6 @@
                     style="color:var(--red-ink)">failed</span
                   >
                 {/if}
-                <button
-                  class="rail-close"
-                  onclick={() => setRailOpen(false)}
-                  title="hide AI panel"
-                  aria-label="hide AI panel"
-                  ><PanelRightClose size={14} /></button
-                >
               </span>
             </div>
 
@@ -714,7 +1322,7 @@
               {#if aiSections.length > 0}
                 <div class="ai-breakdown">
                   <h4 class="rail-kicker">breakdown</h4>
-                  {#each aiSections as section (section.title + section.start)}
+                  {#each aiSections as section, si (si + ':' + section.title + section.start)}
                     <div class="ai-section">
                       <button
                         class="sec-head"
@@ -729,7 +1337,7 @@
                       </button>
                       {#if section.points?.length > 0}
                         <ul class="sec-points">
-                          {#each section.points as point (point.text + point.start)}
+                          {#each section.points as point, pi (pi + ':' + point.text + point.start)}
                             <li>
                               <button
                                 onclick={() => seekTo(point.start, true)}
@@ -749,7 +1357,7 @@
                 </div>
               {:else if aiTopics.length > 0}
                 <div class="ai-topics">
-                  {#each aiTopics as topic (topic.title + topic.start)}
+                  {#each aiTopics as topic, ti (ti + ':' + topic.title + topic.start)}
                     <button
                       class="topic pill"
                       onclick={() => seekTo(topic.start, true)}
@@ -765,7 +1373,7 @@
               {#if aiQuotes.length > 0}
                 <div class="ai-quotes">
                   <h4 class="rail-kicker">key quotes</h4>
-                  {#each aiQuotes as quote (quote.text + quote.start)}
+                  {#each aiQuotes as quote, qi (qi + ':' + quote.text + quote.start)}
                     <button
                       class="quote"
                       onclick={() => seekTo(quote.start, true)}
@@ -788,6 +1396,7 @@
               >
             {/if}
           </div>
+          {/if}
         </aside>
       {/if}
     </div>
@@ -805,7 +1414,7 @@
         <span class="time mono-kicker now">{fmtClock(currentTime)}</span>
 
         <div
-          class="tl"
+          class="seek-track"
           role="slider"
           tabindex="0"
           aria-label="seek"
@@ -830,14 +1439,14 @@
                 100
             )}
             <div
-              class="seg"
+              class="seek-seg"
               style="left:{left}%; width:{width}%; background:{spColor(
                 seg.speaker
               )}"
             ></div>
           {/each}
           <div
-            class="head"
+            class="seek-head"
             style="left:{(duration ? currentTime / duration : 0) * 100}%"
           >
             <i></i>
@@ -986,7 +1595,29 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
-  /* ── drag divider between transcript and AI rail ── */
+  /* yours tab: the card stretches rail-top to the very bottom and the
+     list scrolls inside it, instead of floating mid-panel */
+  .ai-rail.yours-tab {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 24px;
+  }
+  :global(.ai-rail.yours-tab .rail-tabs) {
+    flex-shrink: 0;
+  }
+  .ai-rail.yours-tab .mine {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+  .ai-rail.yours-tab .mine-list {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+  }
   .rail-resize {
     position: relative;
     z-index: 6;
@@ -1391,6 +2022,7 @@
 
   /* ── otter-style blocks ── */
   .turns {
+    position: relative;
     margin-top: 26px;
     display: flex;
     flex-direction: column;
@@ -1410,9 +2042,10 @@
   .oturn:hover {
     background: var(--paper);
   }
+  /* active turn: background tint only — no border, no weight changes,
+     nothing that makes the text reflow while it's speaking */
   .oturn.now {
     background: color-mix(in srgb, var(--hotpink) 5%, transparent);
-    border-color: rgba(252, 86, 129, 0.25);
   }
 
   .ohead {
@@ -1424,9 +2057,9 @@
   .avatar {
     display: grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 99px;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
     flex-shrink: 0;
     color: #fff;
     font-size: 11px;
@@ -1488,6 +2121,319 @@
     color: var(--text-1);
     user-select: text;
     overflow-wrap: anywhere;
+    /* native selection paint is replaced by the continuous selband
+       overlay; keep the selection itself functional for copy/paste */
+  }
+  .otext ::selection {
+    background: transparent;
+    color: inherit;
+  }
+  .selband-wrap {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* turn cards are position:relative and would otherwise paint over the
+       bands — and .oturn:hover's opaque background made highlights
+       invisible everywhere except the playing turn */
+    z-index: 25;
+  }
+  .selband {
+    position: absolute;
+    background: var(--hotpink);
+    opacity: 0.24;
+    border-radius: 7px;
+    transition:
+      left 0.13s var(--ease-out),
+      width 0.13s var(--ease-out),
+      top 0.1s var(--ease-out),
+      height 0.1s var(--ease-out),
+      opacity 0.16s var(--ease-out);
+  }
+
+  /* floating selection toolbar — same tokens as .card */
+  .selmenu {
+    position: absolute;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 8px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card, 12px);
+    box-shadow: 0 2px 10px var(--shadow-card);
+  }
+  .sm-act {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    color: var(--text-2);
+    transition:
+      background 0.12s var(--ease-out),
+      color 0.12s var(--ease-out);
+  }
+  .sm-act:hover {
+    background: var(--hotpink);
+    color: #fff;
+  }
+  .sm-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    transition:
+      transform 0.12s var(--ease-out),
+      box-shadow 0.12s var(--ease-out);
+  }
+  .sm-swatch:hover {
+    transform: scale(1.25);
+    box-shadow: 0 0 0 2px var(--line);
+  }
+  .selmenu.draft {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    width: 250px;
+    border-radius: 18px;
+    border-bottom-left-radius: 5px;
+    padding: 10px 10px 8px;
+  }
+  /* comic speech-bubble tail pointing back at the selection */
+  .selmenu.draft::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 16px;
+    width: 12px;
+    height: 12px;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    transform: rotate(45deg);
+    border-top-left-radius: 3px;
+  }
+  .selmenu.draft textarea {
+    font: inherit;
+    font-size: 13px;
+    color: var(--text-1);
+    background: var(--page);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 7px 9px;
+    resize: vertical;
+  }
+  .selmenu.draft textarea:focus {
+    outline: none;
+    border-color: var(--hotpink);
+  }
+  .draft-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .draft-hint {
+    margin-right: auto;
+    color: var(--text-3);
+  }
+
+  /* panel toggle: quiet ghost icon, no border, no box */
+  .rail-toggle {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-3);
+    transition:
+      color 0.15s var(--ease-out),
+      background 0.15s var(--ease-out);
+  }
+  .rail-toggle:hover {
+    color: var(--text-1);
+    background: var(--paper);
+  }
+  /* rail section tabs: AI | yours — one thing at a time */
+  :global(.rail-tabs) {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  :global(.rail-tab) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    background: transparent;
+    border: 1px solid var(--line);
+    transition:
+      background 0.15s var(--ease-out),
+      color 0.15s var(--ease-out),
+      border-color 0.15s var(--ease-out);
+  }
+  :global(.rail-tab:hover) {
+    color: var(--text-1);
+  }
+  :global(.rail-tab.active) {
+    background: var(--hotpink);
+    border-color: var(--hotpink);
+    color: var(--on-accent, #fff);
+  }
+  :global(.tab-count) {
+    background: rgba(0, 0, 0, 0.14);
+    border-radius: 999px;
+    padding: 1px 7px;
+    font-size: 10px;
+  }
+  :global(.rail-tab:not(.active) .tab-count) {
+    background: var(--paper, var(--page));
+    color: var(--text-3);
+  }
+
+  /* the "yours" rail card: highlights + comments */
+  .mine {
+    margin-bottom: 14px;
+  }
+  .mine-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .mine-empty {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-3);
+  }
+  .mine-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .mine-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px 9px;
+    border-radius: 10px;
+    background: var(--page);
+    transition: background 0.12s var(--ease-out);
+  }
+  /* comments read as speech bubbles, clearly distinct from highlights */
+  .mine-item.comment {
+    background: color-mix(in srgb, var(--hotpink) 5%, var(--page));
+    border: 1px solid color-mix(in srgb, var(--hotpink) 25%, transparent);
+    border-radius: 14px;
+    border-bottom-left-radius: 4px;
+  }
+  .mine-tag {
+    flex: none;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hotpink);
+    background: color-mix(in srgb, var(--hotpink) 12%, transparent);
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-top: 3px;
+  }
+  .mine-item:hover {
+    background: var(--page-deep, var(--page));
+  }
+  .mine-dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-top: 4px;
+  }
+  .mine-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .mine-ts {
+    color: var(--text-3);
+    transition: color 0.12s var(--ease-out);
+  }
+  .mine-ts:hover {
+    color: var(--hotpink);
+  }
+  .mine-quote {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-1);
+    margin: 2px 0 0;
+  }
+  .mine-note {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--text-2);
+    margin: 4px 0 0;
+    padding-left: 8px;
+    border-left: 2px solid var(--line-strong);
+  }
+  .mine-item.comment .mine-note {
+    border-left-color: var(--hotpink);
+  }
+  /* comment margin marker in the turn header */
+  .cmark {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    color: var(--hotpink);
+    background: color-mix(in srgb, var(--hotpink) 10%, transparent);
+    transition:
+      background 0.15s var(--ease-out),
+      transform 0.15s var(--ease-out);
+  }
+  .cmark:hover {
+    background: color-mix(in srgb, var(--hotpink) 22%, transparent);
+    transform: scale(1.06);
+  }
+  .cmark-n {
+    font-size: 9px;
+  }
+  @keyframes mine-flash {
+    0%, 60% {
+      background: color-mix(in srgb, var(--hotpink) 26%, var(--page));
+    }
+    100% {
+      background: color-mix(in srgb, var(--hotpink) 5%, var(--page));
+    }
+  }
+  .mine-item.flash {
+    animation: mine-flash 2s var(--ease-out);
+  }
+  .mine-del {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    color: var(--text-3);
+    opacity: 0;
+    transition:
+      opacity 0.12s var(--ease-out),
+      color 0.12s var(--ease-out);
+  }
+  .mine-item:hover .mine-del {
+    opacity: 1;
+  }
+  .mine-del:hover {
+    color: var(--red-ink, var(--hotpink));
   }
   .w {
     border-radius: 5px;
@@ -1499,7 +2445,31 @@
   .w:hover {
     background: rgba(252, 86, 129, 0.14);
   }
+  .w.hit {
+    /* search match: yellow marker, dark text, works on both themes */
+    background: #ffd43b;
+    color: #131722;
+  }
+  .w.hit:hover {
+    background: #ffcd1f;
+  }
   .w.on {
+    background: var(--hotpink);
+    color: #fff;
+  }
+  /* saved highlights painted on the words themselves — must come after
+     .hit and .on so the user's chosen colour wins over search yellow,
+     and the playing word still wins over everything.
+     The word's trailing space lives INSIDE the span, so marked spans tile
+     edge-to-edge: margin 0 (no negative-margin overlap) + translucent tint
+     paints exactly once → continuous band, no dark seams. */
+  .w.marked {
+    background: color-mix(in srgb, var(--mk) 30%, transparent);
+    margin: 0;
+    border-radius: 0;
+  }
+  /* the word being spoken right now always reads as playback pink */
+  .w.marked.on {
     background: var(--hotpink);
     color: #fff;
   }
@@ -1584,15 +2554,21 @@
   .time {
     white-space: nowrap;
   }
-  .now {
+  /* current-time emphasis (dock only — never on turn text) */
+  .time.now {
     color: var(--ink);
     font-weight: 500;
   }
+  /* (no .now text styling — weight/colour changes made the whole turn reflow)
   .dim {
     color: var(--text-3);
   }
 
-  .tl {
+  /* scrubber — :global + namespaced. The scoped .tl rule was being pruned
+     by the svelte compiler (no warning!) which unanchored the absolutely
+     positioned segments and stretched them across the whole window, and
+     SortSeg's :global .seg was leaking onto these segments too. */
+  :global(.seek-track) {
     position: relative;
     flex: 1;
     height: 14px;
@@ -1601,19 +2577,19 @@
     cursor: pointer;
     overflow: hidden;
   }
-  .tl::before {
+  :global(.seek-track::before) {
     content: '';
     position: absolute;
     inset: 0;
   } /* hit area */
-  .seg {
+  :global(.seek-seg) {
     position: absolute;
     top: 3px;
     bottom: 3px;
     border-radius: 99px;
     opacity: 0.75;
   }
-  .head {
+  :global(.seek-head) {
     position: absolute;
     top: -2px;
     bottom: -2px;
@@ -1622,7 +2598,7 @@
     border-radius: 2px;
     pointer-events: none;
   }
-  .head i {
+  :global(.seek-head .seek-head-dot) {
     position: absolute;
     top: -1px;
     left: 50%;

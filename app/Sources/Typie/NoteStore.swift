@@ -154,6 +154,9 @@ final class NoteStore: ObservableObject {
             persist(note)
             StatsStore.shared.record(text: text, latencyMs: 0, audioSeconds: seconds)
             AppLog.event("voice note: filed \"\(text.prefix(40))…\" (\(String(format: "%.1f", seconds))s)")
+            // take the user straight to the result (Sam: "take me to the
+            // page"). already-open window just switches pane.
+            ShelfController.shared.onOpenAppPane?("notes")
         } catch {
             AppLog.event("voice note: transcription failed, \(error)")
             lastError = "transcription failed"

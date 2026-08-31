@@ -28,6 +28,7 @@ final class DictationController: ObservableObject {
     private let monitor = HotkeyMonitor()
     private var settings: SettingsStore?
     private var phaseResetTask: Task<Void, Never>?
+    private var transcribeTask: Task<Void, Never>?
     private var keyDownAt: Date?
 
     private init() {}
@@ -41,31 +42,30 @@ final class DictationController: ObservableObject {
             guard settings.hotkey == key else { return }
             switch settings.triggerMode {
             case .hold:
-                // push-to-talk: down starts, up stops
-                guard phase == .idle else { return }
-                startRecording()
+                // push-to-talk: down starts, up stops. A down during the
+                // post-done cooldown or an in-flight transcribe restarts
+                // immediately instead of being swallowed for 1.4s
+                guard phase != .listening else { return }
+                startFresh()
             case .toggle:
-                // one press starts, the next stops
+                // one press starts, the next stops; presses during the
+                // transcribing/done tail windup into a fresh recording
                 switch phase {
-                case .idle:
-                    startRecording()
                 case .listening:
                     stopAndTranscribe()
                 default:
-                    break
+                    startFresh()
                 }
             case .both:
                 // hold OR tap: down starts (or stops a tap-session),
                 // a long-enough hold also stops on release
                 switch phase {
-                case .idle:
-                    keyDownAt = Date()
-                    startRecording()
                 case .listening:
                     keyDownAt = nil
                     stopAndTranscribe()
                 default:
-                    break
+                    keyDownAt = Date()
+                    startFresh()
                 }
             }
         }
@@ -123,12 +123,25 @@ final class DictationController: ObservableObject {
         phase = .transcribing
         SoundPlayer.playRelease()
         AppLog.event("recording stopped, \(samples.count) samples, \(String(format: "%.1f", Double(samples.count) / 16_000))s")
-        Task { [weak self] in
+        transcribeTask = Task { [weak self] in
             await self?.transcribe(samples: samples)
         }
     }
 
+    /// Abort any leftover transcribe/cooldown state and start listening.
+    /// Lets stop → immediately-start feel instant instead of waiting out
+    /// the 1.4s idle reset. An in-flight transcription is cancelled WITHOUT
+    /// pasting its (now unwanted) text.
+    private func startFresh() {
+        transcribeTask?.cancel()
+        transcribeTask = nil
+        phaseResetTask?.cancel()
+        phaseResetTask = nil
+        startRecording()
+    }
+
     private func transcribe(samples: [Float]) async {
+        if Task.isCancelled { return }
         guard !samples.isEmpty else {
             finishWithFailure()
             return
@@ -142,6 +155,12 @@ final class DictationController: ObservableObject {
         }
         do {
             let (text, ms) = try await modelManager.transcribe(samples)
+            // a fresh recording started while this was running: drop the
+            // result entirely, no paste, no phase changes
+            guard !Task.isCancelled else {
+                AppLog.event("dictation: superseded by a new recording, discarding transcript")
+                return
+            }
             if text.isEmpty {
                 finishWithFailure()
                 return
@@ -161,6 +180,9 @@ final class DictationController: ObservableObject {
             phase = .done(ms: Double(Int(ms.rounded())))
             scheduleIdleReset()
         } catch {
+            // cancelled because a new recording superseded this pass — stay
+            // quiet, the new session owns the phase now
+            if Task.isCancelled { return }
             AppLog.event("ERROR transcription failed: \(error)")
             finishWithFailure()
         }

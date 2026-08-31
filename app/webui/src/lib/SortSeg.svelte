@@ -1,26 +1,31 @@
 <script>
-  /** segmented sort picker, same visual language as TriggerPicker's segment */
+  /** segmented sort picker, same visual language as TriggerPicker's segment.
+      bits-ui ToggleGroup (single) provides the behavior + a11y. */
+  import { ToggleGroup } from 'bits-ui';
+
   let { options = [], value = $bindable() } = $props();
 </script>
 
-<div
+<ToggleGroup.Root
+  type="single"
+  bind:value
   class="seg"
-  role="group"
   aria-label="sort order"
 >
   {#each options as o (o.id)}
-    <button
-      class:selected={value === o.id}
-      aria-pressed={value === o.id}
-      onclick={() => (value = o.id)}
+    <ToggleGroup.Item
+      value={o.id}
+      class="segitem {value === o.id ? 'selected' : ''}"
+      aria-label={o.label}
     >
       {o.label}
-    </button>
+    </ToggleGroup.Item>
   {/each}
-</div>
+</ToggleGroup.Root>
 
 <style>
-  .seg {
+  /* :global — bits-ui renders the root + items */
+  :global(.seg) {
     display: inline-flex;
     gap: 4px;
     padding: 3px;
@@ -28,7 +33,7 @@
     border: 1px solid var(--line);
     background: var(--cream);
   }
-  button {
+  :global(.seg .segitem) {
     padding: 6px 12px;
     border-radius: 9px;
     font-family: var(--display);
@@ -41,11 +46,11 @@
       color 0.2s var(--ease-out),
       box-shadow 0.2s var(--ease-out);
   }
-  button:hover:not(.selected) {
+  :global(.seg .segitem:hover:not(.selected)) {
     background: var(--wash);
     color: var(--ink);
   }
-  button.selected {
+  :global(.seg .segitem.selected) {
     background: var(--pink);
     color: var(--ink);
     box-shadow: 0 1px 5px rgba(252, 86, 129, 0.22);

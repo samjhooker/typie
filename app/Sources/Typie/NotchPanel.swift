@@ -149,8 +149,22 @@ final class NotchPanel: NSPanel {
     /// menu bar extras
     private func refreshInteraction() {
         let interactive = ShelfController.shared.wantsMouse
-        if ignoresMouseEvents == !interactive { return }
+        let wasIgnoring = ignoresMouseEvents
         ignoresMouseEvents = !interactive
+        if interactive && wasIgnoring {
+            // The panel just flipped from click-through to interactive with the
+            // cursor possibly already stationary over a hover target. macOS
+            // synthesizes no mouseEntered for it (tracking areas fire on
+            // boundary crossings or subsequent moves), so a still cursor on
+            // e.g. the record button never triggers the hover morph. Nudge
+            // the event stream with a synthetic move at the current position
+            // so AppKit re-evaluates tracking areas immediately.
+            if let current = CGEvent(source: nil)?.location,
+               let move = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved,
+                                  mouseCursorPosition: current, mouseButton: .left) {
+                move.post(tap: .cghidEventTap)
+            }
+        }
     }
 
     func show() {
@@ -299,10 +313,9 @@ final class PlusDropdownPanel: NSPanel {
 private struct PlusMenuView: View {
     var body: some View {
         VStack(spacing: 0) {
-            // seamless black from the very top of the screen down through the pill, trimmed from +8 to +4 to reduce top argin
+            // seamless black from the very top of the screen down through the pill
             Color.black.frame(height: NotchPanel.notchHeight + 4)
-            // horizontal 3-up, compact, minimal, no descriptions (per screenshot)
-            // uses the cute glyph SVGs (same as the main app, Glyph.svelte)
+            // horizontal 3-up, compact, minimal (the notch + card, as it always was)
             HStack(spacing: 0) {
                 PlusItem(icon: "glyph-note", tint: Theme.hotpink, title: "quick note") {
                     ShelfController.shared.plusMenuVisible = false

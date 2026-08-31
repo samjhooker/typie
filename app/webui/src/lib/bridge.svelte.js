@@ -18,6 +18,7 @@ export const ui = $state({
     notesKeepAudio: true,
     meetingMixMic: false,
     transcriptsKeepAudio: true,
+    aiEnabled: true,
     appearance: 'system', // 'system' | 'light' | 'dark'
   },
   permissions: { mic: false, ax: false, screen: false },
@@ -50,13 +51,22 @@ export const ui = $state({
   capturingHotkey: false,
   meeting: { isCapturing: false, processing: false, startedAt: '' },
   aiAvailable: false,
+  aiSettingSupported: false,
 });
 
 /** purely local UI state the native side doesn't care about */
 export const local = $state({
   pane: 'home',
   selectedTranscriptId: null,
-  openedIds: {}, // transcripts opened at least once, the "new" chip retires
+  // transcripts opened at least once — the "new" chip retires forever.
+  // persisted: the library shouldn't tease "new" on every relaunch.
+  openedIds: (() => {
+    try {
+      return JSON.parse(localStorage.getItem('typie:openedIds') || '{}');
+    } catch {
+      return {};
+    }
+  })(),
   step: 0,
   practice: '',
   flash: false,
@@ -88,6 +98,14 @@ function setTranscript(data) {
 }
 
 let copyTimer = 0;
+export function markOpened(id) {
+  if (!id || local.openedIds[id]) return;
+  local.openedIds[id] = true;
+  try {
+    localStorage.setItem('typie:openedIds', JSON.stringify(local.openedIds));
+  } catch {}
+}
+
 export function markCopied(id) {
   local.copiedId = id;
   clearTimeout(copyTimer);
@@ -115,7 +133,11 @@ export function applyPush(s) {
   if (!s || typeof s !== 'object') return;
   const wasRoute = ui.route;
   ui.variant = s.variant ?? 'prod';
-  Object.assign(ui.settings, s.settings);
+  if (s.settings) {
+    Object.assign(ui.settings, s.settings);
+    // the AI toggle only makes sense when the OS can actually deliver
+    ui.aiSettingSupported = !!s.aiAvailable;
+  }
   Object.assign(ui.permissions, s.permissions);
   // if the OS finally reports granted, persist it so first render is correct
   if (s.permissions?.screen) {
@@ -161,7 +183,31 @@ export function setStep(n) {
 export function setRecheck(v) {
   local.recheck = !!v;
 }
-window.__typie = { push: applyPush, setTranscript, setStep, setRecheck };
+
+/** native → pane switching (legacy ids incl.). Lives at module level, NOT
+ * in a component: Swift delivers queued panes the moment the page says
+ * "ready", which fires at module load — before any component mounts —
+ * so setPane must already exist or the switch is silently dropped
+ * (this exact race made "stop a call → open library" land on home). */
+export function setPane(p) {
+  if (p?.startsWith('transcript:')) {
+    local.pane = 'library';
+    local.selectedTranscriptId = p.split(':')[1];
+    return;
+  }
+  const map = {
+    dictation: 'notes',
+    app: 'notes',
+    past_dictations: 'history',
+    history: 'history',
+    transcripts: 'library',
+    recordings: 'library',
+  };
+  const nid = map[p] ?? p;
+  if (['home', 'notes', 'library', 'history', 'settings', 'stats'].includes(nid))
+    local.pane = nid;
+}
+window.__typie = { push: applyPush, setTranscript, setPane, setStep, setRecheck };
 
 // tell the Swift host the page is live so it starts pushing state
 if (typeof window !== 'undefined') {

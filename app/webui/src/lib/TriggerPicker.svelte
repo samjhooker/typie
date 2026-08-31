@@ -1,7 +1,9 @@
 <script>
+  import { ToggleGroup } from 'bits-ui';
   import { ui, send } from './bridge.svelte.js';
 
-  /** hold / tap / both selector with the friendly hint underneath */
+  /** hold / tap / both selector with the friendly hint underneath.
+      bits-ui ToggleGroup (single) provides the behavior + a11y. */
   const modes = [
     { id: 'both', label: 'Hold or tap' },
     { id: 'hold', label: 'Hold to talk' },
@@ -13,31 +15,42 @@
     hold: 'hold the key while you speak, let go to transcribe',
     toggle: 'press once to start, press again to stop',
   };
+
+  function setMode(v) {
+    if (v) send({ type: 'setSetting', key: 'triggerMode', value: v });
+  }
 </script>
 
-<div class="wrap">
-  <div class="seg">
-    {#each modes as m}
-      <button
-        class:selected={ui.settings.triggerMode === m.id}
-        onclick={() =>
-          send({ type: 'setSetting', key: 'triggerMode', value: m.id })}
+<div class="tp-wrap">
+  <ToggleGroup.Root
+    type="single"
+    value={ui.settings.triggerMode}
+    onValueChange={setMode}
+    class="tp-seg"
+  >
+    {#each modes as m (m.id)}
+      <ToggleGroup.Item
+        value={m.id}
+        class="tp-segitem {ui.settings.triggerMode === m.id ? 'selected' : ''}"
+        aria-label={m.label}
       >
         {m.label}
-      </button>
+      </ToggleGroup.Item>
     {/each}
-  </div>
+  </ToggleGroup.Root>
   <p>{hints[ui.settings.triggerMode]}</p>
 </div>
 
 <style>
-  .wrap {
+  /* :global + .tp- namespace — bits-ui renders the root + items, and these
+     must not collide with SortSeg's global .seg styles */
+  :global(.tp-wrap) {
     display: flex;
     flex-direction: column;
     gap: 7px;
   }
 
-  .seg {
+  :global(.tp-seg) {
     display: inline-flex;
     gap: 4px;
     padding: 3px;
@@ -46,7 +59,7 @@
     align-self: flex-start;
   }
 
-  button {
+  :global(.tp-seg .tp-segitem) {
     padding: 7px 13px;
     border-radius: 9px;
     font-family: var(--display);
@@ -58,7 +71,7 @@
       color 0.2s var(--ease-out);
   }
 
-  button.selected {
+  :global(.tp-seg .tp-segitem.selected) {
     background: var(--pink);
     color: var(--ink);
   }

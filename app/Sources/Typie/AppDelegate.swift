@@ -62,6 +62,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 AppLog.event("launch path: setup complete, going straight to live mode")
                 // model files are on disk but not in memory yet, load them
                 Task { await ModelManager.shared.downloadAndLoad() }
+                // heal the diarizer state now too: it starts .unknown and
+                // was only lazily healed by the app window's state pushes.
+                // Without this, "record call" from the notch on first open
+                // failed silently ("diarizer model not ready") until the
+                // app window had been opened once.
+                DiarizeStore.shared.refreshModelState()
                 finishSetup(closeOnboarding: false)
             }
         } else {
@@ -170,17 +176,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showAppWindow(pane: "transcripts")
     }
 
+    @objc func toggleNoteRecording() {
+        NoteStore.shared.toggleRecord()
+    }
+
+    @objc func toggleMeetingRecording() {
+        MeetingController.shared.toggle()
+    }
+
     @objc func openHome() {
         showAppWindow(pane: "home")
     }
 
     func showAppWindow(pane: String) {
         if appController == nil {
-            appController = WebUIController(
+            let controller = WebUIController(
                 route: .app,
                 title: AppVariant.displayName,
                 size: NSSize(width: 1276, height: 792)
             )
+            // Closing the window tears the controller down (observers +
+            // script bridge are removed in windowWillClose). If we kept
+            // reusing it, the reopened window would be a zombie: one-shot
+            // state push on present(), then no live updates and no
+            // JS→Swift actions ever again — fresh data (a finished
+            // transcription, a new voice note) would only appear after
+            // closing and reopening. Nil on close so the next open builds
+            // a fresh controller that loads the page and pushes full state.
+            controller.onWillClose = { [weak self] in
+                guard let self, self.appController === controller else { return }
+                self.appController = nil
+            }
+            appController = controller
         }
         appController!.showPane(pane)
         appController!.present()

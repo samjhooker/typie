@@ -8,37 +8,23 @@
   import LibraryPane from './LibraryPane.svelte';
   import HistoryPane from './panes/HistoryPane.svelte';
   import SettingsPane from './panes/SettingsPane.svelte';
+  import StatsPane from './panes/StatsPane.svelte';
+  import { BarChart3 } from 'lucide-svelte';
   import Glyph from './Glyph.svelte';
 
-  const nav = [
+  // core actions up top, admin down the bottom — two separate groups
+  const navMain = [
     { id: 'home', label: 'Home', glyph: 'home' },
     { id: 'notes', label: 'Notes', glyph: 'note' },
     { id: 'library', label: 'Library', glyph: 'transcript' },
-    { id: 'settings', label: 'Settings', glyph: 'gear' },
   ];
+  const navAdmin = [
+    { id: 'settings', label: 'Settings', glyph: 'gear' },
+    { id: 'stats', label: 'Stats', icon: BarChart3 },
+  ];
+  const allPanes = [...navMain, ...navAdmin];
 
-  // support legacy pane ids pushed from native (menu bar items etc.)
-  window.__typie.setPane = (p) => {
-    if (p?.startsWith('transcript:')) {
-      local.pane = 'library';
-      local.selectedTranscriptId = p.split(':')[1];
-      return;
-    }
-    const map = {
-      dictation: 'notes',
-      app: 'notes',
-      past_dictations: 'history',
-      history: 'history',
-      transcripts: 'library',
-      recordings: 'library',
-      stats: 'home',
-    };
-    const nid = map[p] ?? p;
-    if (['home', 'notes', 'library', 'history', 'settings'].includes(nid))
-      local.pane = nid;
-  };
-
-  if (!nav.some((n) => n.id === local.pane)) local.pane = 'home';
+  if (!allPanes.some((n) => n.id === local.pane)) local.pane = 'home';
 
   const phaseLabel = $derived.by(() => {
     switch (ui.dictation.phase) {
@@ -72,8 +58,9 @@
       <DevTag />
     </div>
 
+  <!-- core actions -->
     <nav>
-      {#each nav as item}
+      {#each navMain as item}
         <button
           class="nav-item"
           class:active={local.pane === item.id}
@@ -113,6 +100,36 @@
 
     <div class="spacer"></div>
 
+    <!-- admin: pinned to the bottom, visually separate from the core actions -->
+    <nav>
+      {#each navAdmin as item}
+        <button
+          class="nav-item"
+          class:active={local.pane === item.id}
+          title={item.label}
+          onclick={() => {
+            local.pane = item.id;
+            if (item.id === 'transcripts') local.selectedTranscriptId = null;
+          }}
+        >
+          <span class="nav-ico">
+            {#if item.glyph}
+              <Glyph
+                name={item.glyph}
+                size={17}
+              />
+            {:else}
+              <item.icon
+                size={17}
+                strokeWidth={2.1}
+              />
+            {/if}
+          </span>
+          <span class="nav-label">{item.label}</span>
+        </button>
+      {/each}
+    </nav>
+
     <div class="local-card">
       <div class="row">
         <Robot
@@ -138,6 +155,8 @@
         <HistoryPane />
       {:else if local.pane === 'settings'}
         <SettingsPane />
+      {:else if local.pane === 'stats'}
+        <StatsPane />
       {/if}
     </main>
   </div>
@@ -268,6 +287,9 @@
   }
 
   .local-card {
+    /* breathing room above the privacy card so the admin nav's highlight
+       ring never touches it */
+    margin-top: 12px;
     padding: 13px 14px;
     background: var(--card-mint);
     border-radius: 16px;

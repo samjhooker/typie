@@ -53,6 +53,8 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
     /// nil for legacy records, heuristics never announced themselves before.
     var aiEngine: String?
     var aiGeneratedAt: Date?
+    /// user-saved highlights and comments (PRD: "key quote" marking)
+    var annotations: [StoredAnnotation]?
 
     init(from result: DiarizeStore.JobResult) {
         self.id = UUID()
@@ -81,6 +83,24 @@ struct StoredTranscript: Codable, Identifiable, Equatable {
         self.elapsedMs = 0
         self.turns = []
     }
+}
+
+/// A user-saved selection: a highlighted quote, optionally with a note
+/// (comment). Anchored to audio time so highlights are clickable and
+/// survive re-transcription of nearby words.
+struct StoredAnnotation: Codable, Equatable, Identifiable {
+    let id: UUID
+    /// "highlight" | "comment"
+    var kind: String
+    /// the selected text (verbatim)
+    var text: String
+    /// user's note (empty for plain highlights)
+    var note: String
+    /// hex highlight colour ("#ffd43b" …), 5-swatch palette from the webui
+    var color: String?
+    var startSeconds: Double
+    var endSeconds: Double
+    var createdAt: Date
 }
 
 /// The Transcripts library (PRD F3): every finished job lands here,
@@ -279,6 +299,51 @@ final class TranscriptStore: ObservableObject {
         }
     }
 
+    // MARK: user annotations (highlights & comments)
+
+    func annotate(
+        _ id: UUID, kind: String, text: String, note: String,
+        start: Double, end: Double, color: String?
+    ) {
+        let trimmedKind = kind == "comment" ? "comment" : "highlight"
+        // keep the stored colour inside a sane shape (hex only)
+        let safeColor: String?
+        if let color, color.hasPrefix("#"), color.count <= 9,
+           color.dropFirst().allSatisfy({ $0.isHexDigit }) {
+            safeColor = color
+        } else {
+            safeColor = nil
+        }
+        let annotation = StoredAnnotation(
+            id: UUID(), kind: trimmedKind,
+            text: text.trimmingCharacters(in: .whitespacesAndNewlines),
+            note: note.trimmingCharacters(in: .whitespacesAndNewlines),
+            color: safeColor,
+            startSeconds: start, endSeconds: end, createdAt: Date())
+        mutate(id) { transcript in
+            var list = transcript.annotations ?? []
+            // a fresh highlight REPLACES overlapping highlights — otherwise
+            // re-highlighting a range stacks duplicates and old colours
+            // linger on words the user thought they cleared
+            if trimmedKind == "highlight" {
+                list.removeAll { existing in
+                    existing.kind == "highlight"
+                        && existing.startSeconds < end
+                        && existing.endSeconds > start
+                }
+            }
+            list.append(annotation)
+            transcript.annotations = list
+        }
+        AppLog.event("transcripts: \(trimmedKind) added to \(id.uuidString)")
+    }
+
+    func removeAnnotation(_ id: UUID, annotationId: UUID) {
+        mutate(id) { transcript in
+            transcript.annotations?.removeAll { $0.id == annotationId }
+        }
+    }
+
     /// Post-generation liveness check: the transcript may have been deleted
     /// while the (long) generation ran.
     private func transcriptStillExists(_ id: UUID) -> Bool {
@@ -461,6 +526,17 @@ final class TranscriptStore: ObservableObject {
         if let actions = t.aiActions, !actions.isEmpty {
             out += "\n### Action items\n"
             for a in actions { out += "- [\(a.timestampLabel)] **\(a.speaker)** will \(a.text)\n" }
+            out += "\n"
+        }
+        if let annotations = t.annotations, !annotations.isEmpty {
+            out += "## Your highlights & comments\n"
+            for a in annotations {
+                let color = a.color ?? "#ffd43b"
+                out += "- **[\(formatClock(a.startSeconds))]**"
+                if !a.text.isEmpty { out += " \"\(a.text)\"" }
+                if !a.note.isEmpty { out += " — \(a.note)" }
+                out += " *(\(a.kind), \(color))*\n"
+            }
             out += "\n"
         }
         for turn in t.turns {
