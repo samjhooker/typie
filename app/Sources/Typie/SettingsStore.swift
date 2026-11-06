@@ -106,6 +106,11 @@ final class SettingsStore: ObservableObject {
     @Published var aiEnabled: Bool {
         didSet { defaults.set(aiEnabled, forKey: "aiEnabled") }
     }
+    /// Clean each dictation through the on-device model before pasting:
+    /// filler words out, punctuation and paragraph breaks in. Default ON.
+    @Published var dictationCleanupEnabled: Bool {
+        didSet { defaults.set(dictationCleanupEnabled, forKey: "dictationCleanupEnabled") }
+    }
     /// "system" (follows macOS) | "light" | "dark", webui + window chrome
     @Published var appearance: String {
         didSet {
@@ -136,6 +141,7 @@ final class SettingsStore: ObservableObject {
         meetingMixMic = defaults.object(forKey: "meetingMixMic") as? Bool ?? true
         transcriptsKeepAudio = defaults.object(forKey: "transcriptsKeepAudio") as? Bool ?? true
         aiEnabled = defaults.object(forKey: "aiEnabled") as? Bool ?? true
+        dictationCleanupEnabled = defaults.object(forKey: "dictationCleanupEnabled") as? Bool ?? true
         appearance = defaults.string(forKey: "appearance") ?? "system"
         Self.applyAppearance(appearance)
     }

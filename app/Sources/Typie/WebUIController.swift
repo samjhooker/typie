@@ -381,6 +381,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                 "notesKeepAudio": settings.notesKeepAudio,
                 "meetingMixMic": settings.meetingMixMic,
                 "aiEnabled": settings.aiEnabled,
+                "dictationCleanupEnabled": settings.dictationCleanupEnabled,
                 "transcriptsKeepAudio": settings.transcriptsKeepAudio,
                 "appearance": settings.appearance,
             ],
@@ -407,6 +408,7 @@ final class WebUIController: NSObject, NSWindowDelegate {
                 [
                     "id": entry.id.uuidString,
                     "text": entry.text,
+                    "rawText": entry.rawText ?? "",
                     "date": Self.iso8601.string(from: entry.date),
                     "latencyMs": entry.latencyMs,
                     "hasAudio": entry.audioFile != nil,
@@ -994,6 +996,26 @@ extension WebUIController: WKNavigationDelegate {
             if let bool = value as? Bool {
                 settings.aiEnabled = bool
                 AppLog.event("settings: apple intelligence \(bool ? "enabled" : "disabled")")
+            }
+        case "dictationCleanupEnabled":
+            if let bool = value as? Bool {
+                settings.dictationCleanupEnabled = bool
+                AppLog.event("settings: dictation cleanup \(bool ? "enabled" : "disabled")")
+                if bool, !DictationCleanup.isSupported {
+                    let alert = NSAlert()
+                    alert.messageText = "cleanup needs apple intelligence"
+                    alert.informativeText = """
+                        dictation cleanup runs on your Mac's own Apple Intelligence model, \
+                        so nothing ever leaves the machine. turn Apple Intelligence on in \
+                        System Settings › Apple Intelligence & Siri and this switch starts \
+                        working.
+
+                        until then typie pastes exactly what it hears, no harm and no slowdown.
+                        """
+                    alert.addButton(withTitle: "got it")
+                    NSApp.activate(ignoringOtherApps: true)
+                    alert.runModal()
+                }
             }
         case "meetingMixMic":
             if let bool = value as? Bool { settings.meetingMixMic = bool }

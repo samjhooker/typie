@@ -102,6 +102,27 @@
     </div>
     <div class="row">
       <div class="rowtxt">
+        <Sparkles size={14} />
+        <strong>clean up dictation</strong>
+        <span>
+          on-device Apple Intelligence removes filler words and adds grammar,
+          punctuation and paragraph breaks before pasting.
+        </span>
+        <span class="ai-note">
+          {#if ui.aiSettingSupported}
+            needs macOS 26 with Apple Intelligence turned on in System Settings.
+            if it's off there, typie pastes exactly what it hears.
+          {:else}
+            this Mac doesn't offer Apple Intelligence right now, so typie
+            pastes exactly what it hears until you turn it on in System
+            Settings › Apple Intelligence & Siri.
+          {/if}
+        </span>
+      </div>
+      <Toggle setting="dictationCleanupEnabled" />
+    </div>
+    <div class="row">
+      <div class="rowtxt">
         <Rocket size={14} />
         <strong>launch at login</strong>
         <span>typie waits in the menu bar from boot</span>

@@ -5,14 +5,17 @@ import SwiftUI
 struct TranscriptionEntry: Codable, Identifiable, Equatable {
     let id: UUID
     let text: String
+    /// what the speech model heard before cleanup, only kept when it differs
+    let rawText: String?
     let date: Date
     let latencyMs: Double
     /// optional wav inside history/audio/ when audio is retained
     var audioFile: String?
 
-    init(text: String, latencyMs: Double, audioFile: String? = nil) {
+    init(text: String, rawText: String? = nil, latencyMs: Double, audioFile: String? = nil) {
         self.id = UUID()
         self.text = text
+        self.rawText = rawText
         self.date = Date()
         self.latencyMs = latencyMs
         self.audioFile = audioFile
@@ -30,7 +33,7 @@ final class HistoryStore: ObservableObject {
         load()
     }
 
-    func add(text: String, latencyMs: Double, enabled: Bool, samples: [Float]? = nil) {
+    func add(text: String, rawText: String? = nil, latencyMs: Double, enabled: Bool, samples: [Float]? = nil) {
         guard enabled else { return }
         var audioFile: String?
         if let samples, !samples.isEmpty {
@@ -42,7 +45,7 @@ final class HistoryStore: ObservableObject {
                 audioFile = name
             }
         }
-        entries.insert(TranscriptionEntry(text: text, latencyMs: latencyMs, audioFile: audioFile), at: 0)
+        entries.insert(TranscriptionEntry(text: text, rawText: rawText, latencyMs: latencyMs, audioFile: audioFile), at: 0)
         if entries.count > maxEntries {
             if let removed = entries.last?.audioFile {
                 try? FileManager.default.removeItem(at: AppPaths.supportDir.appendingPathComponent("history/audio/\(removed)"))

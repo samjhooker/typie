@@ -19,6 +19,7 @@ export const ui = $state({
     meetingMixMic: false,
     transcriptsKeepAudio: true,
     aiEnabled: true,
+    dictationCleanupEnabled: true,
     appearance: 'system', // 'system' | 'light' | 'dark'
   },
   permissions: { mic: false, ax: false, screen: false },

@@ -110,6 +110,9 @@ final class DictationController: ObservableObject {
             }
             try capture.start()
             phase = .listening
+            if settings?.dictationCleanupEnabled == true {
+                DictationCleanup.prewarm()
+            }
             SoundPlayer.playPress()
             AppLog.event("recording started")
         } catch {
@@ -166,18 +169,39 @@ final class DictationController: ObservableObject {
                 return
             }
             AppLog.event("transcribed in \(Int(ms))ms: \"\(text)\"")
-            lastGoodText = text
+            var finalText = text
+            var totalMs = ms
+            if settings?.dictationCleanupEnabled == true,
+               text.split(separator: " ").count >= 4 {
+                let cleanupStarted = Date()
+                let cleaned = await DictationCleanup.clean(text)
+                totalMs += Date().timeIntervalSince(cleanupStarted) * 1_000
+                // a fresh recording started while the model was working:
+                // drop this whole result, cleaned or not
+                if Task.isCancelled { return }
+                if let cleaned {
+                    finalText = cleaned
+                    AppLog.event("cleaned up: \"\(cleaned)\"")
+                }
+            }
+            lastGoodText = finalText
             if routesToDemoBox {
                 AppLog.event("routing transcript to onboarding practice box (paste skipped)")
-                lastTranscript = text
+                lastTranscript = finalText
             } else {
-                TextInserter.paste(text)
+                TextInserter.paste(finalText)
             }
-            StatsStore.shared.record(text: text, latencyMs: ms, audioSeconds: seconds)
+            StatsStore.shared.record(text: finalText, latencyMs: totalMs, audioSeconds: seconds)
             if let settings {
-                HistoryStore.shared.add(text: text, latencyMs: ms, enabled: settings.historyEnabled, samples: samples)
+                HistoryStore.shared.add(
+                    text: finalText,
+                    rawText: finalText == text ? nil : text,
+                    latencyMs: totalMs,
+                    enabled: settings.historyEnabled,
+                    samples: samples
+                )
             }
-            phase = .done(ms: Double(Int(ms.rounded())))
+            phase = .done(ms: Double(Int(totalMs.rounded())))
             scheduleIdleReset()
         } catch {
             // cancelled because a new recording superseded this pass — stay

@@ -1,10 +1,27 @@
 <script>
   import { ui, send, markCopied, local } from '../bridge.svelte.js';
-  import { Search, Copy, Check, Zap, Trash2 } from 'lucide-svelte';
+  import { Search, Copy, Check, Zap, Trash2, Sparkles } from 'lucide-svelte';
   import { infinite } from '../infinite.js';
   import { trash } from '../trash.svelte.js';
 
   let query = $state('');
+  // which rows have their pre-cleanup transcript revealed
+  let openRaw = $state(new Set());
+
+  function toggleRaw(id) {
+    const next = new Set(openRaw);
+    next.has(id) ? next.delete(id) : next.add(id);
+    openRaw = next;
+  }
+
+  function matches(h) {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      h.text.toLowerCase().includes(q) ||
+      (h.rawText || '').toLowerCase().includes(q)
+    );
+  }
 
   // progressive paging, history grows forever, the DOM shouldn't
   const PAGE = 80;
@@ -17,20 +34,13 @@
   // staged deletions vanish instantly; native delete fires after the grace window
   const pending = $derived(trash.pendingIds('history'));
 
-  const totalMatched = $derived.by(() => {
-    if (!query.trim()) return ui.history.length;
-    const q = query.trim().toLowerCase();
-    return ui.history.filter((h) => h.text.toLowerCase().includes(q)).length;
-  });
+  const totalMatched = $derived(ui.history.filter(matches).length);
 
   const grouped = $derived.by(() => {
     let items = [...ui.history].sort(
       (a, b) => new Date(b.date) - new Date(a.date)
     );
-    if (query.trim()) {
-      const q = query.trim().toLowerCase();
-      items = items.filter((h) => h.text.toLowerCase().includes(q));
-    }
+    if (query.trim()) items = items.filter(matches);
     items = items.filter((h) => !pending.has(h.id)).slice(0, shown);
     const day = (d) =>
       new Date(
@@ -155,8 +165,37 @@
           {#each group.items as h (h.id)}
             <div class="row card">
               <span class="time mono-kicker">{fmtTime(h.date)}</span>
-              <p class="txt">{h.text}</p>
+              <div class="body">
+                <p class="txt">{h.text}</p>
+                {#if h.rawText && openRaw.has(h.id)}
+                  <div class="raw">
+                    <span class="mono-kicker">before cleanup</span>
+                    <p class="rawtxt">{h.rawText}</p>
+                    <button
+                      class="icon-btn"
+                      title="copy original"
+                      onclick={() => {
+                        send({ type: 'copy', text: h.rawText });
+                        markCopied(h.id + ':raw');
+                      }}
+                    >
+                      {#if local.copiedId === h.id + ':raw'}<Check
+                          size={13}
+                        />{:else}<Copy size={13} />{/if}
+                    </button>
+                  </div>
+                {/if}
+              </div>
               <span class="tail">
+                {#if h.rawText}
+                  <button
+                    class="chip cleaned {openRaw.has(h.id) ? 'on' : ''}"
+                    title="typie cleaned this up, click to compare"
+                    onclick={() => toggleRaw(h.id)}
+                  >
+                    <Sparkles size={10} /> cleaned
+                  </button>
+                {/if}
                 <span
                   class="chip lat"
                   title="transcription latency"
@@ -164,7 +203,7 @@
                 >
                 <button
                   class="icon-btn"
-                  title="copy"
+                  title="copy cleaned"
                   onclick={() => {
                     send({ type: 'copy', text: h.text });
                     markCopied(h.id);
@@ -322,15 +361,55 @@
     flex-shrink: 0;
     padding-top: 1px;
   }
-  .txt {
+  .body {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .txt {
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-1);
     white-space: pre-wrap;
     word-break: break-word;
     user-select: text;
+  }
+  .raw {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--wash);
+  }
+  .raw > .mono-kicker {
+    flex-shrink: 0;
+    padding-top: 3px;
+    opacity: 0.7;
+  }
+  .rawtxt {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-2);
+    white-space: pre-wrap;
+    word-break: break-word;
+    user-select: text;
+  }
+  .cleaned {
+    background: var(--card-lavender, var(--wash));
+    color: #6d28d9;
+    border: 1px solid transparent;
+    transition:
+      border-color 0.18s var(--ease-out),
+      background 0.18s var(--ease-out);
+  }
+  .cleaned:hover,
+  .cleaned.on {
+    border-color: #6d28d9;
   }
   .tail {
     display: flex;
